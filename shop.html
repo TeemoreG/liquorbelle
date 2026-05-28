@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Shop — LiquorBelle Wines & Spirits | Dagoretti's Finest</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-dark: #0A0A0A;
+  --bg-purple: #1a0a2e;
+  --purple-deep: #2d1b4e;
+  --purple-right: #1e1036;
+  --red-accent: #c0392b;
+  --red-bright: #e74c3c;
+  --white-panel: #ffffff;
+  --white-text: #ffffff;
+  --off-white: #f5f5f5;
+  --safaricom-dark: #006633;
+  --safaricom-light: #00CC66;
+  --gold-star: #f5b81b;
+  --gray-text: #333333;
+  --gray-muted: #666666;
+  --border-light: rgba(255,255,255,0.1);
+  --shadow: 0 8px 24px rgba(0,0,0,0.3);
+  --radius: 16px;
+}
+
+body {
+  background: var(--bg-dark);
+  color: var(--white-text);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+/* HEADER with white panel style */
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background: var(--white-panel);
+  border-bottom: 1px solid #e0e0e0;
+  padding:0 5%;
+  height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-img{height:38px;width:auto;border-radius:8px;}
+.logo-name{font-weight:800;font-size:20px;letter-spacing:-0.3px;color:var(--gray-text);}
+.logo-name em{color:var(--red-accent);font-style:normal;}
+.search-wrap{
+  flex:1;max-width:380px;
+  background:#f0f0f0;
+  border:1px solid #ddd;
+  border-radius:60px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 18px;
+}
+.search-wrap:focus-within{border-color:var(--red-accent);}
+.search-wrap i{color:var(--gray-muted);font-size:14px;}
+.search-wrap input{
+  background:none;
+  border:none;
+  outline:none;
+  color:var(--gray-text);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  width:100%;
+  padding:12px 0;
+}
+.search-wrap input::placeholder{color:#aaa;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.phone-btn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  border:1px solid #ddd;
+  color:var(--red-accent);
+  padding:8px 18px;
+  border-radius:60px;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
+  transition:all 0.2s;
+}
+.phone-btn:hover{border-color:var(--red-accent);background:#fef0ef;}
+.cart-pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:var(--red-accent);
+  border:none;
+  padding:10px 20px;
+  border-radius:60px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:13px;
+  color:white;
+  transition:transform 0.2s;
+}
+.cart-pill:hover{transform:translateY(-1px);background:#a93226;}
+.cart-badge{
+  background:white;
+  color:var(--red-accent);
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  font-weight:800;
+}
+
+/* HOW IT WORKS - COMPACT SIMPLE */
+.how-it-works{
+  background: linear-gradient(135deg, var(--bg-purple) 0%, var(--purple-deep) 100%);
+  padding:20px 5%;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.how-container{
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-around;
+  gap:16px;
+}
+.how-step{
+  flex:1;
+  min-width:160px;
+  text-align:center;
+  padding:8px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.how-num{
+  width:32px;
+  height:32px;
+  background:rgba(255,255,255,0.15);
+  border:1px solid var(--red-accent);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:14px;
+  color:var(--red-accent);
+  flex-shrink:0;
+}
+.how-step h4{
+  font-weight:700;
+  font-size:13px;
+  color:white;
+  margin:0;
+  white-space:nowrap;
+}
+.how-step p{
+  font-size:10px;
+  color:rgba(255,255,255,0.6);
+  line-height:1.3;
+  margin-top:2px;
+  display:none;
+}
+.how-step .step-text{
+  text-align:left;
+}
+@media(min-width:768px){
+  .how-step p{display:block;}
+  .how-step{text-align:left;justify-content:flex-start;}
+}
+
+/* FILTER BAR */
+.filter-wrap{
+  background: var(--purple-right);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding:0 5%;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.filter-wrap::-webkit-scrollbar{display:none;}
+.filter-inner{
+  display:flex;
+  gap:0;
+  white-space:nowrap;
+  align-items:center;
+}
+.fchip{
+  padding:14px 22px;
+  background:transparent;
+  border:none;
+  border-bottom:2px solid transparent;
+  color:rgba(255,255,255,0.7);
+  cursor:pointer;
+  font-weight:500;
+  font-size:13px;
+  transition:all 0.15s;
+}
+.fchip:hover{color:white;}
+.fchip.active{color:var(--red-accent);border-bottom-color:var(--red-accent);}
+
+/* TOOLBAR */
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 5%;
+  background: var(--purple-right);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.result-label{font-size:13px;color:rgba(255,255,255,0.7);}
+.result-label b{color:white;}
+.sort-sel{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.2);
+  color:white;
+  padding:8px 14px;
+  border-radius:60px;
+  font-size:12px;
+  cursor:pointer;
+}
+.sort-sel option{background:var(--purple-deep);}
+
+/* PRODUCT GRID */
+.layout{max-width:1400px;margin:0 auto;padding:28px 5%;}
+.pgrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:22px;
+}
+.pcard{
+  background: white;
+  border-radius:var(--radius);
+  overflow:hidden;
+  cursor:pointer;
+  border: 1px solid #e0e0e0;
+  transition:all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.pcard:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.12);
+  border-color:var(--red-accent);
+}
+.pc-img{
+  height:190px;
+  overflow:hidden;
+  background:#f8f8f8;
+  position:relative;
+}
+.pc-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform 0.3s;
+}
+.pcard:hover .pc-img img{transform:scale(1.05);}
+.pc-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  font-weight:700;
+  font-size:9px;
+  letter-spacing:1px;
+  padding:4px 12px;
+  border-radius:20px;
+  z-index:2;
+}
+.pc-badge.hot{background:var(--red-accent);color:white;}
+.pc-badge.local{background:var(--safaricom-dark);color:white;}
+.pc-badge.prem{background:var(--purple-deep);color:white;}
+.pc-body{padding:14px 14px 18px;}
+.pc-name{font-weight:700;font-size:15px;line-height:1.35;color:var(--gray-text);}
+.pc-sub{font-size:12px;color:var(--gray-muted);margin-top:3px;}
+.pc-price{
+  font-weight:800;
+  font-size:22px;
+  color:var(--red-accent);
+  margin-top:10px;
+}
+.pc-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+}
+.qty-ctrl{
+  display:flex;
+  align-items:center;
+  background:#f0f0f0;
+  border:1px solid #ddd;
+  border-radius:60px;
+  overflow:hidden;
+}
+.qbtn{
+  width:30px;
+  height:30px;
+  background:none;
+  border:none;
+  color:var(--gray-text);
+  cursor:pointer;
+  font-size:14px;
+}
+.qbtn:hover{background:rgba(192,57,43,0.1);color:var(--red-accent);}
+.qval{min-width:24px;text-align:center;font-size:13px;font-weight:700;color:var(--gray-text);}
+.add-btn{
+  flex:1;
+  padding:9px 0;
+  background:var(--red-accent);
+  border:none;
+  color:white;
+  border-radius:60px;
+  font-weight:700;
+  font-size:12px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  transition:all 0.2s;
+}
+.add-btn:hover{background:#a93226;}
+.add-btn.added{background:var(--safaricom-dark);}
+.empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--gray-muted);background:white;border-radius:24px;}
+
+/* CART DRAWER */
+.backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  z-index:400;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
+  backdrop-filter:blur(4px);
+}
+.backdrop.open{opacity:1;pointer-events:all;}
+.cart-drawer{
+  position:fixed;
+  right:0;
+  top:0;
+  bottom:0;
+  width:420px;
+  max-width:95vw;
+  background: white;
+  border-left: 1px solid #e0e0e0;
+  z-index:500;
+  transform:translateX(100%);
+  transition:transform 0.3s;
+  display:flex;
+  flex-direction:column;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+}
+.cart-drawer.open{transform:translateX(0);}
+.cd-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:22px 24px;
+  border-bottom:1px solid #eee;
+}
+.cd-title{font-weight:800;font-size:24px;color:var(--gray-text);}
+.cd-close{
+  background:#f0f0f0;
+  border:1px solid #ddd;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  cursor:pointer;
+  transition:all 0.2s;
+  color:var(--gray-text);
+}
+.cd-close:hover{border-color:var(--red-accent);color:var(--red-accent);}
+.cd-items{flex:1;overflow-y:auto;padding:16px 20px;}
+.cd-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid #f0f0f0;
+}
+.cd-img{width:50px;height:50px;object-fit:cover;border-radius:10px;background:#f5f5f5;}
+.cd-name{font-weight:600;font-size:14px;color:var(--gray-text);}
+.cd-price{font-size:13px;color:var(--red-accent);font-weight:600;}
+.cd-qty-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.cd-qty-row button{
+  width:26px;
+  height:26px;
+  background:#f0f0f0;
+  border:1px solid #ddd;
+  border-radius:50%;
+  cursor:pointer;
+  color:var(--gray-text);
+}
+.cd-qty-row button:hover{background:rgba(192,57,43,0.1);color:var(--red-accent);}
+.cd-del{background:none;border:none;color:#aaa;cursor:pointer;margin-left:auto;}
+.cd-del:hover{color:var(--red-accent);}
+.empty-cart{text-align:center;padding:60px 20px;color:var(--gray-muted);}
+.cd-footer{padding:20px 24px;border-top:1px solid #eee;}
+.cd-totals{margin-bottom:18px;}
+.cd-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;color:var(--gray-muted);}
+.cd-total{display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid #eee;font-weight:700;font-size:18px;}
+.cd-total span:last-child{color:var(--red-accent);}
+/* SINGLE WHATSAPP CHECKOUT BUTTON - REMOVED THE OTHER ONE */
+.cd-btns{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.btn-whatsapp{
+  width:100%;
+  padding:14px;
+  background:#25D366;
+  color:white;
+  border:none;
+  border-radius:60px;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:all 0.2s;
+}
+.btn-whatsapp:hover{background:#20b859;transform:translateY(-1px);}
+
+/* PHONE SELECTION MODAL - Only WhatsApp number */
+.phone-modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  z-index:600;
+  justify-content:center;
+  align-items:center;
+}
+.phone-modal-content{
+  background:white;
+  border-radius:28px;
+  padding:32px;
+  max-width:400px;
+  width:90%;
+  text-align:center;
+}
+.phone-modal-content h3{
+  color:var(--gray-text);
+  font-weight:700;
+  margin-bottom:20px;
+}
+.phone-option{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px;
+  margin:12px 0;
+  border:1px solid #e0e0e0;
+  border-radius:60px;
+  cursor:pointer;
+  transition:all 0.2s;
+  color:var(--gray-text);
+  text-decoration:none;
+}
+.phone-option:hover{
+  border-color:var(--red-accent);
+  background:#fef0ef;
+}
+.phone-option svg{width:20px;height:20px;color:#25D366;}
+.close-modal-btn{
+  margin-top:16px;
+  padding:12px;
+  background:#f0f0f0;
+  border:none;
+  border-radius:60px;
+  cursor:pointer;
+  width:100%;
+  font-weight:600;
+  color:var(--gray-muted);
+}
+
+/* M-PESA BANNER - Safaricom Green */
+.mpesa-banner{
+  background: linear-gradient(135deg, var(--safaricom-dark) 0%, var(--safaricom-light) 100%);
+  padding: 10px 5%;
+  text-align: center;
+}
+.mpesa-banner p{
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+.mpesa-banner i{margin-right: 8px;}
+
+.snack{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#333;
+  border:1px solid #555;
+  padding:10px 24px;
+  border-radius:60px;
+  font-size:13px;
+  color:white;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:999;
+  pointer-events:none;
+}
+.snack.on{opacity:1;}
+.pcard.out-of-stock{opacity:0.65;}
+.pcard.out-of-stock .pc-img img{filter:grayscale(0.5);}
+.oos-label{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,0.72);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:6px 14px;border-radius:4px;z-index:3;white-space:nowrap;
+}
+.float-whatsapp{
+  position:fixed;
+  bottom:24px;
+  left:24px;
+  background:#25D366;
+  color:white;
+  padding:12px 22px;
+  border-radius:60px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  z-index:300;
+  box-shadow:0 6px 20px rgba(37,211,102,0.3);
+}
+.float-order{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  background:var(--red-accent);
+  color:white;
+  padding:12px 22px;
+  border-radius:60px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  z-index:300;
+  box-shadow:0 6px 20px rgba(192,57,43,0.3);
+}
+
+@media(max-width:768px){
+  .phone-btn{display:none;}
+  .pgrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
+  .filter-wrap,.toolbar,.layout{padding-left:16px;padding-right:16px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">
+    <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+    <span class="logo-name">Liquor<em>Belle</em></span>
+  </a>
+  <div class="search-wrap">
+    <i class="ph ph-magnifying-glass"></i>
+    <input type="text" id="searchInput" placeholder="Search whisky, vodka, beer...">
+  </div>
+  <div class="header-right">
+    <a class="phone-btn" href="tel:+254748894443"><i class="ph ph-phone"></i> +254 748 894 443</a>
+    <button class="cart-pill" onclick="openCart()">
+      <i class="ph ph-shopping-bag"></i> Cart <div class="cart-badge" id="cartCount">0</div>
+    </button>
+  </div>
+</header>
+
+<!-- COMPACT HOW IT WORKS -->
+<div class="how-it-works">
+  <div class="how-container">
+    <div class="how-step"><div class="how-num">1</div><div class="step-text"><h4>Select drinks</h4><p>Browse & pick your bottles</p></div></div>
+    <div class="how-step"><div class="how-num">2</div><div class="step-text"><h4>Add to cart</h4><p>Review & checkout</p></div></div>
+    <div class="how-step"><div class="how-num">3</div><div class="step-text"><h4>Pay</h4><p>M-PESA Till 6927569 or POD</p></div></div>
+    <div class="how-step"><div class="how-num">4</div><div class="step-text"><h4>WhatsApp</h4><p>Send payment reference</p></div></div>
+  </div>
+</div>
+
+<div class="mpesa-banner">
+  <p><i class="ph ph-device-mobile"></i> M-PESA Till: 6927569 — Pay & confirm via WhatsApp</p>
+</div>
+
+<div class="filter-wrap">
+  <div class="filter-inner">
+    <button class="fchip active" data-cat="all">All</button>
+    <button class="fchip" data-cat="whisky">Whisky</button>
+    <button class="fchip" data-cat="vodka">Vodka</button>
+    <button class="fchip" data-cat="wine">Wine</button>
+    <button class="fchip" data-cat="beer">Beer</button>
+    <button class="fchip" data-cat="rum">Rum</button>
+    <button class="fchip" data-cat="gin">Gin</button>
+    <button class="fchip" data-cat="cognac">Cognac / Brandy</button>
+    <button class="fchip" data-cat="champagne">Champagne</button>
+    <button class="fchip" data-cat="kenyan">Kenyan Spirits</button>
+  </div>
+</div>
+
+<div class="toolbar">
+  <span class="result-label">Showing <b id="rcount">0</b> products</span>
+  <select class="sort-sel" id="sortSel">
+    <option value="">Sort: Default</option>
+    <option value="asc">Price: Low to High</option>
+    <option value="desc">Price: High to Low</option>
+    <option value="az">Name: A to Z</option>
+  </select>
+</div>
+
+<div class="layout">
+  <div class="pgrid" id="grid"></div>
+</div>
+
+<div class="backdrop" id="backdrop" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cd-header"><div class="cd-title">Your Cart</div><button class="cd-close" onclick="closeCart()"><i class="ph ph-x"></i></button></div>
+  <div class="cd-items" id="cdItems"></div>
+  <div class="cd-footer">
+    <div class="cd-totals">
+      <div class="cd-row"><span>Subtotal</span><b id="subt">KES 0</b></div>
+      <div class="cd-row"><span>Delivery</span><b id="delv">KES 150</b></div>
+      <div class="cd-total"><span>Total</span><span id="tot">KES 0</span></div>
+    </div>
+    <!-- SINGLE CHECKOUT BUTTON - WHATSAPP ONLY -->
+    <div class="cd-btns">
+      <button class="btn-whatsapp" onclick="openPhoneModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Order via WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Order Checkout Modal -->
+<div id="phoneModal" class="phone-modal">
+  <div class="phone-modal-content">
+    <h3>Complete Your Order</h3>
+    <div style="margin-bottom:14px;">
+      <input id="custName" type="text" placeholder="Your Name" style="width:100%;padding:11px 14px;background:#f5f5f5;border:1px solid #ddd;border-radius:40px;font-size:14px;outline:none;margin-bottom:10px;color:#333;">
+      <input id="custAddr" type="text" placeholder="Delivery Address / Area (e.g. Karen, Kilimani...)" style="width:100%;padding:11px 14px;background:#f5f5f5;border:1px solid #ddd;border-radius:40px;font-size:14px;outline:none;color:#333;">
+    </div>
+    <a href="#" class="phone-option" data-phone="254748894443">
+      <span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> +254 748 894 443</span>
+      <span>Send order via WhatsApp →</span>
+    </a>
+    <button class="close-modal-btn" onclick="closePhoneModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="snack" id="snack"></div>
+<a class="float-whatsapp" href="https://wa.me/254748894443?text=Hello%20LiquorBelle!%20I%20want%20to%20place%20an%20order." target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> WhatsApp</a>
+<a class="float-order" href="#" onclick="openCart(); return false;"><i class="ph ph-shopping-bag"></i> Cart</a>
+
+<script>
+// Default image fallback
+const PRODUCT_IMAGE = "https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif";
+
+// Seed product list — used only if admin hasn't saved any products yet
+const SEED_PRODUCTS = [
+  {id:1,n:"Johnnie Walker Black Label",s:"Blended Scotch 750ml",p:3500,c:"whisky",badge:"hot",img:"https://images.vivino.com/thumbs/ApnIiXjcT5Kc33OHgNb9dA_pb_x600.png"},
+  {id:2,n:"Johnnie Walker Red Label",s:"Blended Scotch 750ml",p:2500,c:"whisky",badge:"",img:""},
+  {id:3,n:"Jameson Irish Whiskey",s:"Irish Whiskey 750ml",p:3200,c:"whisky",badge:"",img:"https://www.thewhiskyexchange.com/images/products/10399_full.jpg"},
+  {id:4,n:"Jack Daniel's Old No.7",s:"Tennessee Whiskey 750ml",p:3800,c:"whisky",badge:"",img:""},
+  {id:5,n:"Chivas Regal 12 Year",s:"Blended Scotch 750ml",p:4200,c:"whisky",badge:"prem",img:""},
+  {id:6,n:"Glenfiddich 12 Year",s:"Single Malt 750ml",p:5500,c:"whisky",badge:"prem",img:""},
+  {id:7,n:"Dewar's White Label",s:"Blended Scotch 750ml",p:2800,c:"whisky",badge:"",img:""},
+  {id:8,n:"Ballantine's Finest",s:"Blended Scotch 750ml",p:2600,c:"whisky",badge:"",img:""},
+  {id:9,n:"Grant's Whisky",s:"Blended Scotch 750ml",p:2200,c:"whisky",badge:"",img:""},
+  {id:10,n:"William Lawson's",s:"Blended Scotch 750ml",p:2000,c:"whisky",badge:"",img:""},
+  {id:11,n:"Vat 69 Whisky",s:"Blended Scotch 750ml",p:1950,c:"whisky",badge:"",img:""},
+  {id:12,n:"Kingfisher Whisky",s:"Kenyan Whisky 750ml",p:1800,c:["whisky","kenyan"],badge:"local",img:""},
+  {id:13,n:"Richot Whisky",s:"Kenyan Blended 750ml",p:1650,c:["whisky","kenyan"],badge:"local",img:""},
+  {id:14,n:"General Mechanic Whisky",s:"Kenyan Whisky 750ml",p:1450,c:["whisky","kenyan"],badge:"local",img:""},
+  {id:15,n:"County Whisky",s:"Kenyan Blended 750ml",p:1250,c:["whisky","kenyan"],badge:"local",img:""},
+  {id:20,n:"Smirnoff Red Label",s:"Vodka 750ml",p:1800,c:"vodka",badge:"",img:""},
+  {id:21,n:"Absolut Vodka",s:"Swedish Vodka 750ml",p:2500,c:"vodka",badge:"",img:""},
+  {id:22,n:"Grey Goose Vodka",s:"French Vodka 750ml",p:5800,c:"vodka",badge:"prem",img:""},
+  {id:23,n:"Chrome Vodka",s:"Kenyan Vodka 750ml",p:1100,c:["vodka","kenyan"],badge:"local",img:""},
+  {id:24,n:"Ciroc Vodka",s:"French Vodka 750ml",p:6500,c:"vodka",badge:"prem",img:""},
+  {id:25,n:"Stolichnaya Vodka",s:"Russian Vodka 750ml",p:2900,c:"vodka",badge:"",img:""},
+  {id:26,n:"General Mechanic Vodka",s:"Kenyan Vodka 750ml",p:1200,c:["vodka","kenyan"],badge:"local",img:""},
+  {id:30,n:"Nederburg Rose",s:"South African Wine 750ml",p:1500,c:"wine",badge:""},
+  {id:31,n:"Four Cousins Sweet Red",s:"SA Wine 750ml",p:1200,c:"wine",badge:""},
+  {id:32,n:"KWV Classic Red",s:"SA Wine 750ml",p:1100,c:"wine",badge:""},
+  {id:33,n:"Hardys Cabernet",s:"Australian Wine 750ml",p:1300,c:"wine",badge:""},
+  {id:34,n:"Robertson Winery",s:"SA Wine 750ml",p:1250,c:"wine",badge:""},
+  {id:35,n:"Two Oceans White",s:"SA Wine 750ml",p:1400,c:"wine",badge:""},
+  {id:40,n:"Tusker Lager",s:"Kenyan Beer 500ml",p:230,c:["beer","kenyan"],badge:"local"},
+  {id:41,n:"Tusker Malt",s:"Kenyan Premium Beer 500ml",p:280,c:["beer","kenyan"],badge:"local"},
+  {id:42,n:"White Cap Lager",s:"Kenyan Beer 500ml",p:210,c:["beer","kenyan"],badge:"local"},
+  {id:43,n:"White Cap Light",s:"Kenyan Beer 500ml",p:210,c:["beer","kenyan"],badge:"local"},
+  {id:44,n:"Pilsner Lager",s:"Kenyan Beer 500ml",p:200,c:["beer","kenyan"],badge:"local"},
+  {id:45,n:"Balozi Lager",s:"Kenyan Beer 500ml",p:190,c:["beer","kenyan"],badge:"local"},
+  {id:46,n:"Heineken",s:"Dutch Lager 500ml",p:320,c:"beer",badge:""},
+  {id:47,n:"Guinness Stout",s:"Irish Stout 500ml",p:300,c:"beer",badge:""},
+  {id:50,n:"Captain Morgan Spiced",s:"Spiced Rum 750ml",p:2800,c:"rum",badge:""},
+  {id:51,n:"Bacardi White Rum",s:"White Rum 750ml",p:2700,c:"rum",badge:""},
+  {id:52,n:"Kenya Cane",s:"Kenyan Cane Spirit 750ml",p:950,c:["rum","kenyan"],badge:"local"},
+  {id:53,n:"Konyagi Spirit",s:"Kenyan Spirit 750ml",p:750,c:["rum","kenyan"],badge:"local"},
+  {id:54,n:"Konyagi Blackcurrant",s:"Kenyan Flavoured Spirit 750ml",p:820,c:["rum","kenyan"],badge:"local"},
+  {id:60,n:"Gilbeys Gin",s:"Kenyan Gin 750ml",p:1400,c:["gin","kenyan"],badge:"local"},
+  {id:61,n:"Gordons Gin",s:"London Dry Gin 750ml",p:2200,c:"gin",badge:""},
+  {id:62,n:"Hendricks Gin",s:"Scottish Gin 750ml",p:5200,c:"gin",badge:"prem"},
+  {id:63,n:"Beefeater Gin",s:"London Dry Gin 750ml",p:3100,c:"gin",badge:""},
+  {id:70,n:"Hennessy VS Cognac",s:"Cognac 750ml",p:5500,c:"cognac",badge:"prem"},
+  {id:71,n:"Martell VS Cognac",s:"Cognac 750ml",p:4800,c:"cognac",badge:""},
+  {id:72,n:"Richot Brandy",s:"South African Brandy 750ml",p:1600,c:"cognac",badge:""},
+  {id:73,n:"KWV Brandy",s:"South African Brandy 750ml",p:1800,c:"cognac",badge:""},
+  {id:80,n:"Moet & Chandon Brut",s:"French Champagne 750ml",p:9500,c:"champagne",badge:"prem"},
+  {id:81,n:"Veuve Clicquot",s:"French Champagne 750ml",p:11000,c:"champagne",badge:"prem"},
+  {id:82,n:"JC Le Roux Sparkling",s:"SA Sparkling Wine 750ml",p:1800,c:"champagne",badge:""},
+];
+
+// ── LIVE PRODUCT SYNC FROM ADMIN ──────────────────────────────────
+function loadProducts() {
+  const stored = localStorage.getItem('liquorbelle_products');
+  if (stored) {
+    try {
+      const adminProducts = JSON.parse(stored);
+      if (adminProducts && adminProducts.length > 0) {
+        return adminProducts.map(ap => ({
+          id: ap.id,
+          n: ap.name,
+          s: ap.sub || '',
+          p: ap.price,
+          c: ap.category,
+          badge: ap.badge || '',
+          img: ap.image || '',
+          stock: ap.stock != null ? ap.stock : null
+        }));
+      }
+    } catch(e) {}
+  }
+  const seedForAdmin = SEED_PRODUCTS.map(p => ({
+    id: p.id, name: p.n, sub: p.s, price: p.p,
+    category: Array.isArray(p.c) ? p.c[0] : p.c,
+    badge: p.badge || '', image: p.img || '', stock: null
+  }));
+  localStorage.setItem('liquorbelle_products', JSON.stringify(seedForAdmin));
+  return SEED_PRODUCTS;
+}
+
+let PRODUCTS = loadProducts();
+
+window.addEventListener('storage', e => {
+  if (e.key === 'liquorbelle_products') {
+    PRODUCTS = loadProducts();
+    render();
+  }
+});
+
+let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
+let searchQuery = '';
+let sortBy = '';
+
+function isMatch(product, category, query) {
+  const cats = Array.isArray(product.c) ? product.c : [product.c];
+  const catMatch = category === 'all' || cats.includes(category);
+  const queryMatch = !query || product.n.toLowerCase().includes(query) || product.s.toLowerCase().includes(query);
+  return catMatch && queryMatch;
+}
+
+function getFiltered() {
+  let filtered = PRODUCTS.filter(p => isMatch(p, currentCat, searchQuery));
+  if (sortBy === 'asc') filtered.sort((a,b) => a.p - b.p);
+  else if (sortBy === 'desc') filtered.sort((a,b) => b.p - a.p);
+  else if (sortBy === 'az') filtered.sort((a,b) => a.n.localeCompare(b.n));
+  return filtered;
+}
+
+function render() {
+  const list = getFiltered();
+  document.getElementById('rcount').innerText = list.length;
+  const grid = document.getElementById('grid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state"><p>No products found for "${searchQuery || currentCat}"</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => {
+    const qty = cart[p.id]?.qty || 0;
+    const imgSrc = p.img || PRODUCT_IMAGE;
+    const outOfStock = p.stock != null && p.stock === 0;
+    return `
+      <div class="pcard${outOfStock ? ' out-of-stock' : ''}">
+        <div class="pc-img">
+          ${p.badge ? `<div class="pc-badge ${p.badge}">${p.badge==='local'?'Kenyan Brand':p.badge==='hot'?'Best Seller':'Premium'}</div>` : ''}
+          ${outOfStock ? '<div class="oos-label">Out of Stock</div>' : ''}
+          <img src="${imgSrc}" alt="${escapeHtml(p.n)}" onerror="this.src='${PRODUCT_IMAGE}'">
+        </div>
+        <div class="pc-body">
+          <div class="pc-name">${escapeHtml(p.n)}</div>
+          <div class="pc-sub">${escapeHtml(p.s)}</div>
+          <div class="pc-price">KES ${p.p.toLocaleString()}</div>
+          ${p.stock != null && p.stock > 0 && p.stock <= 5 ? `<div style="font-size:11px;color:#e67e22;font-weight:600;margin-top:2px;">Only ${p.stock} left</div>` : ''}
+          <div class="pc-row">
+            <div class="qty-ctrl">
+              <button class="qbtn" onclick="changeQty(${p.id}, -1)" ${outOfStock?'disabled':''}>−</button>
+              <span class="qval" id="qv${p.id}">${qty}</span>
+              <button class="qbtn" onclick="changeQty(${p.id}, 1)" ${outOfStock?'disabled':''}>+</button>
+            </div>
+            <button class="add-btn ${qty>0?'added':''}" onclick="addToCart(${p.id})" ${outOfStock?'disabled style="opacity:0.45;cursor:not-allowed"':''}>${outOfStock?'Out of Stock':qty>0?'Added':'Add'}</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+function addToCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  if (p.stock != null && p.stock === 0) { toast('This product is out of stock'); return; }
+  if (!cart[id]) cart[id] = { name: p.n, price: p.p, qty: 1, img: p.img || '' };
+  else cart[id].qty++;
+  saveCart(); render(); updateCartUI();
+  toast(`${p.n} added to cart`);
+}
+function changeQty(id, delta) {
+  if (!cart[id] && delta > 0) { addToCart(id); return; }
+  if (!cart[id]) return;
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  saveCart(); render(); updateCartUI();
+}
+function saveCart() { localStorage.setItem('liquorbelle_cart', JSON.stringify(cart)); }
+
+function updateCartUI() {
+  const items = Object.values(cart);
+  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const count = items.reduce((s,i) => s + i.qty, 0);
+  const delivery = subtotal >= 3000 ? 0 : 150;
+  document.getElementById('cartCount').innerText = count;
+  document.getElementById('subt').innerHTML = `KES ${subtotal.toLocaleString()}`;
+  document.getElementById('delv').innerHTML = delivery === 0 ? 'FREE' : `KES ${delivery}`;
+  document.getElementById('tot').innerHTML = `KES ${(subtotal + delivery).toLocaleString()}`;
+  const container = document.getElementById('cdItems');
+  if (!items.length) {
+    container.innerHTML = `<div class="empty-cart"><p>Your cart is empty</p></div>`;
+    return;
+  }
+  container.innerHTML = Object.entries(cart).map(([id, it]) => `
+    <div class="cd-item">
+      <img class="cd-img" src="${it.img || PRODUCT_IMAGE}" onerror="this.src='${PRODUCT_IMAGE}'" alt="">
+      <div style="flex:1;">
+        <div class="cd-name">${escapeHtml(it.name)}</div>
+        <div class="cd-price">KES ${(it.price * it.qty).toLocaleString()}</div>
+        <div class="cd-qty-row">
+          <button onclick="changeQty(${id}, -1)">−</button>
+          <span style="min-width:20px;text-align:center;">${it.qty}</span>
+          <button onclick="changeQty(${id}, 1)">+</button>
+        </div>
+      </div>
+      <button class="cd-del" onclick="changeQty(${id}, -99)"><i class="ph ph-trash"></i></button>
+    </div>
+  `).join('');
+}
+
+function openCart() { document.getElementById('backdrop').classList.add('open'); document.getElementById('cartDrawer').classList.add('open'); }
+function closeCart() { document.getElementById('backdrop').classList.remove('open'); document.getElementById('cartDrawer').classList.remove('open'); }
+
+function openPhoneModal() {
+  if (!Object.keys(cart).length) { toast('Cart is empty'); return; }
+  document.getElementById('phoneModal').style.display = 'flex';
+}
+function closePhoneModal() { document.getElementById('phoneModal').style.display = 'none'; }
+
+function sendWhatsAppOrder(phoneNumber) {
+  const items = Object.values(cart);
+  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const delivery = subtotal >= 3000 ? 0 : 150;
+  const total = subtotal + delivery;
+
+  const custName = (document.getElementById('custName')?.value || '').trim();
+  const custAddr = (document.getElementById('custAddr')?.value || '').trim();
+
+  let message = "LIQUORBELLE ORDER\n\n";
+  if(custName) message += `Name: ${custName}\n`;
+  if(custAddr) message += `Delivery: ${custAddr}\n\n`;
+  items.forEach(i => {
+    message += `${i.name} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}\n`;
+  });
+  message += `\nSubtotal: KES ${subtotal.toLocaleString()}`;
+  message += `\nDelivery: ${delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString()}`;
+  message += `\nTotal: KES ${total.toLocaleString()}`;
+  message += `\n\nPayment: M-PESA Till 6927569 or Pay on Delivery.\nPlease confirm my order.`;
+
+  // Save order to admin dashboard
+  try {
+    const orderId = 'ORD-' + Date.now().toString().slice(-6);
+    const orderData = {
+      id: orderId,
+      date: new Date().toISOString(),
+      time: new Date().toLocaleString('en-KE', {hour12:true,hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'}),
+      customer: custName || 'Walk-in Customer',
+      address: custAddr || '',
+      items: items.map(i => ({name:i.name, qty:i.qty, price:i.price})),
+      total: total,
+      delivery: delivery,
+      status: 'pending'
+    };
+    const existingOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
+    existingOrders.unshift(orderData);
+    localStorage.setItem('liquorbelle_admin_orders', JSON.stringify(existingOrders));
+  } catch(e) {}
+
+  const encodedMessage = encodeURIComponent(message);
+  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  closePhoneModal();
+  closeCart();
+  // Clear cart after order
+  cart = {};
+  saveCart();
+  updateCartUI();
+  toast('Order sent! 🎉');
+}
+
+document.querySelectorAll('.phone-option').forEach(option => {
+  option.addEventListener('click', (e) => {
+    e.preventDefault();
+    const phoneNumber = option.getAttribute('data-phone');
+    sendWhatsAppOrder(phoneNumber);
+  });
+});
+
+function toast(msg) {
+  const t = document.getElementById('snack');
+  t.innerText = msg; t.classList.add('on');
+  clearTimeout(t._to); t._to = setTimeout(() => t.classList.remove('on'), 2500);
+}
+
+document.getElementById('phoneModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('phoneModal')) closePhoneModal();
+});
+
+const urlParams = new URLSearchParams(window.location.search);
+const catParam = urlParams.get('cat');
+if (catParam && catParam !== 'all') {
+  currentCat = catParam;
+  document.querySelectorAll('.fchip').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === currentCat);
+  });
+}
+
+document.querySelectorAll('.fchip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fchip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    render();
+  });
+});
+document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value.toLowerCase(); render(); });
+document.getElementById('sortSel').addEventListener('change', e => { sortBy = e.target.value; render(); });
+
+render(); updateCartUI();
+</script>
+</body>
+</html>
