@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Checkout — LiquorBelle</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#0A0A0A;
+  font-family:'Inter',sans-serif;
+  color:#fff;
+  padding-bottom:40px;
+}
+.header{
+  background:#fff;
+  padding:16px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid #eee;
+}
+.logo-img{height:40px;border-radius:8px;}
+.logo-name{font-weight:800;font-size:20px;color:#333;}
+.logo-name em{color:#c0392b;font-style:normal;}
+.back-btn{
+  background:#f0f0f0;
+  border:none;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.container{max-width:1200px;margin:0 auto;padding:24px 5%;}
+.checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+@media(max-width:768px){.checkout-grid{grid-template-columns:1fr;}}
+
+.order-summary{
+  background:#1a1a1a;
+  border-radius:24px;
+  padding:24px;
+  border:1px solid #333;
+}
+.summary-title{font-size:20px;font-weight:700;margin-bottom:20px;color:#c0392b;}
+.cart-items{margin-bottom:20px;max-height:300px;overflow-y:auto;}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid #333;
+}
+.item-name{font-weight:500;}
+.item-price{color:#c0392b;font-weight:600;}
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 0;
+  border-top:1px solid #333;
+}
+.summary-total{
+  display:flex;
+  justify-content:space-between;
+  padding:16px 0 0;
+  font-size:20px;
+  font-weight:800;
+  color:#c0392b;
+  border-top:2px solid #c0392b;
+  margin-top:8px;
+}
+
+.checkout-form{
+  background:#1a1a1a;
+  border-radius:24px;
+  padding:24px;
+  border:1px solid #333;
+}
+.form-group{margin-bottom:20px;}
+.form-group label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:600;
+  font-size:13px;
+  color:#aaa;
+}
+.form-group input, .form-group select, .form-group textarea{
+  width:100%;
+  padding:14px 16px;
+  background:#2a2a2a;
+  border:1px solid #444;
+  border-radius:12px;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+}
+.form-group input:focus, .form-group select:focus{
+  outline:none;
+  border-color:#c0392b;
+}
+
+.address-hint{
+  background:#2a2a2a;
+  border-radius:12px;
+  padding:12px 16px;
+  margin-bottom:16px;
+  font-size:12px;
+  color:#aaa;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-left:3px solid #25D366;
+}
+.address-hint i{color:#25D366;font-size:18px;}
+
+.payment-options{
+  display:flex;
+  gap:16px;
+  margin-bottom:24px;
+}
+.payment-option{
+  flex:1;
+  padding:16px;
+  background:#2a2a2a;
+  border:2px solid #444;
+  border-radius:16px;
+  cursor:pointer;
+  text-align:center;
+  transition:all 0.2s;
+}
+.payment-option.selected{
+  border-color:#c0392b;
+  background:rgba(192,57,43,0.1);
+}
+.payment-option i{font-size:28px;display:block;margin-bottom:8px;}
+.payment-option .label{font-weight:700;font-size:14px;}
+.mpesa-details{
+  background:#0c2b1a;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:20px;
+  text-align:center;
+  border:1px solid #25D366;
+}
+.mpesa-details p{font-size:13px;margin-bottom:8px;}
+.mpesa-details .phone-prompt{font-weight:700;color:#25D366;}
+
+.btn-place{
+  width:100%;
+  padding:16px;
+  background:#c0392b;
+  color:white;
+  border:none;
+  border-radius:60px;
+  font-weight:800;
+  font-size:16px;
+  cursor:pointer;
+  transition:all 0.2s;
+  margin-top:16px;
+}
+.btn-place:hover{background:#a93226;transform:translateY(-1px);}
+.btn-place:disabled{opacity:0.6;cursor:not-allowed;}
+
+.empty-cart{
+  text-align:center;
+  padding:60px 20px;
+  color:#888;
+}
+.snack{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#333;
+  padding:12px 24px;
+  border-radius:60px;
+  font-size:13px;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:200;
+  pointer-events:none;
+}
+.snack.on{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='shop.html'"><i class="ph ph-arrow-left" style="font-size:20px;"></i></button>
+  <a class="logo" href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+    <span class="logo-name">Liquor<em>Belle</em></span>
+  </a>
+  <div style="width:40px;"></div>
+</div>
+
+<div class="container">
+  <div class="checkout-grid">
+    <div class="order-summary">
+      <div class="summary-title"><i class="ph ph-shopping-bag"></i> Your Order</div>
+      <div id="cartSummaryItems" class="cart-items"></div>
+      <div class="summary-row"><span>Subtotal</span><span id="subtotalAmount">KES 0</span></div>
+      <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 150</span></div>
+      <div class="summary-total"><span>Total</span><span id="totalAmount">KES 0</span></div>
+    </div>
+
+    <div class="checkout-form">
+      <div class="summary-title" style="margin-bottom:20px;"><i class="ph ph-user"></i> Delivery Details</div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="fullName" placeholder="e.g. John Mwangi">
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="0712345678">
+      </div>
+      <div class="address-hint">
+        <i class="ph ph-whatsapp-logo"></i>
+        <span>After payment, WhatsApp will open automatically – just send & share your live location</span>
+      </div>
+      <div class="form-group">
+        <label>Street / Road / Estate</label>
+        <input type="text" id="street" placeholder="e.g. Dagoretti Road">
+      </div>
+      <div class="form-group">
+        <label>Building / Apartment Name</label>
+        <input type="text" id="building" placeholder="e.g. Quickmart Plaza">
+      </div>
+      <div class="form-group">
+        <label>Additional Instructions (Optional)</label>
+        <textarea id="notes" rows="2" placeholder="Gate number, floor, call on arrival, etc."></textarea>
+      </div>
+      
+      <div class="summary-title" style="margin:20px 0 16px;"><i class="ph ph-credit-card"></i> Payment Method</div>
+      <div class="payment-options">
+        <div class="payment-option" data-payment="mpesa" id="mpesaOption">
+          <i class="ph ph-device-mobile"></i>
+          <div class="label">M-PESA (STK Push)</div>
+        </div>
+        <div class="payment-option" data-payment="cod" id="codOption">
+          <i class="ph ph-money"></i>
+          <div class="label">Cash on Delivery</div>
+        </div>
+      </div>
+      
+      <div id="mpesaInfo" style="display:none;">
+        <div class="mpesa-details">
+          <i class="ph ph-phone-call"></i>
+          <p>You will receive a payment prompt on your registered M-PESA phone number.</p>
+          <p class="phone-prompt">Enter your PIN to complete payment</p>
+          <small>After successful payment, WhatsApp will open automatically.</small>
+        </div>
+      </div>
+      
+      <button class="btn-place" onclick="placeOrder()">
+        <i class="ph ph-check-circle"></i> Place Order
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="snack" id="snack"></div>
+
+<script>
+// ==================== CONFIGURATION ====================
+// 🔴 IMPORTANT: Replace with your actual Render backend URL
+const API_BASE_URL = 'https://YOUR-BACKEND-URL.onrender.com';
+
+// ==================== LOAD CART ====================
+let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+
+let selectedPayment = 'cod';
+document.getElementById('mpesaOption').addEventListener('click', () => {
+  selectedPayment = 'mpesa';
+  document.getElementById('mpesaOption').classList.add('selected');
+  document.getElementById('codOption').classList.remove('selected');
+  document.getElementById('mpesaInfo').style.display = 'block';
+});
+document.getElementById('codOption').addEventListener('click', () => {
+  selectedPayment = 'cod';
+  document.getElementById('codOption').classList.add('selected');
+  document.getElementById('mpesaOption').classList.remove('selected');
+  document.getElementById('mpesaInfo').style.display = 'none';
+});
+document.getElementById('codOption').classList.add('selected');
+
+function calculateTotals() {
+  const items = Object.values(cart);
+  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const delivery = subtotal >= 3000 ? 0 : 150;
+  return { subtotal, delivery, total: subtotal + delivery };
+}
+
+function getFullAddress() {
+  const street = document.getElementById('street').value.trim();
+  const building = document.getElementById('building').value.trim();
+  let parts = [];
+  if (building) parts.push(building);
+  if (street) parts.push(street);
+  return parts.join(', ') || 'Address not specified';
+}
+
+function renderCartSummary() {
+  const items = Object.values(cart);
+  const container = document.getElementById('cartSummaryItems');
+  if (items.length === 0) {
+    container.innerHTML = '<div class="empty-cart">Your cart is empty<br><a href="shop.html" style="color:#c0392b;margin-top:12px;display:inline-block;">Continue Shopping →</a></div>';
+    document.getElementById('subtotalAmount').innerText = 'KES 0';
+    document.getElementById('totalAmount').innerText = 'KES 0';
+    return;
+  }
+  container.innerHTML = items.map(item => `
+    <div class="cart-item">
+      <span class="item-name">${escapeHtml(item.name)} x${item.qty}</span>
+      <span class="item-price">KES ${(item.price * item.qty).toLocaleString()}</span>
+    </div>
+  `).join('');
+  const { subtotal, delivery, total } = calculateTotals();
+  document.getElementById('subtotalAmount').innerText = `KES ${subtotal.toLocaleString()}`;
+  document.getElementById('deliveryFee').innerText = delivery === 0 ? 'FREE' : `KES ${delivery}`;
+  document.getElementById('totalAmount').innerText = `KES ${total.toLocaleString()}`;
+}
+
+function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+
+function saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, paymentMethod, timestamp, status) {
+  try {
+    const orders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
+    orders.unshift({
+      id: orderId, date: new Date().toISOString(), time: timestamp,
+      customer: fullName, phone, address, notes,
+      items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+      subtotal, delivery, total, payment: paymentMethod, status
+    });
+    localStorage.setItem('liquorbelle_admin_orders', JSON.stringify(orders));
+  } catch(e) { console.error(e); }
+}
+
+// Build the WhatsApp message that the customer will send (after payment)
+function buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, paymentMethod, timestamp, isPaid) {
+  let msg = isPaid ? "✅ PAYMENT CONFIRMED ✅\n\n" : "🍾 NEW ORDER (Cash on Delivery) 🍾\n\n";
+  msg += `Order ID: ${orderId}\nDate: ${timestamp}\nName: ${fullName}\nPhone: ${phone}\nAddress: ${address}\n`;
+  if (notes) msg += `Notes: ${notes}\n`;
+  msg += `\nITEMS:\n`;
+  items.forEach(i => { msg += `• ${i.name} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}\n`; });
+  msg += `\nSubtotal: KES ${subtotal.toLocaleString()}\nDelivery: ${delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString()}\nTOTAL: KES ${total.toLocaleString()}\n`;
+  msg += `\n📍 Please share your live location for delivery. 📍\n(📎 → Location → Share Live Location)`;
+  return msg;
+}
+
+// Main place order function
+async function placeOrder() {
+  const items = Object.values(cart);
+  if (items.length === 0) { toast('Your cart is empty'); return; }
+  
+  const fullName = document.getElementById('fullName').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const street = document.getElementById('street').value.trim();
+  const building = document.getElementById('building').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  
+  if (!fullName || !phone) { toast('Please fill in your name and phone number'); return; }
+  if (!street && !building) { toast('Please enter at least Street OR Building name'); return; }
+  
+  const address = getFullAddress();
+  const { subtotal, delivery, total } = calculateTotals();
+  const orderId = 'LB-' + Date.now().toString().slice(-8);
+  const timestamp = new Date().toLocaleString('en-KE', { hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
+  
+  if (selectedPayment === 'mpesa') {
+    // ----- M-PESA STK Push -----
+    const btn = document.querySelector('.btn-place');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="ph ph-spinner"></i> Processing...';
+    btn.disabled = true;
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/stkpush`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone, amount: total, orderId, customerName: fullName, address,
+          items, subtotal, delivery, total, paymentMethod: 'mpesa'
+        })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || 'STK push failed');
+      
+      toast('Check your phone for M-PESA prompt');
+      
+      // Poll for payment confirmation
+      const interval = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`${API_BASE_URL}/api/status/${orderId}`);
+          const statusData = await statusRes.json();
+          if (statusData.status === 'paid') {
+            clearInterval(interval);
+            // Save order as PAID
+            saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA (STK)', timestamp, 'paid');
+            // Build WhatsApp message with PAID status
+            const waMsg = buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, true);
+            // Open WhatsApp with the message (customer just taps send)
+            window.open(`https://wa.me/254748894443?text=${encodeURIComponent(waMsg)}`, '_blank');
+            // Clear cart
+            cart = {};
+            localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+            toast('Payment confirmed! Redirecting...');
+            setTimeout(() => window.location.href = 'shop.html', 3000);
+          }
+        } catch (e) { console.error(e); }
+      }, 3000);
+      // Stop polling after 2 minutes
+      setTimeout(() => clearInterval(interval), 120000);
+      
+    } catch (err) {
+      toast('Payment initiation failed. Try again or use Cash on Delivery');
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+    }
+  } else {
+    // ----- Cash on Delivery -----
+    const waMsg = buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, false);
+    window.open(`https://wa.me/254748894443?text=${encodeURIComponent(waMsg)}`, '_blank');
+    saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
+    cart = {};
+    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+    toast('Order sent! Please share your location on WhatsApp');
+    setTimeout(() => window.location.href = 'shop.html', 3000);
+  }
+}
+
+function toast(msg) {
+  const t = document.getElementById('snack');
+  t.innerText = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 3000);
+}
+
+renderCartSummary();
+</script>
+</body>
+</html>

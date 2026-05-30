@@ -93,38 +93,48 @@ header{
   transition:all 0.2s;
 }
 .phone-btn:hover{border-color:var(--red-accent);background:#fef0ef;}
-.cart-pill{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  background:var(--red-accent);
+
+/* ===== MODERN CART BUTTON ===== */
+.modern-cart{
+  position:relative;
+  background:linear-gradient(135deg, #e74c3c, #c0392b);
+  padding:12px 22px;
+  border-radius:16px;
   border:none;
-  padding:10px 20px;
-  border-radius:60px;
   cursor:pointer;
   font-weight:700;
   font-size:13px;
   color:white;
   transition:transform 0.2s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 10px 25px rgba(231,76,60,.25);
 }
-.cart-pill:hover{transform:translateY(-1px);background:#a93226;}
+.modern-cart:hover{transform:translateY(-1px);}
+.modern-cart i{font-size:18px;}
 .cart-badge{
+  position:absolute;
+  top:-6px;
+  right:-6px;
+  width:24px;
+  height:24px;
   background:white;
-  color:var(--red-accent);
-  width:20px;
-  height:20px;
+  color:#c0392b;
+  font-weight:800;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:10px;
-  font-weight:800;
+  border:2px solid #c0392b;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* HOW IT WORKS - COMPACT SIMPLE */
+/* ===== HOW IT WORKS – AUTOMATED STK PUSH FLOW ===== */
 .how-it-works{
   background: linear-gradient(135deg, var(--bg-purple) 0%, var(--purple-deep) 100%);
-  padding:20px 5%;
+  padding:24px 5%;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .how-container{
@@ -132,22 +142,24 @@ header{
   margin:0 auto;
   display:flex;
   flex-wrap:wrap;
-  justify-content:space-around;
+  justify-content:space-between;
   gap:16px;
 }
 .how-step{
   flex:1;
-  min-width:160px;
+  min-width:180px;
   text-align:center;
-  padding:8px 12px;
+  padding:12px;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:8px;
+  gap:10px;
+  background:rgba(0,0,0,0.2);
+  border-radius:60px;
 }
 .how-num{
-  width:32px;
-  height:32px;
+  width:36px;
+  height:36px;
   background:rgba(255,255,255,0.15);
   border:1px solid var(--red-accent);
   border-radius:50%;
@@ -155,30 +167,101 @@ header{
   align-items:center;
   justify-content:center;
   font-weight:800;
-  font-size:14px;
+  font-size:16px;
   color:var(--red-accent);
   flex-shrink:0;
 }
 .how-step h4{
   font-weight:700;
-  font-size:13px;
+  font-size:14px;
   color:white;
   margin:0;
-  white-space:nowrap;
 }
 .how-step p{
-  font-size:10px;
-  color:rgba(255,255,255,0.6);
-  line-height:1.3;
+  font-size:11px;
+  color:rgba(255,255,255,0.7);
   margin-top:2px;
-  display:none;
 }
 .how-step .step-text{
   text-align:left;
 }
 @media(min-width:768px){
-  .how-step p{display:block;}
-  .how-step{text-align:left;justify-content:flex-start;}
+  .how-step{justify-content:flex-start; text-align:left;}
+}
+
+/* ===== MODERN M-PESA BANNER ===== */
+.mpesa-banner{
+  background:linear-gradient(135deg,#00A651,#006633);
+  padding:24px 5%;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.mpesa-banner::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at top right, rgba(255,255,255,.18), transparent 60%);
+  pointer-events:none;
+}
+.mpesa-banner .payment-info{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:18px;
+  position:relative;
+  z-index:2;
+}
+.mpesa-card{
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:18px;
+  padding:18px 24px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  min-width:320px;
+}
+.mpesa-card img{
+  height:52px;
+  width:auto;
+  object-fit:contain;
+}
+.mpesa-text{
+  text-align:left;
+}
+.mpesa-text strong{
+  display:block;
+  font-size:16px;
+  color:white;
+}
+.mpesa-text span{
+  font-size:13px;
+  color:rgba(255,255,255,.85);
+}
+.cod-card{
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:18px;
+  padding:18px 24px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:320px;
+  color:white;
+}
+.cod-card i{
+  font-size:28px;
+}
+.payment-note{
+  margin-top:16px;
+  font-size:13px;
+  color:white;
+  position:relative;
+  z-index:2;
 }
 
 /* FILTER BAR */
@@ -335,7 +418,7 @@ header{
 .add-btn.added{background:var(--safaricom-dark);}
 .empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--gray-muted);background:white;border-radius:24px;}
 
-/* CART DRAWER */
+/* CART DRAWER - MODERN PREMIUM */
 .backdrop{
   position:fixed;
   inset:0;
@@ -355,7 +438,6 @@ header{
   width:420px;
   max-width:95vw;
   background: white;
-  border-left: 1px solid #e0e0e0;
   z-index:500;
   transform:translateX(100%);
   transition:transform 0.3s;
@@ -365,24 +447,33 @@ header{
 }
 .cart-drawer.open{transform:translateX(0);}
 .cd-header{
+  padding:24px;
+  background:linear-gradient(135deg, #2d1b4e, #1a0a2e);
+  color:white;
+  border:none;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:22px 24px;
-  border-bottom:1px solid #eee;
 }
-.cd-title{font-weight:800;font-size:24px;color:var(--gray-text);}
+.cd-title{
+  color:white;
+  font-size:26px;
+  font-weight:800;
+}
 .cd-close{
-  background:#f0f0f0;
-  border:1px solid #ddd;
+  background:rgba(255,255,255,.15);
+  border:none;
+  color:white;
   width:36px;
   height:36px;
   border-radius:50%;
   cursor:pointer;
   transition:all 0.2s;
-  color:var(--gray-text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-.cd-close:hover{border-color:var(--red-accent);color:var(--red-accent);}
+.cd-close:hover{background:rgba(255,255,255,.3);}
 .cd-items{flex:1;overflow-y:auto;padding:16px 20px;}
 .cd-item{
   display:flex;
@@ -408,36 +499,52 @@ header{
 .cd-del{background:none;border:none;color:#aaa;cursor:pointer;margin-left:auto;}
 .cd-del:hover{color:var(--red-accent);}
 .empty-cart{text-align:center;padding:60px 20px;color:var(--gray-muted);}
-.cd-footer{padding:20px 24px;border-top:1px solid #eee;}
+.cd-footer{
+  background:#fafafa;
+  padding:20px 24px;
+  border-top:1px solid #eee;
+}
 .cd-totals{margin-bottom:18px;}
 .cd-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;color:var(--gray-muted);}
-.cd-total{display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid #eee;font-weight:700;font-size:18px;}
-.cd-total span:last-child{color:var(--red-accent);}
-/* SINGLE WHATSAPP CHECKOUT BUTTON - REMOVED THE OTHER ONE */
-.cd-btns{
+.cd-total{
+  background:white;
+  padding:16px;
+  border-radius:16px;
+  margin-top:10px;
+  box-shadow:0 4px 15px rgba(0,0,0,.05);
   display:flex;
-  flex-direction:column;
-  gap:10px;
+  justify-content:space-between;
+  font-weight:700;
+  font-size:18px;
 }
+.cd-total span:last-child{
+  font-size:24px;
+  font-weight:800;
+  color:#c0392b;
+}
+.cd-btns{display:flex;flex-direction:column;gap:10px;}
+
+/* MODERN WHATSAPP CHECKOUT BUTTON */
 .btn-whatsapp{
   width:100%;
-  padding:14px;
-  background:#25D366;
-  color:white;
+  padding:16px;
   border:none;
-  border-radius:60px;
-  font-weight:700;
-  font-size:14px;
+  border-radius:16px;
+  font-weight:800;
+  font-size:15px;
+  color:white;
+  background:linear-gradient(135deg, #25D366, #20b859);
+  box-shadow:0 12px 25px rgba(37,211,102,.25);
+  transition:.25s;
   cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:8px;
-  transition:all 0.2s;
 }
-.btn-whatsapp:hover{background:#20b859;transform:translateY(-1px);}
+.btn-whatsapp:hover{transform:translateY(-2px);}
 
-/* PHONE SELECTION MODAL - Only WhatsApp number */
+/* PHONE SELECTION MODAL */
 .phone-modal{
   display:none;
   position:fixed;
@@ -492,20 +599,6 @@ header{
   font-weight:600;
   color:var(--gray-muted);
 }
-
-/* M-PESA BANNER - Safaricom Green */
-.mpesa-banner{
-  background: linear-gradient(135deg, var(--safaricom-dark) 0%, var(--safaricom-light) 100%);
-  padding: 10px 5%;
-  text-align: center;
-}
-.mpesa-banner p{
-  color: white;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-}
-.mpesa-banner i{margin-right: 8px;}
 
 .snack{
   position:fixed;
@@ -569,6 +662,8 @@ header{
   .phone-btn{display:none;}
   .pgrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
   .filter-wrap,.toolbar,.layout{padding-left:16px;padding-right:16px;}
+  .how-step p{display:block;}
+  .mpesa-card, .cod-card{min-width:auto; width:100%;}
 }
 </style>
 </head>
@@ -585,24 +680,44 @@ header{
   </div>
   <div class="header-right">
     <a class="phone-btn" href="tel:+254748894443"><i class="ph ph-phone"></i> +254 748 894 443</a>
-    <button class="cart-pill" onclick="openCart()">
-      <i class="ph ph-shopping-bag"></i> Cart <div class="cart-badge" id="cartCount">0</div>
+    <button class="modern-cart" onclick="window.location.href='checkout.html'">
+      <i class="ph ph-shopping-bag"></i> Cart
+      <div class="cart-badge" id="cartCount">0</div>
     </button>
   </div>
 </header>
 
-<!-- COMPACT HOW IT WORKS -->
+<!-- ===== HOW IT WORKS SECTION ===== -->
 <div class="how-it-works">
   <div class="how-container">
-    <div class="how-step"><div class="how-num">1</div><div class="step-text"><h4>Select drinks</h4><p>Browse & pick your bottles</p></div></div>
-    <div class="how-step"><div class="how-num">2</div><div class="step-text"><h4>Add to cart</h4><p>Review & checkout</p></div></div>
-    <div class="how-step"><div class="how-num">3</div><div class="step-text"><h4>Pay</h4><p>M-PESA Till 6927569 or POD</p></div></div>
-    <div class="how-step"><div class="how-num">4</div><div class="step-text"><h4>WhatsApp</h4><p>Send payment reference</p></div></div>
+    <div class="how-step"><div class="how-num">1</div><div class="step-text"><h4>Select drinks</h4><p>Add your favourite bottles to cart</p></div></div>
+    <div class="how-step"><div class="how-num">2</div><div class="step-text"><h4>Checkout</h4><p>Fill address & choose M‑PESA or Cash</p></div></div>
+    <div class="how-step"><div class="how-num">3</div><div class="step-text"><h4>Pay via M‑PESA prompt</h4><p>Enter PIN on your phone – automatic</p></div></div>
+    <div class="how-step"><div class="how-num">4</div><div class="step-text"><h4>Send order on WhatsApp</h4><p>WhatsApp opens with details – tap send & share location</p></div></div>
   </div>
 </div>
 
+<!-- ===== MODERN M-PESA BANNER ===== -->
 <div class="mpesa-banner">
-  <p><i class="ph ph-device-mobile"></i> M-PESA Till: 6927569 — Pay & confirm via WhatsApp</p>
+  <div class="payment-info">
+    <div class="mpesa-card">
+      <img src="https://i.postimg.cc/gc4wPfYf/mpesa.png" alt="M-PESA">
+      <div class="mpesa-text">
+        <strong>M-PESA STK PUSH</strong>
+        <span>Receive payment prompt directly on your phone</span>
+      </div>
+    </div>
+    <div class="cod-card">
+      <i class="ph ph-money"></i>
+      <div>
+        <strong>Cash On Delivery</strong><br>
+        <span style="font-size:13px;">Pay when your order arrives</span>
+      </div>
+    </div>
+  </div>
+  <div class="payment-note">
+    🔒 Secure Payments • Instant Confirmation • Fast Delivery Across Nairobi
+  </div>
 </div>
 
 <div class="filter-wrap">
@@ -642,19 +757,18 @@ header{
     <div class="cd-totals">
       <div class="cd-row"><span>Subtotal</span><b id="subt">KES 0</b></div>
       <div class="cd-row"><span>Delivery</span><b id="delv">KES 150</b></div>
-      <div class="cd-total"><span>Total</span><span id="tot">KES 0</span></div>
     </div>
-    <!-- SINGLE CHECKOUT BUTTON - WHATSAPP ONLY -->
+    <div class="cd-total"><span>Total</span><span id="tot">KES 0</span></div>
     <div class="cd-btns">
-      <button class="btn-whatsapp" onclick="openPhoneModal()">
+      <button class="btn-whatsapp" onclick="window.location.href='checkout.html'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-        Order via WhatsApp
+        Proceed to Checkout
       </button>
     </div>
   </div>
 </div>
 
-<!-- Order Checkout Modal -->
+<!-- Order Checkout Modal (kept for fallback) -->
 <div id="phoneModal" class="phone-modal">
   <div class="phone-modal-content">
     <h3>Complete Your Order</h3>
@@ -672,7 +786,7 @@ header{
 
 <div class="snack" id="snack"></div>
 <a class="float-whatsapp" href="https://wa.me/254748894443?text=Hello%20LiquorBelle!%20I%20want%20to%20place%20an%20order." target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> WhatsApp</a>
-<a class="float-order" href="#" onclick="openCart(); return false;"><i class="ph ph-shopping-bag"></i> Cart</a>
+<a class="float-order" href="checkout.html"><i class="ph ph-shopping-bag"></i> Cart</a>
 
 <script>
 // Default image fallback
@@ -708,29 +822,29 @@ const SEED_PRODUCTS = [
   {id:33,n:"Hardys Cabernet",s:"Australian Wine 750ml",p:1300,c:"wine",badge:""},
   {id:34,n:"Robertson Winery",s:"SA Wine 750ml",p:1250,c:"wine",badge:""},
   {id:35,n:"Two Oceans White",s:"SA Wine 750ml",p:1400,c:"wine",badge:""},
-  {id:40,n:"Tusker Lager",s:"Kenyan Beer 500ml",p:230,c:["beer","kenyan"],badge:"local"},
-  {id:41,n:"Tusker Malt",s:"Kenyan Premium Beer 500ml",p:280,c:["beer","kenyan"],badge:"local"},
-  {id:42,n:"White Cap Lager",s:"Kenyan Beer 500ml",p:210,c:["beer","kenyan"],badge:"local"},
-  {id:43,n:"White Cap Light",s:"Kenyan Beer 500ml",p:210,c:["beer","kenyan"],badge:"local"},
-  {id:44,n:"Pilsner Lager",s:"Kenyan Beer 500ml",p:200,c:["beer","kenyan"],badge:"local"},
-  {id:45,n:"Balozi Lager",s:"Kenyan Beer 500ml",p:190,c:["beer","kenyan"],badge:"local"},
+  {id:40,n:"Tusker Lager",s:"Kenyan Beer 500ml",p:230,c:["beer","kenyan"],badge:"local",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Tusker_Lager_can.jpg/440px-Tusker_Lager_can.jpg"},
+  {id:41,n:"Tusker Malt",s:"Kenyan Premium Beer 500ml",p:280,c:["beer","kenyan"],badge:"local",img:""},
+  {id:42,n:"White Cap Lager",s:"Kenyan Beer 500ml",p:210,c:["beer","kenyan"],badge:"local",img:""},
+  {id:43,n:"White Cap Light",s:"Kenyan Beer 500ml",p:210,c:["beer","kenyan"],badge:"local",img:""},
+  {id:44,n:"Pilsner Lager",s:"Kenyan Beer 500ml",p:200,c:["beer","kenyan"],badge:"local",img:""},
+  {id:45,n:"Balozi Lager",s:"Kenyan Beer 500ml",p:190,c:["beer","kenyan"],badge:"local",img:""},
   {id:46,n:"Heineken",s:"Dutch Lager 500ml",p:320,c:"beer",badge:""},
   {id:47,n:"Guinness Stout",s:"Irish Stout 500ml",p:300,c:"beer",badge:""},
   {id:50,n:"Captain Morgan Spiced",s:"Spiced Rum 750ml",p:2800,c:"rum",badge:""},
   {id:51,n:"Bacardi White Rum",s:"White Rum 750ml",p:2700,c:"rum",badge:""},
-  {id:52,n:"Kenya Cane",s:"Kenyan Cane Spirit 750ml",p:950,c:["rum","kenyan"],badge:"local"},
-  {id:53,n:"Konyagi Spirit",s:"Kenyan Spirit 750ml",p:750,c:["rum","kenyan"],badge:"local"},
-  {id:54,n:"Konyagi Blackcurrant",s:"Kenyan Flavoured Spirit 750ml",p:820,c:["rum","kenyan"],badge:"local"},
-  {id:60,n:"Gilbeys Gin",s:"Kenyan Gin 750ml",p:1400,c:["gin","kenyan"],badge:"local"},
+  {id:52,n:"Kenya Cane",s:"Kenyan Cane Spirit 750ml",p:950,c:["rum","kenyan"],badge:"local",img:""},
+  {id:53,n:"Konyagi Spirit",s:"Kenyan Spirit 750ml",p:750,c:["rum","kenyan"],badge:"local",img:""},
+  {id:54,n:"Konyagi Blackcurrant",s:"Kenyan Flavoured Spirit 750ml",p:820,c:["rum","kenyan"],badge:"local",img:""},
+  {id:60,n:"Gilbeys Gin",s:"Kenyan Gin 750ml",p:1400,c:["gin","kenyan"],badge:"local",img:""},
   {id:61,n:"Gordons Gin",s:"London Dry Gin 750ml",p:2200,c:"gin",badge:""},
-  {id:62,n:"Hendricks Gin",s:"Scottish Gin 750ml",p:5200,c:"gin",badge:"prem"},
+  {id:62,n:"Hendricks Gin",s:"Scottish Gin 750ml",p:5200,c:"gin",badge:"prem",img:""},
   {id:63,n:"Beefeater Gin",s:"London Dry Gin 750ml",p:3100,c:"gin",badge:""},
-  {id:70,n:"Hennessy VS Cognac",s:"Cognac 750ml",p:5500,c:"cognac",badge:"prem"},
+  {id:70,n:"Hennessy VS Cognac",s:"Cognac 750ml",p:5500,c:"cognac",badge:"prem",img:""},
   {id:71,n:"Martell VS Cognac",s:"Cognac 750ml",p:4800,c:"cognac",badge:""},
   {id:72,n:"Richot Brandy",s:"South African Brandy 750ml",p:1600,c:"cognac",badge:""},
   {id:73,n:"KWV Brandy",s:"South African Brandy 750ml",p:1800,c:"cognac",badge:""},
-  {id:80,n:"Moet & Chandon Brut",s:"French Champagne 750ml",p:9500,c:"champagne",badge:"prem"},
-  {id:81,n:"Veuve Clicquot",s:"French Champagne 750ml",p:11000,c:"champagne",badge:"prem"},
+  {id:80,n:"Moet & Chandon Brut",s:"French Champagne 750ml",p:9500,c:"champagne",badge:"prem",img:""},
+  {id:81,n:"Veuve Clicquot",s:"French Champagne 750ml",p:11000,c:"champagne",badge:"prem",img:""},
   {id:82,n:"JC Le Roux Sparkling",s:"SA Sparkling Wine 750ml",p:1800,c:"champagne",badge:""},
 ];
 
@@ -843,7 +957,7 @@ function addToCart(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
   if (p.stock != null && p.stock === 0) { toast('This product is out of stock'); return; }
-  if (!cart[id]) cart[id] = { name: p.n, price: p.p, qty: 1, img: p.img || '' };
+  if (!cart[id]) cart[id] = { name: p.n, price: p.p, qty: 1, id: p.id, img: p.img || '' };
   else cart[id].qty++;
   saveCart(); render(); updateCartUI();
   toast(`${p.n} added to cart`);
@@ -891,10 +1005,7 @@ function updateCartUI() {
 function openCart() { document.getElementById('backdrop').classList.add('open'); document.getElementById('cartDrawer').classList.add('open'); }
 function closeCart() { document.getElementById('backdrop').classList.remove('open'); document.getElementById('cartDrawer').classList.remove('open'); }
 
-function openPhoneModal() {
-  if (!Object.keys(cart).length) { toast('Cart is empty'); return; }
-  document.getElementById('phoneModal').style.display = 'flex';
-}
+function openPhoneModal() { if (!Object.keys(cart).length) { toast('Cart is empty'); return; } document.getElementById('phoneModal').style.display = 'flex'; }
 function closePhoneModal() { document.getElementById('phoneModal').style.display = 'none'; }
 
 function sendWhatsAppOrder(phoneNumber) {
@@ -902,86 +1013,35 @@ function sendWhatsAppOrder(phoneNumber) {
   const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
   const delivery = subtotal >= 3000 ? 0 : 150;
   const total = subtotal + delivery;
-
   const custName = (document.getElementById('custName')?.value || '').trim();
   const custAddr = (document.getElementById('custAddr')?.value || '').trim();
-
   let message = "LIQUORBELLE ORDER\n\n";
   if(custName) message += `Name: ${custName}\n`;
   if(custAddr) message += `Delivery: ${custAddr}\n\n`;
-  items.forEach(i => {
-    message += `${i.name} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}\n`;
-  });
+  items.forEach(i => { message += `${i.name} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}\n`; });
   message += `\nSubtotal: KES ${subtotal.toLocaleString()}`;
   message += `\nDelivery: ${delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString()}`;
   message += `\nTotal: KES ${total.toLocaleString()}`;
   message += `\n\nPayment: M-PESA Till 6927569 or Pay on Delivery.\nPlease confirm my order.`;
-
-  // Save order to admin dashboard
+  const orderId = 'ORD-' + Date.now().toString().slice(-6);
   try {
-    const orderId = 'ORD-' + Date.now().toString().slice(-6);
-    const orderData = {
-      id: orderId,
-      date: new Date().toISOString(),
-      time: new Date().toLocaleString('en-KE', {hour12:true,hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'}),
-      customer: custName || 'Walk-in Customer',
-      address: custAddr || '',
-      items: items.map(i => ({name:i.name, qty:i.qty, price:i.price})),
-      total: total,
-      delivery: delivery,
-      status: 'pending'
-    };
+    const orderData = { id: orderId, date: new Date().toISOString(), time: new Date().toLocaleString('en-KE', {hour12:true,hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'}), customer: custName || 'Walk-in Customer', address: custAddr || '', items: items.map(i => ({name:i.name, qty:i.qty, price:i.price})), total: total, delivery: delivery, status: 'pending' };
     const existingOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
     existingOrders.unshift(orderData);
     localStorage.setItem('liquorbelle_admin_orders', JSON.stringify(existingOrders));
   } catch(e) {}
-
-  const encodedMessage = encodeURIComponent(message);
-  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-  closePhoneModal();
-  closeCart();
-  // Clear cart after order
-  cart = {};
-  saveCart();
-  updateCartUI();
-  toast('Order sent! 🎉');
+  window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  closePhoneModal(); closeCart(); cart = {}; saveCart(); updateCartUI(); toast('Order sent! 🎉');
 }
 
-document.querySelectorAll('.phone-option').forEach(option => {
-  option.addEventListener('click', (e) => {
-    e.preventDefault();
-    const phoneNumber = option.getAttribute('data-phone');
-    sendWhatsAppOrder(phoneNumber);
-  });
-});
-
-function toast(msg) {
-  const t = document.getElementById('snack');
-  t.innerText = msg; t.classList.add('on');
-  clearTimeout(t._to); t._to = setTimeout(() => t.classList.remove('on'), 2500);
-}
-
-document.getElementById('phoneModal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('phoneModal')) closePhoneModal();
-});
+document.querySelectorAll('.phone-option').forEach(option => { option.addEventListener('click', (e) => { e.preventDefault(); sendWhatsAppOrder(option.getAttribute('data-phone')); }); });
+document.getElementById('phoneModal').addEventListener('click', (e) => { if (e.target === document.getElementById('phoneModal')) closePhoneModal(); });
+function toast(msg) { const t = document.getElementById('snack'); t.innerText = msg; t.classList.add('on'); clearTimeout(t._to); t._to = setTimeout(() => t.classList.remove('on'), 2500); }
 
 const urlParams = new URLSearchParams(window.location.search);
 const catParam = urlParams.get('cat');
-if (catParam && catParam !== 'all') {
-  currentCat = catParam;
-  document.querySelectorAll('.fchip').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.cat === currentCat);
-  });
-}
-
-document.querySelectorAll('.fchip').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.fchip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentCat = btn.dataset.cat;
-    render();
-  });
-});
+if (catParam && catParam !== 'all') { currentCat = catParam; document.querySelectorAll('.fchip').forEach(btn => { btn.classList.toggle('active', btn.dataset.cat === currentCat); }); }
+document.querySelectorAll('.fchip').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.fchip').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentCat = btn.dataset.cat; render(); }); });
 document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value.toLowerCase(); render(); });
 document.getElementById('sortSel').addEventListener('change', e => { sortBy = e.target.value; render(); });
 
