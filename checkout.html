@@ -269,8 +269,8 @@ body{
 
 <script>
 // ==================== CONFIGURATION ====================
-// 🔴 IMPORTANT: Replace with your actual Render backend URL
-const API_BASE_URL = 'https://YOUR-BACKEND-URL.onrender.com';
+// ✅ CORRECTED: Using your actual Render backend URL
+const API_BASE_URL = 'https://liquorbelle-mpesa-backend.onrender.com';
 
 // ==================== LOAD CART ====================
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
@@ -342,7 +342,6 @@ function saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subto
   } catch(e) { console.error(e); }
 }
 
-// Build the WhatsApp message that the customer will send (after payment)
 function buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, paymentMethod, timestamp, isPaid) {
   let msg = isPaid ? "✅ PAYMENT CONFIRMED ✅\n\n" : "🍾 NEW ORDER (Cash on Delivery) 🍾\n\n";
   msg += `Order ID: ${orderId}\nDate: ${timestamp}\nName: ${fullName}\nPhone: ${phone}\nAddress: ${address}\n`;
@@ -354,7 +353,6 @@ function buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, s
   return msg;
 }
 
-// Main place order function
 async function placeOrder() {
   const items = Object.values(cart);
   if (items.length === 0) { toast('Your cart is empty'); return; }
@@ -374,7 +372,6 @@ async function placeOrder() {
   const timestamp = new Date().toLocaleString('en-KE', { hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
   
   if (selectedPayment === 'mpesa') {
-    // ----- M-PESA STK Push -----
     const btn = document.querySelector('.btn-place');
     const originalHTML = btn.innerHTML;
     btn.innerHTML = '<i class="ph ph-spinner"></i> Processing...';
@@ -394,20 +391,15 @@ async function placeOrder() {
       
       toast('Check your phone for M-PESA prompt');
       
-      // Poll for payment confirmation
       const interval = setInterval(async () => {
         try {
           const statusRes = await fetch(`${API_BASE_URL}/api/status/${orderId}`);
           const statusData = await statusRes.json();
           if (statusData.status === 'paid') {
             clearInterval(interval);
-            // Save order as PAID
             saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA (STK)', timestamp, 'paid');
-            // Build WhatsApp message with PAID status
             const waMsg = buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, true);
-            // Open WhatsApp with the message (customer just taps send)
             window.open(`https://wa.me/254748894443?text=${encodeURIComponent(waMsg)}`, '_blank');
-            // Clear cart
             cart = {};
             localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
             toast('Payment confirmed! Redirecting...');
@@ -415,16 +407,15 @@ async function placeOrder() {
           }
         } catch (e) { console.error(e); }
       }, 3000);
-      // Stop polling after 2 minutes
       setTimeout(() => clearInterval(interval), 120000);
       
     } catch (err) {
+      console.error(err);
       toast('Payment initiation failed. Try again or use Cash on Delivery');
       btn.innerHTML = originalHTML;
       btn.disabled = false;
     }
   } else {
-    // ----- Cash on Delivery -----
     const waMsg = buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, false);
     window.open(`https://wa.me/254748894443?text=${encodeURIComponent(waMsg)}`, '_blank');
     saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
