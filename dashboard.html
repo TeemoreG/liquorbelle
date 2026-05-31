@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>LiquorBelle — Your Premium Liquor Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+/* ============================================
+   LIQUORBELLE DESIGN SYSTEM
+   ============================================ */
+:root {
+  --red: #e03131;
+  --red2: #ff4d4d;
+  --red-dim: rgba(224,49,49,0.12);
+  --red-glow: rgba(224,49,49,0.25);
+  --gold: #f0a500;
+  --gold-dim: rgba(240,165,0,0.1);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.1);
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #17171f;
+  --bg4: #1e1e28;
+  --bg5: #24242f;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --border-r: rgba(224,49,49,0.22);
+  --ink: #f0eef8;
+  --ink2: #c8c4d8;
+  --muted: #6b6780;
+  --mid: #9994ad;
+  --fh: 'Sora', sans-serif;
+  --fb: 'Plus Jakarta Sans', sans-serif;
+  --r-sm: 8px;
+  --r: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-red: 0 4px 20px rgba(224,49,49,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:var(--fb);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-bottom:80px;}
+img{display:block;max-width:100%;}
+button,input,select,textarea{font-family:var(--fb);}
+
+/* ============================================
+   LOGIN OVERLAY
+   ============================================ */
+.login-overlay{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  z-index:1000;background:var(--bg);
+}
+.lo-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 40% at 15% 100%, rgba(224,49,49,0.13) 0%, transparent 60%),
+             radial-gradient(ellipse 40% 35% at 90% 5%, rgba(240,165,0,0.07) 0%, transparent 55%);
+}
+.login-card{
+  position:relative;z-index:1;width:92%;max-width:420px;
+  background:var(--bg2);border-radius:28px;padding:40px 28px 36px;
+  border:1px solid rgba(255,255,255,0.07);
+  box-shadow:0 0 0 1px rgba(224,49,49,0.08), 0 40px 100px rgba(0,0,0,0.7);
+}
+.login-card::before{
+  content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  width:64px;height:3px;border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);
+}
+.lc-logo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:28px;}
+.lc-logo-img{width:66px;height:66px;border-radius:18px;border:1px solid rgba(224,49,49,0.25);object-fit:cover;}
+.lc-brand{font-family:var(--fh);font-size:1.5rem;font-weight:800;letter-spacing:-0.01em;color:var(--ink);}
+.lc-brand em{color:var(--red);font-style:normal;}
+.lc-tagline{font-size:.65rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.lc-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(34,197,94,0.07);
+  border:1px solid rgba(34,197,94,0.18);padding:5px 14px;border-radius:var(--r-pill);margin-bottom:20px;
+  font-size:.68rem;font-weight:700;color:#4ade80;}
+.lc-badge .dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}50%{box-shadow:0 0 0 7px rgba(34,197,94,0)}}
+.lc-h{font-family:var(--fh);font-size:1.5rem;font-weight:800;color:var(--ink);margin-bottom:4px;letter-spacing:-0.02em;}
+.lc-sub{font-size:.82rem;color:var(--muted);margin-bottom:26px;line-height:1.6;}
+.phone-wrap{position:relative;margin-bottom:12px;display:flex;align-items:center;background:var(--bg3);
+  border:1px solid rgba(255,255,255,0.09);border-radius:var(--r);overflow:hidden;transition:border-color .2s;}
+.phone-wrap:focus-within{border-color:rgba(224,49,49,0.45);}
+.phone-prefix{display:flex;align-items:center;gap:8px;padding:0 14px;border-right:1px solid rgba(255,255,255,0.07);font-size:.85rem;font-weight:600;color:var(--mid);}
+.phone-flag{font-size:1.1rem;}
+.phone-input{flex:1;padding:15px 16px;background:transparent;border:none;color:var(--ink);font-size:.95rem;font-weight:500;outline:none;}
+.otp-group{display:none;gap:10px;margin-bottom:12px;}
+.otp-input{flex:1;padding:15px 12px;background:var(--bg3);border:1px solid rgba(255,255,255,0.09);border-radius:var(--r);
+  color:var(--ink);font-size:1.2rem;font-weight:700;text-align:center;letter-spacing:.15em;outline:none;}
+.otp-input:focus{border-color:rgba(224,49,49,0.45);}
+.login-btn{width:100%;padding:15px;background:var(--red);border:none;border-radius:var(--r);color:#fff;
+  font-family:var(--fh);font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:12px;transition:background .18s;
+  display:flex;align-items:center;justify-content:center;gap:8px;}
+.login-btn:hover{background:var(--red2);}
+.resend-link{color:rgba(224,49,49,0.75);font-size:.78rem;cursor:pointer;text-align:center;display:block;}
+.error-msg{font-size:.74rem;margin-top:10px;display:none;text-align:center;padding:9px 14px;border-radius:12px;
+  background:rgba(224,49,49,0.08);border:1px solid rgba(224,49,49,0.2);color:#ff8a7a;}
+.lc-divider{display:flex;align-items:center;gap:10px;margin:18px 0;}
+.lc-divider::before,.lc-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.lc-divider span{font-size:.68rem;color:var(--muted);letter-spacing:.06em;}
+.lc-note{font-size:.68rem;color:var(--muted);text-align:center;line-height:1.6;}
+.lc-note strong{color:var(--gold);}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============================================
+   MAIN APP (DASHBOARD)
+   ============================================ */
+.app-container{display:none;min-height:100vh;}
+.app-header{background:rgba(10,10,15,0.92);backdrop-filter:blur(24px);padding:0 5%;display:flex;
+  justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;height:64px;border-bottom:1px solid var(--border);}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-img{height:34px;border-radius:9px;border:1px solid var(--border-r);}
+.logo-name{font-family:var(--fh);font-weight:800;font-size:1.15rem;letter-spacing:-0.01em;color:var(--ink);}
+.logo-name em{color:var(--red);font-style:normal;}
+.header-right{display:flex;gap:8px;align-items:center;}
+.icon-btn{background:var(--bg3);border:1px solid var(--border);width:40px;height:40px;border-radius:var(--r-pill);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:var(--mid);transition:all .18s;position:relative;}
+.icon-btn:hover{background:var(--red-dim);border-color:var(--border-r);color:var(--ink);}
+.cart-count{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:800;
+  width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
+
+.hero-banner{position:relative;padding:48px 5% 44px;background:linear-gradient(160deg,#0e0b1a 0%,#130818 100%);border-bottom:1px solid var(--border);overflow:hidden;}
+.hero-banner::before{content:'';position:absolute;top:-40%;right:-5%;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(224,49,49,0.1),transparent 65%);}
+.hb-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(224,49,49,0.1);border:1px solid rgba(224,49,49,0.22);
+  padding:5px 13px;border-radius:var(--r-pill);font-size:.68rem;font-weight:700;color:#ff8c7a;margin-bottom:16px;}
+.hb-tag .dot{width:5px;height:5px;border-radius:50%;background:var(--red);}
+.hero-banner h1{font-family:var(--fh);font-size:clamp(1.9rem,5.5vw,2.8rem);font-weight:800;color:var(--ink);line-height:1.08;margin-bottom:10px;letter-spacing:-0.03em;}
+.hero-banner h1 span{color:var(--red);}
+.hero-banner p{font-size:.88rem;color:var(--muted);}
+.hb-delivery{display:inline-flex;align-items:center;gap:7px;margin-top:18px;background:rgba(240,165,0,0.07);
+  border:1px solid rgba(240,165,0,0.18);padding:7px 15px;border-radius:var(--r-pill);font-size:.74rem;font-weight:700;color:var(--gold);}
+
+.section-row{padding:26px 5%;}
+.section-title{font-family:var(--fh);font-size:.95rem;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.section-title a{color:var(--red);font-size:.78rem;font-weight:600;text-decoration:none;}
+.category-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.category-scroll::-webkit-scrollbar{display:none;}
+.category-chip{background:var(--bg3);border:1px solid var(--border);padding:8px 18px;border-radius:var(--r-pill);white-space:nowrap;
+  font-size:.78rem;font-weight:600;cursor:pointer;transition:all .18s;color:var(--mid);}
+.category-chip.active{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 20px rgba(224,49,49,0.25);}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;}
+.product-card{background:var(--bg3);border-radius:18px;overflow:hidden;border:1px solid var(--border);transition:transform .22s;cursor:pointer;}
+.product-card:hover{transform:translateY(-5px);border-color:var(--border-r);box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.product-img-wrap{position:relative;overflow:hidden;}
+.product-img{width:100%;height:130px;object-fit:cover;transition:transform .35s;}
+.product-card:hover .product-img{transform:scale(1.06);}
+.product-badge{position:absolute;top:8px;left:8px;padding:3px 10px;border-radius:var(--r-pill);font-size:.62rem;font-weight:800;text-transform:uppercase;}
+.badge-hot{background:rgba(224,49,49,0.85);color:#fff;}
+.badge-local{background:rgba(240,165,0,0.85);color:#0a0a0f;}
+.badge-new{background:rgba(34,197,94,0.85);color:#0a0a0f;}
+.product-info{padding:12px;}
+.product-name{font-weight:700;font-size:.82rem;margin-bottom:2px;}
+.product-vol{font-size:.68rem;color:var(--muted);margin-bottom:6px;}
+.product-price{color:var(--red);font-family:var(--fh);font-weight:800;font-size:.98rem;}
+.add-btn{width:100%;margin-top:10px;padding:8px;background:var(--red-dim);border:1px solid rgba(224,49,49,0.2);
+  border-radius:10px;color:var(--red);font-weight:700;font-size:.73rem;cursor:pointer;}
+.add-btn:hover{background:var(--red);color:#fff;}
+
+.drawer{position:fixed;top:0;right:-100%;width:88%;max-width:400px;height:100%;background:var(--bg2);z-index:200;
+  transition:right .32s cubic-bezier(.22,.68,0,1.2);overflow-y:auto;box-shadow:-8px 0 60px rgba(0,0,0,0.7);border-left:1px solid var(--border);}
+.drawer.open{right:0;}
+.drawer-top{padding:20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);}
+.drawer-header-title{font-family:var(--fh);font-size:.95rem;font-weight:700;}
+.drawer-close{background:var(--bg3);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:50%;cursor:pointer;}
+.drawer-body{padding:20px;}
+.profile-avatar{width:68px;height:68px;background:linear-gradient(135deg,var(--red),var(--red2));border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.7rem;font-weight:700;margin-bottom:12px;}
+.profile-name{font-family:var(--fh);font-size:1.15rem;font-weight:700;margin-bottom:3px;}
+.profile-contact{color:var(--muted);font-size:.8rem;margin-bottom:4px;}
+.drawer-section h4{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:12px;}
+.addr-item{background:var(--bg3);border:1px solid var(--border);padding:10px 12px;border-radius:10px;margin-bottom:8px;font-size:.83rem;}
+.order-item{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;}
+.order-id{font-size:.73rem;color:var(--muted);}
+.order-total{color:var(--red);font-weight:700;margin-top:6px;font-family:var(--fh);}
+.reorder-btn{margin-top:8px;padding:7px 13px;background:var(--red-dim);border:1px solid rgba(224,49,49,0.2);border-radius:8px;color:var(--red);font-size:.73rem;font-weight:700;cursor:pointer;}
+.reorder-btn:hover{background:var(--red);color:#fff;}
+.logout-btn{width:100%;padding:13px;background:transparent;border:1px solid rgba(224,49,49,0.25);border-radius:12px;color:var(--red);font-weight:600;margin-top:18px;cursor:pointer;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px);}
+.overlay.open{opacity:1;pointer-events:auto;}
+@media(min-width:600px){.product-grid{grid-template-columns:repeat(auto-fill,minmax(185px,1fr));}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="lo-bg"></div>
+  <div class="login-card">
+    <div class="lc-logo">
+      <img class="lc-logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+      <div class="lc-brand">Liquor<em>Belle</em></div>
+      <div class="lc-tagline">DAGORETTI'S FINEST</div>
+    </div>
+    <div style="text-align:center">
+      <div class="lc-badge"><span class="dot"></span>OPEN · DELIVERING NOW</div>
+      <div class="lc-h">Welcome</div>
+      <div class="lc-sub">Enter your email to receive a verification code</div>
+    </div>
+
+    <!-- Email Input (Primary - OTP sent here) -->
+    <div class="phone-wrap">
+      <div class="phone-prefix"><span class="phone-flag">📧</span><span>Email</span></div>
+      <input type="email" id="emailInput" class="phone-input" placeholder="you@example.com">
+    </div>
+
+    <!-- Phone Input -->
+    <div class="phone-wrap">
+      <div class="phone-prefix"><span class="phone-flag"></span><span>Phone</span></div>
+      <input type="tel" id="phoneInput" class="phone-input" placeholder="0712 345 678">
+    </div>
+
+    <div class="otp-group" id="otpGroup">
+      <input type="text" id="otpInput" class="otp-input" placeholder="_ _ _ _ _ _" maxlength="6">
+    </div>
+
+    <button class="login-btn" id="loginBtn">
+      <span>Send Code</span>
+    </button>
+    <div class="resend-link" id="resendLink" style="display:none;">Didn't receive code? Resend</div>
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="lc-divider"><span>secure & encrypted</span></div>
+    <div class="lc-note">We'll email you a 6-digit code to log in.<br>Phone number is optional – used only for delivery contact.</div>
+  </div>
+</div>
+
+<!-- MAIN APP DASHBOARD -->
+<div class="app-container" id="appContainer">
+  <div class="app-header">
+    <div class="logo-wrap">
+      <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+      <span class="logo-name">Liquor<em>Belle</em></span>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" onclick="window.location.href='shop.html'">
+        <i class="ph ph-shopping-bag"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="icon-btn" onclick="openProfileDrawer()"><i class="ph ph-user"></i></button>
+    </div>
+  </div>
+
+  <div class="hero-banner">
+    <div class="hb-tag"><span class="dot"></span>LIVE ORDERS OPEN</div>
+    <h1>Dagoretti's <span>Finest</span><br>Spirit Locker</h1>
+    <p>Premium bottles. Cold, fast, delivered.</p>
+    <div class="hb-delivery">⚡ 45-min delivery · Dagoretti &amp; surroundings</div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-title"><span>Categories</span><a href="shop.html">View all →</a></div>
+    <div class="category-scroll" id="categoryList"></div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-title"><span>🔥 Popular Right Now</span><a href="shop.html">See all →</a></div>
+    <div class="product-grid" id="popularProducts"></div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-title"><span>✨ Latest Arrivals</span><a href="shop.html">See all →</a></div>
+    <div class="product-grid" id="latestProducts"></div>
+  </div>
+</div>
+
+<!-- PROFILE DRAWER -->
+<div class="overlay" id="drawerOverlay" onclick="closeProfileDrawer()"></div>
+<div class="drawer" id="profileDrawer">
+  <div class="drawer-top">
+    <span class="drawer-header-title">My Account</span>
+    <button class="drawer-close" onclick="closeProfileDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div id="profileContent"></div>
+    <button class="logout-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<script>
+// ============================================
+// CONFIGURATION
+// ============================================
+const API_BASE_URL = 'https://liquorbelle-mpesa-backend.onrender.com';
+const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
+
+const PRODUCTS = [
+  {id:1,name:"Johnnie Walker Black",price:3500,category:"whisky",badge:"hot",img:"https://images.vivino.com/thumbs/ApnIiXjcT5Kc33OHgNb9dA_pb_x600.png"},
+  {id:3,name:"Jameson Irish Whiskey",price:3200,category:"whisky",badge:"",img:"https://www.thewhiskyexchange.com/images/products/10399_full.jpg"},
+  {id:20,name:"Smirnoff Red Label",price:1800,category:"vodka",badge:"new",img:""},
+  {id:40,name:"Tusker Lager",price:230,category:"beer",badge:"local",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Tusker_Lager_can.jpg/440px-Tusker_Lager_can.jpg"},
+  {id:30,name:"Nederburg Rosé",price:1500,category:"wine",badge:"",img:"https://images.vivino.com/thumbs/Jm_O5e5yFTaj3Gi7TsNXhA_pb_x600.png"},
+  {id:52,name:"Kenya Cane",price:950,category:"rum",badge:"local",img:""},
+];
+const CATEGORIES = ['All','Whisky','Vodka','Wine','Beer','Rum','Gin','Cognac'];
+
+// ============================================
+// USER MANAGEMENT
+// ============================================
+let currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
+let pendingOTP = null;
+let pendingEmail = null;
+
+function showError(msg, isSuccess = false){
+  const e = document.getElementById('errorMsg');
+  e.innerText = msg;
+  e.style.display = 'block';
+  if(isSuccess) e.style.background = 'rgba(34,197,94,0.1)';
+  else e.style.background = 'rgba(224,49,49,0.08)';
+  setTimeout(()=>e.style.display='none', 4000);
+}
+
+function generateOTP(){ return Math.floor(100000 + Math.random() * 900000).toString(); }
+
+// Send OTP via Brevo Email API
+async function sendOTPviaEmail(email, otp){
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/send-email-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+    });
+    return await response.json();
+  } catch(e) {
+    console.error('Email send failed:', e);
+    return { success: false };
+  }
+}
+
+// LOGIN FLOW
+let isSending = false;
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  if(isSending) return;
+  const email = document.getElementById('emailInput').value.trim();
+  const phone = document.getElementById('phoneInput').value.trim();
+  const btn = document.getElementById('loginBtn');
+  const step = btn.innerText;
+  
+  if(step.includes('Send Code') || step.includes('Send')){
+    if(!email){ showError('Enter your email address'); return; }
+    if(!email.includes('@') || !email.includes('.')){ showError('Enter a valid email address'); return; }
+    
+    isSending = true;
+    btn.innerHTML = '<div class="spinner"></div> Sending...';
+    btn.disabled = true;
+    
+    const otp = generateOTP();
+    pendingOTP = otp;
+    pendingEmail = email;
+    
+    const result = await sendOTPviaEmail(email, otp);
+    
+    if(result.success){
+      showError(`✓ OTP sent to ${email}! Check your inbox (spam folder)`, true);
+      document.getElementById('otpGroup').style.display = 'flex';
+      btn.innerHTML = 'Verify Code →';
+      document.getElementById('resendLink').style.display = 'block';
+    } else {
+      showError('Failed to send OTP. Try again.');
+      btn.innerHTML = 'Send Code';
+    }
+    btn.disabled = false;
+    isSending = false;
+  } else {
+    const enteredOTP = document.getElementById('otpInput').value.trim();
+    if(!enteredOTP){ showError('Enter the verification code'); return; }
+    if(enteredOTP !== pendingOTP){ showError('Invalid code — try again'); return; }
+    
+    // Login successful – save user
+    const userPhone = document.getElementById('phoneInput').value.trim();
+    const user = {
+      email: pendingEmail,
+      phone: userPhone,
+      name: pendingEmail.split('@')[0],
+      joined: new Date().toISOString(),
+      addresses: ['Dagoretti Road, Opposite Quickmart'],
+      orders: JSON.parse(localStorage.getItem(`liquorbelle_orders_${pendingEmail}`) || '[]')
+    };
+    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+    currentUser = user;
+    
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    renderDashboard();
+    updateCartCount();
+  }
+});
+
+document.getElementById('resendLink').addEventListener('click', async () => {
+  const email = document.getElementById('emailInput').value.trim();
+  if(!email){ showError('Enter your email first'); return; }
+  
+  const otp = generateOTP();
+  pendingOTP = otp;
+  const result = await sendOTPviaEmail(email, otp);
+  if(result.success){
+    showError('New OTP sent to your email!', true);
+  } else {
+    showError('Failed to resend OTP. Try again.');
+  }
+});
+
+function logout(){ localStorage.removeItem('liquorbelle_user'); location.reload(); }
+
+function openProfileDrawer(){ renderProfileDrawer(); document.getElementById('profileDrawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
+function closeProfileDrawer(){ document.getElementById('profileDrawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
+
+function renderProfileDrawer(){
+  if(!currentUser) return;
+  const orders = currentUser.orders || [];
+  document.getElementById('profileContent').innerHTML = `
+    <div class="profile-avatar">${(currentUser.name?.charAt(0) || 'U').toUpperCase()}</div>
+    <div class="profile-name">${currentUser.name || 'Customer'}</div>
+    ${currentUser.email ? `<div class="profile-contact">📧 ${currentUser.email}</div>` : ''}
+    ${currentUser.phone ? `<div class="profile-contact">📱 ${currentUser.phone}</div>` : '<div class="profile-contact">📱 No phone number saved</div>'}
+    <div class="drawer-section"><h4>Saved Addresses</h4>${(currentUser.addresses || ['No saved address']).map(a=>`<div class="addr-item">📍 ${a}</div>`).join('')}</div>
+    <div class="drawer-section"><h4>Order History (${orders.length})</h4>${orders.length===0?'<div style="color:var(--muted);">No orders yet</div>':
+      orders.slice().reverse().map(o=>`<div class="order-item"><div class="order-id">Order #${o.id}</div><div style="font-size:.8rem;color:var(--muted);margin-top:2px;">${o.date || new Date(o.timestamp).toLocaleDateString()}</div><div style="font-size:.8rem;margin-top:4px;">${o.items?.map(i=>`${i.name} ×${i.qty}`).join(', ')}</div><div class="order-total">KES ${o.total?.toLocaleString()}</div><button class="reorder-btn" onclick="reorder('${o.id}')">Reorder</button></div>`).join('')}</div>`;
+}
+
+function reorder(orderId){
+  const o = currentUser.orders.find(x=>x.id===orderId);
+  if(o && o.items){
+    let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+    o.items.forEach(i=>{ if(cart[i.id]) cart[i.id].qty += i.qty; else cart[i.id]={name:i.name, price:i.price, qty:i.qty, id:i.id, img:''}; });
+    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+    updateCartCount();
+    window.location.href = 'checkout.html';
+  }
+}
+
+function updateCartCount(){
+  const cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+  const count = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').innerText = count;
+}
+
+function renderDashboard(){
+  document.getElementById('categoryList').innerHTML = CATEGORIES.map(c=>`<div class="category-chip${c==='All'?' active':''}" onclick="window.location.href='shop.html?cat=${c.toLowerCase()}'">${c}</div>`).join('');
+  const card = p => `<div class="product-card"><div class="product-img-wrap"><img class="product-img" src="${p.img||FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'"><div class="product-badge badge-${p.badge}">${p.badge}</div></div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-vol">750ml</div><div class="product-price">KES ${p.price.toLocaleString()}</div><button class="add-btn" onclick="addToCartAndRedirect(${p.id},'${p.name.replace(/'/g,"\\'")}',${p.price})">+ Add to Cart</button></div></div>`;
+  document.getElementById('popularProducts').innerHTML = PRODUCTS.slice(0,3).map(card).join('');
+  document.getElementById('latestProducts').innerHTML = PRODUCTS.slice(3,6).map(card).join('');
+}
+
+function addToCartAndRedirect(id,name,price){
+  let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+  if(cart[id]) cart[id].qty++; else cart[id]={name,price,qty:1,id,img:''};
+  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+  updateCartCount();
+  window.location.href = 'checkout.html';
+}
+
+// Auto-login check
+if(currentUser){
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('appContainer').style.display = 'block';
+  renderDashboard();
+  updateCartCount();
+}
+</script>
+</body>
+</html>

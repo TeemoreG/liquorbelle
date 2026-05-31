@@ -3,671 +3,447 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-<title>LiquorBelle — Dagoretti's Finest | Alcohol Delivery App</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<title>LiquorBelle — Dagoretti's Finest | Premium Alcohol Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0a0f;
+  --bg2:#111118;
+  --bg3:#17171f;
+  --gold:#f0a500;
+  --gold-dim:rgba(240,165,0,0.12);
+  --red:#e03131;
+  --red-dim:rgba(224,49,49,0.12);
+  --green:#2ecc71;
+  --border:rgba(255,255,255,0.06);
+  --ink:#f0eef8;
+  --muted:#6b6780;
+  --mid:#9994ad;
+  --fh:'Sora',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+  --radius:16px;
+  --radius-sm:12px;
+}
+body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:70px;}
+
+/* Header */
+.app-header{
+  background:rgba(10,10,15,0.95);
+  backdrop-filter:blur(20px);
+  padding:12px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-img{height:32px;border-radius:8px;}
+.logo-name{font-family:var(--fh);font-weight:800;font-size:1rem;color:var(--ink);}
+.logo-name em{color:var(--gold);font-style:normal;}
+.header-right{display:flex;gap:8px;}
+.cart-icon{
+  position:relative;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:var(--mid);
+  transition:all 0.2s;
+}
+.cart-icon:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
+.cart-count{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  background:var(--red);
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-:root {
-  --bg-dark: #0A0A0A;
-  --bg-purple: #1a0a2e;
-  --purple-deep: #2d1b4e;
-  --purple-right: #1e1036;
-  --red-accent: #c0392b;
-  --white-panel: #ffffff;
-  --safaricom-dark: #006633;
-  --safaricom-light: #00CC66;
-  --gold-star: #FFB800;
-  --gold-dark: #E6A800;
-  --gray-text: #1a1a1a;
-  --gray-muted: #666666;
-  --gray-light: #f5f5f5;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-  --radius: 20px;
-  --radius-sm: 14px;
+/* Hero */
+.hero{
+  background:linear-gradient(135deg, #1a0a2e, #0d0b1a);
+  padding:32px 5% 40px;
+}
+.hero h1{
+  font-family:var(--fh);
+  font-size:clamp(1.8rem,6vw,2.5rem);
+  font-weight:800;
+  line-height:1.2;
+  margin-bottom:10px;
+}
+.hero h1 span{color:var(--gold);}
+.hero p{font-size:.75rem;color:var(--muted);margin-bottom:20px;}
+.hero-buttons{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-primary{
+  background:linear-gradient(135deg,var(--red),#c0392b);
+  color:#fff;
+  padding:12px 24px;
+  border-radius:60px;
+  font-weight:700;
+  text-decoration:none;
+  font-size:.85rem;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:all 0.2s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(224,49,49,0.3);}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--ink);
+  padding:12px 24px;
+  border-radius:60px;
+  font-weight:600;
+  text-decoration:none;
+  font-size:.85rem;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.hero-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(46,204,113,0.12);
+  padding:6px 14px;
+  border-radius:50px;
+  font-size:.7rem;
+  font-weight:600;
+  color:var(--green);
+  margin-top:20px;
 }
 
-body {
-  background: var(--bg-dark);
-  color: var(--gray-text);
-  font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
-  padding-bottom: 72px;
+/* Stats */
+.stats-row{
+  display:flex;
+  justify-content:space-between;
+  background:var(--bg2);
+  border-radius:20px;
+  padding:16px 20px;
+  margin:20px 5% 0;
+  border:1px solid var(--border);
+}
+.stat-item{text-align:center;}
+.stat-number{font-size:24px;font-weight:800;color:var(--gold);font-family:var(--fh);}
+.stat-label{font-size:10px;color:var(--muted);margin-top:4px;}
+
+/* Section Headers */
+.section-header{
+  padding:28px 5% 16px;
+}
+.section-header h2{
+  font-family:var(--fh);
+  font-size:1.2rem;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.section-header p{font-size:.7rem;color:var(--muted);margin-top:4px;}
+
+/* Category Grid with Images */
+.category-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:16px;
+  padding:0 5%;
+}
+.category-card{
+  background:var(--bg2);
+  border-radius:16px;
+  overflow:hidden;
+  text-decoration:none;
+  transition:all 0.2s;
+  border:1px solid var(--border);
+}
+.category-card:hover{transform:translateY(-3px);border-color:var(--gold);}
+.category-card img{
+  width:100%;
+  height:110px;
+  object-fit:cover;
+}
+.category-card span{
+  display:block;
+  padding:12px;
+  text-align:center;
+  font-weight:700;
+  font-size:.8rem;
+  color:var(--ink);
 }
 
-/* App Header */
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--white-panel);
-  padding: 12px 5%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #eee;
-  box-shadow: var(--shadow-sm);
+/* Info Grid */
+.info-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  padding:0 5%;
+  margin:16px 0;
 }
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
+.info-card{
+  background:var(--bg2);
+  border-radius:16px;
+  padding:16px;
+  border:1px solid var(--border);
 }
-
-.logo-img {
-  height: 44px;
-  width: auto;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.info-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
 }
+.info-row:last-child{border-bottom:none;}
+.info-row i{width:32px;color:var(--gold);font-size:18px;}
+.info-row strong{display:block;font-size:.8rem;}
+.info-row small{font-size:.7rem;color:var(--muted);}
 
-.logo-name {
-  font-weight: 800;
-  font-size: 22px;
-  background: linear-gradient(135deg, var(--red-accent) 0%, #e67e22 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  letter-spacing: -0.5px;
+/* Reviews */
+.review-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+  padding:0 5%;
 }
-
-.logo-name em {
-  background: linear-gradient(135deg, var(--gold-star) 0%, var(--gold-dark) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-style: normal;
-  font-weight: 800;
+.review-card{
+  background:var(--bg2);
+  border-radius:16px;
+  padding:14px;
+  border:1px solid var(--border);
 }
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+.reviewer{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
 }
-
-.icon-btn {
-  background: var(--gray-light);
-  border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--gray-text);
-  font-size: 18px;
+.initials-avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--red),#c0392b);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:16px;
 }
-
-.icon-btn:active { transform: scale(0.94); background: #e0e0e0; }
-
-.cart-badge {
-  position: relative;
-}
-
-.cart-count {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: var(--red-accent);
-  color: white;
-  font-size: 10px;
-  font-weight: 800;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* Hero Section */
-.hero-modern {
-  background: linear-gradient(135deg, var(--white-panel) 0%, var(--white-panel) 60%, var(--purple-right) 60%, var(--purple-deep) 100%);
-  padding: 40px 5% 40px;
-}
-
-.hero-content h1 {
-  font-size: clamp(38px, 7vw, 60px);
-  font-weight: 800;
-  line-height: 1.1;
-  color: var(--gray-text);
-  margin-bottom: 16px;
-}
-
-.hero-content h1 span {
-  background: linear-gradient(135deg, var(--gold-star), var(--gold-dark));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  border-bottom: 3px solid var(--gold-star);
-  display: inline-block;
-}
-
-.hero-tagline {
-  color: var(--gray-muted);
-  font-size: 15px;
-  border-left: 3px solid var(--gold-star);
-  padding-left: 16px;
-  margin: 20px 0;
-  font-weight: 500;
-}
-
-.stats-row {
-  display: flex;
-  gap: 32px;
-  margin: 32px 0;
-  padding-top: 24px;
-  border-top: 1px solid #eee;
-}
-
-.stat-item .stat-number {
-  font-size: 28px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--red-accent), #e67e22);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.stat-item .stat-label {
-  font-size: 12px;
-  color: var(--gray-muted);
-  font-weight: 500;
-}
-
-.hero-image {
-  display: none;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 24px 0;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--red-accent), #e67e22);
-  color: white;
-  padding: 14px 28px;
-  border-radius: 60px;
-  font-weight: 700;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 12px rgba(192,57,43,0.3);
-}
-
-.btn-primary:active { transform: scale(0.97); }
-
-.btn-outline {
-  border: 1px solid #ddd;
-  background: white;
-  padding: 14px 32px;
-  border-radius: 60px;
-  color: var(--gray-text);
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.contact-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 20px 0;
-}
-
-.phone-card {
-  background: var(--gray-light);
-  padding: 10px 18px;
-  border-radius: 60px;
-  text-decoration: none;
-  color: var(--gray-text);
-  font-weight: 600;
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
-}
-
-.phone-card i { color: var(--red-accent); }
-.phone-card:active { transform: scale(0.96); }
-
-/* Support Grid */
-.support-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin: 20px 0;
-}
-
-.support-card {
-  background: var(--gray-light);
-  padding: 16px;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  text-align: center;
-  transition: all 0.2s;
-  display: block;
-}
-
-.support-card:active { transform: scale(0.96); }
-.support-card i { font-size: 28px; color: var(--red-accent); margin-bottom: 8px; display: block; }
-.support-card span { font-size: 13px; font-weight: 600; color: var(--gray-text); display: block; }
-.support-card small { font-size: 11px; color: var(--gray-muted); display: block; margin-top: 4px; }
-
-.section-header {
-  margin-bottom: 24px;
-}
-
-.section-header h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--gray-text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-header p {
-  color: var(--gray-muted);
-  font-size: 13px;
-  margin-top: 4px;
-}
-
-/* Category Grid */
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.category-card {
-  background: white;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s;
-  border: 1px solid #f0f0f0;
-}
-
-.category-card:active { transform: scale(0.97); }
-.category-card img { width: 100%; height: 130px; object-fit: cover; }
-.category-card span { display: block; padding: 12px; text-align: center; font-weight: 700; color: var(--gray-text); font-size: 14px; }
-
-/* Info Cards */
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.info-card {
-  background: white;
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid #f0f0f0;
-}
-
-.info-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.info-row:last-child { border-bottom: none; }
-.info-row i { width: 28px; color: var(--red-accent); font-size: 18px; }
-
-/* Reviews with Initials Avatar */
-.review-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-.review-card {
-  background: white;
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid #f0f0f0;
-}
-
-.reviewer {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.initials-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #4285F4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 18px;
-  text-transform: uppercase;
-}
-
-.stars-gold {
-  color: var(--gold-star);
-  font-size: 13px;
-  letter-spacing: 2px;
-  margin-top: 4px;
-}
-
-.review-text {
-  color: var(--gray-muted);
-  font-size: 13px;
-  line-height: 1.5;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #f0f0f0;
-}
+.stars-gold{color:var(--gold);font-size:11px;letter-spacing:2px;}
+.review-text{font-size:.75rem;color:var(--mid);line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
 
 /* Add Review Form */
-.add-review-form {
-  background: white;
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-top: 24px;
-  box-shadow: var(--shadow-sm);
+.add-review-form{
+  background:var(--bg2);
+  border-radius:16px;
+  padding:16px;
+  margin:20px 5%;
+  border:1px solid var(--border);
 }
-
-.add-review-form input,
-.add-review-form textarea,
-.add-review-form select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  font-family: 'Inter', sans-serif;
+.add-review-form input,.add-review-form select,.add-review-form textarea{
+  width:100%;
+  padding:10px 12px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--ink);
+  font-size:.75rem;
+  margin-bottom:10px;
 }
-
-.add-review-form button {
-  background: linear-gradient(135deg, var(--red-accent), #e67e22);
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 60px;
-  font-weight: 700;
-  width: 100%;
-  cursor: pointer;
+.add-review-form button{
+  width:100%;
+  padding:10px;
+  background:var(--gold);
+  color:#000;
+  border:none;
+  border-radius:40px;
+  font-weight:700;
+  cursor:pointer;
 }
 
 /* Zones */
-.zones-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+.zones-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:10px;
+  padding:0 5%;
+  margin-bottom:20px;
 }
-
-.zone-tag {
-  background: var(--gray-light);
-  padding: 12px;
-  border-radius: 60px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  font-weight: 600;
+.zone-tag{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:40px;
+  padding:8px 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:.7rem;
 }
+.zone-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
 
-.zone-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--gold-star);
-  border-radius: 50%;
+/* Bottom Nav */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(10,10,15,0.96);
+  backdrop-filter:blur(20px);
+  display:flex;
+  justify-content:space-around;
+  padding:10px 5% 20px;
+  border-top:1px solid var(--border);
+  z-index:100;
 }
-
-/* Bottom Tab Bar */
-.bottom-tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(20px);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 10px 20px 22px;
-  border-top: 1px solid #eee;
-  z-index: 200;
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:.65rem;
+  font-weight:600;
 }
+.nav-item.active{color:var(--gold);}
+.nav-item i{font-size:20px;}
 
-.tab-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-decoration: none;
-  color: var(--gray-muted);
-  font-size: 11px;
-  font-weight: 600;
-  background: none;
-  border: none;
-  cursor: pointer;
+/* FAB Buttons */
+.fab-wa{
+  position:fixed;
+  bottom:80px;
+  left:20px;
+  background:#25D366;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  text-decoration:none;
+  box-shadow:0 6px 16px rgba(37,211,102,0.4);
+  z-index:150;
 }
-
-.tab-item i { font-size: 22px; }
-.tab-item.active { color: var(--red-accent); }
-.tab-item:active { transform: scale(0.92); }
-
-/* Floating Action Buttons - Fixed */
-.fab-cart {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background: linear-gradient(135deg, var(--red-accent), #e67e22);
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-decoration: none;
-  box-shadow: 0 6px 16px rgba(192,57,43,0.4);
-  z-index: 150;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: none;
-  cursor: pointer;
+.fab-cart{
+  position:fixed;
+  bottom:80px;
+  right:20px;
+  background:linear-gradient(135deg,var(--red),#c0392b);
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(224,49,49,0.4);
+  z-index:150;
 }
-
-.fab-cart:active { transform: scale(0.92); }
-
-.fab-wa {
-  position: fixed;
-  bottom: 80px;
-  left: 20px;
-  background: #25D366;
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-decoration: none;
-  box-shadow: 0 6px 16px rgba(37,211,102,0.4);
-  z-index: 150;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.fab-wa:active { transform: scale(0.92); }
 
 /* Cart Drawer */
-.cart-drawer {
-  position: fixed;
-  bottom: -100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border-radius: 28px 28px 0 0;
-  z-index: 300;
-  transition: bottom 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+.cart-drawer{
+  position:fixed;
+  bottom:-100%;
+  left:0;
+  right:0;
+  background:var(--bg2);
+  border-radius:28px 28px 0 0;
+  z-index:300;
+  transition:bottom 0.3s;
+  max-height:80vh;
+  overflow-y:auto;
 }
-
-.cart-drawer.open { bottom: 0; }
-
-.cart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-  font-weight: 800;
-  font-size: 20px;
+.cart-drawer.open{bottom:0;}
+.cart-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  font-weight:800;
 }
-
-.cart-items {
-  padding: 16px;
-  max-height: 50vh;
-  overflow-y: auto;
+.cart-items{padding:12px 16px;}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
 }
-
-.cart-item {
-  display: flex;
-  gap: 12px;
-  padding: 14px 0;
-  border-bottom: 1px solid #f0f0f0;
+.cart-item-name{font-weight:600;font-size:.8rem;}
+.cart-item-price{color:var(--gold);font-weight:700;font-size:.75rem;margin-top:4px;}
+.cart-qty{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:6px;
 }
-
-.cart-item-name { font-weight: 700; font-size: 15px; }
-.cart-item-price { color: var(--red-accent); font-weight: 700; font-size: 14px; margin-top: 4px; }
-
-.cart-qty {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
+.cart-qty button{
+  width:28px;
+  height:28px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:50%;
+  cursor:pointer;
+  color:var(--ink);
 }
-
-.cart-qty button {
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
-  border: 1px solid #ddd;
-  background: white;
-  cursor: pointer;
-  font-weight: 700;
+.cart-footer{padding:16px 20px;border-top:1px solid var(--border);}
+.cart-total{
+  display:flex;
+  justify-content:space-between;
+  font-weight:800;
+  font-size:1rem;
+  margin-bottom:12px;
 }
-
-.cart-footer {
-  padding: 16px 20px;
-  border-top: 1px solid #eee;
-  background: white;
+.btn-checkout{
+  width:100%;
+  padding:12px;
+  background:linear-gradient(135deg,var(--gold),#d4a017);
+  border:none;
+  border-radius:60px;
+  font-weight:700;
+  cursor:pointer;
+  color:#000;
 }
-
-.cart-total {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 800;
-  font-size: 20px;
-  margin-bottom: 16px;
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  z-index:250;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
 }
+.overlay.open{opacity:1;pointer-events:auto;}
 
-.btn-checkout {
-  background: linear-gradient(135deg, var(--red-accent), #e67e22);
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 60px;
-  font-weight: 700;
-  width: 100%;
-  cursor: pointer;
-  margin-bottom: 10px;
+footer{
+  background:var(--bg2);
+  padding:30px 5% 20px;
+  text-align:center;
+  border-top:1px solid var(--border);
+  margin-top:20px;
 }
-
-.btn-wa-order {
-  background: #25D366;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 60px;
-  font-weight: 700;
-  width: 100%;
-  cursor: pointer;
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 250;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
-.overlay.open { opacity: 1; pointer-events: auto; }
-
-section { padding: 32px 5%; background: white; margin: 0; }
-
-.mpesa-banner {
-  background: linear-gradient(135deg, var(--safaricom-dark), var(--safaricom-light));
-  padding: 14px;
-  text-align: center;
-  color: white;
-  font-weight: 800;
-  font-size: 13px;
-}
-
-footer {
-  background: var(--purple-right);
-  padding: 40px 5% 20px;
-  color: rgba(255,255,255,0.7);
-  font-size: 12px;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .hero-modern { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
-  .hero-image { display: block; }
-  .hero-image img { width: 100%; border-radius: 24px; box-shadow: var(--shadow-lg); }
-  .info-grid { grid-template-columns: 1fr 1fr; }
-  .review-grid { grid-template-columns: repeat(2, 1fr); }
-}
+footer p{font-size:.7rem;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -677,240 +453,214 @@ footer {
     <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
     <span class="logo-name">Liquor<em>Belle</em></span>
   </a>
-  <div class="header-actions">
-    <button class="icon-btn" onclick="openCartDrawer()"><i class="ph ph-shopping-bag"></i></button>
-    <div class="cart-badge"><span class="cart-count" id="cartCountBadge">0</span></div>
+  <div class="header-right">
+    <div class="cart-icon" onclick="openCartDrawer()">
+      <i class="ph ph-shopping-bag"></i>
+      <span class="cart-count" id="cartCount">0</span>
+    </div>
   </div>
 </div>
 
-<div class="hero-modern">
-  <div class="hero-content">
-    <h1>Dagoretti's <span>Finest</span><br>Spirit Locker.</h1>
-    <div class="hero-tagline">Genuine bottles. 24/7 delivery. Pay on Delivery available.</div>
-    <div class="contact-row">
-      <a href="tel:+254748894443" class="phone-card"><i class="ph ph-phone"></i> +254 748 894 443</a>
-      <a href="tel:+254748894443" class="phone-card"><i class="ph ph-phone"></i> +254 748 894 443</a>
-      <a href="https://wa.me/254748894443" class="phone-card"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> WhatsApp</a>
-    </div>
-    <div class="action-buttons">
-      <button class="btn-primary" onclick="window.location.href='shop.html'"><i class="ph ph-wine" ></i> Order Now</button>
-      <button class="btn-outline" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">Browse Drinks</button>
-    </div>
-    <div class="stats-row">
-      <div class="stat-item"><div class="stat-number">500+</div><div class="stat-label">Products</div></div>
-      <div class="stat-item"><div class="stat-number">45min</div><div class="stat-label">Delivery</div></div>
-      <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Service</div></div>
-    </div>
+<div class="hero">
+  <h1>Dagoretti's <span>Finest</span><br>Spirit Locker</h1>
+  <p>Premium spirits delivered in 45 minutes • 24/7 Service</p>
+  <div class="hero-buttons">
+    <a href="dashboard.html" class="btn-primary"><i class="ph ph-user"></i> Sign In / Register</a>
+    <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
   </div>
-  <div class="hero-image">
-    <img src="https://i.postimg.cc/W1qvx9dw/cognacs.webp" alt="Premium Spirits">
+  <div class="hero-tag"><i class="ph ph-truck"></i> Free delivery over KES 3,000</div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-item"><div class="stat-number">500+</div><div class="stat-label">Products</div></div>
+  <div class="stat-item"><div class="stat-number">45min</div><div class="stat-label">Delivery</div></div>
+  <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Service</div></div>
+  <div class="stat-item"><div class="stat-number">4.9★</div><div class="stat-label">Rating</div></div>
+</div>
+
+<div class="section-header">
+  <h2><i class="ph ph-wine" style="color:var(--gold);"></i> Shop by Category</h2>
+  <p>Whisky, vodka, wine, beer & more — straight from Dagoretti</p>
+</div>
+<div class="category-grid">
+  <a href="shop.html?cat=whisky" class="category-card">
+    <img src="https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp" alt="Whisky">
+    <span>Whisky</span>
+  </a>
+  <a href="shop.html?cat=vodka" class="category-card">
+    <img src="https://i.postimg.cc/xTQFy62P/vodk-AS.jpg" alt="Vodka">
+    <span>Vodka</span>
+  </a>
+  <a href="shop.html?cat=wine" class="category-card">
+    <img src="https://i.postimg.cc/W3R7p4pG/wines.jpg" alt="Wine">
+    <span>Wine</span>
+  </a>
+  <a href="shop.html?cat=beer" class="category-card">
+    <img src="https://i.postimg.cc/FRkMf1Qy/beer-cans.webp" alt="Beer">
+    <span>Beer</span>
+  </a>
+  <a href="shop.html?cat=rum" class="category-card">
+    <img src="https://i.postimg.cc/jS0qX0j9/rums.jpg" alt="Rum">
+    <span>Rum</span>
+  </a>
+  <a href="shop.html?cat=gin" class="category-card">
+    <img src="https://i.postimg.cc/ZqmMjjpn/champagne.jpg" alt="Gin">
+    <span>Gin</span>
+  </a>
+  <a href="shop.html?cat=cognac" class="category-card">
+    <img src="https://i.postimg.cc/W1qvx9dw/cognacs.webp" alt="Cognac">
+    <span>Cognac</span>
+  </a>
+  <a href="shop.html?cat=champagne" class="category-card">
+    <img src="https://i.postimg.cc/ZqmMjjpn/champagne.jpg" alt="Champagne">
+    <span>Champagne</span>
+  </a>
+</div>
+
+<div class="section-header">
+  <h2><i class="ph ph-truck" style="color:var(--gold);"></i> Delivery & Support</h2>
+</div>
+<div class="info-grid">
+  <div class="info-card">
+    <div class="info-row"><i class="ph ph-map-pin"></i><div><strong>Location</strong><small>Dagoretti Road, Opposite Quickmart</small></div></div>
+    <div class="info-row"><i class="ph ph-phone-call"></i><div><strong>Call Us</strong><small>+254 748 894 443</small></div></div>
+    <div class="info-row"><i class="ph ph-whatsapp-logo"></i><div><strong>WhatsApp Orders</strong><small>+254 748 894 443</small></div></div>
+    <div class="info-row"><i class="ph ph-clock"></i><div><strong>24/7 Operations</strong><small>Always open</small></div></div>
+  </div>
+  <div class="info-card">
+    <div class="info-row"><i class="ph ph-device-mobile"></i><div><strong>M-PESA Till: 6927569</strong><small>Pay on Delivery available</small></div></div>
+    <div class="info-row"><i class="ph ph-storefront"></i><div><strong>Wholesale In-Store</strong><small>Visit for bulk pricing</small></div></div>
+    <div class="info-row"><i class="ph ph-check-circle"></i><div><strong>100% Genuine</strong><small>Authentic products guaranteed</small></div></div>
   </div>
 </div>
 
-<div class="mpesa-banner">
-  <i class="ph ph-device-mobile"></i> M-PESA Till: 6927569 — Pay & confirm via WhatsApp
+<div class="section-header">
+  <h2><i class="ph ph-star" style="color:var(--gold);"></i> What Our Customers Say</h2>
+  <p>4.9 ★ from 200+ reviews</p>
+</div>
+<div class="review-grid" id="reviewsContainer"></div>
+<div class="add-review-form">
+  <h4 style="margin-bottom:10px;font-size:.85rem;">Add Your Review</h4>
+  <input type="text" id="reviewName" placeholder="Your name">
+  <input type="text" id="reviewPlace" placeholder="Location">
+  <select id="reviewRating">
+    <option value="5">★★★★★ (5/5)</option><option value="4">★★★★☆ (4/5)</option>
+    <option value="3">★★★☆☆ (3/5)</option><option value="2">★★☆☆☆ (2/5)</option>
+    <option value="1">★☆☆☆☆ (1/5)</option>
+  </select>
+  <textarea id="reviewText" rows="2" placeholder="Your experience..."></textarea>
+  <button id="submitReviewBtn">Submit Review</button>
 </div>
 
-<section id="categories">
-  <div class="section-header">
-    <h2>Shop by Category</h2>
-    <p>Whisky, vodka, wine, beer — straight from Dagoretti</p>
-  </div>
-  <div class="category-grid">
-    <a href="shop.html?cat=whisky" class="category-card"><img src="https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp" alt="Whisky"><span>Whisky</span></a>
-    <a href="shop.html?cat=vodka" class="category-card"><img src="https://i.postimg.cc/xTQFy62P/vodk-AS.jpg" alt="Vodka"><span>Vodka</span></a>
-    <a href="shop.html?cat=wine" class="category-card"><img src="https://i.postimg.cc/W3R7p4pG/wines.jpg" alt="Wine"><span>Wine</span></a>
-    <a href="shop.html?cat=beer" class="category-card"><img src="https://i.postimg.cc/FRkMf1Qy/beer-cans.webp" alt="Beer"><span>Beer</span></a>
-    <a href="shop.html?cat=rum" class="category-card"><img src="https://i.postimg.cc/jS0qX0j9/rums.jpg" alt="Rum"><span>Rum</span></a>
-    <a href="shop.html?cat=gin" class="category-card"><img src="https://i.postimg.cc/ZqmMjjpn/champagne.jpg" alt="Gin"><span>Gin</span></a>
-    <a href="shop.html?cat=cognac" class="category-card"><img src="https://i.postimg.cc/W1qvx9dw/cognacs.webp" alt="Cognac"><span>Cognac</span></a>
-    <a href="shop.html?cat=champagne" class="category-card"><img src="https://i.postimg.cc/ZqmMjjpn/champagne.jpg" alt="Champagne"><span>Champagne</span></a>
-  </div>
-</section>
-
-<section id="support">
-  <div class="section-header">
-    <h2><i class="ph ph-headset" style="color: var(--red-accent);"></i> Support</h2>
-    <p>Reach out anytime — we're here 24/7</p>
-  </div>
-  <div class="support-grid">
-    <a href="tel:+254748894443" class="support-card"><i class="ph ph-phone"></i><span>Call Us</span><small>+254 748 894 443</small></a>
-    <a href="https://wa.me/254748894443" class="support-card" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span>WhatsApp</span><small>Fast responses</small></a>
-    <a href="mailto:info@liquorbelle.co.ke" class="support-card"><i class="ph ph-envelope-simple"></i><span>Email Us</span><small>info@liquorbelle.co.ke</small></a>
-  </div>
-</section>
-
-<section>
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="info-row"><i class="ph ph-map-pin"></i><div><strong>Dagoretti Road</strong><br>Opposite Quickmart</div></div>
-      <div class="info-row"><i class="ph ph-storefront"></i><div><strong>Wholesale in-store only</strong><br>Visit for bulk pricing</div></div>
-      <div class="info-row"><i class="ph ph-truck"></i><div><strong>Free delivery > KES 3,000</strong><br>Min order KES 500</div></div>
-    </div>
-    <div class="info-card">
-      <div class="info-row"><i class="ph ph-device-mobile"></i><div><strong>M-PESA Till: 6927569</strong><br>Pay on Delivery available</div></div>
-      <div class="info-row"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><div><strong>WhatsApp Orders</strong><br>+254 748 894 443</div></div>
-      <div class="info-row"><i class="ph ph-clock"></i><div><strong>24/7 Operations</strong><br>Always open</div></div>
-    </div>
-  </div>
-</section>
-
-<section id="reviews">
-  <div class="section-header">
-    <h2><i class="ph ph-google-logo" style="color:#4285F4;"></i> Customer Reviews</h2>
-    <p><span class="stars-gold">★★★★★</span> 4.9 · 200+ reviews</p>
-  </div>
-  <div class="review-grid" id="reviewsContainer"></div>
-  <div class="add-review-form">
-    <h4 style="margin-bottom: 12px; font-weight: 700;">Add your review</h4>
-    <input type="text" id="reviewName" placeholder="Your name">
-    <input type="text" id="reviewPlace" placeholder="Location">
-    <select id="reviewRating">
-      <option value="5">★★★★★ (5/5)</option><option value="4">★★★★☆ (4/5)</option>
-      <option value="3">★★★☆☆ (3/5)</option><option value="2">★★☆☆☆ (2/5)</option>
-      <option value="1">★☆☆☆☆ (1/5)</option>
-    </select>
-    <textarea id="reviewText" rows="2" placeholder="Your experience..."></textarea>
-    <button id="submitReviewBtn"><i class="ph ph-google-logo"></i> Submit Review</button>
-  </div>
-</section>
-
-<section id="delivery">
-  <div class="section-header">
-    <h2><i class="ph ph-map-pin" style="color: var(--red-accent);"></i> Delivery Zones</h2>
-    <p>Nairobi wide — usually under 45 minutes</p>
-  </div>
-  <div class="zones-grid" id="zonesGrid"></div>
-</section>
+<div class="section-header">
+  <h2><i class="ph ph-map-pin" style="color:var(--gold);"></i> Delivery Zones</h2>
+  <p>Nairobi wide — usually under 45 minutes</p>
+</div>
+<div class="zones-grid" id="zonesGrid"></div>
 
 <footer>
   <p>© 2026 LiquorBelle — Dagoretti's Finest</p>
-  <p style="margin-top: 8px;">Over 18 only. Drink responsibly.</p>
+  <p style="margin-top:6px;">Over 18 only. Drink responsibly.</p>
 </footer>
 
-<div class="bottom-tab-bar">
-  <button class="tab-item active" onclick="scrollToTop()"><i class="ph ph-house"></i><span>Home</span></button>
-  <button class="tab-item" onclick="window.location.href='shop.html'"><i class="ph ph-wine" ></i><span>Shop</span></button>
-  <button class="tab-item" onclick="openCartDrawer()"><i class="ph ph-shopping-bag"></i><span>Cart</span></button>
-  <button class="tab-item" onclick="document.getElementById('support').scrollIntoView({behavior:'smooth'})"><i class="ph ph-headset"></i><span>Support</span></button>
+<div class="bottom-nav">
+  <div class="nav-item active"><i class="ph ph-house"></i><span>Home</span></div>
+  <div class="nav-item" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
+  <div class="nav-item" onclick="openCartDrawer()"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
+  <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="ph ph-user"></i><span>Account</span></div>
 </div>
 
-<!-- Floating Buttons: Green WhatsApp (left) + Cart FAB (right) -->
-<a href="https://wa.me/254748894443?text=I%20want%20to%20order%20from%20LiquorBelle" class="fab-wa" target="_blank"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
-<button class="fab-cart" onclick="openCartDrawer()"><i class="ph ph-shopping-bag" style="font-size:22px"></i></button>
+<a href="https://wa.me/254748894443" class="fab-wa" target="_blank"><i class="ph ph-whatsapp-logo" style="font-size:24px;"></i></a>
+<button class="fab-cart" onclick="openCartDrawer()"><i class="ph ph-shopping-bag" style="font-size:20px;"></i></button>
 
 <div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
-  <div class="cart-header"><span>Your Cart</span><button class="icon-btn" onclick="closeCartDrawer()" style="background:#f0f0f0;"><i class="ph ph-x"></i></button></div>
-  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:40px;color:#999;">Cart is empty</div></div>
+  <div class="cart-header"><span>Your Cart</span><button class="cart-icon" onclick="closeCartDrawer()" style="width:32px;height:32px;"><i class="ph ph-x"></i></button></div>
+  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:40px;color:var(--muted);">Cart is empty</div></div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
     <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
-    <button class="btn-checkout" onclick="checkoutViaWhatsApp()"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> Order via WhatsApp</button>
+    <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout →</button>
   </div>
 </div>
 
 <script>
+// Cart
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 
-function updateCartUI() {
+function updateCartUI(){
   const items = Object.values(cart);
-  const count = items.reduce((s,i) => s + i.qty, 0);
-  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
-  document.getElementById('cartCountBadge').innerText = count;
+  const count = items.reduce((s,i)=>s+i.qty,0);
+  const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('cartCount').innerText = count;
   const container = document.getElementById('cartItemsList');
   const footer = document.getElementById('cartFooter');
-  if (items.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">Cart is empty</div>';
+  if(items.length===0){
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);">Cart is empty</div>';
     footer.style.display = 'none';
     return;
   }
   footer.style.display = 'block';
   const delivery = subtotal >= 3000 ? 0 : 150;
-  document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal + delivery).toLocaleString()}`;
+  document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`;
   container.innerHTML = items.map(item => `
     <div class="cart-item">
-      <div style="flex:1">
-        <div class="cart-item-name">${escapeHtml(item.name)}</div>
+      <div>
+        <div class="cart-item-name">${escapeHtml(item.name)} x${item.qty}</div>
         <div class="cart-item-price">KES ${item.price.toLocaleString()}</div>
         <div class="cart-qty">
-          <button onclick="updateQty('${item.id}', -1)">−</button>
-          <span style="font-weight:600; min-width:30px; text-align:center;">${item.qty}</span>
-          <button onclick="updateQty('${item.id}', 1)">+</button>
+          <button onclick="updateQty('${item.id}',-1)">−</button>
+          <span style="min-width:28px;text-align:center;">${item.qty}</span>
+          <button onclick="updateQty('${item.id}',1)">+</button>
         </div>
       </div>
     </div>
   `).join('');
 }
 
-function updateQty(id, delta) {
-  if (cart[id]) {
+function updateQty(id,delta){
+  if(cart[id]){
     cart[id].qty += delta;
-    if (cart[id].qty <= 0) delete cart[id];
+    if(cart[id].qty <=0) delete cart[id];
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
     updateCartUI();
   }
 }
 
-function openCartDrawer() { document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
-function closeCartDrawer() { document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
-function checkoutViaWhatsApp() {
-  const items = Object.values(cart);
-  if (!items.length) return;
-  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
-  const delivery = subtotal >= 3000 ? 0 : 150;
-  const total = subtotal + delivery;
-  let msg = "LIQUORBELLE ORDER\n\n";
-  items.forEach(i => { msg += `${i.name} x${i.qty} - KES ${(i.price*i.qty).toLocaleString()}\n`; });
-  msg += `\nSubtotal: KES ${subtotal.toLocaleString()}`;
-  msg += `\nDelivery: ${delivery===0?'FREE':'KES '+delivery}`;
-  msg += `\nTotal: KES ${total.toLocaleString()}`;
-  msg += `\n\nPayment: M-PESA Till 6927569 or Pay on Delivery`;
-  window.open(`https://wa.me/254748894443?text=${encodeURIComponent(msg)}`, '_blank');
-  closeCartDrawer();
-}
-
-function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+function openCartDrawer(){ document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
+function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
+function escapeHtml(str){ return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
 // Zones
 const zones = ['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata'];
-const zoneDiv = document.getElementById('zonesGrid');
-zones.forEach(z => { let d = document.createElement('div'); d.className = 'zone-tag'; d.innerHTML = `<div class="zone-dot"></div><span>${z}</span>`; zoneDiv.appendChild(d); });
+document.getElementById('zonesGrid').innerHTML = zones.map(z => `<div class="zone-tag"><div class="zone-dot"></div><span>${z}</span></div>`).join('');
 
-// Reviews with Initials Avatar
-let reviewsArray = [
-  {name:"John Maina",place:"Dagoretti",rating:5,text:"My delivery arrived exactly on time. Professional service. Highly recommend!"},
+// Reviews
+let reviews = [
+  {name:"John Maina",place:"Dagoretti",rating:5,text:"My delivery arrived exactly on time. Professional service!"},
   {name:"Wanjiku Njoroge",place:"Karen",rating:5,text:"Ordered via WhatsApp, paid M-PESA. Delivery within 30 minutes."},
   {name:"Otieno Ochieng",place:"Kilimani",rating:4,text:"Pay on Delivery was smooth. Rider arrived on time."},
-  {name:"Amina Hassan",place:"Westlands",rating:5,text:"Fastest alcohol delivery in Nairobi. Will order again."}
+  {name:"Amina Hassan",place:"Westlands",rating:5,text:"Fastest alcohol delivery in Nairobi. Will order again."},
 ];
-
-function getInitials(name) { return name.charAt(0).toUpperCase(); }
-function getStarString(rating){ return '★'.repeat(rating) + '☆'.repeat(5-rating); }
-
+function getInitials(n){ return n.charAt(0).toUpperCase(); }
+function getStars(r){ return '★'.repeat(r) + '☆'.repeat(5-r); }
 function renderReviews(){
-  const container=document.getElementById('reviewsContainer');
-  container.innerHTML=reviewsArray.slice().reverse().map(r=>`
+  document.getElementById('reviewsContainer').innerHTML = reviews.slice().reverse().map(r => `
     <div class="review-card">
       <div class="reviewer">
         <div class="initials-avatar">${getInitials(r.name)}</div>
-        <div>
-          <div style="font-weight:700;">${escapeHtml(r.name)}</div>
-          <div style="font-size:11px; color:#888;">${escapeHtml(r.place)}</div>
-          <div class="stars-gold">${getStarString(r.rating)}</div>
-        </div>
+        <div><div style="font-weight:600;font-size:.8rem;">${escapeHtml(r.name)}</div><div style="font-size:.65rem;color:var(--muted);">${escapeHtml(r.place)}</div><div class="stars-gold">${getStars(r.rating)}</div></div>
       </div>
       <div class="review-text">${escapeHtml(r.text)}</div>
     </div>
   `).join('');
 }
-
 document.getElementById('submitReviewBtn')?.addEventListener('click',()=>{
   let name=document.getElementById('reviewName').value.trim();
   let place=document.getElementById('reviewPlace').value.trim();
   let rating=parseInt(document.getElementById('reviewRating').value);
   let text=document.getElementById('reviewText').value.trim();
   if(!name||!place||!text){alert("Please fill all fields");return;}
-  reviewsArray.push({name,place,rating,text});
+  reviews.push({name,place,rating,text});
   renderReviews();
   document.getElementById('reviewName').value='';
   document.getElementById('reviewPlace').value='';
@@ -918,8 +668,6 @@ document.getElementById('submitReviewBtn')?.addEventListener('click',()=>{
   alert("Thank you for your review!");
 });
 renderReviews();
-
-function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
 updateCartUI();
 </script>
 </body>
