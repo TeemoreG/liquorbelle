@@ -464,9 +464,8 @@ footer p{font-size:.7rem;color:var(--muted);}
 <div class="hero">
   <h1>Dagoretti's <span>Finest</span><br>Spirit Locker</h1>
   <p>Premium spirits delivered in 45 minutes • 24/7 Service</p>
-  <div class="hero-buttons">
-    <a href="login.html" class="btn-primary"><i class="ph ph-user"></i> Sign In / Register</a>
-    <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
+  <div class="hero-buttons" id="heroButtons">
+    <!-- Dynamic button will be inserted here -->
   </div>
   <div class="hero-tag"><i class="ph ph-truck"></i> Free delivery over KES 3,000</div>
 </div>
@@ -584,7 +583,34 @@ footer p{font-size:.7rem;color:var(--muted);}
 </div>
 
 <script>
-// Cart
+// ==================== LOGIN STATE DETECTION ====================
+function updateAuthButton() {
+  const currentUser = localStorage.getItem('liquorbelle_user');
+  const heroButtons = document.getElementById('heroButtons');
+  
+  if (currentUser) {
+    try {
+      const user = JSON.parse(currentUser);
+      const userName = user.name || user.email.split('@')[0];
+      heroButtons.innerHTML = `
+        <a href="account.html" class="btn-primary"><i class="ph ph-user-circle"></i> My Account, ${escapeHtml(userName)}</a>
+        <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
+      `;
+    } catch(e) {
+      heroButtons.innerHTML = `
+        <a href="login.html" class="btn-primary"><i class="ph ph-user"></i> Sign In / Register</a>
+        <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
+      `;
+    }
+  } else {
+    heroButtons.innerHTML = `
+      <a href="login.html" class="btn-primary"><i class="ph ph-user"></i> Sign In / Register</a>
+      <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
+    `;
+  }
+}
+
+// ==================== CART ====================
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 
 function updateCartUI(){
@@ -669,6 +695,14 @@ document.getElementById('submitReviewBtn')?.addEventListener('click',()=>{
 });
 renderReviews();
 updateCartUI();
+updateAuthButton();
+
+// Listen for login/logout across tabs
+window.addEventListener('storage', (e) => {
+  if(e.key === 'liquorbelle_user') {
+    updateAuthButton();
+  }
+});
 </script>
 </body>
 </html>

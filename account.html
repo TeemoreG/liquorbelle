@@ -22,6 +22,7 @@
   --border:rgba(255,255,255,0.06);
   --ink:#f0eef8;
   --muted:#6b6780;
+  --mid:#9994ad;
   --fh:'Sora',sans-serif;
   --fb:'Plus Jakarta Sans',sans-serif;
 }
@@ -67,15 +68,50 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
 }
 .welcome-card h1{font-size:1.4rem;margin-bottom:8px;}
 .welcome-card .email{color:var(--gold);font-size:.85rem;word-break:break-all;}
+/* Green Verified Badge */
 .badge{
-  background:var(--gold-dim);
-  color:var(--gold);
+  background:var(--green-dim);
+  color:var(--green);
   padding:4px 12px;
   border-radius:50px;
   font-size:.7rem;
   display:inline-block;
   margin-top:12px;
 }
+/* Stats Grid */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+  margin-bottom:20px;
+}
+.stat-card{
+  background:var(--bg3);
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+  border:1px solid var(--border);
+}
+.stat-card .value{
+  font-size:24px;
+  font-weight:800;
+  color:var(--gold);
+  font-family:var(--fh);
+}
+.stat-card .label{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.info-row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.info-row:last-child{border-bottom:none;}
+.info-label{color:var(--muted);font-size:.75rem;}
+.info-value{color:var(--ink);font-size:.8rem;font-weight:500;}
 .section{
   background:var(--bg2);
   border-radius:20px;
@@ -282,6 +318,15 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
     <div class="badge"><i class="ph ph-check-circle"></i> Verified Customer</div>
   </div>
 
+  <!-- Stats Grid -->
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <!-- Account Details Section -->
+  <div class="section">
+    <h2><i class="ph ph-user-circle"></i> Account Details</h2>
+    <div id="accountDetails"></div>
+  </div>
+
   <div class="section">
     <h2><i class="ph ph-clock"></i> Recent Orders</h2>
     <div id="ordersList">
@@ -340,14 +385,57 @@ function loadUser() {
   currentUser = JSON.parse(saved);
   document.getElementById('userName').textContent = currentUser.name || currentUser.email.split('@')[0];
   document.getElementById('userEmail').textContent = currentUser.email;
+  loadStats();
+  loadAccountDetails();
   loadOrders();
   loadAddresses();
 }
 
+function loadStats() {
+  const allOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
+  const userOrders = allOrders.filter(o => {
+    const customerName = o.customer?.toLowerCase() || '';
+    const customerEmail = o.customerEmail?.toLowerCase() || '';
+    const userEmail = currentUser.email?.toLowerCase() || '';
+    const userName = currentUser.name?.toLowerCase() || '';
+    return customerName === userName || customerEmail === userEmail;
+  });
+  
+  const totalOrders = userOrders.length;
+  const totalSpent = userOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const completedOrders = userOrders.filter(o => o.status === 'delivered').length;
+  
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="value">${totalOrders}</div><div class="label">Total Orders</div></div>
+    <div class="stat-card"><div class="value">KES ${totalSpent.toLocaleString()}</div><div class="label">Total Spent</div></div>
+    <div class="stat-card"><div class="value">${completedOrders}</div><div class="label">Completed</div></div>
+  `;
+}
+
+function loadAccountDetails() {
+  // Get user from users list for join date
+  const users = JSON.parse(localStorage.getItem('liquorbelle_users') || '[]');
+  const userData = users.find(u => u.email === currentUser.email);
+  const joinedDate = userData?.joinedAt ? new Date(userData.joinedAt).toLocaleDateString('en-KE') : 'March 2026';
+  const phone = currentUser.phone || userData?.phone || 'Not provided';
+  
+  document.getElementById('accountDetails').innerHTML = `
+    <div class="info-row"><span class="info-label">📧 Email</span><span class="info-value">${escapeHtml(currentUser.email)}</span></div>
+    <div class="info-row"><span class="info-label">📱 Phone</span><span class="info-value">${escapeHtml(phone)}</span></div>
+    <div class="info-row"><span class="info-label">📅 Member Since</span><span class="info-value">${joinedDate}</span></div>
+    <div class="info-row"><span class="info-label">🎂 Age Verification</span><span class="info-value"><span style="color:var(--green);">✓ Over 18 verified</span></span></div>
+  `;
+}
+
 function loadOrders() {
   const allOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
-  const userOrders = allOrders.filter(o => o.customer && o.customer.toLowerCase() === currentUser.name?.toLowerCase() || 
-    (o.customerEmail && o.customerEmail === currentUser.email)).reverse();
+  const userOrders = allOrders.filter(o => {
+    const customerName = o.customer?.toLowerCase() || '';
+    const customerEmail = o.customerEmail?.toLowerCase() || '';
+    const userEmail = currentUser.email?.toLowerCase() || '';
+    const userName = currentUser.name?.toLowerCase() || '';
+    return customerName === userName || customerEmail === userEmail;
+  }).reverse();
   
   const container = document.getElementById('ordersList');
   

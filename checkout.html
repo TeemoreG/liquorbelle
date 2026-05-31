@@ -51,6 +51,10 @@ body{
   from{opacity:0;transform:translateY(30px);}
   to{opacity:1;transform:translateY(0);}
 }
+@keyframes fadeInScale{
+  from{opacity:0;transform:scale(0.95);}
+  to{opacity:1;transform:scale(1);}
+}
 @keyframes spin{
   to{transform:rotate(360deg);}
 }
@@ -93,6 +97,17 @@ body{
   border-radius:24px;
   padding:24px;
   border:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+.order-summary::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--red),var(--gold),var(--red));
 }
 .summary-title{font-size:20px;font-weight:800;font-family:var(--fh);margin-bottom:20px;color:var(--red);display:flex;align-items:center;gap:8px;}
 .cart-items{margin-bottom:20px;max-height:320px;overflow-y:auto;scrollbar-width:thin;}
@@ -104,7 +119,9 @@ body{
   justify-content:space-between;
   padding:14px 0;
   border-bottom:1px solid var(--border);
+  transition:background 0.2s;
 }
+.cart-item:hover{background:rgba(255,255,255,0.02);padding-left:8px;}
 .item-name{font-weight:600;font-size:.9rem;}
 .item-price{color:var(--red);font-weight:700;}
 .summary-row{
@@ -131,7 +148,9 @@ body{
   border-radius:24px;
   padding:28px;
   border:1px solid var(--border);
+  transition:all 0.3s ease;
 }
+.checkout-form:hover{box-shadow:var(--shadow);}
 .form-group{margin-bottom:20px;}
 .form-group label{
   display:block;
@@ -273,6 +292,63 @@ body{
   padding:60px 20px;
   color:var(--muted);
 }
+
+/* Success Modal */
+.success-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.95);
+  backdrop-filter:blur(12px);
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  visibility:hidden;
+  transition:all 0.3s ease;
+}
+.success-modal.active{
+  opacity:1;
+  visibility:visible;
+}
+.success-content{
+  background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  border-radius:32px;
+  padding:40px;
+  text-align:center;
+  max-width:400px;
+  width:90%;
+  border:1px solid var(--mpesa);
+  animation:fadeInScale 0.4s ease;
+}
+.success-icon{
+  width:80px;
+  height:80px;
+  background:var(--mpesa-dim);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 20px;
+}
+.success-icon i{font-size:48px;color:var(--mpesa);}
+.success-content h3{font-size:24px;margin-bottom:10px;color:var(--mpesa);}
+.success-content p{color:var(--mid);margin-bottom:20px;}
+.success-btn{
+  background:var(--mpesa);
+  color:#000;
+  border:none;
+  padding:12px 30px;
+  border-radius:40px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.success-btn:hover{transform:scale(1.05);}
+
 .snack{
   position:fixed;
   bottom:100px;
@@ -341,7 +417,6 @@ body{
         <input type="tel" id="phone" placeholder="0712345678">
       </div>
       
-      <!-- Street / Road / Estate with Auto-Location -->
       <div class="form-group">
         <label>Street / Road / Estate</label>
         <div style="display:flex; gap:10px;">
@@ -383,7 +458,7 @@ body{
           <i class="ph ph-phone-call"></i>
           <p>You'll receive a payment prompt on your phone</p>
           <p class="phone-prompt">Enter your PIN to complete payment</p>
-          <small>After successful payment, WhatsApp opens automatically</small>
+          <small>After successful payment, you'll receive an email confirmation</small>
         </div>
       </div>
       
@@ -394,20 +469,45 @@ body{
   </div>
 </div>
 
+<!-- Success Modal -->
+<div class="success-modal" id="successModal">
+  <div class="success-content">
+    <div class="success-icon"><i class="ph ph-check-circle"></i></div>
+    <h3>Order Placed Successfully</h3>
+    <p id="successMessage">Check your email for order confirmation</p>
+    <button class="success-btn" onclick="closeSuccessModal()">View Orders →</button>
+  </div>
+</div>
+
 <div class="snack" id="snack"></div>
 
 <script>
 // ==================== CONFIGURATION ====================
 const API_BASE_URL = 'https://liquorbelle-mpesa-backend.onrender.com';
 
-// ==================== LOCATION PICKER (Uber Style) ====================
+// Get current user
+const currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
+
+// ==================== SUCCESS MODAL ====================
+function showSuccessModal(message) {
+  const modal = document.getElementById('successModal');
+  document.getElementById('successMessage').textContent = message;
+  modal.classList.add('active');
+}
+
+function closeSuccessModal() {
+  document.getElementById('successModal').classList.remove('active');
+  window.location.href = 'account.html';
+}
+
+// ==================== LOCATION PICKER ====================
 document.getElementById('getLocationBtn').addEventListener('click', () => {
   const statusDiv = document.getElementById('locationStatus');
   statusDiv.innerHTML = '<span class="spinner" style="width:12px;height:12px;"></span> Detecting your location...';
   statusDiv.style.color = 'var(--mid)';
   
   if (!navigator.geolocation) {
-    statusDiv.innerHTML = '❌ Geolocation not supported';
+    statusDiv.innerHTML = 'Geolocation not supported';
     return;
   }
   
@@ -416,7 +516,6 @@ document.getElementById('getLocationBtn').addEventListener('click', () => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       
-      // Convert coordinates to address using reverse geocoding (free, no API key needed - uses OpenStreetMap)
       try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
         const data = await response.json();
@@ -428,14 +527,14 @@ document.getElementById('getLocationBtn').addEventListener('click', () => {
         
         if (addressParts.length > 0) {
           document.getElementById('street').value = addressParts.join(', ');
-          statusDiv.innerHTML = '✅ Location detected! Street address updated.';
+          statusDiv.innerHTML = 'Location detected! Street address updated.';
           statusDiv.style.color = '#2ecc71';
         } else {
-          statusDiv.innerHTML = '⚠️ Location detected, but could not get street name. Please enter manually.';
+          statusDiv.innerHTML = 'Location detected, but could not get street name. Please enter manually.';
         }
       } catch (error) {
         console.error('Reverse geocoding error:', error);
-        statusDiv.innerHTML = '⚠️ Location detected, but address lookup failed. Please enter manually.';
+        statusDiv.innerHTML = 'Location detected, but address lookup failed. Please enter manually.';
       }
       
       setTimeout(() => {
@@ -444,7 +543,7 @@ document.getElementById('getLocationBtn').addEventListener('click', () => {
     },
     (error) => {
       console.error('Geolocation error:', error);
-      statusDiv.innerHTML = '❌ Could not get location. Please allow location access.';
+      statusDiv.innerHTML = 'Could not get location. Please allow location access.';
       setTimeout(() => {
         statusDiv.innerHTML = '';
       }, 4000);
@@ -518,33 +617,49 @@ function saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subto
     const orders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
     orders.unshift({
       id: orderId, date: new Date().toISOString(), time: timestamp,
-      customer: fullName, phone, address, notes,
-      items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+      customer: fullName, customerEmail: currentUser?.email, phone, address, notes,
+      items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price, id: i.id })),
       subtotal, delivery, total, payment: paymentMethod, status
     });
     localStorage.setItem('liquorbelle_admin_orders', JSON.stringify(orders));
-    
-    const currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
-    if(currentUser){
-      currentUser.orders = currentUser.orders || [];
-      currentUser.orders.push({
-        id: orderId, items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price, id: i.id })),
-        total: total, date: timestamp, timestamp: Date.now(), status: status
-      });
-      localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
-    }
   } catch(e) { console.error(e); }
 }
 
-function buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, paymentMethod, timestamp, isPaid) {
-  let msg = isPaid ? "✅ PAYMENT CONFIRMED ✅\n\n" : "🍾 NEW ORDER (Cash on Delivery) 🍾\n\n";
-  msg += `Order ID: ${orderId}\nDate: ${timestamp}\nName: ${fullName}\nPhone: ${phone}\nAddress: ${address}\n`;
-  if (notes) msg += `Notes: ${notes}\n`;
-  msg += `\nITEMS:\n`;
-  items.forEach(i => { msg += `• ${i.name} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}\n`; });
-  msg += `\nSubtotal: KES ${subtotal.toLocaleString()}\nDelivery: ${delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString()}\nTOTAL: KES ${total.toLocaleString()}\n`;
-  msg += `\n📍 Please share your live location for delivery. 📍\n(📎 → Location → Share Live Location)`;
-  return msg;
+// Send order confirmation email
+async function sendOrderConfirmationEmail(orderId, fullName, phone, address, items, subtotal, delivery, total, timestamp, paymentMethod) {
+  const customerEmail = currentUser ? currentUser.email : null;
+  
+  if (!customerEmail) {
+    console.log('No customer email found, skipping email');
+    return;
+  }
+  
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/send-order-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: customerEmail,
+        orderId: orderId,
+        customerName: fullName,
+        phone: phone,
+        items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+        subtotal: subtotal,
+        delivery: delivery,
+        total: total,
+        address: address,
+        timestamp: timestamp,
+        paymentMethod: paymentMethod
+      })
+    });
+    
+    const result = await response.json();
+    if (result.success) {
+      console.log('Order confirmation email sent successfully');
+    }
+  } catch (err) {
+    console.error('Email error:', err);
+  }
 }
 
 async function placeOrder() {
@@ -583,7 +698,7 @@ async function placeOrder() {
       const data = await res.json();
       if (!data.success) throw new Error(data.message || 'STK push failed');
       
-      toast('📱 Check your phone for M-PESA prompt');
+      toast('Check your phone for M-PESA prompt');
       
       const interval = setInterval(async () => {
         try {
@@ -591,13 +706,14 @@ async function placeOrder() {
           const statusData = await statusRes.json();
           if (statusData.status === 'paid') {
             clearInterval(interval);
-            saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA (STK)', timestamp, 'paid');
-            const waMsg = buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, true);
-            window.open(`https://wa.me/254748894443?text=${encodeURIComponent(waMsg)}`, '_blank');
+            saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, 'paid');
+            
+            // Send email confirmation
+            await sendOrderConfirmationEmail(orderId, fullName, phone, address, items, subtotal, delivery, total, timestamp, 'mpesa');
+            
             cart = {};
             localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-            toast('✅ Payment confirmed! Redirecting...');
-            setTimeout(() => window.location.href = 'account.html', 3000);
+            showSuccessModal('Payment confirmed! Check your email for order details.');
           }
         } catch (e) { console.error(e); }
       }, 3000);
@@ -610,13 +726,15 @@ async function placeOrder() {
       btn.disabled = false;
     }
   } else {
-    const waMsg = buildWhatsAppMessage(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, false);
-    window.open(`https://wa.me/254748894443?text=${encodeURIComponent(waMsg)}`, '_blank');
+    // Cash on Delivery
     saveOrderToAdmin(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
+    
+    // Send email confirmation
+    await sendOrderConfirmationEmail(orderId, fullName, phone, address, items, subtotal, delivery, total, timestamp, 'cod');
+    
     cart = {};
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    toast('🎉 Order sent! Please share your location on WhatsApp');
-    setTimeout(() => window.location.href = 'account.html', 3000);
+    showSuccessModal('Order placed! Check your email for confirmation.');
   }
 }
 
