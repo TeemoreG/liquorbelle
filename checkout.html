@@ -309,7 +309,7 @@ body{
 
 <div class="header">
   <button class="back-btn" onclick="window.location.href='shop.html'"><i class="ph ph-arrow-left" style="font-size:20px;"></i></button>
-  <a class="logo" href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+  <a class="logo" href="account.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
     <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
     <span class="logo-name">Liquor<em>Belle</em></span>
   </a>
@@ -597,7 +597,7 @@ async function placeOrder() {
             cart = {};
             localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
             toast('✅ Payment confirmed! Redirecting...');
-            setTimeout(() => window.location.href = 'dashboard.html', 3000);
+            setTimeout(() => window.location.href = 'account.html', 3000);
           }
         } catch (e) { console.error(e); }
       }, 3000);
@@ -616,7 +616,7 @@ async function placeOrder() {
     cart = {};
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
     toast('🎉 Order sent! Please share your location on WhatsApp');
-    setTimeout(() => window.location.href = 'dashboard.html', 3000);
+    setTimeout(() => window.location.href = 'account.html', 3000);
   }
 }
 

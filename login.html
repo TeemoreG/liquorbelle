@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>LiquorBelle — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0a0a0f;
+  --bg2:#111118;
+  --bg3:#17171f;
+  --gold:#f0a500;
+  --red:#e03131;
+  --green:#2ecc71;
+  --border:rgba(255,255,255,0.06);
+  --ink:#f0eef8;
+  --muted:#6b6780;
+  --fh:'Sora',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+}
+body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-container{max-width:440px;width:100%;margin:0 auto;}
+.login-card{
+  background:var(--bg2);
+  border-radius:28px;
+  padding:40px 32px;
+  border:1px solid var(--border);
+  box-shadow:0 40px 100px rgba(0,0,0,0.7);
+}
+.logo{text-align:center;margin-bottom:24px;}
+.logo-img{height:55px;margin-bottom:12px;}
+.logo-name{font-family:var(--fh);font-size:1.3rem;font-weight:800;}
+.logo-name em{color:var(--gold);font-style:normal;}
+.input-group{margin-bottom:14px;}
+.input-group input{
+  width:100%;
+  padding:14px 16px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:14px;
+  color:var(--ink);
+  font-size:.9rem;
+  outline:none;
+}
+.input-group input:focus{border-color:var(--red);}
+.btn-primary{
+  width:100%;
+  padding:14px;
+  background:linear-gradient(135deg,var(--red),#c0392b);
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:8px;
+}
+.otp-group{display:none;margin-bottom:14px;}
+.otp-group input{
+  width:100%;
+  padding:14px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:14px;
+  color:var(--ink);
+  text-align:center;
+  font-size:1.2rem;
+  letter-spacing:4px;
+}
+.message-box{
+  font-size:.75rem;
+  padding:10px;
+  border-radius:12px;
+  margin-top:12px;
+  display:none;
+  text-align:center;
+}
+.message-box.error{background:rgba(224,49,49,0.1);color:#ff8a7a;}
+.message-box.success{background:rgba(46,204,113,0.1);color:var(--green);}
+.resend-link{text-align:center;margin-top:12px;font-size:.75rem;color:var(--gold);cursor:pointer;display:none;}
+</style>
+</head>
+<body>
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">
+      <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+      <div class="logo-name">Liquor<em>Belle</em></div>
+    </div>
+
+    <div id="emailGroup">
+      <div class="input-group">
+        <input type="email" id="emailInput" placeholder="Email address">
+      </div>
+      <div class="input-group">
+        <input type="tel" id="phoneInput" placeholder="Phone (optional for delivery)">
+      </div>
+      <button class="btn-primary" id="sendCodeBtn">Send Verification Code</button>
+    </div>
+
+    <div id="otpGroup" class="otp-group">
+      <input type="text" id="otpInput" placeholder="Enter 6-digit code" maxlength="6">
+      <button class="btn-primary" id="verifyBtn">Verify & Login</button>
+      <div class="resend-link" id="resendLink">Resend Code</div>
+    </div>
+
+    <div class="message-box" id="messageBox"></div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+let pendingEmail = null;
+let pendingOtp = null;
+
+function showMessage(msg, isError = true) {
+  const box = document.getElementById('messageBox');
+  box.textContent = msg;
+  box.className = isError ? 'message-box error' : 'message-box success';
+  box.style.display = 'block';
+  setTimeout(() => box.style.display = 'none', 5000);
+}
+
+document.getElementById('sendCodeBtn').onclick = async () => {
+  const email = document.getElementById('emailInput').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    showMessage('Valid email required');
+    return;
+  }
+  
+  pendingEmail = email;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  pendingOtp = otp;
+  
+  showMessage(`Sending code to ${email}...`, false);
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/send-email-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      showMessage(`✓ Code sent! Check your email. Demo code: ${otp}`, false);
+      document.getElementById('emailGroup').style.display = 'none';
+      document.getElementById('otpGroup').style.display = 'block';
+      document.getElementById('resendLink').style.display = 'block';
+    } else {
+      showMessage('Failed to send. Using demo mode - code: ' + otp);
+      document.getElementById('emailGroup').style.display = 'none';
+      document.getElementById('otpGroup').style.display = 'block';
+    }
+  } catch(err) {
+    showMessage(`Demo mode - use code: ${otp}`, false);
+    document.getElementById('emailGroup').style.display = 'none';
+    document.getElementById('otpGroup').style.display = 'block';
+  }
+};
+
+document.getElementById('verifyBtn').onclick = () => {
+  const entered = document.getElementById('otpInput').value.trim();
+  if (!entered || entered.length !== 6) {
+    showMessage('Enter 6-digit code');
+    return;
+  }
+  
+  if (entered !== pendingOtp) {
+    showMessage('Invalid code');
+    return;
+  }
+  
+  // Save user session
+  const phone = document.getElementById('phoneInput').value.trim();
+  const user = {
+    email: pendingEmail,
+    phone: phone,
+    name: pendingEmail.split('@')[0],
+    loggedInAt: Date.now()
+  };
+  
+  localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+  
+  // Save user to users list
+  const users = JSON.parse(localStorage.getItem('liquorbelle_users') || '[]');
+  const existing = users.find(u => u.email === pendingEmail);
+  if (!existing) {
+    users.push({ email: pendingEmail, phone: phone, orders: [] });
+    localStorage.setItem('liquorbelle_users', JSON.stringify(users));
+  }
+  
+  showMessage('✓ Login successful! Redirecting...', false);
+  setTimeout(() => {
+    window.location.href = 'account.html';
+  }, 1500);
+};
+
+document.getElementById('resendLink').onclick = async () => {
+  if (!pendingEmail) return;
+  const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  pendingOtp = newOtp;
+  showMessage(`New code sent. Demo code: ${newOtp}`, false);
+  
+  try {
+    await fetch(`${API_BASE}/api/send-email-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: pendingEmail, otp: newOtp })
+    });
+  } catch(e) {}
+};
+
+// Check if already logged in
+const savedUser = localStorage.getItem('liquorbelle_user');
+if (savedUser) {
+  window.location.href = 'account.html';
+}
+</script>
+</body>
+</html>

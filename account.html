@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>My Account — LiquorBelle</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0a0a0f;
+  --bg2:#111118;
+  --bg3:#17171f;
+  --bg4:#1e1e28;
+  --gold:#f0a500;
+  --gold-dim:rgba(240,165,0,0.12);
+  --red:#e03131;
+  --red-dim:rgba(224,49,49,0.12);
+  --green:#2ecc71;
+  --green-dim:rgba(46,204,113,0.12);
+  --border:rgba(255,255,255,0.06);
+  --ink:#f0eef8;
+  --muted:#6b6780;
+  --fh:'Sora',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+}
+body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:80px;}
+.app-header{
+  background:rgba(10,10,15,0.95);
+  backdrop-filter:blur(20px);
+  padding:12px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-img{height:32px;border-radius:8px;}
+.logo-name{font-family:var(--fh);font-weight:800;font-size:1rem;}
+.logo-name em{color:var(--gold);font-style:normal;}
+.logout-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  padding:8px 16px;
+  border-radius:40px;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:12px;
+  transition:all 0.2s;
+}
+.logout-btn:hover{
+  background:var(--red-dim);
+  border-color:var(--red);
+  color:var(--red);
+}
+.container{padding:20px 5%;}
+.welcome-card{
+  background:linear-gradient(135deg, #1e1e28, #111118);
+  border-radius:24px;
+  padding:24px;
+  margin-bottom:24px;
+  border:1px solid var(--border);
+}
+.welcome-card h1{font-size:1.4rem;margin-bottom:8px;}
+.welcome-card .email{color:var(--gold);font-size:.85rem;word-break:break-all;}
+.badge{
+  background:var(--gold-dim);
+  color:var(--gold);
+  padding:4px 12px;
+  border-radius:50px;
+  font-size:.7rem;
+  display:inline-block;
+  margin-top:12px;
+}
+.section{
+  background:var(--bg2);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:20px;
+  border:1px solid var(--border);
+}
+.section h2{
+  font-size:1.1rem;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.order-item{
+  background:var(--bg3);
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:12px;
+  border:1px solid var(--border);
+  transition:transform 0.2s;
+}
+.order-item:hover{transform:translateX(4px);}
+.order-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.order-id{
+  font-family:monospace;
+  font-weight:700;
+  font-size:.75rem;
+  color:var(--gold);
+}
+.order-date{
+  font-size:.65rem;
+  color:var(--muted);
+}
+.order-items-list{
+  font-size:.7rem;
+  color:var(--mid);
+  margin:8px 0;
+  padding-left:12px;
+}
+.order-total{
+  font-weight:800;
+  font-size:.9rem;
+  color:var(--gold);
+  margin-top:8px;
+}
+.order-status{
+  font-size:.65rem;
+  padding:2px 8px;
+  border-radius:20px;
+  background:rgba(46,204,113,0.1);
+  color:var(--green);
+}
+.order-status.pending{background:rgba(240,165,0,0.1);color:var(--gold);}
+.order-status.paid{background:rgba(46,204,113,0.1);color:var(--green);}
+.order-status.delivered{background:rgba(59,130,246,0.1);color:#3b82f6;}
+.reorder-btn{
+  background:var(--gold-dim);
+  border:1px solid var(--gold);
+  padding:6px 12px;
+  border-radius:40px;
+  color:var(--gold);
+  font-size:.65rem;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:8px;
+  transition:all 0.2s;
+}
+.reorder-btn:hover{
+  background:var(--gold);
+  color:#000;
+}
+.address-item{
+  background:var(--bg3);
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.address-text{
+  font-size:.8rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--border);
+  padding:10px 16px;
+  border-radius:40px;
+  color:var(--ink);
+  cursor:pointer;
+  font-size:.75rem;
+  transition:all 0.2s;
+}
+.btn-outline:hover{
+  background:var(--gold-dim);
+  border-color:var(--gold);
+  color:var(--gold);
+}
+.btn-danger{
+  background:rgba(224,49,49,0.1);
+  border:1px solid rgba(224,49,49,0.3);
+  padding:8px 14px;
+  border-radius:40px;
+  color:var(--red);
+  cursor:pointer;
+  font-size:.7rem;
+  transition:all 0.2s;
+}
+.btn-danger:hover{
+  background:var(--red-dim);
+  border-color:var(--red);
+}
+.add-address-form{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+.add-address-form input{
+  flex:1;
+  padding:10px 14px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:40px;
+  color:var(--ink);
+  font-size:.8rem;
+}
+.empty-state{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--muted);
+}
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(10,10,15,0.96);
+  backdrop-filter:blur(20px);
+  display:flex;
+  justify-content:space-around;
+  padding:10px 5% 20px;
+  border-top:1px solid var(--border);
+  z-index:100;
+}
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:.65rem;
+  text-decoration:none;
+  transition:color 0.2s;
+}
+.nav-item.active{color:var(--gold);}
+.nav-item i{font-size:20px;}
+.snack{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--bg3);
+  border:1px solid var(--green);
+  padding:10px 20px;
+  border-radius:50px;
+  font-size:.75rem;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:200;
+  pointer-events:none;
+}
+.snack.on{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <a href="index.html" class="logo">
+    <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+    <span class="logo-name">Liquor<em>Belle</em></span>
+  </a>
+  <button class="logout-btn" onclick="logout()"><i class="ph ph-sign-out"></i> Logout</button>
+</div>
+
+<div class="container">
+  <div class="welcome-card" id="welcomeCard">
+    <h1>Welcome back, <span id="userName">Guest</span>!</h1>
+    <div class="email" id="userEmail"></div>
+    <div class="badge"><i class="ph ph-check-circle"></i> Verified Customer</div>
+  </div>
+
+  <div class="section">
+    <h2><i class="ph ph-clock"></i> Recent Orders</h2>
+    <div id="ordersList">
+      <div class="empty-state">No orders yet</div>
+    </div>
+    <button class="btn-outline" onclick="window.location.href='shop.html'" style="width:100%;margin-top:12px;">
+      <i class="ph ph-wine"></i> Browse Shop →
+    </button>
+  </div>
+
+  <div class="section">
+    <h2><i class="ph ph-map-pin"></i> Saved Addresses</h2>
+    <div id="addressesList"></div>
+    <div class="add-address-form">
+      <input type="text" id="newAddress" placeholder="Enter new address">
+      <button class="btn-outline" onclick="addAddress()">Add</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><i class="ph ph-headset"></i> Need Help?</h2>
+    <button class="btn-outline" onclick="window.open('https://wa.me/254748894443','_blank')" style="width:100%;margin-bottom:8px;">
+      <i class="ph ph-whatsapp-logo"></i> WhatsApp Support
+    </button>
+    <button class="btn-outline" onclick="window.location.href='shop.html'" style="width:100%;">
+      <i class="ph ph-storefront"></i> Continue Shopping
+    </button>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <a href="index.html" class="nav-item"><i class="ph ph-house"></i><span>Home</span></a>
+  <a href="shop.html" class="nav-item"><i class="ph ph-wine"></i><span>Shop</span></a>
+  <a href="checkout.html" class="nav-item"><i class="ph ph-shopping-bag"></i><span>Cart</span></a>
+  <a href="account.html" class="nav-item active"><i class="ph ph-user"></i><span>Account</span></a>
+</div>
+
+<div class="snack" id="snack"></div>
+
+<script>
+let currentUser = null;
+
+function toast(msg) {
+  const t = document.getElementById('snack');
+  t.innerText = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2500);
+}
+
+function loadUser() {
+  const saved = localStorage.getItem('liquorbelle_user');
+  if (!saved) {
+    window.location.href = 'login.html';
+    return;
+  }
+  currentUser = JSON.parse(saved);
+  document.getElementById('userName').textContent = currentUser.name || currentUser.email.split('@')[0];
+  document.getElementById('userEmail').textContent = currentUser.email;
+  loadOrders();
+  loadAddresses();
+}
+
+function loadOrders() {
+  const allOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
+  const userOrders = allOrders.filter(o => o.customer && o.customer.toLowerCase() === currentUser.name?.toLowerCase() || 
+    (o.customerEmail && o.customerEmail === currentUser.email)).reverse();
+  
+  const container = document.getElementById('ordersList');
+  
+  if (userOrders.length === 0) {
+    container.innerHTML = '<div class="empty-state">📦 No orders yet. Start shopping!</div>';
+    return;
+  }
+  
+  container.innerHTML = userOrders.map(order => `
+    <div class="order-item">
+      <div class="order-header">
+        <span class="order-id">#${order.id}</span>
+        <span class="order-date">${order.time || new Date(order.date).toLocaleDateString()}</span>
+        <span class="order-status ${order.status}">${order.status === 'pending' ? '⏳ Pending' : order.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
+      </div>
+      <div class="order-items-list">
+        ${order.items?.map(i => `<div>• ${escapeHtml(i.name)} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}</div>`).join('') || ''}
+      </div>
+      <div class="order-total">Total: KES ${(order.total || 0).toLocaleString()}</div>
+      <button class="reorder-btn" onclick="reorder('${order.id}')"><i class="ph ph-arrow-clockwise"></i> Reorder</button>
+    </div>
+  `).join('');
+}
+
+function reorder(orderId) {
+  const allOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
+  const order = allOrders.find(o => o.id === orderId);
+  if (order && order.items) {
+    const cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+    order.items.forEach(item => {
+      if (cart[item.id]) {
+        cart[item.id].qty += item.qty;
+      } else {
+        cart[item.id] = { ...item, qty: item.qty };
+      }
+    });
+    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+    toast('✓ Items added to cart!');
+    setTimeout(() => window.location.href = 'checkout.html', 1000);
+  } else {
+    toast('Unable to reorder');
+  }
+}
+
+function loadAddresses() {
+  const addresses = JSON.parse(localStorage.getItem(`addresses_${currentUser.email}`) || '["Dagoretti Road, Opposite Quickmart"]');
+  const container = document.getElementById('addressesList');
+  
+  if (addresses.length === 0) {
+    container.innerHTML = '<div class="empty-state">📍 No saved addresses</div>';
+    return;
+  }
+  
+  container.innerHTML = addresses.map((addr, i) => `
+    <div class="address-item">
+      <div class="address-text">
+        <i class="ph ph-map-pin" style="color:var(--gold);"></i>
+        <span>${escapeHtml(addr)}</span>
+      </div>
+      <button class="btn-danger" onclick="removeAddress(${i})"><i class="ph ph-trash"></i> Remove</button>
+    </div>
+  `).join('');
+}
+
+function addAddress() {
+  const input = document.getElementById('newAddress');
+  const address = input.value.trim();
+  if (!address) {
+    toast('Please enter an address');
+    return;
+  }
+  const addresses = JSON.parse(localStorage.getItem(`addresses_${currentUser.email}`) || '["Dagoretti Road, Opposite Quickmart"]');
+  addresses.push(address);
+  localStorage.setItem(`addresses_${currentUser.email}`, JSON.stringify(addresses));
+  input.value = '';
+  loadAddresses();
+  toast('✓ Address saved');
+}
+
+function removeAddress(index) {
+  let addresses = JSON.parse(localStorage.getItem(`addresses_${currentUser.email}`) || '["Dagoretti Road, Opposite Quickmart"]');
+  addresses.splice(index, 1);
+  localStorage.setItem(`addresses_${currentUser.email}`, JSON.stringify(addresses));
+  loadAddresses();
+  toast('Address removed');
+}
+
+function logout() {
+  localStorage.removeItem('liquorbelle_user');
+  toast('Logged out successfully');
+  setTimeout(() => window.location.href = 'login.html', 800);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
+}
+
+// Load user data on page load
+loadUser();
+</script>
+</body>
+</html>
