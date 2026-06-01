@@ -81,6 +81,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
   padding-right:45px;
 }
 .input-group input:focus{border-color:var(--red);}
+.input-group input.error{border-color:var(--red); background:rgba(224,49,49,0.05);}
 .password-toggle{
   position:absolute;
   right:15px;
@@ -212,7 +213,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
       <button class="btn-secondary" id="forgotPasswordBtn">Forgot Password?</button>
     </div>
 
-    <!-- REGISTER FORM (WITH NAME FIELD) -->
+    <!-- REGISTER FORM (WITH PHONE VALIDATION) -->
     <div id="registerForm" style="display:none;">
       <div class="input-group">
         <input type="text" id="regName" placeholder="Full name">
@@ -221,7 +222,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
         <input type="email" id="regEmail" placeholder="Email address">
       </div>
       <div class="input-group">
-        <input type="tel" id="regPhone" placeholder="Phone number (for delivery)">
+        <input type="tel" id="regPhone" placeholder="Phone number (e.g., 0712345678)">
       </div>
       <div class="input-group">
         <input type="password" id="regPassword" placeholder="Create password">
@@ -294,6 +295,13 @@ function togglePassword(fieldId) {
     field.type = 'password';
     btn.className = 'ph ph-eye';
   }
+}
+
+function validatePhone(phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  // Kenyan phone: 07XXXXXXXX (10 digits) or 254XXXXXXXXX (12 digits)
+  return (cleaned.length === 10 && cleaned.startsWith('07')) || 
+         (cleaned.length === 12 && cleaned.startsWith('254'));
 }
 
 function showMessage(msg, isError = true) {
@@ -472,22 +480,44 @@ document.getElementById('resetPasswordBtn').onclick = async () => {
 document.getElementById('sendCodeBtn').onclick = async () => {
   const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim().toLowerCase();
-  const phone = document.getElementById('regPhone').value.trim();
+  let phone = document.getElementById('regPhone').value.trim();
   const password = document.getElementById('regPassword').value;
   const confirmPassword = document.getElementById('regConfirmPassword').value;
   
+  // Validate name
   if (!name) {
     showMessage('Please enter your full name');
     return;
   }
+  
+  // Validate email
   if (!email || !email.includes('@')) {
     showMessage('Please enter a valid email address');
     return;
   }
+  
+  // Validate phone (Kenyan format)
   if (!phone) {
     showMessage('Phone number is required for delivery');
     return;
   }
+  
+  // Format phone number
+  let cleanedPhone = phone.replace(/\D/g, '');
+  if (cleanedPhone.length === 10 && cleanedPhone.startsWith('07')) {
+    phone = '254' + cleanedPhone.slice(1);
+  } else if (cleanedPhone.length === 9) {
+    phone = '254' + cleanedPhone;
+  } else if (cleanedPhone.length === 12 && cleanedPhone.startsWith('254')) {
+    phone = cleanedPhone;
+  } else {
+    showMessage('Please enter a valid Kenyan phone number (e.g., 0712345678)');
+    document.getElementById('regPhone').classList.add('error');
+    setTimeout(() => document.getElementById('regPhone').classList.remove('error'), 2000);
+    return;
+  }
+  
+  // Validate password
   if (!password) {
     showMessage('Please create a password');
     return;
