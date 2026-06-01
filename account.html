@@ -19,6 +19,7 @@
   --red-dim:rgba(224,49,49,0.12);
   --green:#2ecc71;
   --green-dim:rgba(46,204,113,0.12);
+  --blue:#3b82f6;
   --border:rgba(255,255,255,0.06);
   --ink:#f0eef8;
   --muted:#6b6780;
@@ -68,7 +69,6 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
 }
 .welcome-card h1{font-size:1.4rem;margin-bottom:8px;}
 .welcome-card .email{color:var(--gold);font-size:.85rem;word-break:break-all;}
-/* Green Verified Badge */
 .badge{
   background:var(--green-dim);
   color:var(--green);
@@ -78,7 +78,6 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
   display:inline-block;
   margin-top:12px;
 }
-/* Stats Grid */
 .stats-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
@@ -91,7 +90,9 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
   padding:16px;
   text-align:center;
   border:1px solid var(--border);
+  transition:transform 0.2s;
 }
+.stat-card:hover{transform:translateY(-2px);border-color:var(--gold);}
 .stat-card .value{
   font-size:24px;
   font-weight:800;
@@ -106,7 +107,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
 .info-row{
   display:flex;
   justify-content:space-between;
-  padding:10px 0;
+  padding:12px 0;
   border-bottom:1px solid var(--border);
 }
 .info-row:last-child{border-bottom:none;}
@@ -299,6 +300,14 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
   pointer-events:none;
 }
 .snack.on{opacity:1;}
+.terms-card{
+  background:rgba(46,204,113,0.03);
+  border:1px solid rgba(46,204,113,0.1);
+}
+.terms-card .info-row{
+  border-bottom-color:rgba(255,255,255,0.03);
+}
+.terms-card .info-label{color:var(--green);}
 </style>
 </head>
 <body>
@@ -318,10 +327,8 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
     <div class="badge"><i class="ph ph-check-circle"></i> Verified Customer</div>
   </div>
 
-  <!-- Stats Grid -->
   <div class="stats-grid" id="statsGrid"></div>
 
-  <!-- Account Details Section -->
   <div class="section">
     <h2><i class="ph ph-user-circle"></i> Account Details</h2>
     <div id="accountDetails"></div>
@@ -347,13 +354,34 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
   </div>
 
   <div class="section">
-    <h2><i class="ph ph-headset"></i> Need Help?</h2>
+    <h2><i class="ph ph-shield-check"></i> Account Security</h2>
+    <div class="info-row"><span class="info-label">Last Login</span><span class="info-value" id="lastLogin">Today</span></div>
+    <div class="info-row"><span class="info-label">Account Status</span><span class="info-value"><span style="color:var(--green);">● Active</span></span></div>
+  </div>
+
+  <div class="section">
+    <h2><i class="ph ph-headset"></i> Support & Help</h2>
     <button class="btn-outline" onclick="window.open('https://wa.me/254748894443','_blank')" style="width:100%;margin-bottom:8px;">
-      <i class="ph ph-whatsapp-logo"></i> WhatsApp Support
+      <i class="ph ph-whatsapp-logo"></i> WhatsApp Support (24/7)
     </button>
-    <button class="btn-outline" onclick="window.location.href='shop.html'" style="width:100%;">
-      <i class="ph ph-storefront"></i> Continue Shopping
+    <button class="btn-outline" onclick="window.location.href='mailto:support@liquorbelle.co.ke'" style="width:100%;margin-bottom:8px;">
+      <i class="ph ph-envelope"></i> Email Support
     </button>
+    <button class="btn-outline" onclick="showFAQs()" style="width:100%;">
+      <i class="ph ph-question"></i> Frequently Asked Questions
+    </button>
+  </div>
+
+  <div class="section terms-card">
+    <h2><i class="ph ph-file-text"></i> Terms & Conditions</h2>
+    <div class="info-row"><span class="info-label">User Agreement</span><span class="info-value"><a href="#" onclick="showTerms()" style="color:var(--gold);">View Terms</a></span></div>
+    <div class="info-row"><span class="info-label">Privacy Policy</span><span class="info-value"><a href="#" onclick="showPrivacy()" style="color:var(--gold);">View Policy</a></span></div>
+    <div class="info-row"><span class="info-label">Delivery Policy</span><span class="info-value"><a href="#" onclick="showDeliveryPolicy()" style="color:var(--gold);">View Policy</a></span></div>
+    <div class="info-row"><span class="info-label">Returns & Refunds</span><span class="info-value"><a href="#" onclick="showReturns()" style="color:var(--gold);">View Policy</a></span></div>
+    <div class="info-row"><span class="info-label">Contact Information</span><span class="info-value">+254 748 894 443</span></div>
+    <div style="margin-top:16px;padding:12px;background:rgba(224,49,49,0.05);border-radius:12px;border-left:3px solid var(--red);">
+      <div style="font-size:11px;color:var(--muted);">⚠️ Important: By using LiquorBelle, you confirm you are over 18 years of age. We reserve the right to verify age upon delivery.</div>
+    </div>
   </div>
 </div>
 
@@ -385,6 +413,7 @@ function loadUser() {
   currentUser = JSON.parse(saved);
   document.getElementById('userName').textContent = currentUser.name || currentUser.email.split('@')[0];
   document.getElementById('userEmail').textContent = currentUser.email;
+  document.getElementById('lastLogin').textContent = new Date().toLocaleString();
   loadStats();
   loadAccountDetails();
   loadOrders();
@@ -404,26 +433,27 @@ function loadStats() {
   const totalOrders = userOrders.length;
   const totalSpent = userOrders.reduce((sum, o) => sum + (o.total || 0), 0);
   const completedOrders = userOrders.filter(o => o.status === 'delivered').length;
+  const pendingOrders = userOrders.filter(o => o.status === 'pending' || o.status === 'paid').length;
   
   document.getElementById('statsGrid').innerHTML = `
     <div class="stat-card"><div class="value">${totalOrders}</div><div class="label">Total Orders</div></div>
     <div class="stat-card"><div class="value">KES ${totalSpent.toLocaleString()}</div><div class="label">Total Spent</div></div>
-    <div class="stat-card"><div class="value">${completedOrders}</div><div class="label">Completed</div></div>
+    <div class="stat-card"><div class="value">${completedOrders}</div><div class="label">Delivered</div></div>
+    <div class="stat-card"><div class="value">${pendingOrders}</div><div class="label">In Progress</div></div>
   `;
 }
 
 function loadAccountDetails() {
-  // Get user from users list for join date
   const users = JSON.parse(localStorage.getItem('liquorbelle_users') || '[]');
   const userData = users.find(u => u.email === currentUser.email);
-  const joinedDate = userData?.joinedAt ? new Date(userData.joinedAt).toLocaleDateString('en-KE') : 'March 2026';
+  const joinedDate = userData?.joinedAt ? new Date(userData.joinedAt).toLocaleDateString('en-KE', { year:'numeric', month:'long', day:'numeric' }) : 'March 2026';
   const phone = currentUser.phone || userData?.phone || 'Not provided';
   
   document.getElementById('accountDetails').innerHTML = `
-    <div class="info-row"><span class="info-label">📧 Email</span><span class="info-value">${escapeHtml(currentUser.email)}</span></div>
-    <div class="info-row"><span class="info-label">📱 Phone</span><span class="info-value">${escapeHtml(phone)}</span></div>
-    <div class="info-row"><span class="info-label">📅 Member Since</span><span class="info-value">${joinedDate}</span></div>
-    <div class="info-row"><span class="info-label">🎂 Age Verification</span><span class="info-value"><span style="color:var(--green);">✓ Over 18 verified</span></span></div>
+    <div class="info-row"><span class="info-label">Email Address</span><span class="info-value">${escapeHtml(currentUser.email)}</span></div>
+    <div class="info-row"><span class="info-label">Phone Number</span><span class="info-value">${escapeHtml(phone)}</span></div>
+    <div class="info-row"><span class="info-label">Member Since</span><span class="info-value">${joinedDate}</span></div>
+    <div class="info-row"><span class="info-label">Age Verification</span><span class="info-value"><span style="color:var(--green);">✓ Verified (Over 18)</span></span></div>
   `;
 }
 
@@ -440,7 +470,7 @@ function loadOrders() {
   const container = document.getElementById('ordersList');
   
   if (userOrders.length === 0) {
-    container.innerHTML = '<div class="empty-state">📦 No orders yet. Start shopping!</div>';
+    container.innerHTML = '<div class="empty-state">No orders yet. Start shopping!</div>';
     return;
   }
   
@@ -449,7 +479,7 @@ function loadOrders() {
       <div class="order-header">
         <span class="order-id">#${order.id}</span>
         <span class="order-date">${order.time || new Date(order.date).toLocaleDateString()}</span>
-        <span class="order-status ${order.status}">${order.status === 'pending' ? '⏳ Pending' : order.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
+        <span class="order-status ${order.status}">${order.status === 'pending' ? 'Pending' : order.status === 'paid' ? 'Paid' : 'Delivered'}</span>
       </div>
       <div class="order-items-list">
         ${order.items?.map(i => `<div>• ${escapeHtml(i.name)} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}</div>`).join('') || ''}
@@ -473,7 +503,7 @@ function reorder(orderId) {
       }
     });
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    toast('✓ Items added to cart!');
+    toast('Items added to cart!');
     setTimeout(() => window.location.href = 'checkout.html', 1000);
   } else {
     toast('Unable to reorder');
@@ -485,7 +515,7 @@ function loadAddresses() {
   const container = document.getElementById('addressesList');
   
   if (addresses.length === 0) {
-    container.innerHTML = '<div class="empty-state">📍 No saved addresses</div>';
+    container.innerHTML = '<div class="empty-state">No saved addresses</div>';
     return;
   }
   
@@ -512,7 +542,7 @@ function addAddress() {
   localStorage.setItem(`addresses_${currentUser.email}`, JSON.stringify(addresses));
   input.value = '';
   loadAddresses();
-  toast('✓ Address saved');
+  toast('Address saved');
 }
 
 function removeAddress(index) {
@@ -529,12 +559,31 @@ function logout() {
   setTimeout(() => window.location.href = 'login.html', 800);
 }
 
+function showFAQs() {
+  alert(`Frequently Asked Questions\n\n1. How long does delivery take?\n   Answer: 45 minutes on average within Nairobi\n\n2. What payment methods do you accept?\n   Answer: M-PESA STK Push and Cash on Delivery\n\n3. Is there a minimum order?\n   Answer: No minimum order\n\n4. Do you deliver outside Nairobi?\n   Answer: Currently only within Nairobi zones\n\n5. How do I track my order?\n   Answer: Check order status in your account page`);
+}
+
+function showTerms() {
+  alert(`Terms & Conditions\n\n1. You must be 18 years or older to use this service\n2. Delivery is available only within specified zones\n3. We reserve the right to refuse service\n4. All prices are in KES and include VAT\n5. Products are subject to availability\n6. We do not sell to intoxicated individuals\n\nFor full terms, please contact us.`);
+}
+
+function showPrivacy() {
+  alert(`Privacy Policy\n\n1. We collect email and phone for delivery only\n2. Your data is never shared with third parties\n3. Payment information is processed securely\n4. You can request data deletion anytime\n5. We use email OTP for secure login\n\nFor privacy concerns, contact privacy@liquorbelle.co.ke`);
+}
+
+function showDeliveryPolicy() {
+  alert(`Delivery Policy\n\n1. Free delivery for orders over KES 3,000\n2. Standard delivery fee: KES 150\n3. Delivery time: 45 minutes average\n4. Rider will call before arrival\n5. Please share live location for faster delivery\n6. Failed delivery attempts may incur extra fees`);
+}
+
+function showReturns() {
+  alert(`Returns & Refunds Policy\n\n1. Damaged products can be returned within 24 hours\n2. Unopened products can be returned within 7 days\n3. Refunds processed within 3-5 business days\n4. Delivery fee is non-refundable\n5. Contact support to initiate a return\n6. Proof of purchase required`);
+}
+
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
 }
 
-// Load user data on page load
 loadUser();
 </script>
 </body>

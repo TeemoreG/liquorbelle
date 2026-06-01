@@ -444,6 +444,24 @@ footer{
   margin-top:20px;
 }
 footer p{font-size:.7rem;color:var(--muted);}
+
+/* Toast Message */
+#toastMsg{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--bg3);
+  border:1px solid var(--green);
+  padding:10px 20px;
+  border-radius:50px;
+  font-size:.75rem;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:200;
+  pointer-events:none;
+  white-space:nowrap;
+}
 </style>
 </head>
 <body>
@@ -468,6 +486,20 @@ footer p{font-size:.7rem;color:var(--muted);}
     <!-- Dynamic button will be inserted here -->
   </div>
   <div class="hero-tag"><i class="ph ph-truck"></i> Free delivery over KES 3,000</div>
+</div>
+
+<!-- Logged-in Welcome Banner -->
+<div id="loggedInBanner" style="display: none; background: linear-gradient(135deg, var(--bg2), var(--bg3)); margin: 0 5% 20px; border-radius: 20px; padding: 16px 20px; border: 1px solid var(--gold);">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div>
+      <i class="ph ph-seal-check" style="color: var(--green); font-size: 20px;"></i>
+      <span id="welcomeMessage" style="font-weight: 600;">Welcome back!</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a href="account.html" class="btn-outline" style="padding: 6px 16px;">My Account</a>
+      <a href="#" id="logoutBtnFromBanner" class="btn-outline" style="padding: 6px 16px; border-color: var(--red); color: var(--red);">Logout</a>
+    </div>
+  </div>
 </div>
 
 <div class="stats-row">
@@ -610,6 +642,38 @@ function updateAuthButton() {
   }
 }
 
+// ==================== LOGGED-IN BANNER ====================
+function updateLoggedInBanner() {
+  const currentUser = localStorage.getItem('liquorbelle_user');
+  const banner = document.getElementById('loggedInBanner');
+  
+  if (currentUser) {
+    try {
+      const user = JSON.parse(currentUser);
+      const userName = user.name || user.email.split('@')[0];
+      document.getElementById('welcomeMessage').innerHTML = `Welcome back, ${escapeHtml(userName)}! Enjoy free delivery on orders over KES 3,000.`;
+      banner.style.display = 'block';
+    } catch(e) {
+      banner.style.display = 'none';
+    }
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// ==================== TOAST FUNCTION ====================
+function toast(msg) {
+  let t = document.getElementById('toastMsg');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toastMsg';
+    document.body.appendChild(t);
+  }
+  t.innerText = msg;
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+
 // ==================== CART ====================
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 
@@ -656,6 +720,14 @@ function openCartDrawer(){ document.getElementById('cartDrawer').classList.add('
 function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
 function escapeHtml(str){ return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
+// Logout button
+document.getElementById('logoutBtnFromBanner')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  localStorage.removeItem('liquorbelle_user');
+  toast('Logged out successfully');
+  setTimeout(() => window.location.reload(), 800);
+});
+
 // Zones
 const zones = ['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata'];
 document.getElementById('zonesGrid').innerHTML = zones.map(z => `<div class="zone-tag"><div class="zone-dot"></div><span>${z}</span></div>`).join('');
@@ -696,11 +768,13 @@ document.getElementById('submitReviewBtn')?.addEventListener('click',()=>{
 renderReviews();
 updateCartUI();
 updateAuthButton();
+updateLoggedInBanner();
 
 // Listen for login/logout across tabs
 window.addEventListener('storage', (e) => {
   if(e.key === 'liquorbelle_user') {
     updateAuthButton();
+    updateLoggedInBanner();
   }
 });
 </script>

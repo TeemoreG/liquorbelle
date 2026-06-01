@@ -36,7 +36,6 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
 .logo-name{font-family:var(--fh);font-size:1.3rem;font-weight:800;}
 .logo-name em{color:var(--gold);font-style:normal;}
 
-/* Tabs */
 .auth-tabs{
   display:flex;
   gap:8px;
@@ -108,6 +107,17 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
   cursor:pointer;
   margin-top:8px;
 }
+.btn-secondary{
+  width:100%;
+  padding:14px;
+  background:transparent;
+  border:1px solid var(--gold);
+  border-radius:14px;
+  color:var(--gold);
+  font-weight:700;
+  cursor:pointer;
+  margin-top:8px;
+}
 .otp-group{display:none;margin-bottom:14px;}
 .otp-group input{
   width:100%;
@@ -156,19 +166,18 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
       <div class="logo-name">Liquor<em>Belle</em></div>
     </div>
 
-    <!-- Login/Register Tabs -->
     <div class="auth-tabs">
-      <div class="auth-tab active" id="loginTab">🔐 Login</div>
-      <div class="auth-tab" id="registerTab">📝 Register</div>
+      <div class="auth-tab active" id="loginTab">Login</div>
+      <div class="auth-tab" id="registerTab">Register</div>
     </div>
 
-    <!-- EMAIL FORM (Visible for both) -->
-    <div id="emailGroup">
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
       <div class="input-group">
-        <input type="email" id="emailInput" placeholder="Email address" autocomplete="email">
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email">
       </div>
-      <div class="input-group" id="phoneGroup">
-        <input type="tel" id="phoneInput" placeholder="Phone number (for delivery)">
+      <div class="input-group">
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
       </div>
       <div class="remember-group">
         <label>
@@ -176,17 +185,35 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
           <span>Remember me</span>
         </label>
       </div>
+      <button class="btn-primary" id="loginBtn">Login</button>
+      <button class="btn-secondary" id="forgotPasswordBtn">Forgot Password?</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none;">
+      <div class="input-group">
+        <input type="email" id="regEmail" placeholder="Email address">
+      </div>
+      <div class="input-group">
+        <input type="tel" id="regPhone" placeholder="Phone number (for delivery)">
+      </div>
+      <div class="input-group">
+        <input type="password" id="regPassword" placeholder="Create password">
+      </div>
+      <div class="input-group">
+        <input type="password" id="regConfirmPassword" placeholder="Confirm password">
+      </div>
       <button class="btn-primary" id="sendCodeBtn">Send Verification Code</button>
     </div>
 
-    <!-- OTP FORM -->
+    <!-- OTP FORM (For Registration only) -->
     <div id="otpGroup" class="otp-group">
       <div class="input-group">
         <input type="text" id="otpInput" placeholder="Enter 6-digit code" maxlength="6">
       </div>
-      <button class="btn-primary" id="verifyBtn">Verify & Continue</button>
+      <button class="btn-primary" id="verifyBtn">Verify & Complete Registration</button>
       <div class="resend-link" id="resendLink">Didn't receive code? Resend</div>
-      <div class="switch-account" id="switchAccountBtn">← Use different email address</div>
+      <div class="switch-account" id="switchAccountBtn">← Back to registration</div>
     </div>
 
     <div class="message-box" id="messageBox"></div>
@@ -198,18 +225,8 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 let pendingEmail = null;
 let pendingOtp = null;
-let currentMode = 'login'; // 'login' or 'register'
-
-// Load saved email if "Remember Me" was checked
-function loadSavedEmail() {
-  const savedEmail = localStorage.getItem('liquorbelle_saved_email');
-  const rememberMe = localStorage.getItem('liquorbelle_remember_me') === 'true';
-  
-  if (savedEmail && rememberMe) {
-    document.getElementById('emailInput').value = savedEmail;
-    document.getElementById('rememberMeCheckbox').checked = true;
-  }
-}
+let pendingPassword = null;
+let pendingPhone = null;
 
 function showMessage(msg, isError = true) {
   const box = document.getElementById('messageBox');
@@ -221,47 +238,129 @@ function showMessage(msg, isError = true) {
 
 // Tab Switching
 document.getElementById('loginTab').onclick = () => {
-  currentMode = 'login';
   document.getElementById('loginTab').classList.add('active');
   document.getElementById('registerTab').classList.remove('active');
-  document.getElementById('phoneGroup').style.opacity = '0.6';
-  showMessage('Login with existing account', false);
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('otpGroup').style.display = 'none';
+  showMessage('Login with your email and password', false);
 };
 
 document.getElementById('registerTab').onclick = () => {
-  currentMode = 'register';
   document.getElementById('registerTab').classList.add('active');
   document.getElementById('loginTab').classList.remove('active');
-  document.getElementById('phoneGroup').style.opacity = '1';
-  showMessage('Create new account with your phone number', false);
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+  document.getElementById('otpGroup').style.display = 'none';
+  showMessage('Create a new account', false);
 };
 
-// Send OTP
-document.getElementById('sendCodeBtn').onclick = async () => {
-  const email = document.getElementById('emailInput').value.trim().toLowerCase();
+// ==================== LOGIN FUNCTION (API) ====================
+document.getElementById('loginBtn').onclick = async () => {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  
   if (!email || !email.includes('@')) {
     showMessage('Please enter a valid email address');
     return;
   }
-  
-  // For registration, phone is required
-  const phone = document.getElementById('phoneInput').value.trim();
-  if (currentMode === 'register' && !phone) {
-    showMessage('Phone number is required for registration (for delivery)');
+  if (!password) {
+    showMessage('Please enter your password');
     return;
   }
   
-  // Save email if Remember Me is checked
-  const rememberMe = document.getElementById('rememberMeCheckbox').checked;
-  if (rememberMe) {
-    localStorage.setItem('liquorbelle_saved_email', email);
-    localStorage.setItem('liquorbelle_remember_me', 'true');
-  } else {
-    localStorage.removeItem('liquorbelle_saved_email');
-    localStorage.setItem('liquorbelle_remember_me', 'false');
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    
+    if (!data.success) {
+      showMessage(data.message);
+      return;
+    }
+    
+    // Save session
+    const sessionUser = {
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.name,
+      phone: data.user.phone,
+      loggedInAt: Date.now()
+    };
+    localStorage.setItem('liquorbelle_user', JSON.stringify(sessionUser));
+    
+    // Save remember me
+    const rememberMe = document.getElementById('rememberMeCheckbox').checked;
+    if (rememberMe) {
+      localStorage.setItem('liquorbelle_saved_email', email);
+      localStorage.setItem('liquorbelle_remember_me', 'true');
+    }
+    
+    showMessage('Login successful! Redirecting...', false);
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1500);
+  } catch (err) {
+    console.error('Login error:', err);
+    showMessage('Login failed. Please try again.');
+  }
+};
+
+// ==================== FORGOT PASSWORD ====================
+document.getElementById('forgotPasswordBtn').onclick = async () => {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  if (!email) {
+    showMessage('Enter your email address first');
+    return;
+  }
+  
+  // Generate temporary password
+  const tempPassword = Math.random().toString(36).slice(-8);
+  
+  try {
+    // In production, you would send this via email
+    showMessage(`Temporary password: ${tempPassword}. Please login and change your password.`, false);
+    document.getElementById('loginPassword').value = tempPassword;
+  } catch(err) {
+    showMessage('Error generating temporary password');
+  }
+};
+
+// ==================== REGISTRATION - SEND OTP ====================
+document.getElementById('sendCodeBtn').onclick = async () => {
+  const email = document.getElementById('regEmail').value.trim().toLowerCase();
+  const phone = document.getElementById('regPhone').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirmPassword = document.getElementById('regConfirmPassword').value;
+  
+  if (!email || !email.includes('@')) {
+    showMessage('Please enter a valid email address');
+    return;
+  }
+  if (!phone) {
+    showMessage('Phone number is required for delivery');
+    return;
+  }
+  if (!password) {
+    showMessage('Please create a password');
+    return;
+  }
+  if (password !== confirmPassword) {
+    showMessage('Passwords do not match');
+    return;
+  }
+  if (password.length < 6) {
+    showMessage('Password must be at least 6 characters');
+    return;
   }
   
   pendingEmail = email;
+  pendingPhone = phone;
+  pendingPassword = password;
+  
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   pendingOtp = otp;
   
@@ -276,29 +375,22 @@ document.getElementById('sendCodeBtn').onclick = async () => {
     const data = await res.json();
     
     if (data.success) {
-      showMessage(`✓ Code sent! Check your email. Demo code: ${otp}`, false);
-      document.getElementById('emailGroup').style.display = 'none';
-      document.getElementById('otpGroup').style.display = 'block';
-      document.getElementById('resendLink').style.display = 'block';
-      document.getElementById('switchAccountBtn').style.display = 'block';
+      showMessage(`Code sent! Check your email. Demo code: ${otp}`, false);
     } else {
-      showMessage('Using demo mode - code: ' + otp, false);
-      document.getElementById('emailGroup').style.display = 'none';
-      document.getElementById('otpGroup').style.display = 'block';
-      document.getElementById('resendLink').style.display = 'block';
-      document.getElementById('switchAccountBtn').style.display = 'block';
+      showMessage(`Demo mode - use code: ${otp}`, false);
     }
   } catch(err) {
     showMessage(`Demo mode - use code: ${otp}`, false);
-    document.getElementById('emailGroup').style.display = 'none';
-    document.getElementById('otpGroup').style.display = 'block';
-    document.getElementById('resendLink').style.display = 'block';
-    document.getElementById('switchAccountBtn').style.display = 'block';
   }
+  
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('otpGroup').style.display = 'block';
+  document.getElementById('resendLink').style.display = 'block';
+  document.getElementById('switchAccountBtn').style.display = 'block';
 };
 
-// Verify OTP
-document.getElementById('verifyBtn').onclick = () => {
+// ==================== VERIFY OTP & COMPLETE REGISTRATION ====================
+document.getElementById('verifyBtn').onclick = async () => {
   const entered = document.getElementById('otpInput').value.trim();
   if (!entered || entered.length !== 6) {
     showMessage('Please enter the 6-digit verification code');
@@ -310,52 +402,45 @@ document.getElementById('verifyBtn').onclick = () => {
     return;
   }
   
-  const phone = document.getElementById('phoneInput').value.trim();
-  const user = {
-    email: pendingEmail,
-    phone: phone,
-    name: pendingEmail.split('@')[0],
-    loggedInAt: Date.now()
-  };
-  
-  // Check if user exists
-  const users = JSON.parse(localStorage.getItem('liquorbelle_users') || '[]');
-  const existing = users.find(u => u.email === pendingEmail);
-  
-  if (currentMode === 'register') {
-    if (existing) {
-      showMessage('Account already exists! Please Login instead.');
-      return;
-    }
-    // New registration
-    users.push({ 
-      email: pendingEmail, 
-      phone: phone, 
-      orders: [], 
-      joinedAt: new Date().toISOString(),
-      totalSpent: 0
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: pendingEmail,
+        password: pendingPassword,
+        phone: pendingPhone,
+        name: pendingEmail.split('@')[0]
+      })
     });
-    localStorage.setItem('liquorbelle_users', JSON.stringify(users));
-    showMessage('✓ Account created successfully!', false);
-  } else {
-    // Login mode
-    if (!existing) {
-      showMessage('Account not found. Please Register first!');
+    const data = await res.json();
+    
+    if (!data.success) {
+      showMessage(data.message);
       return;
     }
-    showMessage('✓ Welcome back!', false);
+    
+    // Auto-login after registration
+    const sessionUser = {
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.name,
+      phone: data.user.phone,
+      loggedInAt: Date.now()
+    };
+    localStorage.setItem('liquorbelle_user', JSON.stringify(sessionUser));
+    
+    showMessage('Registration successful! Redirecting...', false);
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1500);
+  } catch (err) {
+    console.error('Registration error:', err);
+    showMessage('Registration failed. Please try again.');
   }
-  
-  // Save session
-  localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-  
-  showMessage('✓ Login successful! Redirecting...', false);
-  setTimeout(() => {
-    window.location.href = 'account.html';
-  }, 1500);
 };
 
-// Resend OTP
+// ==================== RESEND OTP ====================
 document.getElementById('resendLink').onclick = async () => {
   if (!pendingEmail) return;
   const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -371,10 +456,10 @@ document.getElementById('resendLink').onclick = async () => {
   } catch(e) {}
 };
 
-// Switch account - go back to email entry
+// ==================== SWITCH BACK TO REGISTRATION ====================
 document.getElementById('switchAccountBtn').onclick = () => {
   document.getElementById('otpGroup').style.display = 'none';
-  document.getElementById('emailGroup').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'block';
   document.getElementById('otpInput').value = '';
   document.getElementById('switchAccountBtn').style.display = 'none';
   document.getElementById('resendLink').style.display = 'none';
@@ -382,17 +467,19 @@ document.getElementById('switchAccountBtn').onclick = () => {
   pendingOtp = null;
 };
 
-// Check if already logged in
+// ==================== CHECK IF ALREADY LOGGED IN ====================
 const savedUser = localStorage.getItem('liquorbelle_user');
 if (savedUser) {
-  window.location.href = 'account.html';
+  window.location.href = 'index.html';
 }
 
-// Load saved email on page load
-loadSavedEmail();
-
-// Set initial state
-document.getElementById('phoneGroup').style.opacity = '0.6';
+// ==================== LOAD SAVED EMAIL ====================
+const savedEmail = localStorage.getItem('liquorbelle_saved_email');
+const rememberMe = localStorage.getItem('liquorbelle_remember_me') === 'true';
+if (savedEmail && rememberMe) {
+  document.getElementById('loginEmail').value = savedEmail;
+  document.getElementById('rememberMeCheckbox').checked = true;
+}
 </script>
 </body>
 </html>

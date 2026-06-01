@@ -123,7 +123,6 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 }
 .chip.active{background:var(--red);border-color:var(--red);color:#fff;}
 
-/* Search & Filter Bar */
 .filter-bar{
   padding:16px 5%;
   display:flex;
@@ -334,7 +333,6 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 
 <div class="category-scroll" id="categoryList"></div>
 
-<!-- Search & Filter Bar -->
 <div class="filter-bar">
   <div class="search-wrapper">
     <i class="ph ph-magnifying-glass search-icon"></i>
@@ -362,55 +360,34 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 <div class="snack" id="snack"></div>
 
 <script>
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const PRODUCT_IMAGE = "https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif";
-
-// Fallback products if admin hasn't added any
-const FALLBACK_PRODUCTS = [
-  {id:1,name:"Johnnie Walker Black Label",price:3500,category:"whisky",badge:"hot",image:"https://images.vivino.com/thumbs/ApnIiXjcT5Kc33OHgNb9dA_pb_x600.png",stock:15},
-  {id:3,name:"Jameson Irish Whiskey",price:3200,category:"whisky",badge:"",image:"https://www.thewhiskyexchange.com/images/products/10399_full.jpg",stock:8},
-  {id:70,name:"Hennessy VS Cognac",price:5500,category:"cognac",badge:"prem",image:"",stock:5},
-  {id:20,name:"Smirnoff Red Label",price:1800,category:"vodka",badge:"",image:"",stock:20},
-  {id:60,name:"Gilbeys Gin",price:1400,category:"gin",badge:"local",image:"",stock:12},
-  {id:52,name:"Kenya Cane",price:950,category:"rum",badge:"local",image:"",stock:3},
-  {id:40,name:"Tusker Lager",price:230,category:"beer",badge:"local",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Tusker_Lager_can.jpg/440px-Tusker_Lager_can.jpg",stock:50},
-  {id:30,name:"Nederburg Rosé",price:1500,category:"wine",badge:"",image:"https://images.vivino.com/thumbs/Jm_O5e5yFTaj3Gi7TsNXhA_pb_x600.png",stock:0},
-  {id:80,name:"Moet & Chandon Brut",price:9500,category:"champagne",badge:"prem",image:"",stock:2},
-  {id:12,name:"Kingfisher Whisky",price:1800,category:"kenyan",badge:"local",image:"",stock:7},
-];
-
 const CATEGORIES = ['All','Whisky','Cognac','Vodka','Gin','Rum','Wine','Beer','Champagne','Kenyan Spirits'];
 
-// Load products from admin (localStorage) or use fallback
-function loadProducts(){
-  const stored = localStorage.getItem('liquorbelle_products');
-  if(stored){
-    try{
-      const adminProducts = JSON.parse(stored);
-      if(adminProducts && adminProducts.length > 0){
-        console.log('✅ Loaded', adminProducts.length, 'products from admin');
-        return adminProducts;
-      }
-    }catch(e){ console.error('Error loading products:', e); }
-  }
-  console.log('📦 Using fallback products');
-  localStorage.setItem('liquorbelle_products', JSON.stringify(FALLBACK_PRODUCTS));
-  return FALLBACK_PRODUCTS;
-}
-
-let PRODUCTS = loadProducts();
+let PRODUCTS = [];
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
 let searchTerm = '';
 let currentSort = 'default';
 
-// Listen for admin updates
-window.addEventListener('storage', (e) => {
-  if(e.key === 'liquorbelle_products'){
-    console.log('🔄 Products updated by admin, reloading...');
-    PRODUCTS = loadProducts();
-    render();
+// Load products from DATABASE
+async function loadProducts(){
+  try {
+    const res = await fetch(`${API_BASE}/api/db/products`);
+    const data = await res.json();
+    if(data.success && data.products.length > 0){
+      PRODUCTS = data.products;
+      console.log('✅ Loaded', PRODUCTS.length, 'products from database');
+    } else {
+      console.log('⚠️ No products in database, using fallback');
+      PRODUCTS = [];
+    }
+  } catch(e){
+    console.error('Error loading products:', e);
+    PRODUCTS = [];
   }
-});
+  render();
+}
 
 function updateCartCount(){
   const count = Object.values(cart).reduce((s,i)=>s+i.qty,0);
@@ -435,44 +412,25 @@ function getStockStatus(product){
 function sortProducts(products){
   const sorted = [...products];
   switch(currentSort){
-    case 'price-asc':
-      return sorted.sort((a,b) => (a.price || 0) - (b.price || 0));
-    case 'price-desc':
-      return sorted.sort((a,b) => (b.price || 0) - (a.price || 0));
-    case 'name-asc':
-      return sorted.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
-    default:
-      return sorted;
+    case 'price-asc': return sorted.sort((a,b) => (a.price || 0) - (b.price || 0));
+    case 'price-desc': return sorted.sort((a,b) => (b.price || 0) - (a.price || 0));
+    case 'name-asc': return sorted.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
+    default: return sorted;
   }
 }
 
 function render(){
-  let filtered = PRODUCTS;
-  
-  // Filter by category
-  if(currentCat !== 'all'){
-    filtered = filtered.filter(p => p.category === currentCat);
-  }
-  
-  // Filter by search term
-  if(searchTerm){
-    filtered = filtered.filter(p => 
-      p.name.toLowerCase().includes(searchTerm) || 
-      p.category.toLowerCase().includes(searchTerm) ||
-      (p.sub && p.sub.toLowerCase().includes(searchTerm))
-    );
-  }
-  
-  // Sort
+  let filtered = [...PRODUCTS];
+  if(currentCat !== 'all') filtered = filtered.filter(p => p.category === currentCat);
+  if(searchTerm) filtered = filtered.filter(p => 
+    p.name?.toLowerCase().includes(searchTerm) || 
+    p.category?.toLowerCase().includes(searchTerm) ||
+    (p.sub && p.sub.toLowerCase().includes(searchTerm))
+  );
   filtered = sortProducts(filtered);
   
-  // Update results count
   const countText = document.getElementById('resultsCount');
-  if(filtered.length === 0){
-    countText.innerHTML = 'No products found';
-  } else {
-    countText.innerHTML = `Found ${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
-  }
+  countText.innerHTML = filtered.length === 0 ? 'No products found' : `Found ${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
   
   const grid = document.getElementById('productGrid');
   if(!filtered.length){
@@ -503,7 +461,7 @@ function render(){
           <div class="pc-name">${escapeHtml(p.name)}</div>
           <div class="pc-category">
             <span>${getCategoryDisplayName(p.category)}</span>
-            ${p.stock && p.stock < 10 && p.stock > 0 ? `<span style="color:var(--gold);font-size:9px;">⚠️ Low Stock</span>` : ''}
+            ${p.stock && p.stock < 10 && p.stock > 0 ? '<span style="color:var(--gold);font-size:9px;">⚠️ Low Stock</span>' : ''}
           </div>
           <div class="pc-price">KES ${(p.price || 0).toLocaleString()}</div>
           <button class="add-to-cart" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price || 0})" ${isOutOfStock ? 'disabled' : ''}>
@@ -521,7 +479,6 @@ function addToCart(id,name,price){
     toast('Out of stock!');
     return;
   }
-  
   if(!price || price <= 0){ toast('Price error'); return; }
   if(cart[id]) cart[id].qty++;
   else cart[id] = {name, price, qty:1, id, img:''};
@@ -542,7 +499,6 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('on'),2000); 
 }
 
-// Render categories
 function renderCategories(){
   const container = document.getElementById('categoryList');
   container.innerHTML = CATEGORIES.map(c => {
@@ -555,27 +511,19 @@ function setCategory(cat){
   currentCat = cat;
   renderCategories();
   render();
-  // Update URL without reload
   const url = new URL(window.location);
-  if(cat === 'all'){
-    url.searchParams.delete('cat');
-  } else {
-    url.searchParams.set('cat', cat);
-  }
+  cat === 'all' ? url.searchParams.delete('cat') : url.searchParams.set('cat', cat);
   window.history.pushState({}, '', url);
 }
 
-// Search and Filter Event Listeners
 document.getElementById('searchInput').addEventListener('input', (e) => {
   searchTerm = e.target.value.toLowerCase();
   render();
 });
-
 document.getElementById('sortSelect').addEventListener('change', (e) => {
   currentSort = e.target.value;
   render();
 });
-
 document.getElementById('clearBtn').addEventListener('click', () => {
   searchTerm = '';
   currentSort = 'default';
@@ -586,18 +534,11 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 
 // Initialize
 renderCategories();
-render();
+loadProducts();
 updateCartCount();
 
-// Force refresh if window gains focus (admin might have updated)
-window.addEventListener('focus', () => {
-  const fresh = loadProducts();
-  if(JSON.stringify(fresh) !== JSON.stringify(PRODUCTS)){
-    PRODUCTS = fresh;
-    render();
-    updateCartCount();
-  }
-});
+// Auto-refresh products every 30 seconds (to catch admin updates)
+setInterval(loadProducts, 30000);
 </script>
 </body>
 </html>
