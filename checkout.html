@@ -676,12 +676,13 @@ async function placeOrder() {
   const orderId = 'LB-' + Date.now().toString().slice(-8);
   const timestamp = new Date().toLocaleString('en-KE', { hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
   
+  // Get button and show loading state
+  const btn = document.querySelector('.btn-place');
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<div class="spinner"></div> Processing...';
+  btn.disabled = true;
+  
   if (selectedPayment === 'mpesa') {
-    const btn = document.querySelector('.btn-place');
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<div class="spinner"></div> Processing...';
-    btn.disabled = true;
-    
     try {
       const res = await fetch(`${API_BASE_URL}/api/stkpush`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, amount: total, orderId, customerName: fullName, address, items, subtotal, delivery, total, paymentMethod: 'mpesa' }) });
       const data = await res.json();
@@ -699,6 +700,8 @@ async function placeOrder() {
             await sendOrderConfirmationEmail(orderId, fullName, phone, address, items, subtotal, delivery, total, timestamp, 'mpesa');
             cart = {};
             localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
             showSuccessModal('✅ Payment confirmed! Check your email for order details.');
           }
         } catch (e) { console.error(e); }
@@ -712,10 +715,13 @@ async function placeOrder() {
       btn.disabled = false;
     }
   } else {
+    // Cash on Delivery
     await saveOrderToDatabase(orderId, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
     await sendOrderConfirmationEmail(orderId, fullName, phone, address, items, subtotal, delivery, total, timestamp, 'cod');
     cart = {};
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+    btn.innerHTML = originalHTML;
+    btn.disabled = false;
     showSuccessModal('📋 Order placed! Check your email for confirmation.');
   }
 }
