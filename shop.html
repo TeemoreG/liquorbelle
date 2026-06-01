@@ -354,7 +354,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
   <div class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></div>
   <div class="nav-item active" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
   <div class="nav-item" onclick="window.location.href='checkout.html'"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
-  <div class="nav-item" onclick="window.location.href='login.html'"><i class="ph ph-user"></i><span>Account</span></div>
+  <div class="nav-item" id="shopBottomAccountBtn" onclick="goToAccount()"><i class="ph ph-user"></i><span>Account</span></div>
 </div>
 
 <div class="snack" id="snack"></div>
@@ -369,6 +369,16 @@ let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
 let searchTerm = '';
 let currentSort = 'default';
+
+// Go to account function
+function goToAccount() {
+  const currentUser = localStorage.getItem('liquorbelle_user');
+  if (currentUser) {
+    window.location.href = 'account.html';
+  } else {
+    window.location.href = 'login.html';
+  }
+}
 
 // Load products from DATABASE
 async function loadProducts(){

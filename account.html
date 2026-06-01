@@ -493,7 +493,7 @@ async function loadOrdersFromDatabase() {
         <div class="order-header">
           <span class="order-id">#${order.order_number || order.id.slice(0, 8)}</span>
           <span class="order-date">${new Date(order.created_at).toLocaleDateString()}</span>
-          <span class="order-status ${order.status}">${order.status === 'pending' ? 'Pending' : order.status === 'paid' ? 'Paid' : 'Delivered'}</span>
+          <span class="order-status ${order.status}">${order.status === 'pending' ? 'Pending' : order.status === 'paid' ? 'Completed' : 'Delivered'}</span>
         </div>
         <div class="order-items-list">
           ${order.items?.map(i => `<div>• ${escapeHtml(i.product_name)} x${i.quantity} — KES ${(i.price * i.quantity).toLocaleString()}</div>`).join('') || ''}
