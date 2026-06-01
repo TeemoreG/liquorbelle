@@ -83,14 +83,28 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 }
 .section-title{font-family:var(--fh);font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--gold);}
 .form-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+  margin-bottom:16px;
 }
-.form-grid input, .form-grid select, .form-grid textarea{
-  padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;
-  color:var(--ink);font-family:var(--fb);font-size:13px;
+.form-grid input, .form-grid select{
+  padding:12px 16px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--ink);
+  font-family:var(--fb);
+  font-size:13px;
 }
 .submit-btn{
-  background:var(--gold);color:#000;border:none;padding:12px 24px;border-radius:40px;font-weight:700;cursor:pointer;
+  background:var(--gold);
+  color:#000;
+  border:none;
+  padding:12px 24px;
+  border-radius:40px;
+  font-weight:700;
+  cursor:pointer;
 }
 .image-preview{width:50px;height:50px;border-radius:8px;object-fit:cover;margin-top:8px;}
 
@@ -125,19 +139,33 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 
 /* Products Table */
 .products-container{
-  background:var(--bg2);border-radius:20px;border:1px solid var(--border);overflow-x:auto;
+  background:var(--bg2);
+  border-radius:20px;
+  border:1px solid var(--border);
+  overflow-x:auto;
 }
 .products-header{
-  display:grid;grid-template-columns:60px 1fr 120px 100px 100px 80px;background:var(--bg3);padding:14px 16px;
-  font-weight:600;font-size:13px;border-bottom:1px solid var(--border);
+  display:grid;
+  grid-template-columns:60px 1fr 100px 100px 100px 80px;
+  background:var(--bg3);
+  padding:14px 16px;
+  font-weight:600;
+  font-size:13px;
+  border-bottom:1px solid var(--border);
 }
 .product-row{
-  display:grid;grid-template-columns:60px 1fr 120px 100px 100px 80px;padding:14px 16px;
-  align-items:center;border-bottom:1px solid var(--border);font-size:13px;transition:background 0.2s;
+  display:grid;
+  grid-template-columns:60px 1fr 100px 100px 100px 80px;
+  padding:14px 16px;
+  align-items:center;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+  transition:background 0.2s;
 }
 .product-row:hover{background:rgba(255,255,255,0.02);}
 .product-img{width:40px;height:40px;object-fit:cover;border-radius:8px;background:var(--bg3);}
 .product-name{font-weight:600;}
+.product-capacity{font-size:11px;color:var(--gold);font-weight:500;margin-top:2px;}
 .product-category{font-size:11px;padding:3px 10px;border-radius:40px;background:var(--bg3);display:inline-block;}
 .stock-in{color:var(--green);}
 .stock-out{color:var(--red);font-weight:700;}
@@ -149,8 +177,12 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 .orders-list{display:flex;flex-direction:column;gap:16px;}
 .order-card{background:var(--bg2);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
 .order-header{
-  display:flex;justify-content:space-between;align-items:center;padding:16px 20px;
-  background:var(--bg3);border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
 }
 .order-id{font-family:monospace;font-weight:700;}
 .order-status{padding:4px 12px;border-radius:40px;font-size:11px;font-weight:700;}
@@ -160,7 +192,10 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 .order-items{padding:16px 20px;}
 .order-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
 .order-footer{
-  display:flex;justify-content:space-between;align-items:center;padding:16px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
   border-top:1px solid var(--border);
 }
 .order-total{font-size:20px;font-weight:800;color:var(--gold);font-family:var(--fh);}
@@ -172,9 +207,18 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 
 .empty-state{text-align:center;padding:60px;color:var(--muted);}
 .snack{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:var(--bg3);border:1px solid var(--gold);padding:10px 24px;
-  border-radius:40px;font-size:13px;opacity:0;transition:opacity 0.2s;z-index:200;
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--bg3);
+  border:1px solid var(--gold);
+  padding:10px 24px;
+  border-radius:40px;
+  font-size:13px;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:200;
 }
 .snack.on{opacity:1;}
 
@@ -227,7 +271,14 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
         <div class="section-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
         <div class="form-grid">
           <input type="text" id="prodName" placeholder="Product Name">
-          <input type="text" id="prodSub" placeholder="Description">
+          <select id="prodCapacity">
+            <option value="250ml">250ml</option>
+            <option value="350ml">350ml</option>
+            <option value="500ml">500ml</option>
+            <option value="750ml" selected>750ml</option>
+            <option value="1L">1 Litre</option>
+            <option value="1.5L">1.5 Litre</option>
+          </select>
           <input type="number" id="prodPrice" placeholder="Price (KES)">
           <select id="prodCategory">
             <option value="whisky">Whisky</option><option value="vodka">Vodka</option>
@@ -257,7 +308,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 
       <div class="products-container">
         <div class="products-header">
-          <div>Image</div><div>Name</div><div class="category">Category</div><div>Price</div><div>Stock</div><div>Actions</div>
+          <div>Image</div><div>Name</div><div>Size</div><div>Price</div><div>Stock</div><div>Actions</div>
         </div>
         <div id="productsList"></div>
       </div>
@@ -423,7 +474,7 @@ function renderProducts(){
     filtered = products.filter(p => 
       p.name?.toLowerCase().includes(searchTerm) || 
       p.category?.toLowerCase().includes(searchTerm) ||
-      (p.sub && p.sub.toLowerCase().includes(searchTerm))
+      (p.capacity && p.capacity.toLowerCase().includes(searchTerm))
     );
   }
   const container = document.getElementById('productsList');
@@ -435,10 +486,11 @@ function renderProducts(){
     const isInStock = p.stock !== null && p.stock > 0;
     const stockDisplay = isInStock ? 'In Stock' : 'Out of Stock';
     const stockClass = isInStock ? 'stock-in' : 'stock-out';
+    const capacity = p.capacity || '750ml';
     return `
     <div class="product-row">
       <div><img class="product-img" src="${p.image || 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif'}" onerror="this.src='https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif'"></div>
-      <div class="product-name">${escapeHtml(p.name)}<br><span style="font-size:11px;color:var(--muted);">${escapeHtml(p.sub || '')}</span></div>
+      <div><div class="product-name">${escapeHtml(p.name)}</div><div class="product-capacity">${escapeHtml(capacity)}</div></div>
       <div><span class="product-category">${p.category}</span></div>
       <div style="color:var(--gold);font-weight:700;">KES ${(p.price || 0).toLocaleString()}</div>
       <div class="${stockClass}">${stockDisplay}</div>
@@ -462,7 +514,7 @@ function renderProductStats(){
 
 async function addProduct(){
   const name = document.getElementById('prodName').value.trim();
-  const sub = document.getElementById('prodSub').value.trim();
+  const capacity = document.getElementById('prodCapacity').value;
   const price = parseFloat(document.getElementById('prodPrice').value);
   const category = document.getElementById('prodCategory').value;
   const badge = document.getElementById('prodBadge').value;
@@ -476,7 +528,7 @@ async function addProduct(){
     const res = await fetch(`${API_BASE}/api/db/products`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, sub, price, category, badge, image, stock })
+      body: JSON.stringify({ name, capacity, price, category, badge, image, stock })
     });
     const data = await res.json();
     if(data.success){
@@ -485,9 +537,9 @@ async function addProduct(){
       renderProducts();
       renderProductStats();
       document.getElementById('prodName').value = '';
-      document.getElementById('prodSub').value = '';
       document.getElementById('prodPrice').value = '';
       document.getElementById('prodImage').value = '';
+      document.getElementById('prodCapacity').value = '750ml';
       document.getElementById('prodStockStatus').value = 'in';
     } else { toast('Failed to add product'); }
   } catch(e){ toast('Error adding product'); }
@@ -513,7 +565,7 @@ function openEditModal(id){
   if(!p) return;
   editingId = id;
   document.getElementById('editName').value = p.name;
-  document.getElementById('editSub').value = p.sub || '';
+  document.getElementById('editCapacity').value = p.capacity || '750ml';
   document.getElementById('editPrice').value = p.price;
   document.getElementById('editCategory').value = p.category;
   document.getElementById('editBadge').value = p.badge || '';
@@ -528,7 +580,7 @@ async function saveEdit(){
   const stock = stockStatus === 'in' ? 1 : 0;
   const productData = {
     name: document.getElementById('editName').value.trim(),
-    sub: document.getElementById('editSub').value.trim(),
+    capacity: document.getElementById('editCapacity').value,
     price: parseFloat(document.getElementById('editPrice').value),
     category: document.getElementById('editCategory').value,
     badge: document.getElementById('editBadge').value,
@@ -668,7 +720,14 @@ const modalHtml = `
   <div style="background:var(--bg2);border-radius:20px;padding:28px;width:90%;max-width:500px;border:1px solid var(--gold);">
     <h3 style="margin-bottom:20px;color:var(--gold);">Edit Product</h3>
     <input type="text" id="editName" placeholder="Product Name" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-    <input type="text" id="editSub" placeholder="Description" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
+    <select id="editCapacity" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
+      <option value="250ml">250ml</option>
+      <option value="350ml">350ml</option>
+      <option value="500ml">500ml</option>
+      <option value="750ml">750ml</option>
+      <option value="1L">1 Litre</option>
+      <option value="1.5L">1.5 Litre</option>
+    </select>
     <input type="number" id="editPrice" placeholder="Price" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
     <select id="editCategory" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
       <option value="whisky">Whisky</option><option value="vodka">Vodka</option><option value="wine">Wine</option><option value="beer">Beer</option>

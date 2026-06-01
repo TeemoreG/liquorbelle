@@ -192,7 +192,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 .product-grid{
   padding:20px 5%;
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
   gap:16px;
 }
 .product-card{
@@ -240,8 +240,30 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 .img-wrap{position:relative;}
 .pc-info{padding:12px;}
 .pc-name{font-weight:700;font-size:.85rem;margin-bottom:4px;line-height:1.3;}
+.pc-capacity{
+  font-size: .65rem;
+  color: var(--gold);
+  margin: 2px 0 4px;
+  font-weight: 500;
+}
 .pc-category{font-size:.6rem;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
 .pc-price{font-weight:800;font-size:1rem;color:var(--red);margin:6px 0;}
+.qty-selector{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:8px 0;
+}
+.qty-select{
+  flex:1;
+  padding:8px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--ink);
+  font-size:.7rem;
+  cursor:pointer;
+}
 .add-to-cart{
   width:100%;
   padding:8px;
@@ -425,13 +447,32 @@ function sortProducts(products){
   }
 }
 
+function addToCartWithQty(id, name, price, qty) {
+  const product = PRODUCTS.find(p => p.id === id);
+  if(product && product.stock !== null && product.stock <= 0){
+    toast('Out of stock!');
+    return;
+  }
+  if(!price || price <= 0){ toast('Price error'); return; }
+  
+  const quantity = parseInt(qty);
+  if(cart[id]) {
+    cart[id].qty += quantity;
+  } else {
+    cart[id] = { name, price, qty: quantity, id, img: '' };
+  }
+  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+  updateCartCount();
+  toast(`${quantity}x ${name} added to cart ✓`);
+}
+
 function render(){
   let filtered = [...PRODUCTS];
   if(currentCat !== 'all') filtered = filtered.filter(p => p.category === currentCat);
   if(searchTerm) filtered = filtered.filter(p => 
     p.name?.toLowerCase().includes(searchTerm) || 
     p.category?.toLowerCase().includes(searchTerm) ||
-    (p.sub && p.sub.toLowerCase().includes(searchTerm))
+    (p.capacity && p.capacity.toLowerCase().includes(searchTerm))
   );
   filtered = sortProducts(filtered);
   
@@ -455,6 +496,9 @@ function render(){
                       p.badge === 'prem' ? '<div class="pc-badge badge-prem">⭐ PREMIUM</div>' : '';
     const stockStatus = getStockStatus(p);
     const isOutOfStock = p.stock !== null && p.stock <= 0;
+    const capacity = p.capacity ? `<div class="pc-capacity">${escapeHtml(p.capacity)}</div>` : '';
+    
+    const qtyOptions = [1, 2, 3, 4, 5, 6].map(q => `<option value="${q}">${q}</option>`).join('');
     
     return `
       <div class="product-card">
@@ -465,31 +509,23 @@ function render(){
         </div>
         <div class="pc-info">
           <div class="pc-name">${escapeHtml(p.name)}</div>
+          ${capacity}
           <div class="pc-category">
             <span>${getCategoryDisplayName(p.category)}</span>
           </div>
           <div class="pc-price">KES ${(p.price || 0).toLocaleString()}</div>
-          <button class="add-to-cart" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price || 0})" ${isOutOfStock ? 'disabled' : ''}>
-            <i class="ph ${isOutOfStock ? 'ph-x-circle' : 'ph-plus'}"></i> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-          </button>
+          <div class="qty-selector">
+            <select id="qty_${p.id}" class="qty-select">
+              ${qtyOptions}
+            </select>
+            <button class="add-to-cart" onclick="addToCartWithQty(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price || 0}, document.getElementById('qty_${p.id}').value)" ${isOutOfStock ? 'disabled' : ''}>
+              <i class="ph ${isOutOfStock ? 'ph-x-circle' : 'ph-plus'}"></i> ${isOutOfStock ? 'Out of Stock' : 'Add'}
+            </button>
+          </div>
         </div>
       </div>
     `;
   }).join('');
-}
-
-function addToCart(id,name,price){
-  const product = PRODUCTS.find(p => p.id === id);
-  if(product && product.stock !== null && product.stock <= 0){
-    toast('Out of stock!');
-    return;
-  }
-  if(!price || price <= 0){ toast('Price error'); return; }
-  if(cart[id]) cart[id].qty++;
-  else cart[id] = {name, price, qty:1, id, img:''};
-  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-  updateCartCount();
-  toast(`${name} added to cart ✓`);
 }
 
 function escapeHtml(str){ 
