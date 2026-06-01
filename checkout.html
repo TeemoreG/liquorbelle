@@ -541,6 +541,7 @@ body{
 <script>
 const API_BASE_URL = 'https://liquorbelle-mpesa-backend.onrender.com';
 const currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
+let deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
 
 function showSuccessModal(message) {
   const modal = document.getElementById('successModal');
@@ -558,6 +559,17 @@ function toast(msg) {
   t.innerText = msg;
   t.classList.add('on');
   setTimeout(() => t.classList.remove('on'), 3000);
+}
+
+// Load delivery settings
+async function loadDeliverySettings() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/delivery-settings`);
+    const data = await res.json();
+    if (data.success && data.settings) {
+      deliverySettings = data.settings;
+    }
+  } catch(e) { console.error('Failed to load delivery settings', e); }
 }
 
 // Location Picker
@@ -595,7 +607,16 @@ mpesaOption.addEventListener('click', () => { selectedPayment = 'mpesa'; mpesaOp
 codOption.addEventListener('click', () => { selectedPayment = 'cod'; codOption.classList.add('selected'); mpesaOption.classList.remove('selected'); document.getElementById('mpesaInfo').style.display = 'none'; });
 codOption.classList.add('selected');
 
-function calculateTotals() { const items = Object.values(cart); const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0); const delivery = subtotal >= 3000 ? 0 : 150; return { subtotal, delivery, total: subtotal + delivery }; }
+function calculateTotals() {
+  const items = Object.values(cart);
+  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+  let delivery = 0;
+  if (deliverySettings.delivery_enabled && subtotal < deliverySettings.free_delivery_threshold) {
+    delivery = deliverySettings.delivery_fee;
+  }
+  return { subtotal, delivery, total: subtotal + delivery };
+}
+
 function getFullAddress() { const street = document.getElementById('street').value.trim(); const building = document.getElementById('building').value.trim(); let parts = []; if (building) parts.push(building); if (street) parts.push(street); return parts.join(', ') || 'Address not specified'; }
 function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
@@ -606,7 +627,8 @@ function renderCartSummary() {
   container.innerHTML = items.map(item => `<div class="cart-item"><span class="item-name">${escapeHtml(item.name)} x${item.qty}</span><span class="item-price">KES ${(item.price * item.qty).toLocaleString()}</span></div>`).join('');
   const { subtotal, delivery, total } = calculateTotals();
   document.getElementById('subtotalAmount').innerText = `KES ${subtotal.toLocaleString()}`;
-  document.getElementById('deliveryFee').innerText = delivery === 0 ? 'FREE' : `KES ${delivery}`;
+  const deliveryText = deliverySettings.delivery_enabled ? (delivery === 0 ? 'FREE' : `KES ${delivery}`) : 'FREE';
+  document.getElementById('deliveryFee').innerText = deliveryText;
   document.getElementById('totalAmount').innerText = `KES ${total.toLocaleString()}`;
 }
 
@@ -698,7 +720,10 @@ async function placeOrder() {
   }
 }
 
-renderCartSummary();
+// Initialize
+loadDeliverySettings().then(() => {
+  renderCartSummary();
+});
 </script>
 </body>
 </html>

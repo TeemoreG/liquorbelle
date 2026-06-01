@@ -215,6 +215,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
     <button class="tab active" data-tab="products">📦 Products</button>
     <button class="tab" data-tab="orders">📋 Orders</button>
     <button class="tab" data-tab="stats">📊 Analytics</button>
+    <button class="tab" data-tab="settings">⚙️ Settings</button>
   </div>
 
   <div class="main-content">
@@ -274,6 +275,29 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
         <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProductsStat">0</div></div>
       </div>
     </div>
+
+    <!-- SETTINGS TAB -->
+    <div id="settingsTab" style="display:none;">
+      <div class="add-product-card">
+        <div class="section-title"><i class="ph ph-truck"></i> Delivery Settings</div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label style="display:block; margin-bottom:8px; color:var(--mid);">Delivery Fee (KES)</label>
+          <input type="number" id="deliveryFee" class="form-control" style="width:100%; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; color:var(--ink);">
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label style="display:block; margin-bottom:8px; color:var(--mid);">Free Delivery Threshold (KES)</label>
+          <input type="number" id="freeDeliveryThreshold" class="form-control" style="width:100%; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; color:var(--ink);">
+          <small style="color:var(--muted);">Orders above this amount get free delivery</small>
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+            <input type="checkbox" id="deliveryEnabled">
+            <span>Enable Delivery Fee</span>
+          </label>
+        </div>
+        <button class="submit-btn" onclick="saveDeliverySettings()"><i class="ph ph-save"></i> Save Settings</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -305,10 +329,11 @@ function login(){
 }
 function logout(){ sessionStorage.removeItem('liquorbelle_admin'); location.reload(); }
 
-// ==================== LOAD DATA FROM DATABASE ====================
+// ==================== LOAD DATA ====================
 async function loadAllData(){
   await loadProducts();
   await loadOrders();
+  await loadDeliverySettings();
   renderAll();
 }
 
@@ -330,6 +355,39 @@ async function loadOrders(){
   } catch(e){ console.error('Load orders error:', e); orders = []; }
 }
 
+async function loadDeliverySettings() {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`);
+    const data = await res.json();
+    if (data.success && data.settings) {
+      document.getElementById('deliveryFee').value = data.settings.delivery_fee || 150;
+      document.getElementById('freeDeliveryThreshold').value = data.settings.free_delivery_threshold || 3000;
+      document.getElementById('deliveryEnabled').checked = data.settings.delivery_enabled !== false;
+    }
+  } catch(e) { console.error('Failed to load settings', e); }
+}
+
+async function saveDeliverySettings() {
+  const settings = {
+    delivery_fee: parseInt(document.getElementById('deliveryFee').value) || 0,
+    free_delivery_threshold: parseInt(document.getElementById('freeDeliveryThreshold').value) || 0,
+    delivery_enabled: document.getElementById('deliveryEnabled').checked
+  };
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings)
+    });
+    const data = await res.json();
+    if (data.success) {
+      toast('✅ Delivery settings saved!');
+    } else {
+      toast('Failed to save settings');
+    }
+  } catch(e) { toast('Error saving settings'); }
+}
+
 // ==================== TAB SWITCHING ====================
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -339,6 +397,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.getElementById('productsTab').style.display = tabName === 'products' ? 'block' : 'none';
     document.getElementById('ordersTab').style.display = tabName === 'orders' ? 'block' : 'none';
     document.getElementById('statsTab').style.display = tabName === 'stats' ? 'block' : 'none';
+    document.getElementById('settingsTab').style.display = tabName === 'settings' ? 'block' : 'none';
     if(tabName === 'orders') renderOrders();
     if(tabName === 'stats') renderStats();
   });
@@ -354,7 +413,7 @@ document.getElementById('searchInput')?.addEventListener('input', (e) => {
   renderProducts();
 });
 
-// ==================== PRODUCT MANAGEMENT (DATABASE) ====================
+// ==================== PRODUCT MANAGEMENT ====================
 function renderProducts(){
   let filtered = products;
   if(searchTerm){
@@ -487,7 +546,7 @@ async function saveEdit(){
   } catch(e){ toast('Error updating'); }
 }
 
-// ==================== ORDER MANAGEMENT (DATABASE) ====================
+// ==================== ORDER MANAGEMENT ====================
 function renderOrders(){
   const container = document.getElementById('ordersList');
   if(!orders.length){
