@@ -235,7 +235,6 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
   background:rgba(0,0,0,0.7);
   backdrop-filter:blur(4px);
 }
-.stock-low{color:var(--gold);}
 .stock-out{color:var(--red);}
 .stock-in{color:var(--green);}
 .img-wrap{position:relative;}
@@ -370,7 +369,6 @@ let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
 let searchTerm = '';
 let currentSort = 'default';
 
-// Go to account function
 function goToAccount() {
   const currentUser = localStorage.getItem('liquorbelle_user');
   if (currentUser) {
@@ -380,7 +378,6 @@ function goToAccount() {
   }
 }
 
-// Load products from DATABASE
 async function loadProducts(){
   try {
     const res = await fetch(`${API_BASE}/api/db/products`);
@@ -389,7 +386,7 @@ async function loadProducts(){
       PRODUCTS = data.products;
       console.log('✅ Loaded', PRODUCTS.length, 'products from database');
     } else {
-      console.log('⚠️ No products in database, using fallback');
+      console.log('⚠️ No products in database');
       PRODUCTS = [];
     }
   } catch(e){
@@ -415,7 +412,6 @@ function getCategoryDisplayName(cat){
 function getStockStatus(product){
   if(product.stock === null || product.stock === undefined) return { text: 'In Stock', class: 'stock-in' };
   if(product.stock <= 0) return { text: 'Out of Stock', class: 'stock-out' };
-  if(product.stock < 10) return { text: `Only ${product.stock} left`, class: 'stock-low' };
   return { text: 'In Stock', class: 'stock-in' };
 }
 
@@ -471,7 +467,6 @@ function render(){
           <div class="pc-name">${escapeHtml(p.name)}</div>
           <div class="pc-category">
             <span>${getCategoryDisplayName(p.category)}</span>
-            ${p.stock && p.stock < 10 && p.stock > 0 ? '<span style="color:var(--gold);font-size:9px;">⚠️ Low Stock</span>' : ''}
           </div>
           <div class="pc-price">KES ${(p.price || 0).toLocaleString()}</div>
           <button class="add-to-cart" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price || 0})" ${isOutOfStock ? 'disabled' : ''}>
@@ -542,12 +537,9 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   render();
 });
 
-// Initialize
 renderCategories();
 loadProducts();
 updateCartCount();
-
-// Auto-refresh products every 30 seconds (to catch admin updates)
 setInterval(loadProducts, 30000);
 </script>
 </body>

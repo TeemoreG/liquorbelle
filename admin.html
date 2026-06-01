@@ -139,8 +139,8 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 .product-img{width:40px;height:40px;object-fit:cover;border-radius:8px;background:var(--bg3);}
 .product-name{font-weight:600;}
 .product-category{font-size:11px;padding:3px 10px;border-radius:40px;background:var(--bg3);display:inline-block;}
-.low-stock{color:var(--red);font-weight:700;}
-.in-stock{color:var(--green);}
+.stock-in{color:var(--green);}
+.stock-out{color:var(--red);font-weight:700;}
 .edit-btn,.delete-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;}
 .edit-btn:hover{color:var(--gold);background:var(--gold-dim);}
 .delete-btn:hover{color:var(--red);background:var(--red-dim);}
@@ -241,7 +241,10 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
             <option value="prem">⭐ Premium</option><option value="local">🇰🇪 Kenyan Brand</option>
           </select>
           <input type="text" id="prodImage" placeholder="Image URL">
-          <input type="number" id="prodStock" placeholder="Stock">
+          <select id="prodStockStatus">
+            <option value="in">In Stock</option>
+            <option value="out">Out of Stock</option>
+          </select>
         </div>
         <div id="imagePreview" style="margin-bottom:12px;"></div>
         <button class="submit-btn" onclick="addProduct()"><i class="ph ph-floppy-disk"></i> Save Product</button>
@@ -429,8 +432,9 @@ function renderProducts(){
     return;
   }
   container.innerHTML = filtered.map(p => {
-    const stockDisplay = p.stock == null ? '∞' : p.stock === 0 ? 'Out' : p.stock;
-    const stockClass = p.stock != null && p.stock < 10 && p.stock > 0 ? 'low-stock' : 'in-stock';
+    const isInStock = p.stock !== null && p.stock > 0;
+    const stockDisplay = isInStock ? 'In Stock' : 'Out of Stock';
+    const stockClass = isInStock ? 'stock-in' : 'stock-out';
     return `
     <div class="product-row">
       <div><img class="product-img" src="${p.image || 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif'}" onerror="this.src='https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif'"></div>
@@ -446,12 +450,12 @@ function renderProducts(){
 function renderProductStats(){
   const totalValue = products.reduce((s,p) => s + (p.price || 0), 0);
   const avgPrice = products.length ? Math.round(totalValue / products.length) : 0;
-  const lowStockCount = products.filter(p => p.stock != null && p.stock < 10 && p.stock > 0).length;
+  const outOfStockCount = products.filter(p => p.stock === null || p.stock <= 0).length;
   document.getElementById('productStats').innerHTML = `
     <div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div>
     <div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div>
     <div class="stat-card"><h4>Avg Price</h4><div class="value">KES ${avgPrice.toLocaleString()}</div></div>
-    <div class="stat-card"><h4>Low Stock</h4><div class="value">${lowStockCount}</div></div>
+    <div class="stat-card"><h4>Out of Stock</h4><div class="value">${outOfStockCount}</div></div>
   `;
   document.getElementById('totalProductsStat').innerText = products.length;
 }
@@ -463,8 +467,8 @@ async function addProduct(){
   const category = document.getElementById('prodCategory').value;
   const badge = document.getElementById('prodBadge').value;
   const image = document.getElementById('prodImage').value.trim();
-  const stockVal = document.getElementById('prodStock').value.trim();
-  const stock = stockVal === '' ? null : parseInt(stockVal);
+  const stockStatus = document.getElementById('prodStockStatus').value;
+  const stock = stockStatus === 'in' ? 1 : 0;
   
   if(!name || !price || isNaN(price)){ toast('Name and price required'); return; }
   
@@ -484,7 +488,7 @@ async function addProduct(){
       document.getElementById('prodSub').value = '';
       document.getElementById('prodPrice').value = '';
       document.getElementById('prodImage').value = '';
-      document.getElementById('prodStock').value = '';
+      document.getElementById('prodStockStatus').value = 'in';
     } else { toast('Failed to add product'); }
   } catch(e){ toast('Error adding product'); }
 }
@@ -514,12 +518,14 @@ function openEditModal(id){
   document.getElementById('editCategory').value = p.category;
   document.getElementById('editBadge').value = p.badge || '';
   document.getElementById('editImage').value = p.image || '';
-  document.getElementById('editStock').value = p.stock != null ? p.stock : '';
+  const isInStock = p.stock !== null && p.stock > 0;
+  document.getElementById('editStockStatus').value = isInStock ? 'in' : 'out';
   document.getElementById('editModal').style.display = 'flex';
 }
 function closeModal(){ document.getElementById('editModal').style.display = 'none'; editingId = null; }
 async function saveEdit(){
-  const stockVal = document.getElementById('editStock').value.trim();
+  const stockStatus = document.getElementById('editStockStatus').value;
+  const stock = stockStatus === 'in' ? 1 : 0;
   const productData = {
     name: document.getElementById('editName').value.trim(),
     sub: document.getElementById('editSub').value.trim(),
@@ -527,7 +533,7 @@ async function saveEdit(){
     category: document.getElementById('editCategory').value,
     badge: document.getElementById('editBadge').value,
     image: document.getElementById('editImage').value.trim(),
-    stock: stockVal === '' ? null : parseInt(stockVal)
+    stock: stock
   };
   try {
     const res = await fetch(`${API_BASE}/api/db/products/${editingId}`, {
@@ -672,7 +678,10 @@ const modalHtml = `
       <option value="">No Badge</option><option value="hot">🔥 Best Seller</option><option value="prem">⭐ Premium</option><option value="local">🇰🇪 Kenyan</option>
     </select>
     <input type="text" id="editImage" placeholder="Image URL" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-    <input type="number" id="editStock" placeholder="Stock" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
+    <select id="editStockStatus" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
+      <option value="in">In Stock</option>
+      <option value="out">Out of Stock</option>
+    </select>
     <div style="display:flex;gap:12px;margin-top:20px;">
       <button onclick="saveEdit()" style="flex:1;padding:12px;background:var(--gold);color:#000;border:none;border-radius:40px;font-weight:700;">Save</button>
       <button onclick="closeModal()" style="flex:1;padding:12px;background:transparent;border:1px solid var(--border);border-radius:40px;color:var(--muted);cursor:pointer;">Cancel</button>
