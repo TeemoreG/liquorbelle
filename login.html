@@ -65,7 +65,10 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
   color:var(--ink);
 }
 
-.input-group{margin-bottom:14px;}
+.input-group{
+  margin-bottom:14px;
+  position:relative;
+}
 .input-group input{
   width:100%;
   padding:14px 16px;
@@ -75,8 +78,20 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
   color:var(--ink);
   font-size:.9rem;
   outline:none;
+  padding-right:45px;
 }
 .input-group input:focus{border-color:var(--red);}
+.password-toggle{
+  position:absolute;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:var(--muted);
+  background:transparent;
+  border:none;
+  font-size:18px;
+}
 .remember-group{
   display:flex;
   align-items:center;
@@ -156,6 +171,16 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
   color:var(--muted);
   margin-top:20px;
 }
+.back-link{
+  text-align:center;
+  margin-top:16px;
+}
+.back-link a{
+  color:var(--muted);
+  font-size:.7rem;
+  text-decoration:none;
+}
+.back-link a:hover{color:var(--gold);}
 </style>
 </head>
 <body>
@@ -178,19 +203,20 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
       </div>
       <div class="input-group">
         <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')"><i class="ph ph-eye"></i></button>
       </div>
       <div class="remember-group">
-        <label>
-          <input type="checkbox" id="rememberMeCheckbox">
-          <span>Remember me</span>
-        </label>
+        <label><input type="checkbox" id="rememberMeCheckbox"><span>Remember me</span></label>
       </div>
       <button class="btn-primary" id="loginBtn">Login</button>
       <button class="btn-secondary" id="forgotPasswordBtn">Forgot Password?</button>
     </div>
 
-    <!-- REGISTER FORM -->
+    <!-- REGISTER FORM (WITH NAME FIELD) -->
     <div id="registerForm" style="display:none;">
+      <div class="input-group">
+        <input type="text" id="regName" placeholder="Full name">
+      </div>
       <div class="input-group">
         <input type="email" id="regEmail" placeholder="Email address">
       </div>
@@ -199,9 +225,11 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
       </div>
       <div class="input-group">
         <input type="password" id="regPassword" placeholder="Create password">
+        <button type="button" class="password-toggle" onclick="togglePassword('regPassword')"><i class="ph ph-eye"></i></button>
       </div>
       <div class="input-group">
         <input type="password" id="regConfirmPassword" placeholder="Confirm password">
+        <button type="button" class="password-toggle" onclick="togglePassword('regConfirmPassword')"><i class="ph ph-eye"></i></button>
       </div>
       <button class="btn-primary" id="sendCodeBtn">Send Verification Code</button>
     </div>
@@ -216,6 +244,31 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);min-height:100v
       <div class="switch-account" id="switchAccountBtn">← Back to registration</div>
     </div>
 
+    <!-- FORGOT PASSWORD FLOW -->
+    <div id="forgotPasswordFlow" style="display:none;">
+      <div class="input-group">
+        <input type="email" id="resetEmail" placeholder="Enter your email address">
+      </div>
+      <button class="btn-primary" id="sendResetOtpBtn">Send Reset Code</button>
+      <div class="back-link"><a href="#" onclick="backToLogin()">← Back to Login</a></div>
+    </div>
+
+    <div id="resetOtpGroup" class="otp-group" style="display:none;">
+      <div class="input-group">
+        <input type="text" id="resetOtpInput" placeholder="Enter 6-digit code" maxlength="6">
+      </div>
+      <div class="input-group">
+        <input type="password" id="newPassword" placeholder="New password">
+        <button type="button" class="password-toggle" onclick="togglePassword('newPassword')"><i class="ph ph-eye"></i></button>
+      </div>
+      <div class="input-group">
+        <input type="password" id="confirmNewPassword" placeholder="Confirm new password">
+        <button type="button" class="password-toggle" onclick="togglePassword('confirmNewPassword')"><i class="ph ph-eye"></i></button>
+      </div>
+      <button class="btn-primary" id="resetPasswordBtn">Reset Password</button>
+      <div class="back-link"><a href="#" onclick="backToLogin()">← Back to Login</a></div>
+    </div>
+
     <div class="message-box" id="messageBox"></div>
     <div class="terms-note">By continuing, you agree to our Terms of Service and confirm you are over 18.</div>
   </div>
@@ -227,6 +280,21 @@ let pendingEmail = null;
 let pendingOtp = null;
 let pendingPassword = null;
 let pendingPhone = null;
+let pendingName = null;
+let pendingResetEmail = null;
+let pendingResetOtp = null;
+
+function togglePassword(fieldId) {
+  const field = document.getElementById(fieldId);
+  const btn = field.parentElement.querySelector('.password-toggle i');
+  if (field.type === 'password') {
+    field.type = 'text';
+    btn.className = 'ph ph-eye-slash';
+  } else {
+    field.type = 'password';
+    btn.className = 'ph ph-eye';
+  }
+}
 
 function showMessage(msg, isError = true) {
   const box = document.getElementById('messageBox');
@@ -236,26 +304,37 @@ function showMessage(msg, isError = true) {
   setTimeout(() => box.style.display = 'none', 5000);
 }
 
+function hideAllForms() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('otpGroup').style.display = 'none';
+  document.getElementById('forgotPasswordFlow').style.display = 'none';
+  document.getElementById('resetOtpGroup').style.display = 'none';
+}
+
+function backToLogin() {
+  hideAllForms();
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('loginTab').classList.add('active');
+  document.getElementById('registerTab').classList.remove('active');
+}
+
 // Tab Switching
 document.getElementById('loginTab').onclick = () => {
+  hideAllForms();
   document.getElementById('loginTab').classList.add('active');
   document.getElementById('registerTab').classList.remove('active');
   document.getElementById('loginForm').style.display = 'block';
-  document.getElementById('registerForm').style.display = 'none';
-  document.getElementById('otpGroup').style.display = 'none';
-  showMessage('Login with your email and password', false);
 };
 
 document.getElementById('registerTab').onclick = () => {
+  hideAllForms();
   document.getElementById('registerTab').classList.add('active');
   document.getElementById('loginTab').classList.remove('active');
-  document.getElementById('loginForm').style.display = 'none';
   document.getElementById('registerForm').style.display = 'block';
-  document.getElementById('otpGroup').style.display = 'none';
-  showMessage('Create a new account', false);
 };
 
-// ==================== LOGIN FUNCTION (API) ====================
+// ==================== LOGIN ====================
 document.getElementById('loginBtn').onclick = async () => {
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const password = document.getElementById('loginPassword').value;
@@ -282,7 +361,6 @@ document.getElementById('loginBtn').onclick = async () => {
       return;
     }
     
-    // Save session
     const sessionUser = {
       id: data.user.id,
       email: data.user.email,
@@ -292,7 +370,6 @@ document.getElementById('loginBtn').onclick = async () => {
     };
     localStorage.setItem('liquorbelle_user', JSON.stringify(sessionUser));
     
-    // Save remember me
     const rememberMe = document.getElementById('rememberMeCheckbox').checked;
     if (rememberMe) {
       localStorage.setItem('liquorbelle_saved_email', email);
@@ -300,42 +377,109 @@ document.getElementById('loginBtn').onclick = async () => {
     }
     
     showMessage('Login successful! Redirecting...', false);
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 1500);
+    setTimeout(() => window.location.href = 'index.html', 1500);
   } catch (err) {
-    console.error('Login error:', err);
     showMessage('Login failed. Please try again.');
   }
 };
 
-// ==================== FORGOT PASSWORD ====================
-document.getElementById('forgotPasswordBtn').onclick = async () => {
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  if (!email) {
-    showMessage('Enter your email address first');
+// ==================== FORGOT PASSWORD - SEND OTP ====================
+document.getElementById('forgotPasswordBtn').onclick = () => {
+  hideAllForms();
+  document.getElementById('forgotPasswordFlow').style.display = 'block';
+};
+
+document.getElementById('sendResetOtpBtn').onclick = async () => {
+  const email = document.getElementById('resetEmail').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    showMessage('Please enter a valid email address');
     return;
   }
   
-  // Generate temporary password
-  const tempPassword = Math.random().toString(36).slice(-8);
+  pendingResetEmail = email;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  pendingResetOtp = otp;
+  
+  showMessage(`Sending reset code to ${email}...`, false);
   
   try {
-    // In production, you would send this via email
-    showMessage(`Temporary password: ${tempPassword}. Please login and change your password.`, false);
-    document.getElementById('loginPassword').value = tempPassword;
+    await fetch(`${API_BASE}/api/send-email-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+    });
+    showMessage(`Reset code sent to ${email}. Check your inbox.`, false);
   } catch(err) {
-    showMessage('Error generating temporary password');
+    showMessage(`Failed to send email. Please try again.`, true);
+    return;
+  }
+  
+  document.getElementById('forgotPasswordFlow').style.display = 'none';
+  document.getElementById('resetOtpGroup').style.display = 'block';
+};
+
+// ==================== RESET PASSWORD WITH OTP ====================
+document.getElementById('resetPasswordBtn').onclick = async () => {
+  const enteredOtp = document.getElementById('resetOtpInput').value.trim();
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmNewPassword').value;
+  
+  if (!enteredOtp || enteredOtp.length !== 6) {
+    showMessage('Please enter the 6-digit verification code');
+    return;
+  }
+  if (enteredOtp !== pendingResetOtp) {
+    showMessage('Invalid code. Please try again.');
+    return;
+  }
+  if (!newPassword) {
+    showMessage('Please enter a new password');
+    return;
+  }
+  if (newPassword !== confirmPassword) {
+    showMessage('Passwords do not match');
+    return;
+  }
+  if (newPassword.length < 6) {
+    showMessage('Password must be at least 6 characters');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: pendingResetEmail, newPassword })
+    });
+    const data = await res.json();
+    
+    if (!data.success) {
+      showMessage(data.message);
+      return;
+    }
+    
+    showMessage('Password reset successful! Please login.', false);
+    setTimeout(() => {
+      backToLogin();
+      document.getElementById('loginEmail').value = pendingResetEmail;
+    }, 2000);
+  } catch (err) {
+    showMessage('Password reset failed. Please try again.');
   }
 };
 
 // ==================== REGISTRATION - SEND OTP ====================
 document.getElementById('sendCodeBtn').onclick = async () => {
+  const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim().toLowerCase();
   const phone = document.getElementById('regPhone').value.trim();
   const password = document.getElementById('regPassword').value;
   const confirmPassword = document.getElementById('regConfirmPassword').value;
   
+  if (!name) {
+    showMessage('Please enter your full name');
+    return;
+  }
   if (!email || !email.includes('@')) {
     showMessage('Please enter a valid email address');
     return;
@@ -357,6 +501,7 @@ document.getElementById('sendCodeBtn').onclick = async () => {
     return;
   }
   
+  pendingName = name;
   pendingEmail = email;
   pendingPhone = phone;
   pendingPassword = password;
@@ -367,20 +512,15 @@ document.getElementById('sendCodeBtn').onclick = async () => {
   showMessage(`Sending verification code to ${email}...`, false);
   
   try {
-    const res = await fetch(`${API_BASE}/api/send-email-otp`, {
+    await fetch(`${API_BASE}/api/send-email-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, otp })
     });
-    const data = await res.json();
-    
-    if (data.success) {
-      showMessage(`Code sent! Check your email. Demo code: ${otp}`, false);
-    } else {
-      showMessage(`Demo mode - use code: ${otp}`, false);
-    }
+    showMessage(`Verification code sent to ${email}. Check your inbox.`, false);
   } catch(err) {
-    showMessage(`Demo mode - use code: ${otp}`, false);
+    showMessage('Failed to send verification code. Please try again.');
+    return;
   }
   
   document.getElementById('registerForm').style.display = 'none';
@@ -389,7 +529,7 @@ document.getElementById('sendCodeBtn').onclick = async () => {
   document.getElementById('switchAccountBtn').style.display = 'block';
 };
 
-// ==================== VERIFY OTP & COMPLETE REGISTRATION ====================
+// ==================== VERIFY OTP & REGISTER ====================
 document.getElementById('verifyBtn').onclick = async () => {
   const entered = document.getElementById('otpInput').value.trim();
   if (!entered || entered.length !== 6) {
@@ -410,7 +550,7 @@ document.getElementById('verifyBtn').onclick = async () => {
         email: pendingEmail,
         password: pendingPassword,
         phone: pendingPhone,
-        name: pendingEmail.split('@')[0]
+        name: pendingName
       })
     });
     const data = await res.json();
@@ -420,7 +560,6 @@ document.getElementById('verifyBtn').onclick = async () => {
       return;
     }
     
-    // Auto-login after registration
     const sessionUser = {
       id: data.user.id,
       email: data.user.email,
@@ -431,11 +570,8 @@ document.getElementById('verifyBtn').onclick = async () => {
     localStorage.setItem('liquorbelle_user', JSON.stringify(sessionUser));
     
     showMessage('Registration successful! Redirecting...', false);
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 1500);
+    setTimeout(() => window.location.href = 'index.html', 1500);
   } catch (err) {
-    console.error('Registration error:', err);
     showMessage('Registration failed. Please try again.');
   }
 };
@@ -445,7 +581,7 @@ document.getElementById('resendLink').onclick = async () => {
   if (!pendingEmail) return;
   const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
   pendingOtp = newOtp;
-  showMessage(`New code sent. Demo code: ${newOtp}`, false);
+  showMessage(`New code sent to ${pendingEmail}. Check your inbox.`, false);
   
   try {
     await fetch(`${API_BASE}/api/send-email-otp`, {
@@ -456,7 +592,7 @@ document.getElementById('resendLink').onclick = async () => {
   } catch(e) {}
 };
 
-// ==================== SWITCH BACK TO REGISTRATION ====================
+// ==================== SWITCH BACK ====================
 document.getElementById('switchAccountBtn').onclick = () => {
   document.getElementById('otpGroup').style.display = 'none';
   document.getElementById('registerForm').style.display = 'block';
@@ -467,13 +603,13 @@ document.getElementById('switchAccountBtn').onclick = () => {
   pendingOtp = null;
 };
 
-// ==================== CHECK IF ALREADY LOGGED IN ====================
+// ==================== CHECK LOGIN ====================
 const savedUser = localStorage.getItem('liquorbelle_user');
 if (savedUser) {
   window.location.href = 'index.html';
 }
 
-// ==================== LOAD SAVED EMAIL ====================
+// Load saved email
 const savedEmail = localStorage.getItem('liquorbelle_saved_email');
 const rememberMe = localStorage.getItem('liquorbelle_remember_me') === 'true';
 if (savedEmail && rememberMe) {

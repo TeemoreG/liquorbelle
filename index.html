@@ -598,7 +598,7 @@ footer p{font-size:.7rem;color:var(--muted);}
   <div class="nav-item active"><i class="ph ph-house"></i><span>Home</span></div>
   <div class="nav-item" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
   <div class="nav-item" onclick="openCartDrawer()"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
-  <div class="nav-item" onclick="window.location.href='login.html'"><i class="ph ph-user"></i><span>Account</span></div>
+  <div class="nav-item" id="bottomAccountBtn" onclick="goToAccount()"><i class="ph ph-user"></i><span>Account</span></div>
 </div>
 
 <a href="https://wa.me/254748894443" class="fab-wa" target="_blank"><i class="ph ph-whatsapp-logo" style="font-size:24px;"></i></a>
@@ -640,6 +640,7 @@ function updateAuthButton() {
       <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
     `;
   }
+  updateBottomNavAccount();
 }
 
 // ==================== LOGGED-IN BANNER ====================
@@ -658,6 +659,28 @@ function updateLoggedInBanner() {
     }
   } else {
     banner.style.display = 'none';
+  }
+}
+
+// ==================== BOTTOM NAV ACCOUNT BUTTON ====================
+function goToAccount() {
+  const currentUser = localStorage.getItem('liquorbelle_user');
+  if (currentUser) {
+    window.location.href = 'account.html';
+  } else {
+    window.location.href = 'login.html';
+  }
+}
+
+function updateBottomNavAccount() {
+  const currentUser = localStorage.getItem('liquorbelle_user');
+  const accountBtn = document.getElementById('bottomAccountBtn');
+  if (accountBtn) {
+    if (currentUser) {
+      accountBtn.querySelector('span').textContent = 'Account';
+    } else {
+      accountBtn.querySelector('span').textContent = 'Login';
+    }
   }
 }
 
@@ -769,12 +792,14 @@ renderReviews();
 updateCartUI();
 updateAuthButton();
 updateLoggedInBanner();
+updateBottomNavAccount();
 
 // Listen for login/logout across tabs
 window.addEventListener('storage', (e) => {
   if(e.key === 'liquorbelle_user') {
     updateAuthButton();
     updateLoggedInBanner();
+    updateBottomNavAccount();
   }
 });
 </script>

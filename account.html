@@ -395,6 +395,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:
 <div class="snack" id="snack"></div>
 
 <script>
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 let currentUser = null;
 
 function toast(msg) {
@@ -402,6 +403,11 @@ function toast(msg) {
   t.innerText = msg;
   t.classList.add('on');
   setTimeout(() => t.classList.remove('on'), 2500);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
 }
 
 function loadUser() {
@@ -416,38 +422,41 @@ function loadUser() {
   document.getElementById('lastLogin').textContent = new Date().toLocaleString();
   loadStats();
   loadAccountDetails();
-  loadOrders();
+  loadOrdersFromDatabase();
   loadAddresses();
 }
 
-function loadStats() {
-  const allOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
-  const userOrders = allOrders.filter(o => {
-    const customerName = o.customer?.toLowerCase() || '';
-    const customerEmail = o.customerEmail?.toLowerCase() || '';
-    const userEmail = currentUser.email?.toLowerCase() || '';
-    const userName = currentUser.name?.toLowerCase() || '';
-    return customerName === userName || customerEmail === userEmail;
-  });
-  
-  const totalOrders = userOrders.length;
-  const totalSpent = userOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-  const completedOrders = userOrders.filter(o => o.status === 'delivered').length;
-  const pendingOrders = userOrders.filter(o => o.status === 'pending' || o.status === 'paid').length;
-  
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><div class="value">${totalOrders}</div><div class="label">Total Orders</div></div>
-    <div class="stat-card"><div class="value">KES ${totalSpent.toLocaleString()}</div><div class="label">Total Spent</div></div>
-    <div class="stat-card"><div class="value">${completedOrders}</div><div class="label">Delivered</div></div>
-    <div class="stat-card"><div class="value">${pendingOrders}</div><div class="label">In Progress</div></div>
-  `;
+async function loadStats() {
+  try {
+    const res = await fetch(`${API_BASE}/api/db/orders`);
+    const data = await res.json();
+    if (!data.success || !data.orders) return;
+    
+    const userOrders = data.orders.filter(o => {
+      const customerEmail = o.customer_email?.toLowerCase() || '';
+      const customerName = o.customer_name?.toLowerCase() || '';
+      return customerEmail === currentUser.email?.toLowerCase() || customerName === currentUser.name?.toLowerCase();
+    });
+    
+    const totalOrders = userOrders.length;
+    const totalSpent = userOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+    const completedOrders = userOrders.filter(o => o.status === 'delivered').length;
+    const pendingOrders = userOrders.filter(o => o.status === 'pending' || o.status === 'paid').length;
+    
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card"><div class="value">${totalOrders}</div><div class="label">Total Orders</div></div>
+      <div class="stat-card"><div class="value">KES ${totalSpent.toLocaleString()}</div><div class="label">Total Spent</div></div>
+      <div class="stat-card"><div class="value">${completedOrders}</div><div class="label">Delivered</div></div>
+      <div class="stat-card"><div class="value">${pendingOrders}</div><div class="label">In Progress</div></div>
+    `;
+  } catch (err) {
+    console.error('Error loading stats:', err);
+  }
 }
 
 function loadAccountDetails() {
-  const users = JSON.parse(localStorage.getItem('liquorbelle_users') || '[]');
-  const userData = users.find(u => u.email === currentUser.email);
-  const joinedDate = userData?.joinedAt ? new Date(userData.joinedAt).toLocaleDateString('en-KE', { year:'numeric', month:'long', day:'numeric' }) : 'March 2026';
-  const phone = currentUser.phone || userData?.phone || 'Not provided';
+  const phone = currentUser.phone || 'Not provided';
+  const joinedDate = 'March 2026';
   
   document.getElementById('accountDetails').innerHTML = `
     <div class="info-row"><span class="info-label">Email Address</span><span class="info-value">${escapeHtml(currentUser.email)}</span></div>
@@ -457,57 +466,78 @@ function loadAccountDetails() {
   `;
 }
 
-function loadOrders() {
-  const allOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
-  const userOrders = allOrders.filter(o => {
-    const customerName = o.customer?.toLowerCase() || '';
-    const customerEmail = o.customerEmail?.toLowerCase() || '';
-    const userEmail = currentUser.email?.toLowerCase() || '';
-    const userName = currentUser.name?.toLowerCase() || '';
-    return customerName === userName || customerEmail === userEmail;
-  }).reverse();
-  
+async function loadOrdersFromDatabase() {
   const container = document.getElementById('ordersList');
+  container.innerHTML = '<div class="empty-state">Loading orders...</div>';
   
-  if (userOrders.length === 0) {
-    container.innerHTML = '<div class="empty-state">No orders yet. Start shopping!</div>';
-    return;
+  try {
+    const res = await fetch(`${API_BASE}/api/db/orders`);
+    const data = await res.json();
+    
+    if (!data.success || !data.orders || data.orders.length === 0) {
+      container.innerHTML = '<div class="empty-state">No orders yet. Start shopping!</div>';
+      return;
+    }
+    
+    const userOrders = data.orders.filter(o => {
+      const customerEmail = o.customer_email?.toLowerCase() || '';
+      const customerName = o.customer_name?.toLowerCase() || '';
+      return customerEmail === currentUser.email?.toLowerCase() || customerName === currentUser.name?.toLowerCase();
+    }).reverse();
+    
+    if (userOrders.length === 0) {
+      container.innerHTML = '<div class="empty-state">No orders yet. Start shopping!</div>';
+      return;
+    }
+    
+    container.innerHTML = userOrders.map(order => `
+      <div class="order-item">
+        <div class="order-header">
+          <span class="order-id">#${order.order_number || order.id.slice(0, 8)}</span>
+          <span class="order-date">${new Date(order.created_at).toLocaleDateString()}</span>
+          <span class="order-status ${order.status}">${order.status === 'pending' ? 'Pending' : order.status === 'paid' ? 'Paid' : 'Delivered'}</span>
+        </div>
+        <div class="order-items-list">
+          ${order.items?.map(i => `<div>• ${escapeHtml(i.product_name)} x${i.quantity} — KES ${(i.price * i.quantity).toLocaleString()}</div>`).join('') || ''}
+        </div>
+        <div class="order-total">Total: KES ${(order.total || 0).toLocaleString()}</div>
+        <button class="reorder-btn" onclick="reorderFromOrder('${order.id}')"><i class="ph ph-arrow-clockwise"></i> Reorder</button>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('Error loading orders:', err);
+    container.innerHTML = '<div class="empty-state">Error loading orders. Please refresh.</div>';
   }
-  
-  container.innerHTML = userOrders.map(order => `
-    <div class="order-item">
-      <div class="order-header">
-        <span class="order-id">#${order.id}</span>
-        <span class="order-date">${order.time || new Date(order.date).toLocaleDateString()}</span>
-        <span class="order-status ${order.status}">${order.status === 'pending' ? 'Pending' : order.status === 'paid' ? 'Paid' : 'Delivered'}</span>
-      </div>
-      <div class="order-items-list">
-        ${order.items?.map(i => `<div>• ${escapeHtml(i.name)} x${i.qty} — KES ${(i.price * i.qty).toLocaleString()}</div>`).join('') || ''}
-      </div>
-      <div class="order-total">Total: KES ${(order.total || 0).toLocaleString()}</div>
-      <button class="reorder-btn" onclick="reorder('${order.id}')"><i class="ph ph-arrow-clockwise"></i> Reorder</button>
-    </div>
-  `).join('');
 }
 
-function reorder(orderId) {
-  const allOrders = JSON.parse(localStorage.getItem('liquorbelle_admin_orders') || '[]');
-  const order = allOrders.find(o => o.id === orderId);
-  if (order && order.items) {
-    const cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
-    order.items.forEach(item => {
-      if (cart[item.id]) {
-        cart[item.id].qty += item.qty;
+function reorderFromOrder(orderId) {
+  fetch(`${API_BASE}/api/db/orders`)
+    .then(res => res.json())
+    .then(data => {
+      const order = data.orders.find(o => o.id === orderId);
+      if (order && order.items) {
+        const cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+        order.items.forEach(item => {
+          const productId = item.product_id || item.id;
+          if (cart[productId]) {
+            cart[productId].qty += item.quantity;
+          } else {
+            cart[productId] = { 
+              id: productId, 
+              name: item.product_name, 
+              price: item.price, 
+              qty: item.quantity 
+            };
+          }
+        });
+        localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+        toast('Items added to cart!');
+        setTimeout(() => window.location.href = 'checkout.html', 1000);
       } else {
-        cart[item.id] = { ...item, qty: item.qty };
+        toast('Unable to reorder');
       }
-    });
-    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    toast('Items added to cart!');
-    setTimeout(() => window.location.href = 'checkout.html', 1000);
-  } else {
-    toast('Unable to reorder');
-  }
+    })
+    .catch(() => toast('Unable to reorder'));
 }
 
 function loadAddresses() {
@@ -577,11 +607,6 @@ function showDeliveryPolicy() {
 
 function showReturns() {
   alert(`Returns & Refunds Policy\n\n1. Damaged products can be returned within 24 hours\n2. Unopened products can be returned within 7 days\n3. Refunds processed within 3-5 business days\n4. Delivery fee is non-refundable\n5. Contact support to initiate a return\n6. Proof of purchase required`);
-}
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
 }
 
 loadUser();
