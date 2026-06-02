@@ -31,7 +31,7 @@
   --radius-sm:12px;
   --radius-pill:999px;
 }
-body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
+body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidden;}
 
 /* Login */
 .login-screen{
@@ -50,18 +50,20 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   background:var(--bg2);padding:12px 5%;display:flex;justify-content:space-between;align-items:center;
   border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;
 }
-.logo{display:flex;align-items:center;gap:10px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logo-img{height:36px;border-radius:8px;}
 .logo-name{font-family:var(--fh);font-weight:800;font-size:1.1rem;}
 .logo-name em{color:var(--gold);font-style:normal;}
 .admin-badge{background:var(--gold-dim);padding:6px 14px;border-radius:40px;font-size:12px;font-weight:600;color:var(--gold);}
-.logout-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:40px;cursor:pointer;}
+.logout-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
+.logout-btn:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
 
 /* Stats Grid */
 .stats-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;
 }
-.stat-card{background:var(--bg2);border-radius:16px;padding:20px;border:1px solid var(--border);}
+.stat-card{background:var(--bg2);border-radius:16px;padding:20px;border:1px solid var(--border);transition:transform 0.2s;}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--gold);}
 .stat-card h4{font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;}
 .stat-card .value{font-size:28px;font-weight:800;color:var(--gold);font-family:var(--fh);}
 .stat-card .sub{font-size:11px;color:var(--muted);margin-top:4px;}
@@ -73,6 +75,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   font-weight:600;font-size:14px;border-bottom:2px solid transparent;transition:all 0.2s;
 }
 .tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab:hover{color:var(--red);}
 
 /* Main Content */
 .main-content{padding:24px 5%;max-width:1400px;margin:0 auto;}
@@ -97,6 +100,11 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   font-family:var(--fb);
   font-size:13px;
 }
+.form-grid input:focus, .form-grid select:focus{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 2px var(--gold-dim);
+}
 .submit-btn{
   background:var(--gold);
   color:#000;
@@ -105,7 +113,9 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   border-radius:40px;
   font-weight:700;
   cursor:pointer;
+  transition:all 0.2s;
 }
+.submit-btn:hover{transform:scale(1.02);box-shadow:0 4px 12px rgba(240,165,0,0.3);}
 .image-preview{width:50px;height:50px;border-radius:8px;object-fit:cover;margin-top:8px;}
 
 /* Search Bar */
@@ -114,6 +124,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   display:flex;
   gap:12px;
   align-items:center;
+  flex-wrap:wrap;
 }
 .search-input{
   flex:1;
@@ -135,7 +146,9 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   border-radius:40px;
   color:var(--muted);
   cursor:pointer;
+  transition:all 0.2s;
 }
+.clear-search:hover{background:var(--gold-dim);color:var(--gold);}
 
 /* Products Table */
 .products-container{
@@ -146,7 +159,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 }
 .products-header{
   display:grid;
-  grid-template-columns:60px 1fr 100px 100px 100px 80px;
+  grid-template-columns:60px 1fr 80px 100px 100px 100px 80px;
   background:var(--bg3);
   padding:14px 16px;
   font-weight:600;
@@ -155,27 +168,29 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 }
 .product-row{
   display:grid;
-  grid-template-columns:60px 1fr 100px 100px 100px 80px;
+  grid-template-columns:60px 1fr 80px 100px 100px 100px 80px;
   padding:14px 16px;
   align-items:center;
   border-bottom:1px solid var(--border);
   font-size:13px;
   transition:background 0.2s;
 }
-.product-row:hover{background:rgba(255,255,255,0.02);}
+.product-row:hover{background:rgba(255,255,255,0.03);}
 .product-img{width:40px;height:40px;object-fit:cover;border-radius:8px;background:var(--bg3);}
 .product-name{font-weight:600;}
 .product-capacity{font-size:11px;color:var(--gold);font-weight:500;margin-top:2px;}
 .product-category{font-size:11px;padding:3px 10px;border-radius:40px;background:var(--bg3);display:inline-block;}
+.product-price{color:var(--gold);font-weight:700;}
 .stock-in{color:var(--green);}
 .stock-out{color:var(--red);font-weight:700;}
-.edit-btn,.delete-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;}
-.edit-btn:hover{color:var(--gold);background:var(--gold-dim);}
-.delete-btn:hover{color:var(--red);background:var(--red-dim);}
+.edit-btn,.delete-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;transition:all 0.2s;}
+.edit-btn:hover{color:var(--gold);background:var(--gold-dim);transform:scale(1.05);}
+.delete-btn:hover{color:var(--red);background:var(--red-dim);transform:scale(1.05);}
 
 /* Orders List */
 .orders-list{display:flex;flex-direction:column;gap:16px;}
-.order-card{background:var(--bg2);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
+.order-card{background:var(--bg2);border-radius:16px;border:1px solid var(--border);overflow:hidden;transition:transform 0.2s;}
+.order-card:hover{transform:translateY(-2px);border-color:var(--gold);}
 .order-header{
   display:flex;
   justify-content:space-between;
@@ -183,13 +198,15 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   padding:16px 20px;
   background:var(--bg3);
   border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:10px;
 }
 .order-id{font-family:monospace;font-weight:700;}
 .order-status{padding:4px 12px;border-radius:40px;font-size:11px;font-weight:700;}
 .status-pending{background:var(--gold-dim);color:var(--gold);}
 .status-paid{background:var(--green-dim);color:var(--green);}
 .status-delivered{background:var(--blue);color:#fff;}
-.order-items{padding:16px 20px;}
+.order-items{padding:16px 20px;max-height:200px;overflow-y:auto;}
 .order-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
 .order-footer{
   display:flex;
@@ -197,15 +214,19 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   align-items:center;
   padding:16px 20px;
   border-top:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:12px;
 }
 .order-total{font-size:20px;font-weight:800;color:var(--gold);font-family:var(--fh);}
-.order-actions{display:flex;gap:8px;}
-.order-btn{padding:8px 16px;border-radius:40px;font-size:12px;font-weight:600;cursor:pointer;border:none;}
+.order-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.order-btn{padding:8px 16px;border-radius:40px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;}
+.order-btn:hover{transform:scale(1.02);}
 .btn-mark-paid{background:var(--green-dim);color:var(--green);}
 .btn-mark-delivered{background:var(--gold-dim);color:var(--gold);}
 .btn-delete{background:var(--red-dim);color:var(--red);}
 
 .empty-state{text-align:center;padding:60px;color:var(--muted);}
+.empty-state i{font-size:48px;margin-bottom:16px;opacity:0.5;}
 .snack{
   position:fixed;
   bottom:24px;
@@ -219,13 +240,70 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
   opacity:0;
   transition:opacity 0.2s;
   z-index:200;
+  white-space:nowrap;
 }
 .snack.on{opacity:1;}
 
 @media(max-width:768px){
-  .products-header,.product-row{grid-template-columns:50px 1fr 80px 70px 60px;}
+  .products-header,.product-row{grid-template-columns:50px 1fr 60px 70px 50px;}
   .product-row .product-category,.products-header .category{display:none;}
+  .snack{white-space:normal;max-width:90%;text-align:center;}
 }
+
+/* Edit Modal */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.9);
+  backdrop-filter:blur(8px);
+  z-index:1000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.modal-content{
+  background:var(--bg2);
+  border-radius:24px;
+  padding:32px;
+  width:90%;
+  max-width:550px;
+  border:1px solid var(--gold);
+  max-height:90vh;
+  overflow-y:auto;
+}
+.modal-content h3{color:var(--gold);margin-bottom:24px;font-family:var(--fh);}
+.modal-content input,.modal-content select{
+  width:100%;
+  padding:12px 16px;
+  margin-bottom:12px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--ink);
+  font-family:var(--fb);
+}
+.modal-content input:focus,.modal-content select:focus{
+  outline:none;
+  border-color:var(--gold);
+}
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:20px;
+}
+.modal-actions button{
+  flex:1;
+  padding:12px;
+  border-radius:40px;
+  font-weight:700;
+  cursor:pointer;
+  border:none;
+  transition:all 0.2s;
+}
+.save-modal-btn{background:var(--gold);color:#000;}
+.cancel-modal-btn{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.save-modal-btn:hover{transform:scale(1.02);}
+.cancel-modal-btn:hover{background:var(--red-dim);color:var(--red);}
 </style>
 </head>
 <body>
@@ -245,10 +323,10 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
 <!-- MAIN ADMIN DASHBOARD -->
 <div id="adminApp" style="display:none;">
   <div class="admin-header">
-    <div class="logo">
+    <a class="logo" href="admin.html">
       <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
       <span class="logo-name">Liquor<em>Belle</em> Admin</span>
-    </div>
+    </a>
     <div style="display:flex;gap:12px;align-items:center;">
       <span class="admin-badge"><i class="ph ph-shield-check"></i> Super Admin</span>
       <button class="logout-btn" onclick="logout()">Logout</button>
@@ -270,7 +348,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
       <div class="add-product-card">
         <div class="section-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
         <div class="form-grid">
-          <input type="text" id="prodName" placeholder="Product Name">
+          <input type="text" id="prodName" placeholder="Product Name *">
           <select id="prodCapacity">
             <option value="250ml">250ml</option>
             <option value="350ml">350ml</option>
@@ -279,7 +357,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
             <option value="1L">1 Litre</option>
             <option value="1.5L">1.5 Litre</option>
           </select>
-          <input type="number" id="prodPrice" placeholder="Price (KES)">
+          <input type="number" id="prodPrice" placeholder="Price (KES) *">
           <select id="prodCategory">
             <option value="whisky">Whisky</option><option value="vodka">Vodka</option>
             <option value="wine">Wine</option><option value="beer">Beer</option>
@@ -291,7 +369,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
             <option value="">No Badge</option><option value="hot">🔥 Best Seller</option>
             <option value="prem">⭐ Premium</option><option value="local">🇰🇪 Kenyan Brand</option>
           </select>
-          <input type="text" id="prodImage" placeholder="Image URL">
+          <input type="text" id="prodImage" placeholder="Image URL (PostImages, ImgBB, etc.)">
           <select id="prodStockStatus">
             <option value="in">In Stock</option>
             <option value="out">Out of Stock</option>
@@ -302,13 +380,13 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
       </div>
 
       <div class="search-bar">
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search products...">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search products by name, category, size...">
         <button class="clear-search" onclick="clearSearch()">Clear</button>
       </div>
 
       <div class="products-container">
         <div class="products-header">
-          <div>Image</div><div>Name</div><div>Size</div><div>Price</div><div>Stock</div><div>Actions</div>
+          <div>Image</div><div>Name</div><div>Size</div><div>Category</div><div>Price</div><div>Stock</div><div>Actions</div>
         </div>
         <div id="productsList"></div>
       </div>
@@ -323,10 +401,19 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
     <!-- STATS TAB -->
     <div id="statsTab" style="display:none;">
       <div class="stats-grid">
-        <div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div></div>
-        <div class="stat-card"><h4>Completed Orders</h4><div class="value" id="completedOrders">0</div></div>
-        <div class="stat-card"><h4>Average Order</h4><div class="value" id="avgOrder">KES 0</div></div>
-        <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProductsStat">0</div></div>
+        <div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div>
+        <div class="stat-card"><h4>Completed Orders</h4><div class="value" id="completedOrders">0</div><div class="sub">Successfully delivered</div></div>
+        <div class="stat-card"><h4>Average Order</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per completed order</div></div>
+        <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProductsStat">0</div><div class="sub">In catalog</div></div>
+      </div>
+      <div class="add-product-card">
+        <div class="section-title"><i class="ph ph-chart-line"></i> Quick Insights</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+          <div><strong>Pending Orders:</strong> <span id="pendingCount">0</span></div>
+          <div><strong>Paid Orders:</strong> <span id="paidCount">0</span></div>
+          <div><strong>Delivered Orders:</strong> <span id="deliveredCount">0</span></div>
+          <div><strong>Out of Stock Products:</strong> <span id="outOfStockCount">0</span></div>
+        </div>
       </div>
     </div>
 
@@ -334,22 +421,28 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);}
     <div id="settingsTab" style="display:none;">
       <div class="add-product-card">
         <div class="section-title"><i class="ph ph-truck"></i> Delivery Settings</div>
-        <div class="form-group" style="margin-bottom:20px;">
+        <div style="margin-bottom:20px;">
           <label style="display:block; margin-bottom:8px; color:var(--mid);">Delivery Fee (KES)</label>
-          <input type="number" id="deliveryFee" class="form-control" style="width:100%; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; color:var(--ink);">
+          <input type="number" id="deliveryFee" style="width:100%; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; color:var(--ink);">
         </div>
-        <div class="form-group" style="margin-bottom:20px;">
+        <div style="margin-bottom:20px;">
           <label style="display:block; margin-bottom:8px; color:var(--mid);">Free Delivery Threshold (KES)</label>
-          <input type="number" id="freeDeliveryThreshold" class="form-control" style="width:100%; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; color:var(--ink);">
+          <input type="number" id="freeDeliveryThreshold" style="width:100%; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; color:var(--ink);">
           <small style="color:var(--muted);">Orders above this amount get free delivery</small>
         </div>
-        <div class="form-group" style="margin-bottom:20px;">
+        <div style="margin-bottom:20px;">
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
             <input type="checkbox" id="deliveryEnabled">
             <span>Enable Delivery Fee</span>
           </label>
         </div>
         <button class="submit-btn" onclick="saveDeliverySettings()"><i class="ph ph-save"></i> Save Settings</button>
+      </div>
+      
+      <div class="add-product-card">
+        <div class="section-title"><i class="ph ph-database"></i> System Actions</div>
+        <button class="submit-btn" onclick="refreshData()" style="background:var(--blue); color:#fff; margin-right:12px;"><i class="ph ph-arrows-clockwise"></i> Refresh Data</button>
+        <button class="submit-btn" onclick="clearAllFilters()" style="background:var(--red); color:#fff;"><i class="ph ph-trash"></i> Clear Search Filters</button>
       </div>
     </div>
   </div>
@@ -379,6 +472,7 @@ function login(){
     loadAllData();
   } else {
     document.getElementById('loginError').style.display = 'block';
+    setTimeout(()=>{document.getElementById('loginError').style.display='none';},3000);
   }
 }
 function logout(){ sessionStorage.removeItem('liquorbelle_admin'); location.reload(); }
@@ -442,6 +536,18 @@ async function saveDeliverySettings() {
   } catch(e) { toast('Error saving settings'); }
 }
 
+function refreshData(){
+  loadAllData();
+  toast('🔄 Data refreshed');
+}
+
+function clearAllFilters(){
+  searchTerm = '';
+  document.getElementById('searchInput').value = '';
+  renderProducts();
+  toast('Filters cleared');
+}
+
 // ==================== TAB SWITCHING ====================
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -479,7 +585,7 @@ function renderProducts(){
   }
   const container = document.getElementById('productsList');
   if(!filtered.length){
-    container.innerHTML = '<div class="empty-state">No products found</div>';
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products found</p><small>Add your first product above</small></div>';
     return;
   }
   container.innerHTML = filtered.map(p => {
@@ -487,12 +593,14 @@ function renderProducts(){
     const stockDisplay = isInStock ? 'In Stock' : 'Out of Stock';
     const stockClass = isInStock ? 'stock-in' : 'stock-out';
     const capacity = p.capacity || '750ml';
+    const imgUrl = p.image && p.image.trim() !== '' ? p.image : 'https://placehold.co/400x400/1a1a24/e03131?text=No+Image';
     return `
     <div class="product-row">
-      <div><img class="product-img" src="${p.image || 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif'}" onerror="this.src='https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif'"></div>
+      <div><img class="product-img" src="${imgUrl}" onerror="this.src='https://placehold.co/400x400/1a1a24/e03131?text=LB'" loading="lazy"></div>
       <div><div class="product-name">${escapeHtml(p.name)}</div><div class="product-capacity">${escapeHtml(capacity)}</div></div>
-      <div><span class="product-category">${p.category}</span></div>
-      <div style="color:var(--gold);font-weight:700;">KES ${(p.price || 0).toLocaleString()}</div>
+      <div>${escapeHtml(capacity)}</div>
+      <div><span class="product-category">${p.category || 'Uncategorized'}</span></div>
+      <div class="product-price">KES ${(p.price || 0).toLocaleString()}</div>
       <div class="${stockClass}">${stockDisplay}</div>
       <div><button class="edit-btn" onclick="openEditModal(${p.id})"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(${p.id})"><i class="ph ph-trash"></i></button></div>
     </div>`;
@@ -500,16 +608,19 @@ function renderProducts(){
 }
 
 function renderProductStats(){
+  const totalProducts = products.length;
+  const categoriesCount = new Set(products.map(p=>p.category)).size;
   const totalValue = products.reduce((s,p) => s + (p.price || 0), 0);
-  const avgPrice = products.length ? Math.round(totalValue / products.length) : 0;
+  const avgPrice = totalProducts ? Math.round(totalValue / totalProducts) : 0;
   const outOfStockCount = products.filter(p => p.stock === null || p.stock <= 0).length;
   document.getElementById('productStats').innerHTML = `
-    <div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div>
-    <div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div>
-    <div class="stat-card"><h4>Avg Price</h4><div class="value">KES ${avgPrice.toLocaleString()}</div></div>
-    <div class="stat-card"><h4>Out of Stock</h4><div class="value">${outOfStockCount}</div></div>
+    <div class="stat-card"><h4>Total Products</h4><div class="value">${totalProducts}</div><div class="sub">In catalog</div></div>
+    <div class="stat-card"><h4>Categories</h4><div class="value">${categoriesCount}</div><div class="sub">Available</div></div>
+    <div class="stat-card"><h4>Avg Price</h4><div class="value">KES ${avgPrice.toLocaleString()}</div><div class="sub">Across all</div></div>
+    <div class="stat-card"><h4>Out of Stock</h4><div class="value">${outOfStockCount}</div><div class="sub">Need restock</div></div>
   `;
-  document.getElementById('totalProductsStat').innerText = products.length;
+  document.getElementById('totalProductsStat').innerText = totalProducts;
+  document.getElementById('outOfStockCount').innerText = outOfStockCount;
 }
 
 async function addProduct(){
@@ -522,7 +633,7 @@ async function addProduct(){
   const stockStatus = document.getElementById('prodStockStatus').value;
   const stock = stockStatus === 'in' ? 1 : 0;
   
-  if(!name || !price || isNaN(price)){ toast('Name and price required'); return; }
+  if(!name || !price || isNaN(price)){ toast('❌ Name and price required'); return; }
   
   try {
     const res = await fetch(`${API_BASE}/api/db/products`, {
@@ -532,13 +643,14 @@ async function addProduct(){
     });
     const data = await res.json();
     if(data.success){
-      toast('✓ Product added');
+      toast('✓ Product added successfully');
       await loadProducts();
       renderProducts();
       renderProductStats();
       document.getElementById('prodName').value = '';
       document.getElementById('prodPrice').value = '';
       document.getElementById('prodImage').value = '';
+      document.getElementById('imagePreview').innerHTML = '';
       document.getElementById('prodCapacity').value = '750ml';
       document.getElementById('prodStockStatus').value = 'in';
     } else { toast('Failed to add product'); }
@@ -546,12 +658,12 @@ async function addProduct(){
 }
 
 async function deleteProduct(id){
-  if(!confirm('Delete permanently?')) return;
+  if(!confirm('⚠️ Delete this product permanently?')) return;
   try {
     const res = await fetch(`${API_BASE}/api/db/products/${id}`, { method: 'DELETE' });
     const data = await res.json();
     if(data.success){
-      toast('Product deleted');
+      toast('✓ Product deleted');
       await loadProducts();
       renderProducts();
       renderProductStats();
@@ -608,22 +720,30 @@ async function saveEdit(){
 function renderOrders(){
   const container = document.getElementById('ordersList');
   if(!orders.length){
-    container.innerHTML = '<div class="empty-state">No orders yet</div>';
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-inbox"></i><p>No orders yet</p><small>Orders will appear here when customers checkout</small></div>';
     return;
   }
   container.innerHTML = orders.map(o => `
     <div class="order-card">
       <div class="order-header">
-        <div><span class="order-id">${o.order_number || o.id}</span><br><span style="font-size:12px;">${o.customer_name || 'Customer'}</span><br><span style="font-size:11px;color:var(--muted);">${new Date(o.created_at).toLocaleString()}</span></div>
+        <div>
+          <div class="order-id">📦 ${o.order_number || o.id}</div>
+          <div style="font-size:12px; margin-top:4px;">${escapeHtml(o.customer_name || 'Customer')}</div>
+          <div style="font-size:11px; color:var(--muted);">📧 ${escapeHtml(o.customer_email || 'No email')}</div>
+          <div style="font-size:10px; color:var(--muted);">📅 ${new Date(o.created_at).toLocaleString()}</div>
+        </div>
         <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
       </div>
-      <div class="order-items">${o.items?.map(i => `<div class="order-item"><span>${escapeHtml(i.product_name)} × ${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('') || ''}</div>
+      <div class="order-items">${o.items?.map(i => `<div class="order-item"><span>🍾 ${escapeHtml(i.product_name)} × ${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('') || '<div class="order-item"><span>No items data</span></div>'}</div>
       <div class="order-footer">
-        <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
+        <div>
+          <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
+          <div style="font-size:10px; color:var(--muted);">${o.payment_method || 'Unknown'} • ${o.phone || 'No phone'}</div>
+        </div>
         <div class="order-actions">
-          ${o.status === 'pending' ? `<button class="order-btn btn-mark-paid" onclick="markOrderPaid('${o.id}')">Mark Paid</button>` : ''}
-          ${o.status === 'paid' ? `<button class="order-btn btn-mark-delivered" onclick="markOrderDelivered('${o.id}')">Mark Delivered</button>` : ''}
-          <button class="order-btn btn-delete" onclick="deleteOrder('${o.id}')">Delete</button>
+          ${o.status === 'pending' ? `<button class="order-btn btn-mark-paid" onclick="markOrderPaid('${o.id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}
+          ${o.status === 'paid' ? `<button class="order-btn btn-mark-delivered" onclick="markOrderDelivered('${o.id}')"><i class="ph ph-truck"></i> Delivered</button>` : ''}
+          <button class="order-btn btn-delete" onclick="deleteOrder('${o.id}')"><i class="ph ph-trash"></i> Delete</button>
         </div>
       </div>
     </div>
@@ -633,14 +753,19 @@ function renderOrders(){
 function renderOrderStats(){
   const totalOrders = orders.length;
   const completed = orders.filter(o => o.status === 'delivered').length;
-  const revenue = orders.filter(o => o.status === 'delivered' || o.status === 'paid').reduce((s,o) => s + (o.total || 0), 0);
+  const paid = orders.filter(o => o.status === 'paid').length;
   const pending = orders.filter(o => o.status === 'pending').length;
+  const revenue = orders.filter(o => o.status === 'delivered' || o.status === 'paid').reduce((s,o) => s + (o.total || 0), 0);
   document.getElementById('orderStats').innerHTML = `
-    <div class="stat-card"><h4>Total Orders</h4><div class="value">${totalOrders}</div></div>
-    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div></div>
-    <div class="stat-card"><h4>Completed</h4><div class="value">${completed}</div></div>
-    <div class="stat-card"><h4>Revenue</h4><div class="value">KES ${revenue.toLocaleString()}</div></div>
+    <div class="stat-card"><h4>Total Orders</h4><div class="value">${totalOrders}</div><div class="sub">All time</div></div>
+    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div><div class="sub">Awaiting payment</div></div>
+    <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Payment confirmed</div></div>
+    <div class="stat-card"><h4>Delivered</h4><div class="value">${completed}</div><div class="sub">Completed</div></div>
+    <div class="stat-card"><h4>Revenue</h4><div class="value">KES ${revenue.toLocaleString()}</div><div class="sub">Paid + Delivered</div></div>
   `;
+  document.getElementById('pendingCount').innerText = pending;
+  document.getElementById('paidCount').innerText = paid;
+  document.getElementById('deliveredCount').innerText = completed;
 }
 
 async function markOrderPaid(id){
@@ -652,7 +777,7 @@ async function markOrderPaid(id){
     });
     const data = await res.json();
     if(data.success){
-      toast('Order marked as PAID');
+      toast('✅ Order marked as PAID');
       await loadOrders();
       renderOrders();
       renderOrderStats();
@@ -669,7 +794,7 @@ async function markOrderDelivered(id){
     });
     const data = await res.json();
     if(data.success){
-      toast('Order marked as DELIVERED');
+      toast('🚚 Order marked as DELIVERED');
       await loadOrders();
       renderOrders();
       renderOrderStats();
@@ -678,11 +803,11 @@ async function markOrderDelivered(id){
 }
 
 async function deleteOrder(id){
-  if(!confirm('Delete this order?')) return;
+  if(!confirm('⚠️ Delete this order permanently? This cannot be undone.')) return;
   try {
     const res = await fetch(`${API_BASE}/api/db/orders/${id}`, { method: 'DELETE' });
     if(res.ok){
-      toast('Order deleted');
+      toast('🗑️ Order deleted');
       await loadOrders();
       renderOrders();
       renderOrderStats();
@@ -707,6 +832,7 @@ function renderAll(){
   renderStats();
 }
 
+// Image preview
 document.getElementById('prodImage').addEventListener('input', function(){
   const url = this.value;
   const preview = document.getElementById('imagePreview');
@@ -715,41 +841,43 @@ document.getElementById('prodImage').addEventListener('input', function(){
   } else { preview.innerHTML = ''; }
 });
 
+// Edit Modal HTML
 const modalHtml = `
-<div id="editModal" class="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;justify-content:center;align-items:center;">
-  <div style="background:var(--bg2);border-radius:20px;padding:28px;width:90%;max-width:500px;border:1px solid var(--gold);">
-    <h3 style="margin-bottom:20px;color:var(--gold);">Edit Product</h3>
-    <input type="text" id="editName" placeholder="Product Name" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-    <select id="editCapacity" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-      <option value="250ml">250ml</option>
-      <option value="350ml">350ml</option>
-      <option value="500ml">500ml</option>
-      <option value="750ml">750ml</option>
-      <option value="1L">1 Litre</option>
-      <option value="1.5L">1.5 Litre</option>
+<div id="editModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3><i class="ph ph-pencil"></i> Edit Product</h3>
+    <input type="text" id="editName" placeholder="Product Name">
+    <select id="editCapacity">
+      <option value="250ml">250ml</option><option value="350ml">350ml</option>
+      <option value="500ml">500ml</option><option value="750ml">750ml</option>
+      <option value="1L">1 Litre</option><option value="1.5L">1.5 Litre</option>
     </select>
-    <input type="number" id="editPrice" placeholder="Price" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-    <select id="editCategory" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-      <option value="whisky">Whisky</option><option value="vodka">Vodka</option><option value="wine">Wine</option><option value="beer">Beer</option>
-      <option value="rum">Rum</option><option value="gin">Gin</option><option value="cognac">Cognac</option><option value="champagne">Champagne</option><option value="kenyan">Kenyan</option>
+    <input type="number" id="editPrice" placeholder="Price (KES)">
+    <select id="editCategory">
+      <option value="whisky">Whisky</option><option value="vodka">Vodka</option>
+      <option value="wine">Wine</option><option value="beer">Beer</option>
+      <option value="rum">Rum</option><option value="gin">Gin</option>
+      <option value="cognac">Cognac/Brandy</option><option value="champagne">Champagne</option>
+      <option value="kenyan">Kenyan Spirits</option>
     </select>
-    <select id="editBadge" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-      <option value="">No Badge</option><option value="hot">🔥 Best Seller</option><option value="prem">⭐ Premium</option><option value="local">🇰🇪 Kenyan</option>
+    <select id="editBadge">
+      <option value="">No Badge</option><option value="hot">🔥 Best Seller</option>
+      <option value="prem">⭐ Premium</option><option value="local">🇰🇪 Kenyan</option>
     </select>
-    <input type="text" id="editImage" placeholder="Image URL" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-    <select id="editStockStatus" style="width:100%;padding:12px;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--ink);">
-      <option value="in">In Stock</option>
-      <option value="out">Out of Stock</option>
+    <input type="text" id="editImage" placeholder="Image URL">
+    <select id="editStockStatus">
+      <option value="in">In Stock</option><option value="out">Out of Stock</option>
     </select>
-    <div style="display:flex;gap:12px;margin-top:20px;">
-      <button onclick="saveEdit()" style="flex:1;padding:12px;background:var(--gold);color:#000;border:none;border-radius:40px;font-weight:700;">Save</button>
-      <button onclick="closeModal()" style="flex:1;padding:12px;background:transparent;border:1px solid var(--border);border-radius:40px;color:var(--muted);cursor:pointer;">Cancel</button>
+    <div class="modal-actions">
+      <button class="save-modal-btn" onclick="saveEdit()"><i class="ph ph-check"></i> Save</button>
+      <button class="cancel-modal-btn" onclick="closeModal()"><i class="ph ph-x"></i> Cancel</button>
     </div>
   </div>
 </div>`;
 document.body.insertAdjacentHTML('beforeend', modalHtml);
 document.getElementById('editModal').addEventListener('click', (e) => { if(e.target === document.getElementById('editModal')) closeModal(); });
 
+// Auto-load if already authenticated
 if(auth){
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminApp').style.display = 'block';

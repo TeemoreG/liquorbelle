@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Track Orders — LiquorBelle</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red:#e03131;
+  --red2:#ff4d4d;
+  --red-dim:rgba(224,49,49,0.12);
+  --gold:#f0a500;
+  --gold-dim:rgba(240,165,0,0.12);
+  --green:#2ecc71;
+  --green-dim:rgba(46,204,113,0.12);
+  --bg:#0a0a0f;
+  --bg2:#111118;
+  --bg3:#17171f;
+  --bg4:#1e1e28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.1);
+  --ink:#f0eef8;
+  --ink2:#c8c4d8;
+  --muted:#6b6780;
+  --mid:#9994ad;
+  --fh:'Sora',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+  --radius:16px;
+  --radius-sm:12px;
+}
+body{
+  background:var(--bg);
+  font-family:var(--fb);
+  color:var(--ink);
+  overflow-x:hidden;
+  padding-bottom:80px;
+}
+.header{
+  background:rgba(10,10,15,0.95);
+  backdrop-filter:blur(20px);
+  padding:16px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid var(--border);
+}
+.logo-img{height:38px;border-radius:10px;border:1px solid rgba(224,49,49,0.22);}
+.logo-name{font-family:var(--fh);font-weight:800;font-size:1.2rem;color:var(--ink);}
+.logo-name em{color:var(--red);font-style:normal;}
+.back-btn{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.3s ease;
+  color:var(--mid);
+}
+.back-btn:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
+.container{max-width:800px;margin:0 auto;padding:24px 5%;}
+
+/* Email lookup card */
+.lookup-card{
+  background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  border-radius:24px;
+  padding:28px;
+  border:1px solid var(--border);
+  margin-bottom:24px;
+  text-align:center;
+}
+.lookup-title{
+  font-family:var(--fh);
+  font-size:1.3rem;
+  font-weight:800;
+  color:var(--gold);
+  margin-bottom:8px;
+}
+.lookup-sub{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.email-input-group{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.email-input{
+  flex:1;
+  padding:16px 18px;
+  background:var(--bg4);
+  border:1px solid var(--border2);
+  border-radius:60px;
+  color:var(--ink);
+  font-size:14px;
+  font-family:var(--fb);
+}
+.email-input:focus{
+  outline:none;
+  border-color:var(--red);
+  box-shadow:0 0 0 3px var(--red-dim);
+}
+.track-btn{
+  padding:16px 32px;
+  background:linear-gradient(135deg,var(--red),var(--red2));
+  border:none;
+  border-radius:60px;
+  color:#fff;
+  font-weight:700;
+  font-family:var(--fh);
+  cursor:pointer;
+  transition:transform 0.2s, box-shadow 0.2s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.track-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(224,49,49,0.4);
+}
+.track-btn:disabled{
+  opacity:0.6;
+  transform:none;
+  cursor:not-allowed;
+}
+
+/* Orders list */
+.orders-list{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+.order-card{
+  background:var(--bg2);
+  border-radius:20px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.order-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+}
+.order-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:12px;
+}
+.order-id{
+  font-family:monospace;
+  font-weight:700;
+  font-size:14px;
+  color:var(--gold);
+}
+.order-date{
+  font-size:11px;
+  color:var(--muted);
+}
+.order-status{
+  padding:5px 14px;
+  border-radius:40px;
+  font-size:11px;
+  font-weight:700;
+}
+.status-pending{background:var(--gold-dim);color:var(--gold);}
+.status-paid{background:var(--green-dim);color:var(--green);}
+.status-delivered{background:var(--red-dim);color:var(--red);}
+.order-items{
+  padding:16px 20px;
+  max-height:250px;
+  overflow-y:auto;
+}
+.order-item{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.order-item-name{font-weight:500;}
+.order-item-price{color:var(--gold);font-weight:600;}
+.order-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  background:var(--bg3);
+  border-top:1px solid var(--border);
+}
+.order-total{
+  font-size:18px;
+  font-weight:800;
+  color:var(--red);
+  font-family:var(--fh);
+}
+.order-payment{
+  font-size:11px;
+  padding:4px 12px;
+  background:var(--bg4);
+  border-radius:40px;
+}
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--muted);
+}
+.empty-state i{font-size:48px;margin-bottom:16px;opacity:0.5;}
+.spinner{
+  display:inline-block;
+  width:18px;
+  height:18px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-radius:50%;
+  border-top-color:#fff;
+  animation:spin 0.6s linear infinite;
+  vertical-align:middle;
+  margin-right:8px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.snack{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--bg3);
+  border:1px solid var(--green);
+  padding:12px 24px;
+  border-radius:60px;
+  font-size:13px;
+  color:#fff;
+  opacity:0;
+  transition:opacity 0.3s;
+  z-index:200;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.snack.on{opacity:1;}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(10,10,15,0.96);
+  backdrop-filter:blur(20px);
+  display:flex;
+  justify-content:space-around;
+  padding:10px 5% 20px;
+  border-top:1px solid var(--border);
+  z-index:100;
+}
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:.7rem;
+  font-weight:600;
+}
+.nav-item.active{color:var(--red);}
+.nav-item i{font-size:20px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='shop.html'"><i class="ph ph-arrow-left" style="font-size:20px;"></i></button>
+  <a class="logo" href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+    <span class="logo-name">Liquor<em>Belle</em></span>
+  </a>
+  <div style="width:42px;"></div>
+</div>
+
+<div class="container">
+  <div class="lookup-card">
+    <div class="lookup-title"><i class="ph ph-magnifying-glass"></i> Track Your Orders</div>
+    <div class="lookup-sub">Enter the email you used at checkout</div>
+    <div class="email-input-group">
+      <input type="email" id="trackEmail" class="email-input" placeholder="you@example.com">
+      <button class="track-btn" onclick="lookupOrders()"><i class="ph ph-package"></i> Find Orders</button>
+    </div>
+  </div>
+
+  <div id="ordersContainer">
+    <div class="empty-state">
+      <i class="ph ph-package"></i>
+      <p>Enter your email to see your orders</p>
+      <small style="color:var(--muted);">We'll show all orders placed with this email</small>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></div>
+  <div class="nav-item" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
+  <div class="nav-item" onclick="window.location.href='checkout.html'"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
+  <div class="nav-item active" onclick="window.location.href='track-orders.html'"><i class="ph ph-clock-counter-clockwise"></i><span>Orders</span></div>
+</div>
+
+<div class="snack" id="snack"></div>
+
+<script>
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+
+function toast(msg) {
+  const t = document.getElementById('snack');
+  t.innerText = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 3000);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
+}
+
+function getStatusBadge(status) {
+  switch(status) {
+    case 'pending': return '<span class="order-status status-pending">⏳ Pending</span>';
+    case 'paid': return '<span class="order-status status-paid">✅ Paid</span>';
+    case 'delivered': return '<span class="order-status status-delivered">🚚 Delivered</span>';
+    default: return '<span class="order-status status-pending">📋 Received</span>';
+  }
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return 'Just now';
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  } catch(e) {
+    return dateStr;
+  }
+}
+
+async function lookupOrders() {
+  const email = document.getElementById('trackEmail').value.trim().toLowerCase();
+  
+  if (!email) {
+    toast('Please enter your email address');
+    return;
+  }
+  
+  if (!email.includes('@')) {
+    toast('Please enter a valid email address');
+    return;
+  }
+  
+  const btn = document.querySelector('.track-btn');
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<div class="spinner"></div> Searching...';
+  btn.disabled = true;
+  
+  const container = document.getElementById('ordersContainer');
+  container.innerHTML = '<div class="empty-state"><div class="spinner"></div><p>Loading your orders...</p></div>';
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/orders/by-email/${encodeURIComponent(email)}`);
+    const data = await response.json();
+    
+    if (!data.success) {
+      container.innerHTML = `<div class="empty-state">
+        <i class="ph ph-warning-circle"></i>
+        <p>${data.message || 'Failed to fetch orders'}</p>
+        <small>Please try again</small>
+      </div>`;
+      return;
+    }
+    
+    const orders = data.orders || [];
+    
+    if (orders.length === 0) {
+      container.innerHTML = `<div class="empty-state">
+        <i class="ph ph-inbox"></i>
+        <p>No orders found for ${escapeHtml(email)}</p>
+        <small>Orders placed with this email will appear here</small>
+      </div>`;
+      toast('No orders found for this email');
+      return;
+    }
+    
+    // Group orders by ID (in case of duplicates)
+    const uniqueOrders = [];
+    const seen = new Set();
+    for (const order of orders) {
+      if (!seen.has(order.order_number)) {
+        seen.add(order.order_number);
+        uniqueOrders.push(order);
+      }
+    }
+    
+    container.innerHTML = `<div class="orders-list">${uniqueOrders.map(order => {
+      // Parse items if stored as JSON string
+      let items = order.items;
+      if (typeof items === 'string') {
+        try { items = JSON.parse(items); } catch(e) { items = []; }
+      }
+      if (!items || !items.length) items = [];
+      
+      const subtotal = order.subtotal || 0;
+      const delivery = order.delivery || 0;
+      const total = order.total || subtotal + delivery;
+      
+      const itemsHtml = items.map(item => `
+        <div class="order-item">
+          <span class="order-item-name">${escapeHtml(item.name || item.product_name)} × ${item.quantity || 1}</span>
+          <span class="order-item-price">KES ${((item.price || 0) * (item.quantity || 1)).toLocaleString()}</span>
+        </div>
+      `).join('');
+      
+      const emptyItemsHtml = !items.length ? '<div class="order-item"><span>No items data</span></div>' : '';
+      
+      return `
+        <div class="order-card">
+          <div class="order-header">
+            <div>
+              <div class="order-id">📦 ${escapeHtml(order.order_number)}</div>
+              <div class="order-date">${formatDate(order.created_at)}</div>
+            </div>
+            ${getStatusBadge(order.status)}
+          </div>
+          <div class="order-items">
+            ${itemsHtml || emptyItemsHtml}
+          </div>
+          <div class="order-footer">
+            <div>
+              <div class="order-total">KES ${total.toLocaleString()}</div>
+              <small style="color:var(--muted);">${order.payment_method || 'Not specified'}</small>
+            </div>
+            <div class="order-payment">
+              <i class="ph ph-map-pin"></i> ${escapeHtml(order.address || 'Address not specified')?.substring(0, 40) || 'No address'}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('')}</div>`;
+    
+    toast(`Found ${uniqueOrders.length} order${uniqueOrders.length !== 1 ? 's' : ''}`);
+    
+  } catch (error) {
+    console.error('Lookup error:', error);
+    container.innerHTML = `<div class="empty-state">
+      <i class="ph ph-warning-circle"></i>
+      <p>Network error</p>
+      <small>Please check your connection and try again</small>
+    </div>`;
+    toast('Failed to load orders. Please try again.');
+  } finally {
+    btn.innerHTML = originalHTML;
+    btn.disabled = false;
+  }
+}
+
+// Auto-search if email in URL param
+const urlParams = new URLSearchParams(window.location.search);
+const emailParam = urlParams.get('email');
+if (emailParam) {
+  document.getElementById('trackEmail').value = emailParam;
+  lookupOrders();
+}
+
+// Enter key support
+document.getElementById('trackEmail').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') lookupOrders();
+});
+</script>
+</body>
+</html>

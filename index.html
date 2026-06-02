@@ -467,7 +467,7 @@ footer p{font-size:.7rem;color:var(--muted);}
 <body>
 
 <div class="app-header">
-  <a class="logo" href="#">
+  <a class="logo" href="index.html">
     <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
     <span class="logo-name">Liquor<em>Belle</em></span>
   </a>
@@ -482,29 +482,16 @@ footer p{font-size:.7rem;color:var(--muted);}
 <div class="hero">
   <h1>Dagoretti's <span>Finest</span><br>Spirit Locker</h1>
   <p>Premium spirits delivered in 45 minutes • 24/7 Service</p>
-  <div class="hero-buttons" id="heroButtons">
-    <!-- Dynamic button will be inserted here -->
+  <div class="hero-buttons">
+    <a href="track-orders.html" class="btn-primary"><i class="ph ph-magnifying-glass"></i> Track Orders</a>
+    <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
   </div>
-  <div class="hero-tag"><i class="ph ph-truck"></i> Free delivery over KES 3,000</div>
-</div>
-
-<!-- Logged-in Welcome Banner -->
-<div id="loggedInBanner" style="display: none; background: linear-gradient(135deg, var(--bg2), var(--bg3)); margin: 0 5% 20px; border-radius: 20px; padding: 16px 20px; border: 1px solid var(--gold);">
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-    <div>
-      <i class="ph ph-seal-check" style="color: var(--green); font-size: 20px;"></i>
-      <span id="welcomeMessage" style="font-weight: 600;">Welcome back!</span>
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <a href="account.html" class="btn-outline" style="padding: 6px 16px;">My Account</a>
-      <a href="#" id="logoutBtnFromBanner" class="btn-outline" style="padding: 6px 16px; border-color: var(--red); color: var(--red);">Logout</a>
-    </div>
-  </div>
+  <div class="hero-tag"><i class="ph ph-truck"></i> Free delivery on 750ml+ orders to Waithaka & surrounding areas</div>
 </div>
 
 <div class="stats-row">
   <div class="stat-item"><div class="stat-number">500+</div><div class="stat-label">Products</div></div>
-  <div class="stat-item"><div class="stat-number">45min</div><div class="stat-label">Delivery</div></div>
+  <div class="stat-item"><div class="stat-number">10-45min</div><div class="stat-label">Delivery Time</div></div>
   <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Service</div></div>
   <div class="stat-item"><div class="stat-number">4.9★</div><div class="stat-label">Rating</div></div>
 </div>
@@ -566,7 +553,7 @@ footer p{font-size:.7rem;color:var(--muted);}
 </div>
 
 <div class="section-header">
-  <h2><i class="ph ph-star" style="color:var(--gold);"></i> What Our Customers Say</h2>
+  <h2><i class="ph-ph-star" style="color:var(--gold);"></i> What Our Customers Say</h2>
   <p>4.9 ★ from 200+ reviews</p>
 </div>
 <div class="review-grid" id="reviewsContainer"></div>
@@ -585,20 +572,21 @@ footer p{font-size:.7rem;color:var(--muted);}
 
 <div class="section-header">
   <h2><i class="ph ph-map-pin" style="color:var(--gold);"></i> Delivery Zones</h2>
-  <p>Nairobi wide — usually under 45 minutes</p>
+  <p>Delivery time: 10-45 minutes depending on your location</p>
 </div>
 <div class="zones-grid" id="zonesGrid"></div>
 
 <footer>
   <p>© 2026 LiquorBelle — Dagoretti's Finest</p>
   <p style="margin-top:6px;">Over 18 only. Drink responsibly.</p>
+  <p style="margin-top:6px; font-size:.6rem;">Free delivery on 750ml+ orders to Waithaka & surrounding areas</p>
 </footer>
 
 <div class="bottom-nav">
-  <div class="nav-item active"><i class="ph ph-house"></i><span>Home</span></div>
+  <div class="nav-item active" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></div>
   <div class="nav-item" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
   <div class="nav-item" onclick="openCartDrawer()"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
-  <div class="nav-item" id="bottomAccountBtn" onclick="goToAccount()"><i class="ph ph-user"></i><span>Account</span></div>
+  <div class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clock-counter-clockwise"></i><span>Orders</span></div>
 </div>
 
 <a href="https://wa.me/254748894443" class="fab-wa" target="_blank"><i class="ph ph-whatsapp-logo" style="font-size:24px;"></i></a>
@@ -615,88 +603,6 @@ footer p{font-size:.7rem;color:var(--muted);}
 </div>
 
 <script>
-// ==================== LOGIN STATE DETECTION ====================
-function updateAuthButton() {
-  const currentUser = localStorage.getItem('liquorbelle_user');
-  const heroButtons = document.getElementById('heroButtons');
-  
-  if (currentUser) {
-    try {
-      const user = JSON.parse(currentUser);
-      const userName = user.name || user.email.split('@')[0];
-      heroButtons.innerHTML = `
-        <a href="account.html" class="btn-primary"><i class="ph ph-user-circle"></i> My Account, ${escapeHtml(userName)}</a>
-        <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
-      `;
-    } catch(e) {
-      heroButtons.innerHTML = `
-        <a href="login.html" class="btn-primary"><i class="ph ph-user"></i> Sign In / Register</a>
-        <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
-      `;
-    }
-  } else {
-    heroButtons.innerHTML = `
-      <a href="login.html" class="btn-primary"><i class="ph ph-user"></i> Sign In / Register</a>
-      <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
-    `;
-  }
-  updateBottomNavAccount();
-}
-
-// ==================== LOGGED-IN BANNER ====================
-function updateLoggedInBanner() {
-  const currentUser = localStorage.getItem('liquorbelle_user');
-  const banner = document.getElementById('loggedInBanner');
-  
-  if (currentUser) {
-    try {
-      const user = JSON.parse(currentUser);
-      const userName = user.name || user.email.split('@')[0];
-      document.getElementById('welcomeMessage').innerHTML = `Welcome back, ${escapeHtml(userName)}! Enjoy free delivery on orders over KES 3,000.`;
-      banner.style.display = 'block';
-    } catch(e) {
-      banner.style.display = 'none';
-    }
-  } else {
-    banner.style.display = 'none';
-  }
-}
-
-// ==================== BOTTOM NAV ACCOUNT BUTTON ====================
-function goToAccount() {
-  const currentUser = localStorage.getItem('liquorbelle_user');
-  if (currentUser) {
-    window.location.href = 'account.html';
-  } else {
-    window.location.href = 'login.html';
-  }
-}
-
-function updateBottomNavAccount() {
-  const currentUser = localStorage.getItem('liquorbelle_user');
-  const accountBtn = document.getElementById('bottomAccountBtn');
-  if (accountBtn) {
-    if (currentUser) {
-      accountBtn.querySelector('span').textContent = 'Account';
-    } else {
-      accountBtn.querySelector('span').textContent = 'Login';
-    }
-  }
-}
-
-// ==================== TOAST FUNCTION ====================
-function toast(msg) {
-  let t = document.getElementById('toastMsg');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toastMsg';
-    document.body.appendChild(t);
-  }
-  t.innerText = msg;
-  t.style.opacity = '1';
-  setTimeout(() => t.style.opacity = '0', 2500);
-}
-
 // ==================== CART ====================
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 
@@ -713,7 +619,13 @@ function updateCartUI(){
     return;
   }
   footer.style.display = 'block';
-  const delivery = subtotal >= 3000 ? 0 : 150;
+  // Delivery calculation from settings
+  let delivery = 0;
+  const isWaithakaOrder = true; // This would come from address detection
+  const is750mlPlus = items.some(item => item.capacity === '750ml' || item.capacity === '1L' || item.capacity === '1.5L');
+  if (!is750mlPlus) {
+    delivery = 150;
+  }
   document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`;
   container.innerHTML = items.map(item => `
     <div class="cart-item">
@@ -743,21 +655,30 @@ function openCartDrawer(){ document.getElementById('cartDrawer').classList.add('
 function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
 function escapeHtml(str){ return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
-// Logout button
-document.getElementById('logoutBtnFromBanner')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  localStorage.removeItem('liquorbelle_user');
-  toast('Logged out successfully');
-  setTimeout(() => window.location.reload(), 800);
-});
+function toast(msg) {
+  let t = document.getElementById('toastMsg');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toastMsg';
+    document.body.appendChild(t);
+  }
+  t.innerText = msg;
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
 
 // Zones
-const zones = ['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata'];
+const zones = [
+  'Waithaka (FREE delivery on 750ml+)',
+  'Dagoretti', 'Karen', 'Kilimani', 'Westlands', 
+  'CBD', 'Upperhill', 'Lavington', 'Kileleshwa', 
+  'Rongai', 'Ngong', 'South B', 'Langata'
+];
 document.getElementById('zonesGrid').innerHTML = zones.map(z => `<div class="zone-tag"><div class="zone-dot"></div><span>${z}</span></div>`).join('');
 
 // Reviews
 let reviews = [
-  {name:"John Maina",place:"Dagoretti",rating:5,text:"My delivery arrived exactly on time. Professional service!"},
+  {name:"John Maina",place:"Waithaka",rating:5,text:"Free delivery on my 750ml order! Arrived in 15 minutes."},
   {name:"Wanjiku Njoroge",place:"Karen",rating:5,text:"Ordered via WhatsApp, paid M-PESA. Delivery within 30 minutes."},
   {name:"Otieno Ochieng",place:"Kilimani",rating:4,text:"Pay on Delivery was smooth. Rider arrived on time."},
   {name:"Amina Hassan",place:"Westlands",rating:5,text:"Fastest alcohol delivery in Nairobi. Will order again."},
@@ -786,22 +707,10 @@ document.getElementById('submitReviewBtn')?.addEventListener('click',()=>{
   document.getElementById('reviewName').value='';
   document.getElementById('reviewPlace').value='';
   document.getElementById('reviewText').value='';
-  alert("Thank you for your review!");
+  toast("Thank you for your review!");
 });
 renderReviews();
 updateCartUI();
-updateAuthButton();
-updateLoggedInBanner();
-updateBottomNavAccount();
-
-// Listen for login/logout across tabs
-window.addEventListener('storage', (e) => {
-  if(e.key === 'liquorbelle_user') {
-    updateAuthButton();
-    updateLoggedInBanner();
-    updateBottomNavAccount();
-  }
-});
 </script>
 </body>
 </html>

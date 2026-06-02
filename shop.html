@@ -309,8 +309,10 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
   color:var(--muted);
   font-size:.7rem;
   font-weight:600;
+  transition:color 0.2s;
 }
 .nav-item.active{color:var(--red);}
+.nav-item:hover{color:var(--gold);}
 .nav-item i{font-size:20px;}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
 .snack{
@@ -334,7 +336,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 <body>
 
 <div class="app-header">
-  <a class="logo" href="login.html">
+  <a class="logo" href="index.html">
     <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
     <span class="logo-name">Liquor<em>Belle</em></span>
   </a>
@@ -349,7 +351,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 <div class="banner">
   <h1>Dagoretti's <span>Finest</span></h1>
   <p>Whisky • Cognac • Brandy • Vodka • Gin • Rum • Wine • Beer • Champagne • Kenyan Spirits</p>
-  <div class="banner-tag">⚡ 45-min delivery • 24/7 Service</div>
+  <div class="banner-tag">⚡ 10-45 min delivery • 24/7 Service • Free delivery on 750ml+ to Waithaka</div>
 </div>
 
 <div class="category-scroll" id="categoryList"></div>
@@ -375,7 +377,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
   <div class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></div>
   <div class="nav-item active" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
   <div class="nav-item" onclick="window.location.href='checkout.html'"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
-  <div class="nav-item" id="shopBottomAccountBtn" onclick="goToAccount()"><i class="ph ph-user"></i><span>Account</span></div>
+  <div class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clock-counter-clockwise"></i><span>Orders</span></div>
 </div>
 
 <div class="snack" id="snack"></div>
@@ -390,15 +392,6 @@ let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
 let searchTerm = '';
 let currentSort = 'default';
-
-function goToAccount() {
-  const currentUser = localStorage.getItem('liquorbelle_user');
-  if (currentUser) {
-    window.location.href = 'account.html';
-  } else {
-    window.location.href = 'login.html';
-  }
-}
 
 async function loadProducts(){
   try {
@@ -459,7 +452,7 @@ function addToCartWithQty(id, name, price, qty) {
   if(cart[id]) {
     cart[id].qty += quantity;
   } else {
-    cart[id] = { name, price, qty: quantity, id, img: '' };
+    cart[id] = { name, price, qty: quantity, id, capacity: product?.capacity || '' };
   }
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   updateCartCount();
@@ -503,7 +496,7 @@ function render(){
     return `
       <div class="product-card">
         <div class="img-wrap">
-          <img class="pc-img" src="${imgUrl}" onerror="this.src='${PRODUCT_IMAGE}'" alt="${escapeHtml(p.name)}">
+          <img class="pc-img" src="${imgUrl}" onerror="this.src='${PRODUCT_IMAGE}'" alt="${escapeHtml(p.name)}" loading="lazy">
           ${badgeHtml}
           <div class="stock-badge ${stockStatus.class}">${stockStatus.text}</div>
         </div>
