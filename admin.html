@@ -194,7 +194,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 .order-header{
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  align-items:flex-start;
   padding:16px 20px;
   background:var(--bg3);
   border-bottom:1px solid var(--border);
@@ -206,8 +206,25 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 .status-pending{background:var(--gold-dim);color:var(--gold);}
 .status-paid{background:var(--green-dim);color:var(--green);}
 .status-delivered{background:var(--blue);color:#fff;}
-.order-items{padding:16px 20px;max-height:200px;overflow-y:auto;}
-.order-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.order-items{padding:16px 20px;max-height:300px;overflow-y:auto;}
+.order-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.order-item-img{
+  width:40px;
+  height:40px;
+  object-fit:cover;
+  border-radius:8px;
+  background:var(--bg3);
+}
+.order-item-details{flex:1;}
+.order-item-name{font-weight:600;font-size:13px;}
+.order-item-qty{font-size:11px;color:var(--muted);}
+.order-item-price{color:var(--gold);font-weight:700;font-size:13px;}
 .order-footer{
   display:flex;
   justify-content:space-between;
@@ -224,6 +241,29 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 .btn-mark-paid{background:var(--green-dim);color:var(--green);}
 .btn-mark-delivered{background:var(--gold-dim);color:var(--gold);}
 .btn-delete{background:var(--red-dim);color:var(--red);}
+.btn-wa{
+  background:rgba(37,211,102,0.15);
+  color:#25D366;
+  border:1px solid rgba(37,211,102,0.3);
+}
+.btn-wa:hover{background:#25D366;color:#fff;transform:scale(1.02);}
+.btn-call{
+  background:rgba(59,130,246,0.15);
+  color:#3b82f6;
+  border:1px solid rgba(59,130,246,0.3);
+}
+.btn-call:hover{background:#3b82f6;color:#fff;transform:scale(1.02);}
+.customer-phone{
+  background:var(--bg4);
+  padding:4px 10px;
+  border-radius:40px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--gold);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
 
 .empty-state{text-align:center;padding:60px;color:var(--muted);}
 .empty-state i{font-size:48px;margin-bottom:16px;opacity:0.5;}
@@ -369,7 +409,7 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
             <option value="">No Badge</option><option value="hot">🔥 Best Seller</option>
             <option value="prem">⭐ Premium</option><option value="local">🇰🇪 Kenyan Brand</option>
           </select>
-          <input type="text" id="prodImage" placeholder="Image URL (PostImages, ImgBB, etc.)">
+          <input type="text" id="prodImage" placeholder="Image URL">
           <select id="prodStockStatus">
             <option value="in">In Stock</option>
             <option value="out">Out of Stock</option>
@@ -716,29 +756,87 @@ async function saveEdit(){
   } catch(e){ toast('Error updating'); }
 }
 
-// ==================== ORDER MANAGEMENT ====================
+// ==================== ORDER MANAGEMENT (WITH IMAGES + PHONE CONTACT) ====================
 function renderOrders(){
   const container = document.getElementById('ordersList');
   if(!orders.length){
     container.innerHTML = '<div class="empty-state"><i class="ph ph-inbox"></i><p>No orders yet</p><small>Orders will appear here when customers checkout</small></div>';
     return;
   }
-  container.innerHTML = orders.map(o => `
+  
+  container.innerHTML = orders.map(o => {
+    // Format phone for WhatsApp and Call
+    let phoneNumber = o.phone || '';
+    let cleanPhone = phoneNumber.replace(/\D/g, '');
+    if (cleanPhone.startsWith('0')) cleanPhone = '254' + cleanPhone.slice(1);
+    if (!cleanPhone.startsWith('254')) cleanPhone = '254' + cleanPhone;
+    const whatsappLink = `https://wa.me/${cleanPhone}`;
+    const callLink = `tel:${cleanPhone}`;
+    
+    // Display formatted phone
+    let displayPhone = phoneNumber;
+    if (phoneNumber && phoneNumber.length === 12 && phoneNumber.startsWith('254')) {
+      displayPhone = '0' + phoneNumber.slice(3);
+    }
+    
+    // Parse items
+    let itemsArray = o.items;
+    if (typeof itemsArray === 'string') {
+      try { itemsArray = JSON.parse(itemsArray); } catch(e) { itemsArray = []; }
+    }
+    
+    // Build items HTML with product images
+    const itemsHtml = itemsArray.map(i => {
+      // Find product in products array to get image
+      const product = products.find(p => p.id === i.product_id || p.name === i.product_name || p.name === i.name);
+      const productImg = (product && product.image && product.image.trim() !== '') 
+        ? product.image 
+        : 'https://placehold.co/40x40/1a1a24/e03131?text=🍾';
+      const itemName = i.product_name || i.name || 'Product';
+      const itemQty = i.quantity || i.qty || 1;
+      const itemPrice = i.price || 0;
+      return `
+        <div class="order-item">
+          <img class="order-item-img" src="${productImg}" onerror="this.src='https://placehold.co/40x40/1a1a24/e03131?text=🍾'">
+          <div class="order-item-details">
+            <div class="order-item-name">${escapeHtml(itemName)}</div>
+            <div class="order-item-qty">Quantity: ${itemQty}</div>
+          </div>
+          <div class="order-item-price">KES ${(itemPrice * itemQty).toLocaleString()}</div>
+        </div>
+      `;
+    }).join('');
+    
+    const noItemsHtml = !itemsArray.length ? '<div class="order-item" style="padding:10px 0; color:var(--muted); justify-content:center;">No items data available</div>' : '';
+    
+    return `
     <div class="order-card">
       <div class="order-header">
         <div>
           <div class="order-id">📦 ${o.order_number || o.id}</div>
-          <div style="font-size:12px; margin-top:4px;">${escapeHtml(o.customer_name || 'Customer')}</div>
-          <div style="font-size:11px; color:var(--muted);">📧 ${escapeHtml(o.customer_email || 'No email')}</div>
-          <div style="font-size:10px; color:var(--muted);">📅 ${new Date(o.created_at).toLocaleString()}</div>
+          <div style="font-size:13px; margin-top:6px; font-weight:600;">${escapeHtml(o.customer_name || 'Customer')}</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px;">📧 ${escapeHtml(o.customer_email || 'No email')}</div>
+          <div style="font-size:10px; color:var(--muted); margin-top:2px;">📅 ${new Date(o.created_at).toLocaleString()}</div>
+          <div style="margin-top:8px;">
+            <span class="customer-phone"><i class="ph ph-phone"></i> ${escapeHtml(displayPhone || 'No phone')}</span>
+          </div>
         </div>
-        <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+          <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
+          <div style="display:flex; gap:6px;">
+            <a href="${whatsappLink}" target="_blank" class="order-btn btn-wa" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="ph ph-whatsapp-logo"></i> WA</a>
+            <a href="${callLink}" class="order-btn btn-call" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="ph ph-phone-call"></i> Call</a>
+          </div>
+        </div>
       </div>
-      <div class="order-items">${o.items?.map(i => `<div class="order-item"><span>🍾 ${escapeHtml(i.product_name)} × ${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('') || '<div class="order-item"><span>No items data</span></div>'}</div>
+      <div class="order-items">
+        ${itemsHtml || noItemsHtml}
+      </div>
       <div class="order-footer">
         <div>
           <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
-          <div style="font-size:10px; color:var(--muted);">${o.payment_method || 'Unknown'} • ${o.phone || 'No phone'}</div>
+          <div style="font-size:10px; color:var(--muted);">${o.payment_method || 'Unknown'}</div>
+          <div style="font-size:10px; color:var(--muted); margin-top:4px;">📍 ${escapeHtml((o.address || '').substring(0, 60))}${(o.address || '').length > 60 ? '...' : ''}</div>
         </div>
         <div class="order-actions">
           ${o.status === 'pending' ? `<button class="order-btn btn-mark-paid" onclick="markOrderPaid('${o.id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}
@@ -746,8 +844,8 @@ function renderOrders(){
           <button class="order-btn btn-delete" onclick="deleteOrder('${o.id}')"><i class="ph ph-trash"></i> Delete</button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderOrderStats(){
