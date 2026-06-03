@@ -246,13 +246,13 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
   color:#25D366;
   border:1px solid rgba(37,211,102,0.3);
 }
-.btn-wa:hover{background:#25D366;color:#fff;transform:scale(1.02);}
+.btn-wa:hover{background:#25D366;color:#fff;}
 .btn-call{
   background:rgba(59,130,246,0.15);
   color:#3b82f6;
   border:1px solid rgba(59,130,246,0.3);
 }
-.btn-call:hover{background:#3b82f6;color:#fff;transform:scale(1.02);}
+.btn-call:hover{background:#3b82f6;color:#fff;}
 .customer-phone{
   background:var(--bg4);
   padding:4px 10px;
@@ -263,6 +263,16 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
   display:inline-flex;
   align-items:center;
   gap:6px;
+}
+.completed-badge{
+  font-size:11px;
+  color:var(--green);
+  padding:6px 12px;
+  background:var(--green-dim);
+  border-radius:40px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
 }
 
 .empty-state{text-align:center;padding:60px;color:var(--muted);}
@@ -284,10 +294,28 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 }
 .snack.on{opacity:1;}
 
+/* Quick Stats Row */
+.quick-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+.quick-stat{
+  background:var(--bg2);
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+  border:1px solid var(--border);
+}
+.quick-stat .num{font-size:28px;font-weight:800;color:var(--gold);}
+.quick-stat .label{font-size:11px;color:var(--muted);margin-top:4px;}
+
 @media(max-width:768px){
   .products-header,.product-row{grid-template-columns:50px 1fr 60px 70px 50px;}
   .product-row .product-category,.products-header .category{display:none;}
   .snack{white-space:normal;max-width:90%;text-align:center;}
+  .quick-stats{grid-template-columns:repeat(2,1fr);}
 }
 
 /* Edit Modal */
@@ -434,7 +462,15 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
 
     <!-- ORDERS TAB -->
     <div id="ordersTab" style="display:none;">
-      <div class="stats-grid" id="orderStats"></div>
+      <!-- Quick Stats Row for Orders -->
+      <div class="quick-stats" id="orderQuickStats"></div>
+      
+      <!-- Search Orders -->
+      <div class="search-bar" style="margin-bottom:20px;">
+        <input type="text" id="orderSearchInput" class="search-input" placeholder="🔍 Search orders by customer name, email, or phone...">
+        <button class="clear-search" onclick="clearOrderSearch()">Clear</button>
+      </div>
+      
       <div id="ordersList" class="orders-list"></div>
     </div>
 
@@ -449,10 +485,10 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
       <div class="add-product-card">
         <div class="section-title"><i class="ph ph-chart-line"></i> Quick Insights</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
-          <div><strong>Pending Orders:</strong> <span id="pendingCount">0</span></div>
-          <div><strong>Paid Orders:</strong> <span id="paidCount">0</span></div>
-          <div><strong>Delivered Orders:</strong> <span id="deliveredCount">0</span></div>
-          <div><strong>Out of Stock Products:</strong> <span id="outOfStockCount">0</span></div>
+          <div><strong>📋 Pending Orders:</strong> <span id="pendingCount">0</span></div>
+          <div><strong>✅ Paid Orders:</strong> <span id="paidCount">0</span></div>
+          <div><strong>🚚 Delivered Orders:</strong> <span id="deliveredCount">0</span></div>
+          <div><strong>📦 Out of Stock:</strong> <span id="outOfStockCount">0</span></div>
         </div>
       </div>
     </div>
@@ -483,6 +519,17 @@ body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidd
         <div class="section-title"><i class="ph ph-database"></i> System Actions</div>
         <button class="submit-btn" onclick="refreshData()" style="background:var(--blue); color:#fff; margin-right:12px;"><i class="ph ph-arrows-clockwise"></i> Refresh Data</button>
         <button class="submit-btn" onclick="clearAllFilters()" style="background:var(--red); color:#fff;"><i class="ph ph-trash"></i> Clear Search Filters</button>
+      </div>
+      
+      <!-- Help Section for Non-Tech Users -->
+      <div class="add-product-card">
+        <div class="section-title"><i class="ph ph-question"></i> Quick Guide</div>
+        <div style="font-size:13px; color:var(--mid); line-height:1.6;">
+          <p>📦 <strong>Products:</strong> Add/Edit products with images, prices and stock status</p>
+          <p>📋 <strong>Orders:</strong> View customer orders, mark as Paid or Delivered, contact via WhatsApp/Call</p>
+          <p>⚙️ <strong>Settings:</strong> Adjust delivery fees and thresholds</p>
+          <p>💬 <strong>Customer Contact:</strong> Click WA or Call buttons next to each order</p>
+        </div>
       </div>
     </div>
   </div>
@@ -588,6 +635,11 @@ function clearAllFilters(){
   toast('Filters cleared');
 }
 
+function clearOrderSearch(){
+  document.getElementById('orderSearchInput').value = '';
+  renderOrders();
+}
+
 // ==================== TAB SWITCHING ====================
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -612,6 +664,18 @@ document.getElementById('searchInput')?.addEventListener('input', (e) => {
   searchTerm = e.target.value.toLowerCase();
   renderProducts();
 });
+
+// Order Search Function
+function filterOrdersBySearch() {
+  const searchVal = document.getElementById('orderSearchInput')?.value.toLowerCase() || '';
+  const container = document.getElementById('ordersList');
+  if(!container) return;
+  const cards = container.querySelectorAll('.order-card');
+  cards.forEach(card => {
+    const text = card.innerText.toLowerCase();
+    card.style.display = text.includes(searchVal) ? 'block' : 'none';
+  });
+}
 
 // ==================== PRODUCT MANAGEMENT ====================
 function renderProducts(){
@@ -756,7 +820,22 @@ async function saveEdit(){
   } catch(e){ toast('Error updating'); }
 }
 
-// ==================== ORDER MANAGEMENT (WITH IMAGES + PHONE CONTACT) ====================
+// ==================== ORDER MANAGEMENT ====================
+function renderOrderQuickStats(){
+  const total = orders.length;
+  const pending = orders.filter(o => o.status === 'pending').length;
+  const paid = orders.filter(o => o.status === 'paid').length;
+  const delivered = orders.filter(o => o.status === 'delivered').length;
+  const revenue = orders.filter(o => o.status === 'delivered' || o.status === 'paid').reduce((s,o) => s + (o.total || 0), 0);
+  
+  document.getElementById('orderQuickStats').innerHTML = `
+    <div class="quick-stat"><div class="num">${total}</div><div class="label">Total Orders</div></div>
+    <div class="quick-stat"><div class="num">${pending}</div><div class="label">⏳ Pending</div></div>
+    <div class="quick-stat"><div class="num">${paid}</div><div class="label">✅ Paid</div></div>
+    <div class="quick-stat"><div class="num">KES ${revenue.toLocaleString()}</div><div class="label">Revenue</div></div>
+  `;
+}
+
 function renderOrders(){
   const container = document.getElementById('ordersList');
   if(!orders.length){
@@ -765,7 +844,6 @@ function renderOrders(){
   }
   
   container.innerHTML = orders.map(o => {
-    // Format phone for WhatsApp and Call
     let phoneNumber = o.phone || '';
     let cleanPhone = phoneNumber.replace(/\D/g, '');
     if (cleanPhone.startsWith('0')) cleanPhone = '254' + cleanPhone.slice(1);
@@ -773,21 +851,17 @@ function renderOrders(){
     const whatsappLink = `https://wa.me/${cleanPhone}`;
     const callLink = `tel:${cleanPhone}`;
     
-    // Display formatted phone
     let displayPhone = phoneNumber;
     if (phoneNumber && phoneNumber.length === 12 && phoneNumber.startsWith('254')) {
       displayPhone = '0' + phoneNumber.slice(3);
     }
     
-    // Parse items
     let itemsArray = o.items;
     if (typeof itemsArray === 'string') {
       try { itemsArray = JSON.parse(itemsArray); } catch(e) { itemsArray = []; }
     }
     
-    // Build items HTML with product images
     const itemsHtml = itemsArray.map(i => {
-      // Find product in products array to get image
       const product = products.find(p => p.id === i.product_id || p.name === i.product_name || p.name === i.name);
       const productImg = (product && product.image && product.image.trim() !== '') 
         ? product.image 
@@ -824,7 +898,7 @@ function renderOrders(){
         <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
           <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
           <div style="display:flex; gap:6px;">
-            <a href="${whatsappLink}" target="_blank" class="order-btn btn-wa" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="ph ph-whatsapp-logo"></i> WA</a>
+            <a href="${whatsappLink}" target="_blank" class="order-btn btn-wa" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
             <a href="${callLink}" class="order-btn btn-call" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="ph ph-phone-call"></i> Call</a>
           </div>
         </div>
@@ -839,13 +913,17 @@ function renderOrders(){
           <div style="font-size:10px; color:var(--muted); margin-top:4px;">📍 ${escapeHtml((o.address || '').substring(0, 60))}${(o.address || '').length > 60 ? '...' : ''}</div>
         </div>
         <div class="order-actions">
-          ${o.status === 'pending' ? `<button class="order-btn btn-mark-paid" onclick="markOrderPaid('${o.id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}
-          ${o.status === 'paid' ? `<button class="order-btn btn-mark-delivered" onclick="markOrderDelivered('${o.id}')"><i class="ph ph-truck"></i> Delivered</button>` : ''}
+          ${o.status === 'pending' ? `<button class="order-btn btn-mark-paid" onclick="markOrderPaid('${o.id}')"><i class="ph ph-check-circle"></i> ✓ Mark Paid</button>` : ''}
+          ${o.status === 'paid' ? `<button class="order-btn btn-mark-delivered" onclick="markOrderDelivered('${o.id}')"><i class="ph ph-truck"></i> 🚚 Mark Delivered</button>` : ''}
+          ${o.status === 'delivered' ? `<span class="completed-badge"><i class="ph ph-check"></i> Completed ✓</span>` : ''}
           <button class="order-btn btn-delete" onclick="deleteOrder('${o.id}')"><i class="ph ph-trash"></i> Delete</button>
         </div>
       </div>
     </div>`;
   }).join('');
+  
+  // Apply search filter after rendering
+  setTimeout(() => filterOrdersBySearch(), 50);
 }
 
 function renderOrderStats(){
@@ -864,6 +942,7 @@ function renderOrderStats(){
   document.getElementById('pendingCount').innerText = pending;
   document.getElementById('paidCount').innerText = paid;
   document.getElementById('deliveredCount').innerText = completed;
+  renderOrderQuickStats();
 }
 
 async function markOrderPaid(id){
@@ -938,6 +1017,9 @@ document.getElementById('prodImage').addEventListener('input', function(){
     preview.innerHTML = `<img src="${url}" class="image-preview" onerror="this.style.display='none'">`;
   } else { preview.innerHTML = ''; }
 });
+
+// Order search listener
+document.getElementById('orderSearchInput')?.addEventListener('input', filterOrdersBySearch);
 
 // Edit Modal HTML
 const modalHtml = `
