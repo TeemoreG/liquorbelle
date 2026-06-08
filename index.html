@@ -32,7 +32,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 img{display:block;}
 a{color:inherit;text-decoration:none;}
 
-/* Age Gate */
+/* Age Gate - FIXED for index page only */
 .age-gate{
   position:fixed;inset:0;background:rgba(0,0,0,0.92);
   display:flex;align-items:center;justify-content:center;
@@ -87,10 +87,10 @@ a{color:inherit;text-decoration:none;}
 .wishlist-atc{padding:6px 14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-size:.7rem;font-weight:700;cursor:pointer;}
 .wishlist-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px;}
 
-/* Top Bar */
+/* Top Bar - RED THEME */
 .top-bar{
   background:var(--primary);
-  color:rgba(255,255,255,.88);
+  color:rgba(255,255,255,.92);
   padding:8px 5%;
   display:flex;
   justify-content:space-between;
@@ -103,40 +103,39 @@ a{color:inherit;text-decoration:none;}
 .top-bar-left span{display:inline-flex;align-items:center;gap:5px;opacity:.9;}
 .badge-24h{
   background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.25);
   padding:3px 12px;border-radius:50px;
   font-size:11px;font-weight:600;color:#fff;
 }
 
-/* Header */
+/* Header - RED background, WHITE buttons */
 .main-header{
-  background:rgba(255,255,255,.97);
-  backdrop-filter:blur(12px);
+  background:var(--primary);
   padding:14px 5%;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:20px;
-  border-bottom:1px solid var(--border);
+  border-bottom:1px solid rgba(255,255,255,0.15);
   position:sticky;top:0;z-index:200;
 }
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.logo-img{height:44px;width:44px;border-radius:0px;object-fit:cover;}
-.logo-text{font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:var(--primary);letter-spacing:-.3px;line-height:1;text-decoration:none;}
-.logo-text small{display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:var(--muted);letter-spacing:.5px;margin-top:2px;text-transform:uppercase;text-decoration:none;}
+.logo-img{height:44px;width:44px;border-radius:0px;object-fit:cover;background:white;padding:2px;border-radius:8px;}
+.logo-text{font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;text-decoration:none;text-shadow:0 1px 2px rgba(0,0,0,0.1);}
+.logo-text small{display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:2px;text-transform:uppercase;text-decoration:none;}
 .search-wrap{flex:1;max-width:460px;position:relative;}
 .search-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px;}
 .search-wrap input{
   width:100%;
   padding:11px 16px 11px 44px;
-  background:var(--bg);
-  border:1.5px solid var(--border);
+  background:rgba(255,255,255,0.92);
+  border:1.5px solid transparent;
   border-radius:50px;
   font-size:13.5px;font-family:var(--font-body);color:var(--text);
-  transition:border-color .2s,box-shadow .2s;
+  transition:all .2s;
 }
-.search-wrap input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,.1);}
-.header-actions{display:flex;align-items:center;gap:6px;}
+.search-wrap input:focus{outline:none;background:#fff;border-color:var(--white);box-shadow:0 0 0 3px rgba(255,255,255,0.3);}
+.header-actions{display:flex;align-items:center;gap:8px;}
 .action-group{
   display:flex;
   flex-direction:column;
@@ -147,32 +146,33 @@ a{color:inherit;text-decoration:none;}
 .action-label{
   font-size:9px;
   font-weight:600;
-  color:var(--muted);
+  color:rgba(255,255,255,0.85);
   text-transform:uppercase;
   letter-spacing:.3px;
 }
+/* WHITE buttons with primary icons */
 .hbtn{
   width:35px;height:35px;border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:var(--primary);
-  color:white;
+  background:white;
+  color:var(--primary);
   border:none;
   cursor:pointer;
   position:relative;
   transition:all .2s;
-  box-shadow:0 2px 6px rgba(128,0,0,.2);
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
-.hbtn:hover{background:var(--primary-bright);transform:translateY(-2px);}
-.hbtn i{font-size:15px;}
+.hbtn:hover{background:var(--bg2);transform:translateY(-2px);}
+.hbtn i{font-size:15px;color:var(--primary);}
 .cart-count{
   position:absolute;top:-5px;right:-5px;
   background:var(--sale-red);color:#fff;
   font-size:9px;font-weight:700;
   width:17px;height:17px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  border:2px solid var(--white);
+  border:2px solid white;
 }
 .wishlist-count{
   position:absolute;top:-5px;right:-5px;
@@ -180,7 +180,7 @@ a{color:inherit;text-decoration:none;}
   font-size:9px;font-weight:700;
   width:17px;height:17px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  border:2px solid var(--white);
+  border:2px solid white;
   display:none;
 }
 
@@ -451,7 +451,7 @@ a{color:inherit;text-decoration:none;}
 .rv-item-name{font-size:.65rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:2px;}
 .rv-item-price{font-size:.7rem;font-weight:700;color:var(--sale-red);}
 
-/* Wholesale Inquiry Section - FIXED */
+/* Wholesale Inquiry Section */
 .store-promo{
   background: var(--white);
   margin: 40px 5%;
@@ -566,7 +566,7 @@ a{color:inherit;text-decoration:none;}
   background: #0e6b32;
 }
 
-/* Support Cards - Side by Side */
+/* Support Cards */
 .support-grid{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -616,7 +616,6 @@ a{color:inherit;text-decoration:none;}
   color: var(--muted);
 }
 
-/* PHP Style Info Row */
 .php-info-row{
   display:flex;
   gap:24px;
@@ -668,7 +667,6 @@ a{color:inherit;text-decoration:none;}
 }
 .nl-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
 
-/* Review Button */
 .review-section{
   margin:40px 5%;
   background:var(--bg2);
@@ -695,7 +693,6 @@ a{color:inherit;text-decoration:none;}
 }
 .review-btn:hover{background:var(--primary-bright);transform:translateY(-2px);}
 
-/* Zones */
 .zones-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
@@ -775,7 +772,6 @@ a{color:inherit;text-decoration:none;}
   pointer-events:none;white-space:nowrap;
 }
 
-/* Remove button styling */
 .cart-remove-btn {
   background: #dc3545 !important;
   color: white !important;
@@ -825,14 +821,14 @@ a{color:inherit;text-decoration:none;}
 </head>
 <body>
 
-<!-- Age Gate -->
+<!-- Age Gate - FIXED for index page only -->
 <div class="age-gate" id="ageGate">
   <div class="age-gate-card">
     <h2>Are you 18+?</h2>
     <p>LiquorBelle sells alcohol. You must be at least 18 years old to enter this site. Please confirm your age to continue.</p>
     <div class="age-gate-btns">
-      <button class="age-yes" onclick="confirmAge()">Yes, I'm 18+</button>
-      <button class="age-no" onclick="denyAge()">No, I'm under 18</button>
+      <button class="age-yes" id="ageYesBtn">Yes, I'm 18+</button>
+      <button class="age-no" id="ageNoBtn">No, I'm under 18</button>
     </div>
   </div>
 </div>
@@ -859,6 +855,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
+<!-- RED THEME TOP BAR -->
 <div class="top-bar">
   <div class="top-bar-left">
     <span><i class="ph ph-map-pin"></i>Dagoretti Road, Nairobi</span>
@@ -867,6 +864,7 @@ a{color:inherit;text-decoration:none;}
   <div class="badge-24h"><i class="ph ph-clock"></i>&nbsp;Open 24/7</div>
 </div>
 
+<!-- RED HEADER with WHITE buttons -->
 <header class="main-header">
   <a class="logo" href="index.html" style="text-decoration:none;">
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle logo">
@@ -941,7 +939,7 @@ a{color:inherit;text-decoration:none;}
   <div class="rv-scroll" id="rvScroll"></div>
 </div>
 
-<!-- Wholesale Inquiry Section - FIXED -->
+<!-- Wholesale Inquiry Section -->
 <div class="store-promo">
   <div class="store-promo-left">
     <h3><i class="ph ph-buildings"></i> Wholesale & Bulk Orders</h3>
@@ -970,7 +968,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Support Cards - Side by Side -->
+<!-- Support Cards -->
 <div class="support-grid">
   <div class="support-card">
     <div class="support-card-header"><i class="ph ph-map-pin"></i> Location & Contact</div>
@@ -1030,28 +1028,38 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <script>
+// AGE GATE - FIXED for index page only (proper event listeners)
+function initAgeGate() {
+  const ageGate = document.getElementById('ageGate');
+  const ageYesBtn = document.getElementById('ageYesBtn');
+  const ageNoBtn = document.getElementById('ageNoBtn');
+  
+  if(localStorage.getItem('lb_age_confirmed_index') === '1') {
+    if(ageGate) ageGate.style.display = 'none';
+  } else {
+    if(ageGate) ageGate.style.display = 'flex';
+  }
+  
+  if(ageYesBtn) {
+    ageYesBtn.onclick = function() {
+      localStorage.setItem('lb_age_confirmed_index', '1');
+      document.getElementById('ageGate').style.display = 'none';
+    };
+  }
+  
+  if(ageNoBtn) {
+    ageNoBtn.onclick = function() {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;">Sorry, you must be 18 or older to visit this site.</div>';
+    };
+  }
+}
+
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 let wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
 let recentlyViewed = JSON.parse(localStorage.getItem('liquorbelle_rv') || '[]');
 let PRODUCTS = [];
-
-// Age Gate
-(function(){
-  if(!localStorage.getItem('lb_age_confirmed')){
-    document.getElementById('ageGate').style.display='flex';
-  } else {
-    document.getElementById('ageGate').style.display='none';
-  }
-})();
-function confirmAge(){
-  localStorage.setItem('lb_age_confirmed','1');
-  document.getElementById('ageGate').style.display='none';
-}
-function denyAge(){
-  document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;">Sorry, you must be 18 or older to visit this site.</div>';
-}
 
 // Auth
 let currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
@@ -1216,7 +1224,6 @@ function renderRecentlyViewed(){
   `).join('');
 }
 
-// Flash Sale Countdown
 function startCountdown(){
   let endKey = 'lb_flash_end';
   let end = parseInt(localStorage.getItem(endKey)||'0');
@@ -1233,19 +1240,21 @@ function startCountdown(){
     const h = Math.floor(diff/3600000);
     const m = Math.floor((diff%3600000)/60000);
     const s = Math.floor((diff%60000)/1000);
-    document.getElementById('cdH').innerText = String(h).padStart(2,'0');
-    document.getElementById('cdM').innerText = String(m).padStart(2,'0');
-    document.getElementById('cdS').innerText = String(s).padStart(2,'0');
+    const hEl = document.getElementById('cdH');
+    const mEl = document.getElementById('cdM');
+    const sEl = document.getElementById('cdS');
+    if(hEl){hEl.innerText = String(h).padStart(2,'0');}
+    if(mEl){mEl.innerText = String(m).padStart(2,'0');}
+    if(sEl){sEl.innerText = String(s).padStart(2,'0');}
   }
   tick();
   setInterval(tick,1000);
 }
 
-// Newsletter
 function subscribeNewsletter(){
-  const em = document.getElementById('nlEmail').value.trim();
+  const em = document.getElementById('nlEmail')?.value.trim();
   if(!em||!em.includes('@')){toast('Please enter a valid email');return;}
-  document.getElementById('nlEmail').value='';
+  if(document.getElementById('nlEmail')) document.getElementById('nlEmail').value='';
   toast('Subscribed! You\'ll get exclusive deals 🎉');
 }
 
@@ -1262,7 +1271,9 @@ const categories = [
 ];
 function renderCategories(){
   const container = document.getElementById('categoryGrid');
-  container.innerHTML = categories.map(cat => `<a href="shop.html?cat=${cat.cat}" class="cat-card"><img class="cat-img" src="${cat.image}" alt="${cat.name}"><span>${cat.name}</span></a>`).join('');
+  if(container){
+    container.innerHTML = categories.map(cat => `<a href="shop.html?cat=${cat.cat}" class="cat-card"><img class="cat-img" src="${cat.image}" alt="${cat.name}"><span>${cat.name}</span></a>`).join('');
+  }
 }
 
 // Load Products
@@ -1317,23 +1328,33 @@ function renderTrending(){
       </div>
     </div>`;
   }).join('');
-  document.getElementById('trendingGrid').innerHTML = trendingItems;
+  const grid = document.getElementById('trendingGrid');
+  if(grid) grid.innerHTML = trendingItems;
 }
 
 const zones = ['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata','Waithaka','Kikuyu','Runda'];
-document.getElementById('zonesGrid').innerHTML = zones.map(z=>`<div class="zone-tag"><div class="zone-dot"></div><span>${z}</span></div>`).join('');
-document.getElementById('searchInput').addEventListener('keypress',e=>{if(e.key==='Enter') window.location.href=`shop.html?search=${encodeURIComponent(e.target.value)}`;});
+const zonesGrid = document.getElementById('zonesGrid');
+if(zonesGrid) zonesGrid.innerHTML = zones.map(z=>`<div class="zone-tag"><div class="zone-dot"></div><span>${z}</span></div>`).join('');
 
-// Click outside modals to close
-document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeAuthModal();});
-document.getElementById('wishlistModal').addEventListener('click',function(e){if(e.target===this)closeWishlistModal();});
+const searchInput = document.getElementById('searchInput');
+if(searchInput){
+  searchInput.addEventListener('keypress',e=>{if(e.key==='Enter') window.location.href=`shop.html?search=${encodeURIComponent(e.target.value)}`;});
+}
 
+// Close modals on outside click
+const authModal = document.getElementById('authModal');
+if(authModal) authModal.addEventListener('click',function(e){if(e.target===this)closeAuthModal();});
+const wishlistModal = document.getElementById('wishlistModal');
+if(wishlistModal) wishlistModal.addEventListener('click',function(e){if(e.target===this)closeWishlistModal();});
+
+// Initialize everything
 renderCategories();
 updateAccountUI();
 updateWishlistUI();
 loadProducts();
 updateCartUI();
 startCountdown();
+initAgeGate(); // Age gate only for this page
 if(currentUser && document.getElementById('accountBtn')) document.getElementById('accountBtn').oncontextmenu = (e)=>{e.preventDefault();localStorage.removeItem('liquorbelle_user');currentUser=null;toast('Logged out');};
 </script>
 </body>
