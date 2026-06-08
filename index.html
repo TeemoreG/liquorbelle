@@ -3,793 +3,1107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-<title>LiquorBelle — Dagoretti's Finest | Premium Alcohol Delivery</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<title>LiquorBelle — Nairobi's Finest Alcohol Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
-  --bg:#0a0a0f;
-  --bg2:#111118;
-  --bg3:#17171f;
-  --gold:#f0a500;
-  --gold-dim:rgba(240,165,0,0.12);
-  --red:#e03131;
-  --red-dim:rgba(224,49,49,0.12);
-  --green:#2ecc71;
-  --border:rgba(255,255,255,0.06);
-  --ink:#f0eef8;
-  --muted:#6b6780;
-  --mid:#9994ad;
-  --fh:'Sora',sans-serif;
-  --fb:'Plus Jakarta Sans',sans-serif;
+  --primary:#800000;
+  --primary-bright:#990000;
+  --discount-red:#CC0000;
+  --sale-red:#D50000;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --success:#1A8A3E;
+  --gold:#B8860B;
   --radius:16px;
-  --radius-sm:12px;
+  --radius-sm:10px;
+  --shadow:0 2px 12px rgba(90,20,30,0.08);
+  --shadow-lg:0 8px 32px rgba(90,20,30,0.14);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans',-apple-system,sans-serif;
 }
-body{background:var(--bg);font-family:var(--fb);color:var(--ink);padding-bottom:70px;}
+body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
+img{display:block;}
+a{color:inherit;text-decoration:none;}
+
+/* Age Gate */
+.age-gate{
+  position:fixed;inset:0;background:rgba(0,0,0,0.92);
+  display:flex;align-items:center;justify-content:center;
+  z-index:2000;
+}
+.age-gate-card{
+  background:var(--white);border-radius:var(--radius);
+  padding:40px 32px;text-align:center;max-width:400px;width:90%;
+  border-top:5px solid var(--primary);
+}
+.age-gate-card h2{font-family:var(--font-display);font-size:1.8rem;color:var(--primary);margin-bottom:8px;}
+.age-gate-card p{color:var(--muted);font-size:.85rem;margin-bottom:28px;line-height:1.6;}
+.age-gate-btns{display:flex;gap:12px;}
+.age-yes{flex:1;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
+.age-no{flex:1;padding:13px;background:var(--bg2);color:var(--muted);border:1.5px solid var(--border);border-radius:50px;font-weight:700;cursor:pointer;}
+
+/* Modal Overlay */
+.modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;visibility:hidden;opacity:0;transition:all 0.2s;
+}
+.modal-overlay.active{visibility:visible;opacity:1;}
+.modal-card{
+  background:var(--white);border-radius:var(--radius);width:90%;max-width:420px;
+  padding:28px 24px;box-shadow:var(--shadow-lg);border-top:4px solid var(--primary);
+}
+.modal-card h3{font-family:var(--font-display);font-size:1.4rem;margin-bottom:6px;}
+.modal-card p{font-size:.8rem;color:var(--muted);margin-bottom:20px;}
+.modal-input{
+  width:100%;padding:12px 14px;margin-bottom:12px;
+  background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-family:var(--font-body);font-size:.85rem;
+}
+.modal-input:focus{outline:none;border-color:var(--primary);}
+.modal-btn{
+  width:100%;padding:12px;background:var(--primary);color:#fff;border:none;
+  border-radius:50px;font-weight:700;cursor:pointer;margin-top:8px;
+}
+.modal-switch{text-align:center;margin-top:16px;font-size:.75rem;color:var(--muted);}
+.modal-switch span{color:var(--primary);cursor:pointer;font-weight:600;}
+
+/* Wishlist Modal */
+.wishlist-modal .modal-card{max-width:480px;}
+.wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
+.wishlist-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.wishlist-item img{width:52px;height:52px;object-fit:cover;border-radius:8px;background:var(--bg2);}
+.wishlist-item-info{flex:1;}
+.wishlist-item-name{font-weight:700;font-size:.85rem;}
+.wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.8rem;}
+.wishlist-atc{padding:6px 14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-size:.7rem;font-weight:700;cursor:pointer;}
+.wishlist-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px;}
+
+/* Top Bar */
+.top-bar{
+  background:var(--primary);
+  color:rgba(255,255,255,.88);
+  padding:8px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.top-bar-left{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.top-bar-left span{display:inline-flex;align-items:center;gap:5px;opacity:.9;}
+.badge-24h{
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.2);
+  padding:3px 12px;border-radius:50px;
+  font-size:11px;font-weight:600;color:#fff;
+}
 
 /* Header */
-.app-header{
-  background:rgba(10,10,15,0.95);
-  backdrop-filter:blur(20px);
-  padding:12px 5%;
+.main-header{
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(12px);
+  padding:14px 5%;
   display:flex;
+  align-items:center;
   justify-content:space-between;
-  align-items:center;
-  position:sticky;
-  top:0;
-  z-index:100;
+  gap:20px;
   border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;
 }
-.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
-.logo-img{height:32px;border-radius:8px;}
-.logo-name{font-family:var(--fh);font-weight:800;font-size:1rem;color:var(--ink);}
-.logo-name em{color:var(--gold);font-style:normal;}
-.header-right{display:flex;gap:8px;}
-.cart-icon{
-  position:relative;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  color:var(--mid);
-  transition:all 0.2s;
-}
-.cart-icon:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
-.cart-count{
-  position:absolute;
-  top:-4px;
-  right:-4px;
-  background:var(--red);
-  color:#fff;
-  font-size:10px;
-  font-weight:800;
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* Hero */
-.hero{
-  background:linear-gradient(135deg, #1a0a2e, #0d0b1a);
-  padding:32px 5% 40px;
-}
-.hero h1{
-  font-family:var(--fh);
-  font-size:clamp(2rem,6vw,2.8rem);
-  font-weight:800;
-  line-height:1.2;
-  margin-bottom:12px;
-}
-.hero h1 span{color:var(--gold);}
-.hero p{font-size:.85rem;color:var(--mid);margin-bottom:24px;}
-.hero-buttons{display:flex;gap:14px;flex-wrap:wrap;}
-.btn-primary{
-  background:linear-gradient(135deg,var(--red),#c0392b);
-  color:#fff;
-  padding:14px 28px;
-  border-radius:60px;
-  font-weight:700;
-  text-decoration:none;
-  font-size:.9rem;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  transition:all 0.2s;
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(224,49,49,0.3);}
-.btn-outline{
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--ink);
-  padding:14px 28px;
-  border-radius:60px;
-  font-weight:600;
-  text-decoration:none;
-  font-size:.9rem;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
-.hero-tag{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  background:rgba(46,204,113,0.12);
-  padding:8px 16px;
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-img{height:44px;width:44px;border-radius:0px;object-fit:cover;}
+.logo-text{font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:var(--primary);letter-spacing:-.3px;line-height:1;text-decoration:none;}
+.logo-text small{display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:var(--muted);letter-spacing:.5px;margin-top:2px;text-transform:uppercase;text-decoration:none;}
+.search-wrap{flex:1;max-width:460px;position:relative;}
+.search-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px;}
+.search-wrap input{
+  width:100%;
+  padding:11px 16px 11px 44px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
   border-radius:50px;
-  font-size:.75rem;
-  font-weight:600;
-  color:var(--green);
-  margin-top:20px;
+  font-size:13.5px;font-family:var(--font-body);color:var(--text);
+  transition:border-color .2s,box-shadow .2s;
 }
-
-/* Stats - Responsive for mobile */
-.stats-row{
-  display:flex;
-  justify-content:space-between;
-  background:var(--bg2);
-  border-radius:20px;
-  padding:16px 12px;
-  margin:20px 5% 0;
-  border:1px solid var(--border);
-  flex-wrap:wrap;
-  gap:10px;
-}
-.stat-item{
-  text-align:center;
-  flex:1;
-  min-width:70px;
-  white-space: nowrap;
-}
-.stat-number{
-  font-size:clamp(18px, 4vw, 28px);
-  font-weight:800;
-  color:var(--gold);
-  font-family:var(--fh);
-}
-.stat-label{
-  font-size:clamp(9px, 2.5vw, 12px);
-  color:var(--muted);
-  margin-top:6px;
-}
-
-/* Live Delivery Status Bar - NEW */
-.delivery-status-bar{
-  background:linear-gradient(135deg, var(--bg2), var(--bg3));
-  border-radius:60px;
-  margin:16px 5%;
-  padding:12px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  border:1px solid rgba(46,204,113,0.3);
-}
-.status-left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.pulse-dot{
-  width:10px;
-  height:10px;
-  background:var(--green);
-  border-radius:50%;
-  animation:pulse 1.5s infinite;
-  box-shadow:0 0 0 0 rgba(46,204,113,0.7);
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(46,204,113,0.7);}
-  70%{box-shadow:0 0 0 8px rgba(46,204,113,0);}
-  100%{box-shadow:0 0 0 0 rgba(46,204,113,0);}
-}
-.status-text{
-  font-size:.8rem;
-  font-weight:600;
-}
-.status-text span{color:var(--green);}
-.status-right{
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
-.status-rider-count{
-  background:var(--bg4);
-  padding:4px 12px;
-  border-radius:40px;
-  font-size:.7rem;
-  color:var(--gold);
-}
-.status-time{
-  font-size:.7rem;
-  color:var(--muted);
-}
-
-/* Section Headers */
-.section-header{
-  padding:32px 5% 20px;
-}
-.section-header h2{
-  font-family:var(--fh);
-  font-size:1.4rem;
-  font-weight:700;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.section-header p{font-size:.8rem;color:var(--muted);margin-top:6px;}
-
-/* Category Grid */
-.category-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:20px;
-  padding:0 5%;
-}
-.category-card{
-  background:linear-gradient(135deg, var(--bg2), var(--bg3));
-  border-radius:20px;
-  overflow:hidden;
-  text-decoration:none;
-  transition:all 0.3s ease;
-  border:1px solid var(--border);
-  position:relative;
-}
-.category-card:hover{
-  transform:translateY(-5px);
-  border-color:var(--gold);
-  box-shadow:0 12px 24px rgba(0,0,0,0.3);
-}
-.category-card img{
-  width:100%;
-  height:130px;
-  object-fit:cover;
-  transition:transform 0.3s ease;
-}
-.category-card:hover img{transform:scale(1.05);}
-.category-card span{
-  display:block;
-  padding:14px;
-  text-align:center;
-  font-weight:700;
-  font-size:.85rem;
-  color:var(--ink);
-  background:linear-gradient(to top, var(--bg2), transparent);
-}
-.category-card::after{
-  content:'';
-  position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
-  height:3px;
-  background:linear-gradient(90deg, var(--red), var(--gold));
-  transform:scaleX(0);
-  transition:transform 0.3s ease;
-}
-.category-card:hover::after{transform:scaleX(1);}
-
-/* Info Grid */
-.info-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;
-  padding:0 5%;
-  margin:20px 0;
-}
-.info-card{
-  background:var(--bg2);
-  border-radius:20px;
-  padding:20px;
-  border:1px solid var(--border);
-  transition:transform 0.2s;
-}
-.info-card:hover{transform:translateY(-3px);border-color:var(--gold);}
-.info-row{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:12px 0;
-  border-bottom:1px solid var(--border);
-}
-.info-row:last-child{border-bottom:none;}
-.info-row i{width:36px;color:var(--gold);font-size:20px;}
-.info-row strong{display:block;font-size:.9rem;}
-.info-row small{font-size:.75rem;color:var(--muted);}
-
-/* Reviews */
-.review-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:16px;
-  padding:0 5%;
-}
-.review-card{
-  background:var(--bg2);
-  border-radius:20px;
-  padding:20px;
-  border:1px solid var(--border);
-  transition:transform 0.2s;
-}
-.review-card:hover{transform:translateY(-3px);border-color:var(--gold);}
-.reviewer{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:12px;
-}
-.initials-avatar{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--red),#c0392b);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  font-size:18px;
-  color:#fff;
-}
-.reviewer-info{
-  flex:1;
-}
-.reviewer-name{
-  font-weight:700;
-  font-size:1rem;
-  margin-bottom:2px;
-}
-.reviewer-place{
-  font-size:.7rem;
-  color:var(--muted);
-}
-.stars-gold{
-  color:var(--gold);
-  font-size:13px;
-  letter-spacing:2px;
-  margin-top:4px;
-}
-.review-text{
-  font-size:.85rem;
-  color:var(--mid);
-  line-height:1.5;
-  margin-top:12px;
-  padding-top:12px;
-  border-top:1px solid var(--border);
-}
-
-/* Add Review Form */
-.add-review-form{
-  background:var(--bg2);
-  border-radius:20px;
-  padding:20px;
-  margin:20px 5%;
-  border:1px solid var(--border);
-}
-.add-review-form h4{
-  font-size:1rem;
-  margin-bottom:16px;
-  color:var(--gold);
-}
-.add-review-form input,.add-review-form select,.add-review-form textarea{
-  width:100%;
-  padding:12px 14px;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:12px;
-  color:var(--ink);
-  font-size:.85rem;
-  margin-bottom:12px;
-  font-family:var(--fb);
-}
-.add-review-form input:focus,.add-review-form select:focus,.add-review-form textarea:focus{
-  outline:none;
-  border-color:var(--gold);
-}
-.add-review-form button{
-  width:100%;
-  padding:12px;
-  background:var(--gold);
-  color:#000;
-  border:none;
-  border-radius:40px;
-  font-weight:700;
-  font-size:.85rem;
-  cursor:pointer;
-  transition:all 0.2s;
-}
-.add-review-form button:hover{transform:scale(1.02);}
-
-/* Zones */
-.zones-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-  gap:12px;
-  padding:0 5%;
-  margin-bottom:24px;
-}
-.zone-tag{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:40px;
-  padding:10px 14px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:.75rem;
-}
-.zone-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);}
-
-/* Bottom Nav */
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:rgba(10,10,15,0.96);
-  backdrop-filter:blur(20px);
-  display:flex;
-  justify-content:space-around;
-  padding:10px 5% 20px;
-  border-top:1px solid var(--border);
-  z-index:100;
-}
-.nav-item{
+.search-wrap input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,.1);}
+.header-actions{display:flex;align-items:center;gap:6px;}
+.action-group{
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:4px;
   cursor:pointer;
-  color:var(--muted);
-  font-size:.7rem;
+}
+.action-label{
+  font-size:9px;
   font-weight:600;
-  transition:color 0.2s;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.3px;
 }
-.nav-item.active{color:var(--gold);}
-.nav-item:hover{color:var(--red);}
-.nav-item i{font-size:22px;}
-
-/* FAB Buttons */
-.fab-wa{
-  position:fixed;
-  bottom:80px;
-  left:20px;
-  background:#25D366;
-  width:52px;
-  height:52px;
-  border-radius:50%;
+.hbtn{
+  width:35px;height:35px;border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#fff;
-  text-decoration:none;
-  box-shadow:0 6px 16px rgba(37,211,102,0.4);
-  z-index:150;
-  transition:transform 0.2s;
-}
-.fab-wa:hover{transform:scale(1.05);}
-.fab-cart{
-  position:fixed;
-  bottom:80px;
-  right:20px;
-  background:linear-gradient(135deg,var(--red),#c0392b);
-  width:52px;
-  height:52px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
+  background:var(--primary);
+  color:white;
   border:none;
   cursor:pointer;
-  box-shadow:0 6px 16px rgba(224,49,49,0.4);
-  z-index:150;
-  transition:transform 0.2s;
+  position:relative;
+  transition:all .2s;
+  box-shadow:0 2px 6px rgba(128,0,0,.2);
 }
-.fab-cart:hover{transform:scale(1.05);}
+.hbtn:hover{background:var(--primary-bright);transform:translateY(-2px);}
+.hbtn i{font-size:15px;}
+.cart-count{
+  position:absolute;top:-5px;right:-5px;
+  background:var(--sale-red);color:#fff;
+  font-size:9px;font-weight:700;
+  width:17px;height:17px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--white);
+}
+.wishlist-count{
+  position:absolute;top:-5px;right:-5px;
+  background:var(--gold);color:#fff;
+  font-size:9px;font-weight:700;
+  width:17px;height:17px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--white);
+  display:none;
+}
 
-/* Floating Quick Order Card - NEW */
-.quick-order-card{
-  position:fixed;
-  bottom:150px;
-  right:20px;
-  background:linear-gradient(135deg, var(--bg2), var(--bg3));
-  border-radius:20px;
-  padding:12px 16px;
-  width:auto;
-  min-width:140px;
+/* Hero Section */
+.hero-section{
+  margin:20px 5% 0;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+.hero-image{
+  width:100%;
+  height:auto;
+  display:block;
+  max-height: 320px;
+  object-fit: cover;
+  object-position: center;
+}
+.hero-card{
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-bright) 100%);
+  padding: 32px 40px;
+  color: white;
+  text-align: left;
+}
+.hero-card h1{
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 900;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+.hero-card p{
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 24px;
+  max-width: 500px;
+}
+.shop-all-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  color: var(--primary);
+  padding: 12px 32px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.shop-all-btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  background: #f5f5f5;
+}
+
+/* Flash Sale Banner */
+.flash-sale-banner{
+  margin:32px 5% 0;
+  background:linear-gradient(135deg,#1a0505 0%,var(--primary) 100%);
+  border-radius:var(--radius);
+  padding:20px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  box-shadow:var(--shadow-lg);
+}
+.flash-left{display:flex;align-items:center;gap:16px;}
+.flash-icon{font-size:36px;}
+.flash-text h3{font-family:var(--font-display);color:#fff;font-size:1.2rem;margin-bottom:4px;}
+.flash-text p{color:rgba(255,255,255,.75);font-size:.8rem;}
+.countdown{display:flex;gap:8px;align-items:center;}
+.cd-block{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:8px;
+  padding:8px 12px;
   text-align:center;
-  border:1px solid var(--gold);
-  box-shadow:0 8px 24px rgba(0,0,0,0.3);
-  z-index:150;
-  backdrop-filter:blur(10px);
-  transition:transform 0.2s;
+  min-width:52px;
+}
+.cd-num{display:block;font-size:1.4rem;font-weight:800;color:#fff;font-family:var(--font-display);line-height:1;}
+.cd-label{display:block;font-size:.55rem;color:rgba(255,255,255,.6);text-transform:uppercase;margin-top:2px;}
+.flash-btn{
+  background:#fff;color:var(--primary);
+  padding:10px 22px;border-radius:50px;
+  font-weight:700;font-size:.8rem;
+  border:none;cursor:pointer;
+  transition:all .2s;
+}
+.flash-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.2);}
+
+.feature-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 32px 5%;
+}
+
+.feature-card{
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 20px 16px;
+  text-align: center;
+  border: 1px solid var(--border);
+  transition: all .2s;
+  box-shadow: var(--shadow);
+}
+
+@media(min-width: 768px){
+  .feature-grid{
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+
+.feature-card:hover{
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(128,0,0,.2);
+}
+.feature-icon{
+  font-size: 32px;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.feature-title{
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.feature-desc{
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+/* Section Headers */
+.section-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin:32px 5% 20px;
+  border-left:4px solid var(--primary);
+  padding-left:16px;
+}
+.section-header h2{font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--text);}
+.section-header a{font-size:.8rem;font-weight:600;color:var(--primary);}
+
+/* Category Cards Grid */
+.category-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:20px;
+  padding:0 5%;
+  margin-bottom:32px;
+}
+.cat-card{
+  background:var(--white);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  text-align:center;
+  border:1px solid var(--border);
+  transition:all .2s;
   cursor:pointer;
 }
-.quick-order-card:hover{transform:scale(1.02);}
-.quick-order-card i{font-size:22px;color:var(--gold);display:block;margin-bottom:6px;}
-.quick-order-card .label{font-size:.7rem;color:var(--ink);font-weight:600;}
-.quick-order-card .sub{font-size:.6rem;color:var(--muted);}
+.cat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
+.cat-img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  background:var(--bg2);
+}
+.cat-card span{
+  display:block;
+  padding:12px;
+  font-weight:700;
+  font-size:.85rem;
+  color:var(--text);
+}
+
+/* Products Grid with Wishlist Button */
+.products-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:20px;
+  padding:0 5%;
+}
+.prod-card{
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  transition:all .25s;
+  cursor:pointer;
+  position:relative;
+}
+.prod-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(128,0,0,.2);}
+.pc-img-wrap{position:relative;overflow:hidden;background:var(--bg);}
+.pc-img{width:100%;height:170px;object-fit:cover;transition:transform .4s;}
+.prod-card:hover .pc-img{transform:scale(1.05);}
+.pc-badge{
+  position:absolute;top:8px;left:8px;
+  padding:3px 9px;border-radius:50px;
+  font-size:.6rem;font-weight:700;text-transform:uppercase;
+  z-index:1;
+}
+.badge-hot{background:var(--primary);color:#fff;}
+.badge-local{background:var(--gold);color:#fff;}
+.badge-prem{background:#5B3A8E;color:#fff;}
+.pc-wishlist{
+  position:absolute;top:8px;right:8px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,0.9);border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:2;transition:all .2s;
+  font-size:16px;
+}
+.pc-wishlist:hover{background:#fff;transform:scale(1.1);}
+.pc-wishlist.wishlisted{color:var(--sale-red);}
+.pc-body{padding:12px;}
+.pc-name{font-weight:700;font-size:.9rem;margin-bottom:2px;line-height:1.3;}
+.pc-vol{
+  display:inline-block;background:var(--bg2);border:1px solid var(--border);
+  font-size:.6rem;font-weight:600;color:var(--gold);padding:2px 7px;border-radius:50px;margin-bottom:6px;
+}
+.pc-price-wrap{display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap;}
+.pc-price-old{font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:line-through;}
+.pc-price-new{font-family:var(--font-display);font-size:1.2rem;font-weight:800;color:var(--sale-red);}
+.pc-save{font-size:.65rem;color:var(--success);font-weight:700;}
+.atc-btn{
+  width:100%;padding:9px;
+  background:var(--primary);color:#fff;border:none;
+  border-radius:50px;font-weight:700;font-size:.75rem;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.atc-btn:hover{background:var(--primary-bright);transform:scale(1.02);}
+
+/* Recently Viewed */
+.recently-viewed{
+  margin:32px 5%;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 24px;
+}
+.rv-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.rv-header h3{font-family:var(--font-display);font-size:1.1rem;font-weight:800;}
+.rv-scroll{
+  display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:none;
+}
+.rv-scroll::-webkit-scrollbar{display:none;}
+.rv-item{
+  flex:0 0 110px;text-align:center;cursor:pointer;
+  transition:all .2s;
+}
+.rv-item:hover{transform:translateY(-2px);}
+.rv-item img{
+  width:80px;height:80px;object-fit:cover;border-radius:10px;
+  margin:0 auto 6px;border:1.5px solid var(--border);
+}
+.rv-item-name{font-size:.65rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:2px;}
+.rv-item-price{font-size:.7rem;font-weight:700;color:var(--sale-red);}
+
+/* Wholesale Inquiry Section - FIXED */
+.store-promo{
+  background: var(--white);
+  margin: 40px 5%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+}
+.store-promo-left{
+  padding: 36px 32px;
+  background: var(--bg);
+}
+.store-promo-left h3{
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.store-address{
+  background: rgba(128,0,0,0.05);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin: 16px 0;
+  border-left: 3px solid var(--primary);
+}
+.store-address p{
+  color: var(--text);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.store-address strong{
+  color: var(--primary);
+}
+.store-promo-left p{
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.store-promo-right{
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--white);
+}
+.store-features-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.store-feature-item{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(128,0,0,0.04);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  border: 1px solid var(--border);
+}
+.store-feature-item:hover{
+  background: rgba(128,0,0,0.08);
+  transform: translateX(5px);
+  border-color: var(--primary);
+}
+.store-feature-item i{
+  font-size: 24px;
+  color: var(--primary);
+  width: 32px;
+}
+.store-feature-item span{
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.store-feature-item small{
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+.directions-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #1a8a3e;
+  color: white;
+  padding: 14px 24px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+}
+.directions-btn:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  background: #0e6b32;
+}
+
+/* Support Cards - Side by Side */
+.support-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 40px 5%;
+}
+.support-card{
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.support-card-header{
+  background: var(--bg2);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+.support-card-body{
+  padding: 16px 18px;
+}
+.support-item{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.support-item:last-child{
+  border-bottom: none;
+}
+.support-item i{
+  font-size: 18px;
+  color: var(--primary);
+  width: 28px;
+}
+.support-item strong{
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+.support-item small{
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+/* PHP Style Info Row */
+.php-info-row{
+  display:flex;
+  gap:24px;
+  margin:24px 5% 32px;
+  flex-wrap:wrap;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:16px 24px;
+  justify-content:space-between;
+}
+.php-info-badge{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:.8rem;
+  font-weight:500;
+  color:var(--text);
+}
+.php-info-badge i{font-size:20px;color:var(--primary);}
+
+/* Newsletter Strip */
+.newsletter-strip{
+  margin:0 5% 32px;
+  background:linear-gradient(135deg,var(--primary) 0%,#5a0000 100%);
+  border-radius:var(--radius);
+  padding:28px 32px;
+  display:flex;
+  align-items:center;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.nl-text{flex:1;min-width:200px;}
+.nl-text h4{font-family:var(--font-display);color:#fff;font-size:1.2rem;margin-bottom:4px;}
+.nl-text p{color:rgba(255,255,255,.75);font-size:.8rem;}
+.nl-form{display:flex;gap:8px;flex:1;min-width:260px;}
+.nl-input{
+  flex:1;padding:11px 16px;border-radius:50px;border:none;
+  background:rgba(255,255,255,.15);color:#fff;
+  font-family:var(--font-body);font-size:.85rem;
+}
+.nl-input::placeholder{color:rgba(255,255,255,.55);}
+.nl-input:focus{outline:none;background:rgba(255,255,255,.2);}
+.nl-btn{
+  padding:11px 22px;border-radius:50px;
+  background:#fff;color:var(--primary);border:none;
+  font-weight:700;font-size:.8rem;cursor:pointer;
+  transition:all .2s;
+}
+.nl-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
+
+/* Review Button */
+.review-section{
+  margin:40px 5%;
+  background:var(--bg2);
+  border-radius:var(--radius);
+  padding:32px 40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.review-section-text h3{
+  font-family:var(--font-display);
+  font-size:1.3rem;font-weight:800;color:var(--text);
+  margin-bottom:6px;
+}
+.review-section-text p{color:var(--muted);font-size:.85rem;}
+.review-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 32px;
+  background:var(--primary);color:#fff;border-radius:50px;
+  font-weight:700;font-size:.85rem;
+  transition:all .2s;border:none;cursor:pointer;
+}
+.review-btn:hover{background:var(--primary-bright);transform:translateY(-2px);}
+
+/* Zones */
+.zones-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:12px;
+  padding:0 5%;
+  margin-bottom:32px;
+}
+.zone-tag{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:40px;
+  padding:8px 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:.75rem;
+}
+.zone-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);}
+
+/* Footer */
+.footer{
+  background:var(--primary);
+  color:rgba(255,255,255,.85);
+  padding:40px 5% 28px;
+  margin-top:40px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:32px;
+  margin-bottom:32px;
+}
+.footer-col h4{font-size:.9rem;font-weight:700;margin-bottom:16px;color:#fff;opacity:.9;}
+.footer-col p,.footer-col a{display:block;font-size:.75rem;margin-bottom:8px;opacity:.7;color:#fff;text-decoration:none;}
+.footer-col a:hover{opacity:1;}
+.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:.7rem;opacity:.6;}
 
 /* Cart Drawer */
-.cart-drawer{
-  position:fixed;
-  bottom:-100%;
-  left:0;
-  right:0;
-  background:var(--bg2);
-  border-radius:28px 28px 0 0;
-  z-index:300;
-  transition:bottom 0.3s;
-  max-height:80vh;
-  overflow-y:auto;
-}
-.cart-drawer.open{bottom:0;}
-.cart-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:16px 20px;
-  border-bottom:1px solid var(--border);
-  font-weight:800;
-  font-size:1rem;
-}
-.cart-items{padding:12px 16px;}
-.cart-item{
-  display:flex;
-  justify-content:space-between;
-  padding:14px 0;
-  border-bottom:1px solid var(--border);
-}
-.cart-item-name{font-weight:600;font-size:.9rem;}
-.cart-item-price{color:var(--gold);font-weight:700;font-size:.8rem;margin-top:4px;}
-.cart-qty{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-top:8px;
-}
-.cart-qty button{
-  width:32px;
-  height:32px;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:50%;
-  cursor:pointer;
-  color:var(--ink);
-  font-size:1rem;
-}
-.cart-footer{padding:16px 20px;border-top:1px solid var(--border);}
-.cart-total{
-  display:flex;
-  justify-content:space-between;
-  font-weight:800;
-  font-size:1.1rem;
-  margin-bottom:12px;
-}
-.btn-checkout{
-  width:100%;
-  padding:14px;
-  background:linear-gradient(135deg,var(--gold),#d4a017);
-  border:none;
-  border-radius:60px;
-  font-weight:700;
-  font-size:.9rem;
-  cursor:pointer;
-  color:#000;
-}
 .overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  z-index:250;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.3s;
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;
 }
 .overlay.open{opacity:1;pointer-events:auto;}
-
-footer{
-  background:var(--bg2);
-  padding:32px 5% 24px;
-  text-align:center;
-  border-top:1px solid var(--border);
-  margin-top:24px;
+.cart-drawer{
+  position:fixed;bottom:-100%;left:0;right:0;
+  background:var(--white);border-radius:24px 24px 0 0;
+  z-index:500;transition:bottom .35s;
+  max-height:82vh;overflow-y:auto;
+  box-shadow:0 -4px 30px rgba(0,0,0,.12);
 }
-footer p{font-size:.75rem;color:var(--muted);}
+.cart-drawer.open{bottom:0;}
+.cart-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 22px;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--white);
+}
+.cart-head span{font-weight:800;font-size:1.05rem;font-family:var(--font-display);}
+.cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;}
+.cart-items{padding:14px 18px;}
+.cart-item{
+  display:flex;justify-content:space-between;
+  padding:13px 0;border-bottom:1px solid var(--border);
+}
+.cart-item-name{font-weight:700;font-size:.875rem;}
+.cart-item-price{color:var(--sale-red);font-weight:700;}
+.cart-qty{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.cart-qty button{width:28px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;}
+.cart-footer{padding:14px 18px 22px;border-top:1px solid var(--border);}
+.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:14px;}
+.btn-checkout{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
+.btn-checkout:hover{background:var(--primary-bright);}
+#toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;
+  padding:10px 22px;border-radius:50px;
+  font-size:.8rem;opacity:0;transition:opacity .2s;z-index:600;
+  pointer-events:none;white-space:nowrap;
+}
 
-/* Toast Message */
-#toastMsg{
-  position:fixed;
-  bottom:100px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--bg3);
-  border:1px solid var(--green);
-  padding:12px 24px;
-  border-radius:50px;
-  font-size:.8rem;
-  opacity:0;
-  transition:opacity 0.2s;
-  z-index:200;
-  pointer-events:none;
-  white-space:nowrap;
+/* Remove button styling */
+.cart-remove-btn {
+  background: #dc3545 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 5px 12px !important;
+  font-size: 0.7rem !important;
+  cursor: pointer !important;
+  margin-left: 8px !important;
+  font-weight: 600 !important;
+  width: auto !important;
+  height: auto !important;
+}
+.cart-remove-btn:hover {
+  background: #c82333 !important;
+}
+
+@media(max-width:768px){
+  .search-wrap{display:none;}
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .hero-section{margin:12px 4% 0;}
+  .hero-card{padding: 24px 20px;}
+  .hero-card h1{font-size: 1.4rem;}
+  .feature-grid{gap:12px;margin:20px 4%;}
+  .section-header{margin:24px 4% 16px;}
+  .section-header h2{font-size: 1.3rem;}
+  .products-grid{padding:0 4%;}
+  .support-grid{gap:12px;margin:24px 4%;}
+  .php-info-row{flex-direction:column;gap:12px;margin:20px 4%;padding:12px 16px;}
+  .review-section{margin:24px 4%;padding:24px 20px;flex-direction:column;text-align:center;}
+  .zones-grid{padding:0 4%;}
+  .action-label{font-size:8px;}
+  .category-grid{grid-template-columns:repeat(2,1fr);gap:12px;padding:0 4%;}
+  .cat-img{height:100px;}
+  .store-promo{grid-template-columns:1fr;margin:24px 4%;}
+  .store-promo-left{padding:28px 20px;}
+  .store-promo-right{padding:28px 20px;}
+  .flash-sale-banner{margin:20px 4% 0;padding:16px 18px;flex-direction:column;text-align:center;}
+  .countdown{flex-wrap:wrap;justify-content:center;}
+  .cd-block{min-width:44px;padding:6px 8px;}
+  .cd-num{font-size:1.1rem;}
+  .newsletter-strip{margin:0 4% 24px;padding:20px;}
+  .nl-form{flex-direction:column;}
+  .recently-viewed{margin:24px 4%;}
 }
 </style>
 </head>
 <body>
 
-<div class="app-header">
-  <a class="logo" href="index.html">
-    <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
-    <span class="logo-name">Liquor<em>Belle</em></span>
-  </a>
-  <div class="header-right">
-    <div class="cart-icon" onclick="openCartDrawer()">
-      <i class="ph ph-shopping-bag"></i>
-      <span class="cart-count" id="cartCount">0</span>
+<!-- Age Gate -->
+<div class="age-gate" id="ageGate">
+  <div class="age-gate-card">
+    <h2>Are you 18+?</h2>
+    <p>LiquorBelle sells alcohol. You must be at least 18 years old to enter this site. Please confirm your age to continue.</p>
+    <div class="age-gate-btns">
+      <button class="age-yes" onclick="confirmAge()">Yes, I'm 18+</button>
+      <button class="age-no" onclick="denyAge()">No, I'm under 18</button>
     </div>
   </div>
 </div>
 
-<div class="hero">
-  <h1>Dagoretti's <span>Finest</span><br>Spirit Locker</h1>
-  <p>Premium spirits delivered fast • 24/7 Service</p>
-  <div class="hero-buttons">
-    <a href="track-orders.html" class="btn-primary"><i class="ph ph-magnifying-glass"></i> Track Orders</a>
-    <a href="shop.html" class="btn-outline"><i class="ph ph-wine"></i> Shop Now</a>
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-card">
+    <h3 id="modalTitle">Welcome Back</h3>
+    <p id="modalMsg">Login to your account for faster checkout</p>
+    <input type="email" id="modalEmail" class="modal-input" placeholder="Email address">
+    <input type="password" id="modalPassword" class="modal-input" placeholder="Password">
+    <button class="modal-btn" id="modalActionBtn">Login</button>
+    <div class="modal-switch" id="modalSwitchText">Don't have an account? <span id="toggleAuthMode">Register</span></div>
   </div>
-  <div class="hero-tag"><i class="ph ph-truck"></i> Free delivery on 750ml+ orders • Fast delivery across Nairobi</div>
 </div>
 
-<div class="stats-row">
-  <div class="stat-item"><div class="stat-number">500+</div><div class="stat-label">Products</div></div>
-  <div class="stat-item"><div class="stat-number">10-45min</div><div class="stat-label">Delivery Time</div></div>
-  <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Service</div></div>
-  <div class="stat-item"><div class="stat-number">4.9★</div><div class="stat-label">Rating</div></div>
+<!-- Wishlist Modal -->
+<div class="modal-overlay wishlist-modal" id="wishlistModal">
+  <div class="modal-card">
+    <h3>My Wishlist <i class="ph ph-heart" style="color:var(--sale-red);"></i></h3>
+    <p>Save your favourites and add them to cart anytime.</p>
+    <div id="wishlistItems"></div>
+    <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:12px;" onclick="closeWishlistModal()">Close</button>
+  </div>
 </div>
 
-<!-- LIVE DELIVERY STATUS BAR - NEW -->
-<div class="delivery-status-bar">
-  <div class="status-left">
-    <div class="pulse-dot"></div>
-    <div class="status-text">🟢 <span>We're delivering now!</span> • Riders active in your area</div>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <span><i class="ph ph-map-pin"></i>Dagoretti Road, Nairobi</span>
+    <span><i class="ph ph-phone-call"></i>+254 748 894 443</span>
   </div>
-  <div class="status-right">
-    <div class="status-rider-count"><i class="ph ph-motorcycle"></i> 5 riders active</div>
-    <div class="status-time"><i class="ph ph-clock"></i> Est. 15-30 min</div>
+  <div class="badge-24h"><i class="ph ph-clock"></i>&nbsp;Open 24/7</div>
+</div>
+
+<header class="main-header">
+  <a class="logo" href="index.html" style="text-decoration:none;">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle logo">
+    <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
+  </a>
+  <div class="search-wrap">
+    <i class="ph ph-magnifying-glass"></i>
+    <input type="text" id="searchInput" placeholder="Search whisky, wine, beer…">
   </div>
+  <div class="header-actions">
+    <div class="action-group" onclick="window.location.href='checkout.html'">
+      <div class="hbtn"><i class="ph ph-credit-card"></i></div>
+      <span class="action-label">Checkout</span>
+    </div>
+    <div class="action-group" onclick="openWishlistModal()">
+      <div class="hbtn" id="wishlistBtn">
+        <i class="ph ph-heart"></i>
+        <span class="wishlist-count" id="wishlistCount">0</span>
+      </div>
+      <span class="action-label">Wishlist</span>
+    </div>
+    <div class="action-group" id="accountBtn" onclick="openAuthModal()">
+      <div class="hbtn"><i class="ph ph-user-circle"></i></div>
+      <span class="action-label">Account</span>
+    </div>
+    <div class="action-group" onclick="openCartDrawer()">
+      <div class="hbtn">
+        <i class="ph ph-shopping-bag"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
+      <span class="action-label">Cart</span>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<div class="hero-section">
+  <img class="hero-image" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780937909/lb2_y4bwkw.png" alt="LiquorBelle Premium Selection">
+  <div class="hero-card">
+    <h1>Shop All Drinks</h1>
+    <p>Discover Nairobi's finest selection of premium spirits, wines, and beers. 100% authentic, delivered fast.</p>
+    <button class="shop-all-btn" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i> Shop All Drinks →</button>
+  </div>
+</div>
+
+<!-- Category Cards Section -->
+<div class="section-header">
+  <h2>Shop by Category</h2>
+  <a href="shop.html">View All →</a>
+</div>
+<div class="category-grid" id="categoryGrid"></div>
+
+<div class="feature-grid">
+  <div class="feature-card"><div class="feature-icon"><i class="ph ph-check-circle"></i></div><div class="feature-title">Authentic Brands</div><div class="feature-desc">Top global brands you can trust.</div></div>
+  <div class="feature-card"><div class="feature-icon"><i class="ph ph-lock-simple"></i></div><div class="feature-title">Secure Shopping</div><div class="feature-desc">Safe & secure payments.</div></div>
+  <div class="feature-card"><div class="feature-icon"><i class="ph ph-truck"></i></div><div class="feature-title">Fast Delivery</div><div class="feature-desc">Quick delivery to your door.</div></div>
+  <div class="feature-card"><div class="feature-icon"><i class="ph ph-storefront"></i></div><div class="feature-title">Shop Anytime</div><div class="feature-desc">Quality you trust, delivered.</div></div>
 </div>
 
 <div class="section-header">
-  <h2><i class="ph ph-wine" style="color:var(--gold);"></i> Shop by Category</h2>
-  <p>Explore our premium collection of spirits, wines, and beers</p>
+  <h2>Trending Deals</h2>
+  <a href="shop.html">View All →</a>
 </div>
-<div class="category-grid">
-  <a href="shop.html?cat=whisky" class="category-card">
-    <img src="https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp" alt="Whisky">
-    <span>🥃 Whisky</span>
-  </a>
-  <a href="shop.html?cat=cognac" class="category-card">
-    <img src="https://i.postimg.cc/W1qvx9dw/cognacs.webp" alt="Cognac">
-    <span>🍾 Cognac</span>
-  </a>
-  <a href="shop.html?cat=vodka" class="category-card">
-    <img src="https://i.postimg.cc/xTQFy62P/vodk-AS.jpg" alt="Vodka">
-    <span>🍸 Vodka</span>
-  </a>
-  <a href="shop.html?cat=gin" class="category-card">
-    <img src="https://i.postimg.cc/ZqmMjjpn/champagne.jpg" alt="Gin">
-    <span>🌿 Gin</span>
-  </a>
-  <a href="shop.html?cat=rum" class="category-card">
-    <img src="https://i.postimg.cc/jS0qX0j9/rums.jpg" alt="Rum">
-    <span>🏝️ Rum</span>
-  </a>
-  <a href="shop.html?cat=wine" class="category-card">
-    <img src="https://i.postimg.cc/W3R7p4pG/wines.jpg" alt="Wine">
-    <span>🍷 Wine</span>
-  </a>
-  <a href="shop.html?cat=beer" class="category-card">
-    <img src="https://i.postimg.cc/FRkMf1Qy/beer-cans.webp" alt="Beer">
-    <span>🍺 Beer</span>
-  </a>
-  <a href="shop.html?cat=champagne" class="category-card">
-    <img src="https://i.postimg.cc/ZqmMjjpn/champagne.jpg" alt="Champagne">
-    <span>🥂 Champagne</span>
-  </a>
+<div class="products-grid" id="trendingGrid"></div>
+
+<!-- Recently Viewed -->
+<div class="recently-viewed" id="recentlyViewedSection" style="display:none;">
+  <div class="rv-header">
+    <h3>Recently Viewed</h3>
+    <span style="font-size:.75rem;color:var(--primary);cursor:pointer;" onclick="clearRecentlyViewed()">Clear</span>
+  </div>
+  <div class="rv-scroll" id="rvScroll"></div>
 </div>
 
-<div class="section-header">
-  <h2><i class="ph ph-truck" style="color:var(--gold);"></i> Delivery & Support</h2>
-</div>
-<div class="info-grid">
-  <div class="info-card">
-    <div class="info-row"><i class="ph ph-map-pin"></i><div><strong>Location</strong><small>Dagoretti Road, Opposite Quickmart</small></div></div>
-    <div class="info-row"><i class="ph ph-phone-call"></i><div><strong>Call Us</strong><small>+254 748 894 443</small></div></div>
-    <div class="info-row"><i class="ph ph-whatsapp-logo"></i><div><strong>WhatsApp Orders</strong><small>+254 748 894 443</small></div></div>
-    <div class="info-row"><i class="ph ph-clock"></i><div><strong>24/7 Operations</strong><small>Always open</small></div></div>
+<!-- Wholesale Inquiry Section - FIXED -->
+<div class="store-promo">
+  <div class="store-promo-left">
+    <h3><i class="ph ph-buildings"></i> Wholesale & Bulk Orders</h3>
+    <div class="store-address">
+      <p><strong>📍 Dagoretti Road, Nairobi</strong></p>
+      <p><strong>📞 +254 748 894 443</strong> — Call or WhatsApp</p>
+    </div>
+    <p>Competitive bulk pricing for bars, restaurants, events & corporate gifting. 100% authentic products from official distributors.</p>
   </div>
-  <div class="info-card">
-    <div class="info-row"><div style="width:36px;"></div><div><strong>M-PESA Till: 6927569</strong><small>Pay on Delivery available</small></div></div>
-    <div class="info-row"><i class="ph ph-storefront"></i><div><strong>Wholesale In-Store</strong><small>Visit for bulk pricing</small></div></div>
-    <div class="info-row"><i class="ph ph-check-circle"></i><div><strong>100% Genuine</strong><small>Authentic products guaranteed</small></div></div>
+  <div class="store-promo-right">
+    <div class="store-features-grid">
+      <div class="store-feature-item">
+        <i class="ph ph-chart-line"></i>
+        <div><span>Volume Discounts</span><small>Save on bulk orders</small></div>
+      </div>
+      <div class="store-feature-item">
+        <i class="ph ph-truck"></i>
+        <div><span>Bulk Delivery</span><small>Fast & reliable</small></div>
+      </div>
+      <div class="store-feature-item">
+        <i class="ph ph-seal-check"></i>
+        <div><span>100% Authentic</span><small>Official distributors</small></div>
+      </div>
+    </div>
+    <a href="https://wa.me/254748894443?text=I'm%20interested%20in%20wholesale%20pricing" target="_blank" class="directions-btn"><i class="ph ph-whatsapp-logo"></i> Request Quote →</a>
   </div>
 </div>
 
-<div class="section-header">
-  <h2><i class="ph ph-star" style="color:var(--gold);"></i> What Our Customers Say</h2>
-  <p>Real reviews from real customers • Updated in real-time</p>
-</div>
-<div class="review-grid" id="reviewsContainer"></div>
-<div class="add-review-form">
-  <h4><i class="ph ph-pencil"></i> Share Your Experience</h4>
-  <input type="text" id="reviewName" placeholder="Your name">
-  <input type="text" id="reviewPlace" placeholder="Your location (e.g., Dagoretti)">
-  <select id="reviewRating">
-    <option value="5">★★★★★ (5/5) - Excellent</option>
-    <option value="4">★★★★☆ (4/5) - Very Good</option>
-    <option value="3">★★★☆☆ (3/5) - Good</option>
-    <option value="2">★★☆☆☆ (2/5) - Fair</option>
-    <option value="1">★☆☆☆☆ (1/5) - Poor</option>
-  </select>
-  <textarea id="reviewText" rows="3" placeholder="Tell us about your experience..."></textarea>
-  <button id="submitReviewBtn"><i class="ph ph-paper-plane"></i> Submit Review</button>
+<!-- Support Cards - Side by Side -->
+<div class="support-grid">
+  <div class="support-card">
+    <div class="support-card-header"><i class="ph ph-map-pin"></i> Location & Contact</div>
+    <div class="support-card-body">
+      <div class="support-item"><i class="ph ph-map-pin"></i><div><strong>Location</strong><small>Dagoretti Road, Nairobi</small></div></div>
+      <div class="support-item"><i class="ph ph-phone-call"></i><div><strong>Call Us</strong><small>+254 748 894 443</small></div></div>
+      <div class="support-item"><i class="ph ph-whatsapp-logo"></i><div><strong>WhatsApp Orders</strong><small>+254 748 894 443</small></div></div>
+      <div class="support-item"><i class="ph ph-clock"></i><div><strong>24/7 Operations</strong><small>Always open</small></div></div>
+    </div>
+  </div>
+  <div class="support-card">
+    <div class="support-card-header"><i class="ph ph-credit-card"></i> Payment & Policies</div>
+    <div class="support-card-body">
+      <div class="support-item"><i class="ph ph-device-mobile"></i><div><strong>M-PESA Till: 6927569</strong><small>Pay on Delivery available</small></div></div>
+      <div class="support-item"><i class="ph ph-storefront"></i><div><strong>Wholesale In-Store</strong><small>Visit for bulk pricing</small></div></div>
+      <div class="support-item"><i class="ph ph-check-circle"></i><div><strong>100% Genuine</strong><small>Authentic products guaranteed</small></div></div>
+    </div>
+  </div>
 </div>
 
-<div class="section-header">
-  <h2><i class="ph ph-map-pin" style="color:var(--gold);"></i> Delivery Zones</h2>
-  <p>Delivery time: 10-45 minutes depending on your location</p>
+<div class="php-info-row">
+  <div class="php-info-badge"><i class="ph ph-seal-check"></i> <span>Curated Premium Spirits</span></div>
+  <div class="php-info-badge"><i class="ph ph-gift"></i> <span>Special Occasion Packages</span></div>
+  <div class="php-info-badge"><i class="ph ph-chart-line"></i> <span>Best Price Guarantee</span></div>
 </div>
+
+<!-- Review Section -->
+<div class="review-section">
+  <div class="review-section-text">
+    <h3>Enjoyed shopping with us?</h3>
+    <p>Your review means the world to us. Share your experience on Google and help others find us.</p>
+  </div>
+  <a href="https://www.google.com/maps/place/Dagoretti+Road,+Nairobi" target="_blank" class="review-btn"><i class="ph ph-google-logo"></i> Write a Review on Google</a>
+</div>
+
 <div class="zones-grid" id="zonesGrid"></div>
 
-<footer>
-  <p>© 2026 LiquorBelle — Dagoretti's Finest</p>
-  <p style="margin-top:8px;">Over 18 only. Drink responsibly.</p>
-  <p style="margin-top:6px; font-size:.65rem;">Free delivery on 750ml+ orders | 24/7 Customer Support</p>
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="track-orders.html">Track Orders</a></div>
+    <div class="footer-col"><h4>Customer Support</h4><p><i class="ph ph-phone-call"></i> +254 748 894 443</p><p><i class="ph ph-whatsapp-logo"></i> WhatsApp 24/7</p></div>
+    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly.</p></div>
 </footer>
-
-<div class="bottom-nav">
-  <div class="nav-item active" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></div>
-  <div class="nav-item" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
-  <div class="nav-item" onclick="openCartDrawer()"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
-  <div class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clock-counter-clockwise"></i><span>Orders</span></div>
-</div>
-
-<!-- FLOATING QUICK ORDER CARD - NEW -->
-<div class="quick-order-card" onclick="quickOrderWhatsApp()">
-  <i class="ph ph-lightning"></i>
-  <div class="label">Quick Order</div>
-  <div class="sub">Via WhatsApp</div>
-</div>
-
-<a href="https://wa.me/254748894443" class="fab-wa" target="_blank"><i class="ph ph-whatsapp-logo" style="font-size:26px;"></i></a>
-<button class="fab-cart" onclick="openCartDrawer()"><i class="ph ph-shopping-bag" style="font-size:22px;"></i></button>
 
 <div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
-  <div class="cart-header"><span>🛒 Your Cart</span><button class="cart-icon" onclick="closeCartDrawer()" style="width:32px;height:32px;"><i class="ph ph-x"></i></button></div>
-  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:40px;color:var(--muted);">Your cart is empty<br><small style="font-size:11px;">Add items from the shop</small></div></div>
+  <div class="cart-head"><span>Your Cart</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
+  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div></div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
     <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
     <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout →</button>
   </div>
 </div>
+<div id="toast"></div>
 
 <script>
-// ==================== CART ====================
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+let wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
+let recentlyViewed = JSON.parse(localStorage.getItem('liquorbelle_rv') || '[]');
+let PRODUCTS = [];
 
+// Age Gate
+(function(){
+  if(!localStorage.getItem('lb_age_confirmed')){
+    document.getElementById('ageGate').style.display='flex';
+  } else {
+    document.getElementById('ageGate').style.display='none';
+  }
+})();
+function confirmAge(){
+  localStorage.setItem('lb_age_confirmed','1');
+  document.getElementById('ageGate').style.display='none';
+}
+function denyAge(){
+  document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;">Sorry, you must be 18 or older to visit this site.</div>';
+}
+
+// Auth
+let currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
+function updateAccountUI(){}
+function openAuthModal(){ document.getElementById('authModal').classList.add('active'); }
+function closeAuthModal(){ document.getElementById('authModal').classList.remove('active'); }
+let isLoginMode = true;
+document.getElementById('toggleAuthMode').addEventListener('click',()=>{
+  isLoginMode = !isLoginMode;
+  const title = document.getElementById('modalTitle');
+  const msg = document.getElementById('modalMsg');
+  const btn = document.getElementById('modalActionBtn');
+  if(isLoginMode){
+    title.innerText = 'Welcome Back'; msg.innerText = 'Login to your account for faster checkout';
+    btn.innerText = 'Login';
+    document.getElementById('modalSwitchText').innerHTML = `Don't have an account? <span id="toggleAuthMode">Register</span>`;
+  } else {
+    title.innerText = 'Create Account'; msg.innerText = 'Register to track orders and save addresses';
+    btn.innerText = 'Register';
+    document.getElementById('modalSwitchText').innerHTML = `Already have an account? <span id="toggleAuthMode">Login</span>`;
+  }
+  document.getElementById('toggleAuthMode').addEventListener('click', arguments.callee);
+});
+document.getElementById('modalActionBtn').addEventListener('click',async()=>{
+  const email = document.getElementById('modalEmail').value.trim();
+  const password = document.getElementById('modalPassword').value.trim();
+  if(!email||!password){ toast('Please fill all fields'); return; }
+  try{
+    let url,body;
+    if(isLoginMode){
+      url=`${API_BASE}/api/auth/login`;
+      body={email,password};
+    } else {
+      url=`${API_BASE}/api/auth/register`;
+      body={email,password,name:email.split('@')[0]};
+    }
+    const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data = await res.json();
+    if(data.success){
+      currentUser = data.user;
+      localStorage.setItem('liquorbelle_user',JSON.stringify(currentUser));
+      updateAccountUI();
+      closeAuthModal();
+      toast(isLoginMode?'Logged in successfully':'Account created successfully');
+    } else { toast(data.message || 'Authentication failed'); }
+  } catch(e){ toast('Server error. Try again later.'); }
+});
+
+function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
+function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
+
+// Cart
 function updateCartUI(){
   const items = Object.values(cart);
   const count = items.reduce((s,i)=>s+i.qty,0);
@@ -797,173 +1111,230 @@ function updateCartUI(){
   document.getElementById('cartCount').innerText = count;
   const container = document.getElementById('cartItemsList');
   const footer = document.getElementById('cartFooter');
-  if(items.length===0){
-    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);">Your cart is empty<br><small style="font-size:11px;">Add items from the shop</small></div>';
+  if(!items.length){
+    container.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div>';
     footer.style.display = 'none';
     return;
   }
   footer.style.display = 'block';
-  let delivery = 0;
-  const is750mlPlus = items.some(item => item.capacity === '750ml' || item.capacity === '1L' || item.capacity === '1.5L');
-  if (!is750mlPlus) {
-    delivery = 150;
-  }
+  const hasBig = items.some(i=>['750ml','1L','1.5L'].includes(i.capacity));
+  const delivery = hasBig?0:150;
   document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`;
-  container.innerHTML = items.map(item => `
-    <div class="cart-item">
-      <div>
-        <div class="cart-item-name">${escapeHtml(item.name)} <span style="color:var(--gold);">x${item.qty}</span></div>
-        <div class="cart-item-price">KES ${(item.price * item.qty).toLocaleString()}</div>
-        <div class="cart-qty">
-          <button onclick="updateQty('${item.id}',-1)">−</button>
-          <span style="min-width:32px;text-align:center;">${item.qty}</span>
-          <button onclick="updateQty('${item.id}',1)">+</button>
-        </div>
-      </div>
-    </div>
+  container.innerHTML = items.map(item=>`
+    <div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} <span style="color:var(--primary);">x${item.qty}</span></div>
+    <div class="cart-item-price">KES ${(item.price*item.qty).toLocaleString()}</div>
+    <div class="cart-qty">
+      <button onclick="updateQty('${item.id}',-1)">−</button>
+      <span>${item.qty}</span>
+      <button onclick="updateQty('${item.id}',1)">+</button>
+      <button onclick="removeCartItem('${item.id}')" class="cart-remove-btn">Remove</button>
+    </div></div></div>
   `).join('');
 }
-
-function updateQty(id,delta){
+function removeCartItem(id){
   if(cart[id]){
-    cart[id].qty += delta;
-    if(cart[id].qty <=0) delete cart[id];
+    delete cart[id];
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
     updateCartUI();
+    toast('Item removed from cart');
   }
 }
-
-function openCartDrawer(){ document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
-function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
-function escapeHtml(str){ return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
-
-function toast(msg) {
-  let t = document.getElementById('toastMsg');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toastMsg';
-    document.body.appendChild(t);
-  }
-  t.innerText = msg;
-  t.style.opacity = '1';
-  setTimeout(() => t.style.opacity = '0', 2500);
+function updateQty(id,delta){
+  if(cart[id]){cart[id].qty+=delta;if(cart[id].qty<=0)delete cart[id];localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));updateCartUI();}
+}
+function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
+function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
+function addToCart(id,name,price,capacity){
+  if(cart[id]){cart[id].qty+=1;}else{cart[id]={id,name,price,qty:1,capacity:capacity};}
+  localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
+  updateCartUI();
+  toast(`${name} added to cart ✓`);
 }
 
-// Quick Order WhatsApp
-function quickOrderWhatsApp() {
-  const message = "Hello LiquorBelle! I'd like to place a quick order. Please assist me.";
-  window.open(`https://wa.me/254748894443?text=${encodeURIComponent(message)}`, '_blank');
+// Wishlist
+function updateWishlistUI(){
+  const count = wishlist.length;
+  const countEl = document.getElementById('wishlistCount');
+  if(count>0){countEl.style.display='flex';countEl.innerText=count;}
+  else{countEl.style.display='none';}
 }
-
-// Zones
-const zones = [
-  'Dagoretti', 'Karen', 'Kilimani', 'Westlands', 
-  'CBD', 'Upperhill', 'Lavington', 'Kileleshwa', 
-  'Rongai', 'Ngong', 'South B', 'Langata', 'Waithaka'
-];
-document.getElementById('zonesGrid').innerHTML = zones.map(z => `<div class="zone-tag"><div class="zone-dot"></div><span>${z}</span></div>`).join('');
-
-// ==================== REAL-TIME REVIEWS ====================
-let reviews = [];
-
-function loadReviewsFromStorage() {
-  const stored = localStorage.getItem('liquorbelle_reviews');
-  if (stored) {
-    try {
-      reviews = JSON.parse(stored);
-    } catch(e) { reviews = []; }
+function toggleWishlist(id,name,price,image,capacity){
+  const idx = wishlist.findIndex(w=>w.id==id);
+  if(idx>-1){
+    wishlist.splice(idx,1);
+    toast(`Removed from wishlist`);
+  } else {
+    wishlist.push({id,name,price,image,capacity});
+    toast(`${name} added to wishlist ♥`);
   }
-  if (!reviews || reviews.length === 0) {
-    reviews = [
-      {name:"John Maina", place:"Waithaka", rating:5, text:"Excellent service! Delivery was super fast, and the rider was very professional."},
-      {name:"Wanjiku Njoroge", place:"Karen", rating:5, text:"Ordered via WhatsApp, paid M-PESA. Delivery within 30 minutes. Highly recommend!"},
-      {name:"Otieno Ochieng", place:"Kilimani", rating:4, text:"Pay on Delivery was smooth. Rider arrived on time. Good experience."},
-      {name:"Amina Hassan", place:"Westlands", rating:5, text:"Fastest alcohol delivery in Nairobi. Will definitely order again."},
-      {name:"David Mwangi", place:"Dagoretti", rating:5, text:"Great prices and genuine products."}
-    ];
-    saveReviewsToStorage();
-  }
-  renderReviews();
+  localStorage.setItem('liquorbelle_wishlist',JSON.stringify(wishlist));
+  updateWishlistUI();
+  renderTrending();
 }
-
-function saveReviewsToStorage() {
-  localStorage.setItem('liquorbelle_reviews', JSON.stringify(reviews));
-  window.dispatchEvent(new StorageEvent('storage', { key: 'liquorbelle_reviews', newValue: JSON.stringify(reviews) }));
-}
-
-function getInitials(n){ return n.charAt(0).toUpperCase(); }
-function getStars(r){ return '★'.repeat(r) + '☆'.repeat(5-r); }
-
-function renderReviews(){
-  const container = document.getElementById('reviewsContainer');
-  if (!container) return;
-  
-  if (!reviews.length) {
-    container.innerHTML = '<div class="empty-state" style="text-align:center;padding:40px;">No reviews yet. Be the first to review!</div>';
-    return;
-  }
-  
-  container.innerHTML = reviews.slice().reverse().map(r => `
-    <div class="review-card">
-      <div class="reviewer">
-        <div class="initials-avatar">${getInitials(r.name)}</div>
-        <div class="reviewer-info">
-          <div class="reviewer-name">${escapeHtml(r.name)}</div>
-          <div class="reviewer-place">📍 ${escapeHtml(r.place)}</div>
-          <div class="stars-gold">${getStars(r.rating)}</div>
+function openWishlistModal(){
+  const container = document.getElementById('wishlistItems');
+  if(!wishlist.length){
+    container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
+  } else {
+    container.innerHTML = wishlist.map(w=>`
+      <div class="wishlist-item">
+        <img src="${w.image||FALLBACK_IMG}" alt="${escapeHtml(w.name)}" onerror="this.src='${FALLBACK_IMG}'">
+        <div class="wishlist-item-info">
+          <div class="wishlist-item-name">${escapeHtml(w.name)}</div>
+          <div class="wishlist-item-price">KES ${w.price.toLocaleString()}</div>
         </div>
+        <button class="wishlist-atc" onclick="addToCart(${w.id},'${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},'${w.capacity||''}');closeWishlistModal();">Add to Cart</button>
+        <button class="wishlist-remove" onclick="toggleWishlist(${w.id},'${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},'${w.image||''}','${w.capacity||''}');openWishlistModal();"><i class="ph ph-trash"></i></button>
       </div>
-      <div class="review-text">"${escapeHtml(r.text)}"</div>
+    `).join('');
+  }
+  document.getElementById('wishlistModal').classList.add('active');
+}
+function closeWishlistModal(){document.getElementById('wishlistModal').classList.remove('active');}
+
+// Recently Viewed
+function addToRecentlyViewed(product){
+  recentlyViewed = recentlyViewed.filter(r=>r.id!=product.id);
+  recentlyViewed.unshift(product);
+  if(recentlyViewed.length>8) recentlyViewed = recentlyViewed.slice(0,8);
+  localStorage.setItem('liquorbelle_rv',JSON.stringify(recentlyViewed));
+  renderRecentlyViewed();
+}
+function clearRecentlyViewed(){
+  recentlyViewed=[];localStorage.removeItem('liquorbelle_rv');
+  document.getElementById('recentlyViewedSection').style.display='none';
+}
+function renderRecentlyViewed(){
+  if(!recentlyViewed.length){document.getElementById('recentlyViewedSection').style.display='none';return;}
+  document.getElementById('recentlyViewedSection').style.display='block';
+  document.getElementById('rvScroll').innerHTML = recentlyViewed.map(p=>`
+    <div class="rv-item" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}')">
+      <img src="${p.image||FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'">
+      <div class="rv-item-name">${escapeHtml(p.name)}</div>
+      <div class="rv-item-price">KES ${p.price.toLocaleString()}</div>
     </div>
   `).join('');
 }
 
-window.addEventListener('storage', (e) => {
-  if (e.key === 'liquorbelle_reviews') {
-    try {
-      reviews = JSON.parse(e.newValue) || [];
-      renderReviews();
-      toast("📝 Reviews updated!");
-    } catch(err) {}
+// Flash Sale Countdown
+function startCountdown(){
+  let endKey = 'lb_flash_end';
+  let end = parseInt(localStorage.getItem(endKey)||'0');
+  if(!end || Date.now()>end){
+    end = Date.now() + 8*60*60*1000;
+    localStorage.setItem(endKey,end);
   }
-});
-
-document.getElementById('submitReviewBtn')?.addEventListener('click', () => {
-  let name = document.getElementById('reviewName').value.trim();
-  let place = document.getElementById('reviewPlace').value.trim();
-  let rating = parseInt(document.getElementById('reviewRating').value);
-  let text = document.getElementById('reviewText').value.trim();
-  
-  if (!name || !place || !text) {
-    toast("Please fill in all fields");
-    return;
+  function tick(){
+    const diff = end - Date.now();
+    if(diff<=0){
+      localStorage.removeItem('lb_flash_end');
+      startCountdown();return;
+    }
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+    document.getElementById('cdH').innerText = String(h).padStart(2,'0');
+    document.getElementById('cdM').innerText = String(m).padStart(2,'0');
+    document.getElementById('cdS').innerText = String(s).padStart(2,'0');
   }
-  
-  reviews.push({ name, place, rating, text });
-  saveReviewsToStorage();
-  renderReviews();
-  
-  document.getElementById('reviewName').value = '';
-  document.getElementById('reviewPlace').value = '';
-  document.getElementById('reviewText').value = '';
-  document.getElementById('reviewRating').value = '5';
-  
-  toast("✅ Thank you for your review!");
-});
+  tick();
+  setInterval(tick,1000);
+}
 
-// Initialize
-loadReviewsFromStorage();
+// Newsletter
+function subscribeNewsletter(){
+  const em = document.getElementById('nlEmail').value.trim();
+  if(!em||!em.includes('@')){toast('Please enter a valid email');return;}
+  document.getElementById('nlEmail').value='';
+  toast('Subscribed! You\'ll get exclusive deals 🎉');
+}
+
+// Categories
+const categories = [
+  { name: "Whisky", cat: "whisky", image: "https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp" },
+  { name: "Cognac", cat: "cognac", image: "https://i.postimg.cc/W1qvx9dw/cognacs.webp" },
+  { name: "Vodka", cat: "vodka", image: "https://i.postimg.cc/xTQFy62P/vodk-AS.jpg" },
+  { name: "Gin", cat: "gin", image: "https://i.postimg.cc/ZqmMjjpn/champagne.jpg" },
+  { name: "Rum", cat: "rum", image: "https://i.postimg.cc/jS0qX0j9/rums.jpg" },
+  { name: "Wine", cat: "wine", image: "https://i.postimg.cc/W3R7p4pG/wines.jpg" },
+  { name: "Beer", cat: "beer", image: "https://i.postimg.cc/FRkMf1Qy/beer-cans.webp" },
+  { name: "Champagne", cat: "champagne", image: "https://i.postimg.cc/ZqmMjjpn/champagne.jpg" }
+];
+function renderCategories(){
+  const container = document.getElementById('categoryGrid');
+  container.innerHTML = categories.map(cat => `<a href="shop.html?cat=${cat.cat}" class="cat-card"><img class="cat-img" src="${cat.image}" alt="${cat.name}"><span>${cat.name}</span></a>`).join('');
+}
+
+// Load Products
+async function loadProducts(){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/products`);
+    const data = await res.json();
+    if(data.success && data.products.length>0){
+      PRODUCTS = data.products.map(p => ({
+        ...p,
+        originalPrice: p.discount_percent ? Math.round(p.price * 100 / (100 - p.discount_percent)) : Math.round(p.price * 1.25),
+        discountPercent: p.discount_percent || Math.round(((Math.round(p.price*1.25)-p.price)/Math.round(p.price*1.25))*100)
+      }));
+    } else {
+      PRODUCTS = getSampleProductsWithDiscounts();
+    }
+  }catch(e){
+    PRODUCTS = getSampleProductsWithDiscounts();
+  }
+  renderTrending();
+  renderRecentlyViewed();
+}
+function getSampleProductsWithDiscounts(){
+  return [
+    {id:1,name:"Johnnie Walker Black Label",capacity:"750ml",price:3500,originalPrice:4200,discountPercent:17,category:"whisky",badge:"hot",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop"},
+    {id:2,name:"Jameson Irish Whiskey",capacity:"750ml",price:3200,originalPrice:3800,discountPercent:16,category:"whisky",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop"},
+    {id:3,name:"Hennessy VS",capacity:"750ml",price:5500,originalPrice:6200,discountPercent:11,category:"cognac",badge:"prem",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop"},
+    {id:4,name:"Smirnoff Red",capacity:"750ml",price:1800,originalPrice:2200,discountPercent:18,category:"vodka",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop"},
+    {id:5,name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1650,discountPercent:15,category:"gin",badge:"local",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop"},
+    {id:6,name:"Kenya Cane",capacity:"750ml",price:950,originalPrice:1150,discountPercent:17,category:"rum",badge:"local",image:"https://images.unsplash.com/photo-1565277408825-5da2b2a4b1dd?w=300&h=300&fit=crop"},
+    {id:7,name:"Tusker Lager",capacity:"500ml",price:230,originalPrice:280,discountPercent:18,category:"beer",badge:"local",image:"https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=300&h=300&fit=crop"},
+    {id:8,name:"Nederburg Rosé",capacity:"750ml",price:1500,originalPrice:1900,discountPercent:21,category:"wine",image:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=300&h=300&fit=crop"}
+  ];
+}
+function renderTrending(){
+  const trendingItems = PRODUCTS.slice(0,4).map(p=>{
+    const original = p.originalPrice;
+    const savePercent = p.discountPercent;
+    const isWishlisted = wishlist.some(w=>w.id==p.id);
+    return `<div class="prod-card">
+      <div class="pc-img-wrap">
+        <img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'" onclick="addToRecentlyViewed({id:${p.id},name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })">
+        ${p.badge?`<div class="pc-badge badge-${p.badge==='hot'?'hot':p.badge==='local'?'local':'prem'}">${p.badge==='hot'?'🔥 Hot':p.badge==='local'?'🇰🇪 Local':'⭐ Premium'}</div>`:''}
+        <button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="toggleWishlist(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')">
+          <i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}" style="${isWishlisted?'color:var(--sale-red)':''}"></i>
+        </button>
+      </div>
+      <div class="pc-body">
+        <div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}
+        <div class="pc-price-wrap"><span class="pc-price-old">KES ${original.toLocaleString()}</span><span class="pc-price-new">KES ${p.price.toLocaleString()}</span><span class="pc-save">-${savePercent}%</span></div>
+        <button class="atc-btn" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:${p.id},name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Cart</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('trendingGrid').innerHTML = trendingItems;
+}
+
+const zones = ['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata','Waithaka','Kikuyu','Runda'];
+document.getElementById('zonesGrid').innerHTML = zones.map(z=>`<div class="zone-tag"><div class="zone-dot"></div><span>${z}</span></div>`).join('');
+document.getElementById('searchInput').addEventListener('keypress',e=>{if(e.key==='Enter') window.location.href=`shop.html?search=${encodeURIComponent(e.target.value)}`;});
+
+// Click outside modals to close
+document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeAuthModal();});
+document.getElementById('wishlistModal').addEventListener('click',function(e){if(e.target===this)closeWishlistModal();});
+
+renderCategories();
+updateAccountUI();
+updateWishlistUI();
+loadProducts();
 updateCartUI();
-
-// Live delivery status update every 30 seconds (simulated)
-let riderCount = 5;
-setInterval(() => {
-  riderCount = Math.floor(Math.random() * 8) + 3;
-  const riderElement = document.querySelector('.status-rider-count');
-  if (riderElement) {
-    riderElement.innerHTML = `<i class="ph ph-motorcycle"></i> ${riderCount} riders active`;
-  }
-}, 30000);
+startCountdown();
+if(currentUser && document.getElementById('accountBtn')) document.getElementById('accountBtn').oncontextmenu = (e)=>{e.preventDefault();localStorage.removeItem('liquorbelle_user');currentUser=null;toast('Logged out');};
 </script>
 </body>
 </html>

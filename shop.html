@@ -2,574 +2,839 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <title>LiquorBelle — Shop All Drinks</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
-  --red:#e03131;
-  --red-dim:rgba(224,49,49,0.12);
-  --green:#2ecc71;
-  --green-dim:rgba(46,204,113,0.12);
-  --gold:#f0a500;
-  --gold-dim:rgba(240,165,0,0.12);
-  --bg:#0a0a0f;
-  --bg2:#111118;
-  --bg3:#17171f;
-  --card:#1a1a24;
-  --border:rgba(255,255,255,0.06);
-  --border2:rgba(255,255,255,0.08);
-  --ink:#f0eef8;
-  --muted:#6b6780;
-  --mid:#9994ad;
-  --fh:'Sora',sans-serif;
-  --fb:'Plus Jakarta Sans',sans-serif;
+  --primary:#800000;
+  --primary-dark:#5C0B1B;
+  --primary-bright:#990000;
+  --sale-red:#D50000;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --success:#1A8A3E;
+  --gold:#B8860B;
   --radius:16px;
-  --radius-sm:12px;
+  --radius-sm:10px;
+  --shadow:0 2px 12px rgba(128,0,0,0.08);
+  --shadow-lg:0 8px 32px rgba(128,0,0,0.14);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans',-apple-system,sans-serif;
 }
-body{background:var(--bg);font-family:var(--fb);color:var(--ink);overflow-x:hidden;padding-bottom:70px;}
-.app-header{
-  background:rgba(10,10,15,0.92);
-  backdrop-filter:blur(20px);
-  padding:12px 5%;
+body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding-bottom:0;}
+
+/* Remove button styling */
+.cart-remove-btn {
+  background: #dc3545 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 5px 12px !important;
+  font-size: 0.7rem !important;
+  cursor: pointer !important;
+  margin-left: 8px !important;
+  font-weight: 600 !important;
+  width: auto !important;
+  height: auto !important;
+}
+.cart-remove-btn:hover {
+  background: #c82333 !important;
+}
+
+/* Age Gate */
+.age-gate{
+  position:fixed;inset:0;background:rgba(0,0,0,0.92);
+  display:flex;align-items:center;justify-content:center;
+  z-index:2000;
+}
+.age-gate-card{
+  background:var(--white);border-radius:var(--radius);
+  padding:40px 32px;text-align:center;max-width:400px;width:90%;
+  border-top:5px solid var(--primary);
+}
+.age-gate-card h2{font-family:var(--font-display);font-size:1.8rem;color:var(--primary);margin-bottom:8px;}
+.age-gate-card p{color:var(--muted);font-size:.85rem;margin-bottom:28px;line-height:1.6;}
+.age-gate-btns{display:flex;gap:12px;}
+.age-yes{flex:1;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
+.age-no{flex:1;padding:13px;background:var(--bg2);color:var(--muted);border:1.5px solid var(--border);border-radius:50px;font-weight:700;cursor:pointer;}
+
+/* Wishlist Modal */
+.wishlist-modal .modal-card{max-width:480px;}
+.wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
+.wishlist-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.wishlist-item img{width:52px;height:52px;object-fit:cover;border-radius:8px;}
+.wishlist-item-info{flex:1;}
+.wishlist-item-name{font-weight:700;font-size:.85rem;}
+.wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.8rem;}
+.wishlist-atc{padding:6px 14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-size:.7rem;font-weight:700;cursor:pointer;}
+.wishlist-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px;}
+
+/* Modal Overlay */
+.modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;visibility:hidden;opacity:0;transition:all 0.2s;
+}
+.modal-overlay.active{visibility:visible;opacity:1;}
+.modal-card{
+  background:var(--white);border-radius:var(--radius);width:90%;max-width:420px;
+  padding:28px 24px;box-shadow:var(--shadow-lg);border-top:4px solid var(--primary);
+}
+.modal-card h3{font-family:var(--font-display);font-size:1.4rem;margin-bottom:6px;}
+.modal-card p{font-size:.8rem;color:var(--muted);margin-bottom:20px;}
+
+/* Top Bar */
+.top-bar{
+  background:var(--primary-dark);
+  color:rgba(255,255,255,.88);
+  padding:8px 5%;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  position:sticky;
-  top:0;
-  z-index:100;
-  border-bottom:1px solid var(--border);
-}
-.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
-.logo-img{height:32px;border-radius:8px;}
-.logo-name{font-family:var(--fh);font-weight:800;font-size:1rem;color:var(--ink);}
-.logo-name em{color:var(--red);font-style:normal;}
-.header-right{display:flex;gap:8px;}
-.cart-icon{
-  position:relative;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  color:var(--mid);
-  transition:all 0.2s;
-}
-.cart-icon:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
-.cart-count{
-  position:absolute;
-  top:-4px;
-  right:-4px;
-  background:var(--red);
-  color:#fff;
-  font-size:10px;
-  font-weight:800;
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.banner{
-  background:linear-gradient(135deg, #1a0a2e, #0d0b1a);
-  padding:20px 5% 28px;
-}
-.banner h1{
-  font-family:var(--fh);
-  font-size:1.6rem;
-  font-weight:800;
-  line-height:1.2;
-  margin-bottom:4px;
-}
-.banner h1 span{color:var(--red);}
-.banner p{font-size:.75rem;color:var(--muted);}
-.banner-tag{
-  display:inline-block;
-  background:rgba(46,204,113,0.12);
-  padding:4px 12px;
-  border-radius:50px;
-  font-size:.65rem;
-  font-weight:600;
-  color:var(--green);
-  margin-top:12px;
-}
-.category-scroll{
-  padding:16px 5%;
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  scrollbar-width:none;
-  border-bottom:1px solid var(--border);
-}
-.category-scroll::-webkit-scrollbar{display:none;}
-.chip{
-  padding:8px 18px;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:50px;
-  font-size:.75rem;
-  font-weight:600;
-  white-space:nowrap;
-  cursor:pointer;
-  transition:all 0.18s;
-  color:var(--mid);
-}
-.chip.active{background:var(--red);border-color:var(--red);color:#fff;}
-
-.filter-bar{
-  padding:16px 5%;
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  align-items:center;
-  border-bottom:1px solid var(--border);
-  background:var(--bg2);
-}
-.search-wrapper{
-  flex:2;
-  min-width:200px;
-  position:relative;
-}
-.search-icon{
-  position:absolute;
-  left:14px;
-  top:50%;
-  transform:translateY(-50%);
-  color:var(--muted);
-  font-size:16px;
-}
-.search-input{
-  width:100%;
-  padding:12px 16px 12px 42px;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:40px;
-  color:var(--ink);
-  font-size:13px;
-}
-.search-input:focus{
-  outline:none;
-  border-color:var(--gold);
-}
-.sort-select{
-  padding:12px 20px;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:40px;
-  color:var(--ink);
-  font-size:13px;
-  cursor:pointer;
-}
-.clear-btn{
-  padding:12px 20px;
-  background:transparent;
-  border:1px solid var(--border);
-  border-radius:40px;
-  color:var(--muted);
-  cursor:pointer;
-  font-size:13px;
-  transition:all 0.2s;
-}
-.clear-btn:hover{
-  background:var(--red-dim);
-  border-color:var(--red);
-  color:var(--red);
-}
-.results-count{
   font-size:12px;
-  color:var(--muted);
-  padding:0 5%;
-  margin-top:12px;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.top-bar-left{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.top-bar-left span{display:inline-flex;align-items:center;gap:5px;opacity:.9;}
+.badge-24h{
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.2);
+  padding:3px 12px;border-radius:50px;
+  font-size:11px;font-weight:600;color:#fff;
 }
 
-.product-grid{
-  padding:20px 5%;
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
+/* Header - with smaller buttons */
+.main-header{
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(12px);
+  padding:14px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-img{height:44px;width:44px;border-radius:0px;object-fit:cover;}
+.logo-text{font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:var(--primary);letter-spacing:-.3px;line-height:1;text-decoration:none;}
+.logo-text small{display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:var(--muted);letter-spacing:.5px;margin-top:2px;text-transform:uppercase;}
+.search-wrap{flex:1;max-width:460px;position:relative;}
+.search-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px;}
+.search-wrap input{
+  width:100%;
+  padding:11px 16px 11px 44px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:50px;
+  font-size:13.5px;font-family:var(--font-body);color:var(--text);
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-wrap input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,.1);}
+.header-actions{display:flex;align-items:center;gap:4px;}
+.action-group{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+.action-label{font-size:8px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+.hbtn{
+  width:35px;height:35px;border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--primary);
+  color:white;
+  border:none;
+  cursor:pointer;
+  position:relative;
+  transition:all .2s;
+  box-shadow:0 2px 6px rgba(128,0,0,.2);
+}
+.hbtn:hover{background:var(--primary-bright);transform:translateY(-2px);}
+.hbtn i{font-size:15px;}
+.cart-count{
+  position:absolute;top:-5px;right:-5px;
+  background:var(--sale-red);color:#fff;
+  font-size:9px;font-weight:700;
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--white);
+}
+.wishlist-count{
+  position:absolute;top:-5px;right:-5px;
+  background:var(--gold);color:#fff;
+  font-size:9px;font-weight:700;
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--white);
+  display:none;
+}
+
+/* Hero Image Section */
+.hero-image-section{
+  margin:20px 5% 0;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+.hero-image{width:100%;height:auto;display:block;max-height:280px;object-fit:cover;object-position:center;}
+
+/* Category Section */
+.category-section{padding:0 5% 24px;margin-top:24px;}
+.category-section h2{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;color:var(--text);}
+.category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;}
+.cat-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;text-align:center;border:1px solid var(--border);transition:all .2s;cursor:pointer;text-decoration:none;box-shadow:var(--shadow);}
+.cat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
+.cat-img{width:100%;height:100px;object-fit:cover;background:var(--bg2);}
+.cat-card span{display:block;padding:10px;font-weight:600;font-size:.8rem;color:var(--text);}
+
+/* Hot Deals Section */
+.hot-deals{
+  background:linear-gradient(135deg, var(--sale-red) 0%, var(--primary) 100%);
+  padding:16px 5%;
+  margin:20px 5% 0;
+  border-radius:var(--radius-sm);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
   gap:16px;
 }
-.product-card{
-  background:var(--card);
-  border-radius:var(--radius-sm);
-  overflow:hidden;
-  border:1px solid var(--border);
-  transition:transform 0.2s, border-color 0.2s;
-  position:relative;
-}
-.product-card:hover{transform:translateY(-3px);border-color:var(--red);}
-.pc-img{
+.hot-deals h3{font-family:var(--font-display);color:white;font-size:1.1rem;display:flex;align-items:center;gap:10px;}
+.deals-scroll{display:flex;gap:16px;overflow-x:auto;scrollbar-width:thin;padding:4px 0;}
+.deal-item{background:rgba(255,255,255,0.15);border-radius:40px;padding:5px 16px;color:white;font-size:.75rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+
+/* Shop Layout */
+.shop-body{display:flex;gap:0;padding:24px 5%;align-items:flex-start;min-height:60vh;}
+.sidebar{width:250px;flex-shrink:0;position:sticky;top:78px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-right:24px;}
+.sb-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.sb-head h3{font-size:.9rem;font-weight:700;color:var(--text);}
+.sb-clear{font-size:.72rem;color:var(--primary);font-weight:600;cursor:pointer;background:none;border:none;}
+.sb-section{border-bottom:1px solid var(--border);padding:16px 18px;}
+.sb-section:last-child{border-bottom:none;}
+.sb-section h4{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:12px;}
+.filter-option{display:flex;justify-content:space-between;align-items:center;padding:6px 0;cursor:pointer;}
+.filter-option label{display:flex;align-items:center;gap:9px;font-size:.82rem;color:var(--text);cursor:pointer;font-weight:500;}
+.filter-option input[type=checkbox]{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
+.filter-count{font-size:.68rem;color:var(--muted);background:var(--bg2);padding:2px 7px;border-radius:50px;}
+.price-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+.price-input{flex:1;padding:8px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;font-family:var(--font-body);color:var(--text);}
+.price-input:focus{outline:none;border-color:var(--primary);}
+.btn-price-go{width:100%;padding:9px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;}
+.btn-price-go:hover{background:var(--primary-bright);}
+.shop-main{flex:1;min-width:0;}
+.filter-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;}
+.results-label{font-size:.82rem;color:var(--muted);}
+.sort-wrap select{padding:8px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:50px;font-size:.8rem;font-family:var(--font-body);color:var(--text);cursor:pointer;}
+.mob-filter-btn{display:none;align-items:center;gap:7px;background:var(--white);border:1.5px solid var(--border);padding:9px 16px;border-radius:50px;font-size:.8rem;font-weight:600;cursor:pointer;margin-bottom:14px;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;}
+.sidebar-overlay.open{display:block;}
+.sidebar.mob-open{display:block!important;position:fixed;left:0;top:0;bottom:0;z-index:350;overflow-y:auto;width:280px;border-radius:0;}
+
+/* Products Grid */
+.products-grid-wrapper{overflow-x:auto;width:100%;}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;min-width:auto;}
+.product-number{position:absolute;top:8px;left:8px;background:rgba(128,0,0,0.9);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;z-index:2;}
+.prod-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;transition:all .25s;cursor:pointer;position:relative;}
+.prod-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
+.pc-img-wrap{position:relative;overflow:hidden;background:var(--bg);}
+.pc-img{width:100%;height:170px;object-fit:cover;transition:transform .4s;}
+.prod-card:hover .pc-img{transform:scale(1.05);}
+.pc-badge{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:50px;font-size:.6rem;font-weight:700;text-transform:uppercase;z-index:2;}
+.badge-hot{background:var(--primary);color:#fff;}
+.badge-local{background:var(--gold);color:#fff;}
+.badge-prem{background:#5B3A8E;color:#fff;}
+.pc-wishlist{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:all .2s;font-size:16px;}
+.pc-wishlist:hover{background:#fff;transform:scale(1.1);}
+.pc-wishlist.wishlisted{color:var(--sale-red);}
+.pc-body{padding:12px;}
+.pc-name{font-weight:700;font-size:.9rem;margin-bottom:4px;line-height:1.3;}
+.size-selector{
   width:100%;
-  height:130px;
-  object-fit:cover;
-  background:var(--bg3);
-}
-.pc-badge{
-  position:absolute;
-  top:8px;
-  left:8px;
-  padding:3px 10px;
-  border-radius:50px;
-  font-size:.6rem;
-  font-weight:700;
-  text-transform:uppercase;
-  z-index:2;
-}
-.badge-hot{background:var(--red);color:#fff;}
-.badge-local{background:var(--gold);color:#0a0a0f;}
-.badge-prem{background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff;}
-.stock-badge{
-  position:absolute;
-  top:8px;
-  right:8px;
-  padding:3px 8px;
-  border-radius:50px;
-  font-size:.55rem;
-  font-weight:700;
-  background:rgba(0,0,0,0.7);
-  backdrop-filter:blur(4px);
-}
-.stock-out{color:var(--red);}
-.stock-in{color:var(--green);}
-.img-wrap{position:relative;}
-.pc-info{padding:12px;}
-.pc-name{font-weight:700;font-size:.85rem;margin-bottom:4px;line-height:1.3;}
-.pc-capacity{
-  font-size: .65rem;
-  color: var(--gold);
-  margin: 2px 0 4px;
-  font-weight: 500;
-}
-.pc-category{font-size:.6rem;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
-.pc-price{font-weight:800;font-size:1rem;color:var(--red);margin:6px 0;}
-.qty-selector{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin:8px 0;
-}
-.qty-select{
-  flex:1;
-  padding:8px;
-  background:var(--bg3);
-  border:1px solid var(--border);
+  padding:6px 8px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
   border-radius:8px;
-  color:var(--ink);
   font-size:.7rem;
+  margin-bottom:8px;
   cursor:pointer;
 }
-.add-to-cart{
-  width:100%;
-  padding:8px;
-  background:var(--red-dim);
-  border:1px solid var(--border);
-  border-radius:30px;
-  color:var(--red);
-  font-weight:700;
-  font-size:.7rem;
-  cursor:pointer;
-  transition:all 0.15s;
+.price-row-display{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.price-old{font-size:.75rem;font-weight:700;color:var(--muted);text-decoration:line-through;}
+.price-new{font-family:var(--font-display);font-size:1.15rem;font-weight:800;color:var(--sale-red);}
+.discount-badge{font-size:.65rem;font-weight:700;color:var(--success);background:rgba(26,138,62,.1);padding:2px 6px;border-radius:20px;}
+.qty-row{margin-bottom:8px;}
+.qty-sel{width:70px;padding:6px 8px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:.7rem;cursor:pointer;}
+.atc-btn{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;font-size:.75rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.atc-btn:hover:not(:disabled){background:var(--primary-bright);transform:scale(1.02);}
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:32px 0 8px;flex-wrap:wrap;}
+.page-btn{min-width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;cursor:pointer;background:var(--white);color:var(--text);transition:all .2s;padding:0 12px;}
+.page-btn:hover{border-color:var(--primary);color:var(--primary);}
+.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.page-btn:disabled{opacity:.4;cursor:not-allowed;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
+
+/* Recently Viewed */
+.recently-viewed{margin:32px 5%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;}
+.rv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.rv-header h3{font-family:var(--font-display);font-size:1.1rem;font-weight:800;}
+.rv-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.rv-scroll::-webkit-scrollbar{display:none;}
+.rv-item{flex:0 0 110px;text-align:center;cursor:pointer;transition:all .2s;}
+.rv-item:hover{transform:translateY(-2px);}
+.rv-item img{width:80px;height:80px;object-fit:cover;border-radius:10px;margin:0 auto 6px;border:1.5px solid var(--border);}
+.rv-item-name{font-size:.65rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:2px;}
+.rv-item-price{font-size:.7rem;font-weight:700;color:var(--sale-red);}
+
+/* Shop Features */
+.shop-features-bottom{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:32px 5% 24px;border-top:1px solid var(--border);margin-top:20px;max-width:600px;margin-left:auto;margin-right:auto;}
+.shop-feature-bottom{background:var(--white);border-radius:var(--radius-sm);padding:18px 12px;text-align:center;border:1px solid var(--border);transition:all .2s;box-shadow:var(--shadow);}
+.shop-feature-bottom:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
+.shop-feature-bottom i{font-size:28px;color:var(--primary);margin-bottom:8px;display:block;}
+.shop-feature-bottom strong{display:block;font-size:.85rem;font-weight:800;margin-bottom:4px;color:var(--text);}
+.shop-feature-bottom small{font-size:.7rem;color:var(--muted);line-height:1.4;}
+
+/* Newsletter Strip */
+.newsletter-strip{
+  margin:0 5% 32px;
+  background:linear-gradient(135deg,var(--primary) 0%,#5a0000 100%);
+  border-radius:var(--radius);
+  padding:28px 32px;
   display:flex;
   align-items:center;
-  justify-content:center;
-  gap:4px;
+  gap:24px;
+  flex-wrap:wrap;
 }
-.add-to-cart:hover:not(:disabled){background:var(--red);color:#fff;}
-.add-to-cart:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  background:var(--bg3);
-  color:var(--muted);
+.nl-text{flex:1;min-width:200px;}
+.nl-text h4{font-family:var(--font-display);color:#fff;font-size:1.2rem;margin-bottom:4px;}
+.nl-text p{color:rgba(255,255,255,.75);font-size:.8rem;}
+.nl-form{display:flex;gap:8px;flex:1;min-width:260px;}
+.nl-input{flex:1;padding:11px 16px;border-radius:50px;border:none;background:rgba(255,255,255,.15);color:#fff;font-family:var(--font-body);font-size:.85rem;}
+.nl-input::placeholder{color:rgba(255,255,255,.55);}
+.nl-input:focus{outline:none;background:rgba(255,255,255,.2);}
+.nl-btn{padding:11px 22px;border-radius:50px;background:#fff;color:var(--primary);border:none;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.nl-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
+
+/* Cart Drawer */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.open{opacity:1;pointer-events:auto;}
+.cart-drawer{position:fixed;bottom:-100%;left:0;right:0;background:var(--white);border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s;max-height:82vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.12);}
+.cart-drawer.open{bottom:0;}
+.cart-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);}
+.cart-head span{font-weight:800;font-size:1.05rem;font-family:var(--font-display);}
+.cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;}
+.cart-items{padding:14px 18px;}
+.cart-item{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:8px;}
+.cart-item-name{font-weight:700;font-size:.875rem;}
+.cart-item-price{color:var(--sale-red);font-weight:700;}
+.cart-qty{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.cart-qty button{width:28px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;}
+.cart-footer{padding:14px 18px 22px;border-top:1px solid var(--border);}
+.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:14px;}
+.btn-checkout{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
+.btn-checkout:hover{background:var(--primary-bright);}
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 22px;border-radius:50px;font-size:.8rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;white-space:nowrap;}
+
+/* Footer */
+.footer{background:var(--primary);color:rgba(255,255,255,.85);padding:40px 5% 28px;margin-top:40px;}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-bottom:32px;}
+.footer-col h4{font-size:.9rem;font-weight:700;margin-bottom:16px;color:#fff;opacity:.9;}
+.footer-col p,.footer-col a{display:block;font-size:.75rem;margin-bottom:8px;opacity:.7;color:#fff;text-decoration:none;}
+.footer-col a:hover{opacity:1;}
+.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:.7rem;opacity:.6;}
+
+/* Hide filter counts */
+.filter-count {
+  display: none;
 }
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:rgba(10,10,15,0.96);
-  backdrop-filter:blur(20px);
-  display:flex;
-  justify-content:space-around;
-  padding:10px 5% 20px;
-  border-top:1px solid var(--border);
-  z-index:100;
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .mob-filter-btn{display:inline-flex;}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));}
 }
-.nav-item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  cursor:pointer;
-  color:var(--muted);
-  font-size:.7rem;
-  font-weight:600;
-  transition:color 0.2s;
+@media(max-width:768px){
+  .search-wrap{display:none;}
+  .shop-body{padding:16px 4%;}
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:12px;min-width:auto;}
+  .pc-img{height:140px;}
+  .price-new{font-size:1rem;}
+  .hero-image-section{margin:12px 4% 0;}
+  .hero-image{max-height:180px;}
+  .hot-deals{margin:16px 4% 0;flex-direction:column;align-items:flex-start;}
+  .deals-scroll{width:100%;}
+  .category-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .product-number{width:22px;height:22px;font-size:.6rem;top:4px;left:4px;}
+  .category-section{margin-top:16px;}
+  .footer{padding:32px 4% 24px;}
+  .action-label{font-size:8px;}
+  .shop-features-bottom{gap:12px;padding:24px 4%;max-width:100%;}
+  .shop-feature-bottom{padding:14px 8px;}
+  .shop-feature-bottom i{font-size:24px;}
+  .newsletter-strip{margin:0 4% 24px;padding:20px;}
+  .nl-form{flex-direction:column;}
+  .recently-viewed{margin:24px 4%;}
 }
-.nav-item.active{color:var(--red);}
-.nav-item:hover{color:var(--gold);}
-.nav-item i{font-size:20px;}
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
-.snack{
-  position:fixed;
-  bottom:80px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--bg3);
-  border:1px solid var(--green);
-  padding:10px 20px;
-  border-radius:50px;
-  font-size:.75rem;
-  opacity:0;
-  transition:opacity 0.2s;
-  z-index:200;
-  pointer-events:none;
-}
-.snack.on{opacity:1;}
 </style>
 </head>
 <body>
 
-<div class="app-header">
-  <a class="logo" href="index.html">
-    <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
-    <span class="logo-name">Liquor<em>Belle</em></span>
-  </a>
-  <div class="header-right">
-    <div class="cart-icon" onclick="window.location.href='checkout.html'">
-      <i class="ph ph-shopping-bag"></i>
-      <span class="cart-count" id="cartCount">0</span>
+<!-- Age Gate -->
+<div class="age-gate" id="ageGate">
+  <div class="age-gate-card">
+    <h2>Are you 18+?</h2>
+    <p>LiquorBelle sells alcohol. You must be at least 18 years old to enter this site. Please confirm your age to continue.</p>
+    <div class="age-gate-btns">
+      <button class="age-yes" onclick="confirmAge()">Yes, I'm 18+</button>
+      <button class="age-no" onclick="denyAge()">No, I'm under 18</button>
     </div>
   </div>
 </div>
 
-<div class="banner">
-  <h1>Dagoretti's <span>Finest</span></h1>
-  <p>Whisky • Cognac • Brandy • Vodka • Gin • Rum • Wine • Beer • Champagne • Kenyan Spirits</p>
-  <div class="banner-tag">⚡ 10-45 min delivery • 24/7 Service • Free delivery on 750ml+ to Waithaka</div>
-</div>
-
-<div class="category-scroll" id="categoryList"></div>
-
-<div class="filter-bar">
-  <div class="search-wrapper">
-    <i class="ph ph-magnifying-glass search-icon"></i>
-    <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+<!-- Wishlist Modal -->
+<div class="modal-overlay wishlist-modal" id="wishlistModal">
+  <div class="modal-card">
+    <h3>My Wishlist <i class="ph ph-heart" style="color:var(--sale-red);"></i></h3>
+    <p>Save your favourites and add them to cart anytime.</p>
+    <div id="wishlistItems"></div>
+    <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:12px;" onclick="closeWishlistModal()">Close</button>
   </div>
-  <select id="sortSelect" class="sort-select">
-    <option value="default">Sort by</option>
-    <option value="price-asc">Price: Low to High</option>
-    <option value="price-desc">Price: High to Low</option>
-    <option value="name-asc">Name: A to Z</option>
-  </select>
-  <button class="clear-btn" id="clearBtn">Clear</button>
-</div>
-<div id="resultsCount" class="results-count"></div>
-
-<div class="product-grid" id="productGrid"></div>
-
-<div class="bottom-nav">
-  <div class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></div>
-  <div class="nav-item active" onclick="window.location.href='shop.html'"><i class="ph ph-wine"></i><span>Shop</span></div>
-  <div class="nav-item" onclick="window.location.href='checkout.html'"><i class="ph ph-shopping-bag"></i><span>Cart</span></div>
-  <div class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clock-counter-clockwise"></i><span>Orders</span></div>
 </div>
 
-<div class="snack" id="snack"></div>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <span><i class="ph ph-map-pin"></i>Dagoretti Road, Nairobi</span>
+    <span><i class="ph ph-phone-call"></i>+254 748 894 443</span>
+  </div>
+  <div class="badge-24h"><i class="ph ph-clock"></i>&nbsp;Open 24/7</div>
+</div>
+
+<header class="main-header">
+  <a class="logo" href="index.html" style="text-decoration:none;">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle logo">
+    <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
+  </a>
+  <div class="search-wrap">
+    <i class="ph ph-magnifying-glass"></i>
+    <input type="text" id="searchInput" placeholder="Search whisky, wine, beer…">
+  </div>
+  <div class="header-actions">
+    <div class="action-group" onclick="window.location.href='checkout.html'">
+      <div class="hbtn"><i class="ph ph-credit-card"></i></div>
+      <span class="action-label">Checkout</span>
+    </div>
+    <div class="action-group" onclick="openWishlistModal()">
+      <div class="hbtn" id="wishlistBtn">
+        <i class="ph ph-heart"></i>
+        <span class="wishlist-count" id="wishlistCount">0</span>
+      </div>
+      <span class="action-label">Wishlist</span>
+    </div>
+    <div class="action-group" onclick="window.location.href='index.html'">
+      <div class="hbtn"><i class="ph ph-house"></i></div>
+      <span class="action-label">Home</span>
+    </div>
+    <div class="action-group" onclick="openCartDrawer()">
+      <div class="hbtn">
+        <i class="ph ph-shopping-bag"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
+      <span class="action-label">Cart</span>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Image Section -->
+<div class="hero-image-section">
+  <img class="hero-image" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780937909/lb2_y4bwkw.png" alt="LiquorBelle Premium Selection">
+</div>
+
+<!-- Category Cards Grid -->
+<div class="category-section">
+  <h2>Browse by Category</h2>
+  <div class="category-grid" id="categoryGrid"></div>
+</div>
+
+<!-- Hot Deals Section -->
+<div class="hot-deals">
+  <h3><i class="ph ph-fire"></i> Hot Deals & Offers</h3>
+  <div class="deals-scroll">
+    <div class="deal-item"><i class="ph ph-tag"></i> Up to 30% OFF Whisky</div>
+    <div class="deal-item"><i class="ph ph-gift"></i> Buy 2 Get 10% OFF</div>
+    <div class="deal-item"><i class="ph ph-truck"></i> Free Delivery over 750ml</div>
+    <div class="deal-item"><i class="ph ph-star"></i> New Arrivals</div>
+    <div class="deal-item"><i class="ph ph-discount"></i> M-PESA Till: 6927569</div>
+  </div>
+</div>
+
+<div class="shop-body">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <h3><i class="ph ph-funnel"></i> Filters</h3>
+      <button class="sb-clear" onclick="clearAllFilters()">Clear All</button>
+    </div>
+    <div class="sb-section">
+      <h4>Bottle Size</h4>
+      <div id="sizeFilters"></div>
+    </div>
+    <div class="sb-section">
+      <h4>Price Range (KES)</h4>
+      <div class="price-row"><input type="number" id="priceMin" class="price-input" placeholder="Min"><span class="price-sep">–</span><input type="number" id="priceMax" class="price-input" placeholder="Max"></div>
+      <button class="btn-price-go" onclick="applyFilters()">Apply Price</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <main class="shop-main">
+    <button class="mob-filter-btn" onclick="openSidebar()"><i class="ph ph-funnel"></i>Filters &amp; Sort</button>
+    <div class="filter-bar">
+      <div class="results-label" id="resultsLabel">Loading products…</div>
+      <div class="sort-wrap"><select id="sortSelect" onchange="currentPage=1;applyFilters()">
+        <option value="default">Sort: Default</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+        <option value="name-asc">Name: A → Z</option>
+      </select></div>
+    </div>
+    <div class="products-grid-wrapper">
+      <div class="products-grid" id="productGrid"><div class="empty-state"><i class="ph ph-wine"></i><p>Loading products…</p></div></div>
+    </div>
+    <div id="paginationWrap"></div>
+  </main>
+</div>
+
+<!-- Recently Viewed -->
+<div class="recently-viewed" id="recentlyViewedSection" style="display:none;">
+  <div class="rv-header">
+    <h3>Recently Viewed</h3>
+    <span style="font-size:.75rem;color:var(--primary);cursor:pointer;" onclick="clearRecentlyViewed()">Clear</span>
+  </div>
+  <div class="rv-scroll" id="rvScroll"></div>
+</div>
+
+<!-- Shop Features -->
+<div class="shop-features-bottom">
+  <div class="shop-feature-bottom"><i class="ph ph-funnel"></i><strong>Smart Filters</strong><small>By size & price</small></div>
+  <div class="shop-feature-bottom"><i class="ph ph-trend-up"></i><strong>Trending Now</strong><small>Updated hourly</small></div>
+  <div class="shop-feature-bottom"><i class="ph ph-tag"></i><strong>Daily Deals</strong><small>Up to 30% off</small></div>
+  <div class="shop-feature-bottom"><i class="ph ph-stars"></i><strong>Top Rated</strong><small>Customer favorites</small></div>
+</div>
+
+<!-- Newsletter Strip -->
+<div class="newsletter-strip">
+  <div class="nl-text">
+    <h4>Get Exclusive Deals</h4>
+    <p>Subscribe for flash sales, new arrivals & special offers straight to your inbox.</p>
+  </div>
+  <div class="nl-form">
+    <input type="email" id="nlEmail" class="nl-input" placeholder="Enter your email address…">
+    <button class="nl-btn" onclick="subscribeNewsletter()">Subscribe</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="track-orders.html">Track Orders</a></div>
+    <div class="footer-col"><h4>Customer Support</h4><p><i class="ph ph-phone-call"></i> +254 748 894 443</p><p><i class="ph ph-whatsapp-logo"></i> WhatsApp 24/7</p></div>
+    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly.</p></div>
+</footer>
+
+<!-- Cart Drawer -->
+<div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><span>Your Cart</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
+  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
+    <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout →</button>
+  </div>
+</div>
+<div id="toast"></div>
 
 <script>
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-const PRODUCT_IMAGE = "https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif";
-const CATEGORIES = ['All','Whisky','Cognac','Vodka','Gin','Rum','Wine','Beer','Champagne','Kenyan Spirits'];
+const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
+const PER_PAGE = 12;
 
 let PRODUCTS = [];
+let filtered = [];
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+let wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
+let recentlyViewed = JSON.parse(localStorage.getItem('liquorbelle_rv') || '[]');
 let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
-let searchTerm = '';
-let currentSort = 'default';
+let currentPage = 1;
+let sizeFiltersActive = new Set();
 
+// Age Gate
+(function(){
+  if(!localStorage.getItem('lb_age_confirmed')) document.getElementById('ageGate').style.display='flex';
+  else document.getElementById('ageGate').style.display='none';
+})();
+function confirmAge(){ localStorage.setItem('lb_age_confirmed','1'); document.getElementById('ageGate').style.display='none'; }
+function denyAge(){ document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;">Sorry, you must be 18 or older to visit this site.</div>'; }
+
+function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
+function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
+
+// Cart functions
+function updateCartUI(){
+  const items = Object.values(cart);
+  const count = items.reduce((s,i)=>s+i.qty,0);
+  const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('cartCount').innerText = count;
+  const container = document.getElementById('cartItemsList');
+  const footer = document.getElementById('cartFooter');
+  if(!items.length){container.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div>';footer.style.display='none';return;}
+  footer.style.display='block';
+  const hasBig = items.some(i=>['750ml','1L','1.5L'].includes(i.capacity));
+  const delivery = hasBig?0:150;
+  document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`;
+  container.innerHTML = items.map(item=>`<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} ${item.size ? `(${item.size})` : ''} x${item.qty}</div><div class="cart-item-price">KES ${(item.price*item.qty).toLocaleString()}</div><div class="cart-qty"><button onclick="updateQty('${item.id}',-1)">−</button><span>${item.qty}</span><button onclick="updateQty('${item.id}',1)">+</button><button onclick="removeCartItem('${item.id}')" class="cart-remove-btn">Remove</button></div></div></div>`).join('');
+}
+function removeCartItem(id){
+  if(cart[id]){
+    delete cart[id];
+    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+    updateCartUI();
+    toast('Item removed from cart');
+  }
+}
+function updateQty(id,delta){if(cart[id]){cart[id].qty+=delta;if(cart[id].qty<=0)delete cart[id];localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));updateCartUI();}}
+function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
+function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
+function addToCart(id, name, price, qty, selectedSize){
+  const quantity = parseInt(qty)||1;
+  const capacity = selectedSize || '750ml';
+  if(cart[id]){cart[id].qty+=quantity;}else{cart[id]={id, name, price, qty:quantity, capacity:capacity, size:capacity};}
+  localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
+  updateCartUI();
+  toast(`${quantity}× ${name} (${capacity}) added ✓`);
+}
+
+// Wishlist
+function updateWishlistUI(){
+  const count = wishlist.length;
+  const countEl = document.getElementById('wishlistCount');
+  if(count>0){countEl.style.display='flex';countEl.innerText=count;}
+  else{countEl.style.display='none';}
+}
+function toggleWishlist(id,name,price,image,capacity){
+  const idx = wishlist.findIndex(w=>w.id==id);
+  if(idx>-1){wishlist.splice(idx,1);toast(`Removed from wishlist`);}
+  else{wishlist.push({id,name,price,image,capacity});toast(`${name} added to wishlist ♥`);}
+  localStorage.setItem('liquorbelle_wishlist',JSON.stringify(wishlist));
+  updateWishlistUI();
+  applyFilters();
+}
+function openWishlistModal(){
+  const container = document.getElementById('wishlistItems');
+  if(!wishlist.length){container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';}
+  else{
+    container.innerHTML = wishlist.map(w=>`<div class="wishlist-item"><img src="${w.image||FALLBACK_IMG}" alt="${escapeHtml(w.name)}" onerror="this.src='${FALLBACK_IMG}'"><div class="wishlist-item-info"><div class="wishlist-item-name">${escapeHtml(w.name)}</div><div class="wishlist-item-price">KES ${w.price.toLocaleString()}</div></div><button class="wishlist-atc" onclick="addToCart(${w.id},'${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},1,'${w.capacity||'750ml'}');closeWishlistModal();">Add to Cart</button><button class="wishlist-remove" onclick="toggleWishlist(${w.id},'${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},'${w.image||''}','${w.capacity||''}');openWishlistModal();"><i class="ph ph-trash"></i></button></div>`).join('');
+  }
+  document.getElementById('wishlistModal').classList.add('active');
+}
+function closeWishlistModal(){document.getElementById('wishlistModal').classList.remove('active');}
+
+// Recently Viewed
+function addToRecentlyViewed(product){
+  recentlyViewed = recentlyViewed.filter(r=>r.id!=product.id);
+  recentlyViewed.unshift(product);
+  if(recentlyViewed.length>8) recentlyViewed = recentlyViewed.slice(0,8);
+  localStorage.setItem('liquorbelle_rv',JSON.stringify(recentlyViewed));
+  renderRecentlyViewed();
+}
+function clearRecentlyViewed(){recentlyViewed=[];localStorage.removeItem('liquorbelle_rv');document.getElementById('recentlyViewedSection').style.display='none';}
+function renderRecentlyViewed(){
+  if(!recentlyViewed.length){document.getElementById('recentlyViewedSection').style.display='none';return;}
+  document.getElementById('recentlyViewedSection').style.display='block';
+  document.getElementById('rvScroll').innerHTML = recentlyViewed.map(p=>`<div class="rv-item" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},1,'${p.capacity||'750ml'}')"><img src="${p.image||FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'"><div class="rv-item-name">${escapeHtml(p.name)}</div><div class="rv-item-price">KES ${p.price.toLocaleString()}</div></div>`).join('');
+}
+
+// Newsletter
+function subscribeNewsletter(){
+  const em = document.getElementById('nlEmail').value.trim();
+  if(!em||!em.includes('@')){toast('Please enter a valid email');return;}
+  document.getElementById('nlEmail').value='';
+  toast('Subscribed! You\'ll get exclusive deals 🎉');
+}
+
+// Load products from API with variants
 async function loadProducts(){
-  try {
+  try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
-    if(data.success && data.products.length > 0){
+    if(data.success && data.products.length){
       PRODUCTS = data.products;
-      console.log('✅ Loaded', PRODUCTS.length, 'products from database');
-    } else {
-      console.log('⚠️ No products in database');
-      PRODUCTS = [];
+    } else { PRODUCTS = []; }
+  }catch(e){ 
+    console.log('Error loading products:', e);
+    PRODUCTS = []; 
+  }
+  buildSizeFilters();
+  applyFilters();
+}
+
+function buildSizeFilters(){
+  const sizes = new Set();
+  PRODUCTS.forEach(p => {
+    if(p.variants && p.variants.length){
+      p.variants.forEach(v => sizes.add(v.size));
     }
-  } catch(e){
-    console.error('Error loading products:', e);
-    PRODUCTS = [];
-  }
-  render();
-}
-
-function updateCartCount(){
-  const count = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-  document.getElementById('cartCount').innerText = count;
-}
-
-function getCategoryDisplayName(cat){
-  const map = {
-    'whisky':'Whisky','cognac':'Cognac','vodka':'Vodka','gin':'Gin',
-    'rum':'Rum','wine':'Wine','beer':'Beer','champagne':'Champagne','kenyan':'Kenyan Spirits'
-  };
-  return map[cat] || cat;
-}
-
-function getStockStatus(product){
-  if(product.stock === null || product.stock === undefined) return { text: 'In Stock', class: 'stock-in' };
-  if(product.stock <= 0) return { text: 'Out of Stock', class: 'stock-out' };
-  return { text: 'In Stock', class: 'stock-in' };
-}
-
-function sortProducts(products){
-  const sorted = [...products];
-  switch(currentSort){
-    case 'price-asc': return sorted.sort((a,b) => (a.price || 0) - (b.price || 0));
-    case 'price-desc': return sorted.sort((a,b) => (b.price || 0) - (a.price || 0));
-    case 'name-asc': return sorted.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
-    default: return sorted;
-  }
-}
-
-function addToCartWithQty(id, name, price, qty) {
-  const product = PRODUCTS.find(p => p.id === id);
-  if(product && product.stock !== null && product.stock <= 0){
-    toast('Out of stock!');
+  });
+  const sorted = Array.from(sizes).sort();
+  const container = document.getElementById('sizeFilters');
+  if(sorted.length === 0){
+    container.innerHTML = '<div class="filter-option">No sizes available</div>';
     return;
   }
-  if(!price || price <= 0){ toast('Price error'); return; }
-  
-  const quantity = parseInt(qty);
-  if(cart[id]) {
-    cart[id].qty += quantity;
-  } else {
-    cart[id] = { name, price, qty: quantity, id, capacity: product?.capacity || '' };
-  }
-  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-  updateCartCount();
-  toast(`${quantity}x ${name} added to cart ✓`);
+  container.innerHTML = sorted.map(s=>`<div class="filter-option"><label><input type="checkbox" value="${escapeHtml(s)}" class="size-check" onchange="toggleSize('${escapeHtml(s)}')"> ${escapeHtml(s)}</label></div>`).join('');
 }
 
-function render(){
-  let filtered = [...PRODUCTS];
-  if(currentCat !== 'all') filtered = filtered.filter(p => p.category === currentCat);
-  if(searchTerm) filtered = filtered.filter(p => 
-    p.name?.toLowerCase().includes(searchTerm) || 
-    p.category?.toLowerCase().includes(searchTerm) ||
-    (p.capacity && p.capacity.toLowerCase().includes(searchTerm))
-  );
-  filtered = sortProducts(filtered);
-  
-  const countText = document.getElementById('resultsCount');
-  countText.innerHTML = filtered.length === 0 ? 'No products found' : `Found ${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
-  
+function toggleSize(size){if(sizeFiltersActive.has(size))sizeFiltersActive.delete(size);else sizeFiltersActive.add(size);currentPage=1;applyFilters();}
+function clearAllFilters(){
+  sizeFiltersActive.clear();
+  document.getElementById('priceMin').value='';document.getElementById('priceMax').value='';
+  document.querySelectorAll('.size-check').forEach(el=>el.checked=false);
+  currentPage=1;applyFilters();
+}
+function applyFilters(){
+  let result = [...PRODUCTS];
+  if(currentCat && currentCat!=='all') result = result.filter(p=>(p.category||'').toLowerCase()===currentCat.toLowerCase());
+  const term = document.getElementById('searchInput').value.trim().toLowerCase();
+  if(term) result = result.filter(p=>p.name?.toLowerCase().includes(term)||p.category?.toLowerCase().includes(term));
+  if(sizeFiltersActive.size) result = result.filter(p=>p.variants?.some(v=>sizeFiltersActive.has(v.size)));
+  const minVal = parseFloat(document.getElementById('priceMin').value);
+  const maxVal = parseFloat(document.getElementById('priceMax').value);
+  if(!isNaN(minVal) || !isNaN(maxVal)){
+    result = result.filter(p => {
+      const minPrice = Math.min(...(p.variants?.map(v=>v.price) || [0]));
+      if(!isNaN(minVal) && minPrice < minVal) return false;
+      if(!isNaN(maxVal) && minPrice > maxVal) return false;
+      return true;
+    });
+  }
+  const sort = document.getElementById('sortSelect').value;
+  if(sort==='price-asc') result.sort((a,b)=>Math.min(...(a.variants?.map(v=>v.price)||[0])) - Math.min(...(b.variants?.map(v=>v.price)||[0])));
+  else if(sort==='price-desc') result.sort((a,b)=>Math.min(...(b.variants?.map(v=>v.price)||[0])) - Math.min(...(a.variants?.map(v=>v.price)||[0])));
+  else if(sort==='name-asc') result.sort((a,b)=>a.name.localeCompare(b.name));
+  filtered = result;
+  renderPage();
+}
+
+function renderPage(){
+  const total = filtered.length;
+  const totalPages = Math.ceil(total/PER_PAGE);
+  if(currentPage>totalPages&&totalPages>0) currentPage=totalPages;
+  const start = (currentPage-1)*PER_PAGE;
+  const pageItems = filtered.slice(start, start+PER_PAGE);
+  document.getElementById('resultsLabel').innerHTML = total===0?'No products found':`Showing ${start+1}–${Math.min(start+PER_PAGE,total)} of ${total} products`;
   const grid = document.getElementById('productGrid');
-  if(!filtered.length){
-    grid.innerHTML = `<div class="empty-state">
-      <i class="ph ph-wine" style="font-size:48px;opacity:0.5;"></i>
-      <p>No products found</p>
-      <small style="color:var(--muted);">Try a different search or category</small>
-    </div>`;
-    return;
-  }
-  
-  grid.innerHTML = filtered.map(p => {
-    const imgUrl = p.image && p.image.trim() !== '' ? p.image : PRODUCT_IMAGE;
-    const badgeHtml = p.badge === 'hot' ? '<div class="pc-badge badge-hot">🔥 HOT</div>' :
-                      p.badge === 'local' ? '<div class="pc-badge badge-local">🇰🇪 LOCAL</div>' :
-                      p.badge === 'prem' ? '<div class="pc-badge badge-prem">⭐ PREMIUM</div>' : '';
-    const stockStatus = getStockStatus(p);
-    const isOutOfStock = p.stock !== null && p.stock <= 0;
-    const capacity = p.capacity ? `<div class="pc-capacity">${escapeHtml(p.capacity)}</div>` : '';
-    
-    const qtyOptions = [1, 2, 3, 4, 5, 6].map(q => `<option value="${q}">${q}</option>`).join('');
-    
-    return `
-      <div class="product-card">
-        <div class="img-wrap">
-          <img class="pc-img" src="${imgUrl}" onerror="this.src='${PRODUCT_IMAGE}'" alt="${escapeHtml(p.name)}" loading="lazy">
-          ${badgeHtml}
-          <div class="stock-badge ${stockStatus.class}">${stockStatus.text}</div>
-        </div>
-        <div class="pc-info">
-          <div class="pc-name">${escapeHtml(p.name)}</div>
-          ${capacity}
-          <div class="pc-category">
-            <span>${getCategoryDisplayName(p.category)}</span>
-          </div>
-          <div class="pc-price">KES ${(p.price || 0).toLocaleString()}</div>
-          <div class="qty-selector">
-            <select id="qty_${p.id}" class="qty-select">
-              ${qtyOptions}
-            </select>
-            <button class="add-to-cart" onclick="addToCartWithQty(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price || 0}, document.getElementById('qty_${p.id}').value)" ${isOutOfStock ? 'disabled' : ''}>
-              <i class="ph ${isOutOfStock ? 'ph-x-circle' : 'ph-plus'}"></i> ${isOutOfStock ? 'Out of Stock' : 'Add'}
-            </button>
-          </div>
-        </div>
+  if(!pageItems.length){grid.innerHTML='<div class="empty-state"><i class="ph ph-wine"></i><p>No products found</p></div>';document.getElementById('paginationWrap').innerHTML='';return;}
+  const globalStartNumber = start + 1;
+  grid.innerHTML = pageItems.map((p, idx) => {
+    const variants = p.variants || [];
+    const defaultVariant = variants.find(v=>v.size==='750ml') || variants[0] || {size:'750ml',price:0,discount:0};
+    const productNumber = globalStartNumber + idx;
+    const isWishlisted = wishlist.some(w=>w.id==p.id);
+    const variantOptions = variants.map(v => `<option value="${v.size}" data-price="${v.price}" data-discount="${v.discount}">${v.size} - KES ${v.price.toLocaleString()}${v.discount ? ` (${v.discount}% off)` : ''}</option>`).join('');
+    const originalPrice = defaultVariant.discount ? Math.round(defaultVariant.price * 100 / (100 - defaultVariant.discount)) : defaultVariant.price;
+    const hasDiscount = defaultVariant.discount > 0;
+    return `<div class="prod-card">
+      <div class="product-number">${productNumber}</div>
+      <div class="pc-img-wrap">
+        <img class="pc-img" src="${p.image||FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'" onclick="addToRecentlyViewed({id:${p.id},name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${defaultVariant.price},image:'${p.image||''}',capacity:'${defaultVariant.size}'})">
+        ${p.badge?`<div class="pc-badge badge-${p.badge}">${p.badge==='hot'?'🔥 Hot':p.badge==='local'?'🇰🇪 Local':'⭐ Premium'}</div>`:''}
+        <button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="toggleWishlist(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${defaultVariant.price},'${p.image||''}','${defaultVariant.size}')">
+          <i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}" style="${isWishlisted?'color:var(--sale-red)':''}"></i>
+        </button>
       </div>
-    `;
+      <div class="pc-body">
+        <div class="pc-name">${escapeHtml(p.name)}</div>
+        <select class="size-selector" id="size_${p.id}" onchange="updateVariantPrice(${p.id}, this.value)">
+          ${variantOptions}
+        </select>
+        <div class="price-row-display" id="price_display_${p.id}">
+          ${hasDiscount?`<span class="price-old">KES ${originalPrice.toLocaleString()}</span>`:''}
+          <span class="price-new">KES ${defaultVariant.price.toLocaleString()}</span>
+          ${hasDiscount?`<span class="discount-badge">-${defaultVariant.discount}%</span>`:''}
+        </div>
+        <div class="qty-row"><select class="qty-sel" id="qty_${p.id}">${[1,2,3,4,5,6].map(q=>`<option value="${q}">${q}</option>`).join('')}</select></div>
+        <button class="atc-btn" onclick="addToCartWithVariant(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',document.getElementById('size_${p.id}').value,document.getElementById('qty_${p.id}').value)"><i class="ph ph-plus"></i> Add to Cart</button>
+      </div>
+    </div>`;
   }).join('');
+  renderPagination(totalPages);
 }
 
-function escapeHtml(str){ 
-  if(!str) return '';
-  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); 
+function updateVariantPrice(productId, selectedSize){
+  const product = PRODUCTS.find(p => p.id === productId);
+  if(!product) return;
+  const variant = product.variants.find(v => v.size === selectedSize);
+  if(!variant) return;
+  const hasDiscount = variant.discount > 0;
+  const originalPrice = hasDiscount ? Math.round(variant.price * 100 / (100 - variant.discount)) : variant.price;
+  const priceDiv = document.getElementById(`price_display_${productId}`);
+  if(priceDiv){
+    priceDiv.innerHTML = `${hasDiscount?`<span class="price-old">KES ${originalPrice.toLocaleString()}</span>`:''}<span class="price-new">KES ${variant.price.toLocaleString()}</span>${hasDiscount?`<span class="discount-badge">-${variant.discount}%</span>`:''}`;
+  }
 }
 
-function toast(msg){ 
-  const t=document.getElementById('snack'); 
-  t.innerText=msg; 
-  t.classList.add('on'); 
-  setTimeout(()=>t.classList.remove('on'),2000); 
+function addToCartWithVariant(productId, productName, selectedSize, qty){
+  const product = PRODUCTS.find(p => p.id === productId);
+  if(!product) return;
+  const variant = product.variants.find(v => v.size === selectedSize);
+  if(!variant) return;
+  addToCart(productId, productName, variant.price, qty, selectedSize);
 }
 
-function renderCategories(){
-  const container = document.getElementById('categoryList');
-  container.innerHTML = CATEGORIES.map(c => {
-    const catKey = c === 'All' ? 'all' : c.toLowerCase().replace(' ', '');
-    return `<div class="chip ${currentCat === catKey ? 'active' : ''}" onclick="setCategory('${catKey}')">${c}</div>`;
-  }).join('');
+function renderPagination(totalPages){
+  const wrap = document.getElementById('paginationWrap');
+  if(totalPages<=1){wrap.innerHTML='';return;}
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>← Prev</button>`;
+  for(let i=1;i<=Math.min(totalPages,5);i++) html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  if(totalPages>5) html += `<div class="page-ellipsis">…</div><button class="page-btn" onclick="goPage(${totalPages})">${totalPages}</button>`;
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>Next →</button>`;
+  wrap.innerHTML = `<div class="pagination">${html}</div>`;
+}
+function goPage(page){const totalPages=Math.ceil(filtered.length/PER_PAGE);if(page<1||page>totalPages)return;currentPage=page;renderPage();window.scrollTo({top:0,behavior:'smooth'});}
+
+function setCategory(cat){currentCat=cat;currentPage=1;const url=new URL(window.location);cat==='all'?url.searchParams.delete('cat'):url.searchParams.set('cat',cat);window.history.pushState({},'',url);applyFilters();}
+document.getElementById('searchInput').addEventListener('input',()=>{currentPage=1;applyFilters();});
+function openSidebar(){document.getElementById('sidebar').classList.add('mob-open');document.getElementById('sidebarOverlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('sidebarOverlay').classList.remove('open');}
+
+// Render Category Cards
+const categories = [
+  { name: "Whisky", cat: "whisky", image: "https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp" },
+  { name: "Cognac", cat: "cognac", image: "https://i.postimg.cc/W1qvx9dw/cognacs.webp" },
+  { name: "Vodka", cat: "vodka", image: "https://i.postimg.cc/xTQFy62P/vodk-AS.jpg" },
+  { name: "Gin", cat: "gin", image: "https://i.postimg.cc/ZqmMjjpn/champagne.jpg" },
+  { name: "Rum", cat: "rum", image: "https://i.postimg.cc/jS0qX0j9/rums.jpg" },
+  { name: "Wine", cat: "wine", image: "https://i.postimg.cc/W3R7p4pG/wines.jpg" },
+  { name: "Beer", cat: "beer", image: "https://i.postimg.cc/FRkMf1Qy/beer-cans.webp" },
+  { name: "Champagne", cat: "champagne", image: "https://i.postimg.cc/ZqmMjjpn/champagne.jpg" }
+];
+function renderCategoryCards(){
+  const container = document.getElementById('categoryGrid');
+  container.innerHTML = categories.map(cat=>`<a href="shop.html?cat=${cat.cat}" class="cat-card"><img class="cat-img" src="${cat.image}" alt="${cat.name}"><span>${cat.name}</span></a>`).join('');
 }
 
-function setCategory(cat){
-  currentCat = cat;
-  renderCategories();
-  render();
-  const url = new URL(window.location);
-  cat === 'all' ? url.searchParams.delete('cat') : url.searchParams.set('cat', cat);
-  window.history.pushState({}, '', url);
-}
-
-document.getElementById('searchInput').addEventListener('input', (e) => {
-  searchTerm = e.target.value.toLowerCase();
-  render();
-});
-document.getElementById('sortSelect').addEventListener('change', (e) => {
-  currentSort = e.target.value;
-  render();
-});
-document.getElementById('clearBtn').addEventListener('click', () => {
-  searchTerm = '';
-  currentSort = 'default';
-  document.getElementById('searchInput').value = '';
-  document.getElementById('sortSelect').value = 'default';
-  render();
-});
-
-renderCategories();
+renderCategoryCards();
+updateCartUI();
+updateWishlistUI();
 loadProducts();
-updateCartCount();
-setInterval(loadProducts, 30000);
+renderRecentlyViewed();
 </script>
 </body>
 </html>

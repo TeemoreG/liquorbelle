@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>LiquorBelle — Full Admin Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#800000;
+  --primary-light:#990000;
+  --green:#1A8A3E;
+  --green-light:#2DBE4E;
+  --gold:#B8860B;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --red:#D32F2F;
+  --radius:16px;
+  --radius-sm:12px;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
+.btn{background:var(--primary);color:white;border:none;padding:10px 20px;border-radius:40px;cursor:pointer;font-weight:600;transition:all 0.2s;}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-green{background:var(--green);}
+.btn-green:hover{background:var(--green-light);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{background:var(--primary);color:white;border-color:var(--primary);}
+.btn-red{background:var(--red);}
+.btn-red:hover{background:#c62828;}
+
+/* Header */
+.admin-header{
+  background:var(--primary);
+  color:white;
+  padding:16px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-img{height:40px;width:auto;border-radius:0;}
+.logo-text{font-weight:700;font-size:1.2rem;}
+.tabs{
+  display:flex;
+  gap:4px;
+  background:rgba(255,255,255,0.15);
+  padding:6px;
+  border-radius:60px;
+}
+.tab{
+  padding:8px 20px;
+  background:transparent;
+  border:none;
+  border-radius:40px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.2s;
+  color:white;
+}
+.tab.active{background:white;color:var(--primary);}
+.container{max-width:1400px;margin:0 auto;padding:24px 5%;}
+
+/* Stats Grid */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+  margin-bottom:24px;
+}
+.stat-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:20px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.stat-card h4{font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.stat-card .value{font-size:28px;font-weight:800;color:var(--primary);}
+
+/* Product Form - Variants Section */
+.form-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:24px;
+  border:1px solid var(--border);
+}
+.form-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
+  margin-bottom:16px;
+}
+.form-row input, .form-row select, .form-row textarea{
+  padding:12px 14px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  font-size:14px;
+  font-family:inherit;
+}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus{outline:none;border-color:var(--primary);}
+textarea{resize:vertical;}
+
+/* Variants Table - No Stock Column */
+.variants-table{
+  width:100%;
+  border-collapse:collapse;
+  margin:16px 0;
+}
+.variants-table th, .variants-table td{
+  border:1px solid var(--border);
+  padding:10px;
+  text-align:left;
+  font-size:13px;
+}
+.variants-table th{
+  background:var(--bg2);
+  font-weight:600;
+}
+.variants-table input{
+  width:100%;
+  padding:8px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-size:13px;
+}
+.variant-row{transition:all 0.2s;}
+.variant-row:hover{background:rgba(128,0,0,0.03);}
+.add-variant-btn{
+  background:transparent;
+  border:1px dashed var(--primary);
+  color:var(--primary);
+  padding:8px 16px;
+  border-radius:40px;
+  cursor:pointer;
+  margin-top:8px;
+  font-weight:600;
+}
+.remove-variant{
+  background:var(--red);
+  color:white;
+  border:none;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:14px;
+}
+
+/* Products Table */
+.table-container{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  overflow-x:auto;
+}
+.table-header{
+  display:grid;
+  grid-template-columns:60px 1.5fr 160px 100px 80px;
+  background:var(--bg2);
+  padding:14px 16px;
+  font-weight:600;
+  font-size:13px;
+  border-bottom:1px solid var(--border);
+}
+.product-row{
+  display:grid;
+  grid-template-columns:60px 1.5fr 160px 100px 80px;
+  padding:12px 16px;
+  align-items:center;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.product-row:hover{background:rgba(0,0,0,0.02);}
+.product-img{width:40px;height:40px;object-fit:cover;border-radius:8px;}
+.product-name{font-weight:600;}
+.variant-badge{
+  background:var(--bg2);
+  padding:2px 8px;
+  border-radius:20px;
+  font-size:10px;
+  margin:2px;
+  display:inline-block;
+}
+.discount-badge{
+  background:#E8F5E9;
+  color:var(--green);
+  padding:2px 8px;
+  border-radius:20px;
+  font-size:11px;
+}
+.edit-btn,.delete-btn{background:transparent;border:none;cursor:pointer;padding:6px;border-radius:6px;}
+.edit-btn:hover{color:var(--primary);background:rgba(128,0,0,0.1);}
+.delete-btn:hover{color:var(--red);background:rgba(211,47,47,0.1);}
+
+/* Orders List */
+.orders-list{display:flex;flex-direction:column;gap:16px;}
+.order-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  overflow:hidden;
+}
+.order-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:16px 20px;
+  background:var(--bg2);
+  flex-wrap:wrap;
+  gap:10px;
+}
+.order-status{
+  padding:4px 12px;
+  border-radius:40px;
+  font-size:11px;
+  font-weight:700;
+}
+.status-pending{background:#FFF3E0;color:#E67E22;}
+.status-paid{background:#E8F5E9;color:var(--green);}
+.status-delivered{background:#E3F2FD;color:#2196F3;}
+.order-items{padding:16px 20px;max-height:250px;overflow-y:auto;}
+.order-item{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.order-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:12px;
+}
+.order-total{font-size:18px;font-weight:800;color:var(--primary);}
+
+/* Product Edit Modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  visibility:hidden;
+  opacity:0;
+  transition:all 0.2s;
+}
+.modal-overlay.active{visibility:visible;opacity:1;}
+.modal-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  width:90%;
+  max-width:800px;
+  max-height:85vh;
+  overflow-y:auto;
+  padding:28px;
+}
+.modal-card h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;}
+.modal-close{
+  float:right;
+  background:none;
+  border:none;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.search-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.search-input{flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:60px;font-size:14px;}
+.toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--text);
+  color:white;
+  padding:12px 24px;
+  border-radius:50px;
+  font-size:14px;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:200;
+  pointer-events:none;
+}
+@media(max-width:768px){
+  .table-header,.product-row{grid-template-columns:50px 1fr 120px 80px 60px;}
+  .tabs{width:100%;justify-content:center;}
+  .variant-badge{font-size:8px;padding:2px 4px;}
+}
+</style>
+</head>
+<body>
+
+<div class="admin-header">
+  <div class="logo">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <span class="logo-text">Full Admin Control</span>
+  </div>
+  <div class="tabs">
+    <button class="tab active" data-tab="products">📦 Products</button>
+    <button class="tab" data-tab="orders">📋 Orders</button>
+    <button class="tab" data-tab="analytics">📊 Analytics</button>
+    <button class="tab" data-tab="settings">⚙️ Settings</button>
+  </div>
+  <button class="btn btn-outline" onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.3);color:white;">Logout</button>
+</div>
+
+<div class="container">
+  <!-- Products Tab -->
+  <div id="productsTab">
+    <div class="stats-grid" id="productStats"></div>
+    
+    <div class="form-card">
+      <h3 style="margin-bottom:16px;">➕ Add New Product</h3>
+      <div class="form-row">
+        <input type="text" id="prodName" placeholder="Product Name (e.g., Chrome Gin)">
+        <select id="prodCategory">
+          <option value="whisky">Whisky</option><option value="cognac">Cognac</option>
+          <option value="vodka">Vodka</option><option value="gin">Gin</option>
+          <option value="rum">Rum</option><option value="wine">Wine</option>
+          <option value="beer">Beer</option><option value="champagne">Champagne</option>
+        </select>
+        <select id="prodBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select>
+        <input type="text" id="prodImage" placeholder="Image URL">
+        <textarea id="prodDesc" placeholder="Product description..." rows="2"></textarea>
+      </div>
+      
+      <h4 style="margin:16px 0 8px;">📏 Bottle Size Variants (Price per size)</h4>
+      <table class="variants-table" id="variantsTable">
+        <thead>
+          <tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th></tr>
+        </thead>
+        <tbody id="variantsBody">
+          <tr class="variant-row">
+            <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
+            <td><input type="number" class="variant-price" placeholder="Price"></td>
+            <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td>
+            <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
+          </tr>
+        </tbody>
+       </table>
+      <button type="button" class="add-variant-btn" onclick="addVariantRow()">+ Add Another Size</button>
+      
+      <button class="btn" onclick="addProduct()" style="margin-top:16px;">💾 Save Product</button>
+    </div>
+    
+    <div class="search-bar">
+      <input type="text" id="productSearch" class="search-input" placeholder="🔍 Search products...">
+      <button class="btn btn-outline" onclick="clearProductSearch()">Clear</button>
+    </div>
+    
+    <div class="table-container">
+      <div class="table-header">
+        <div>Image</div><div>Product</div><div>Variants</div><div>Best Price</div><div>Actions</div>
+      </div>
+      <div id="productsList"></div>
+    </div>
+  </div>
+  
+  <!-- Orders Tab -->
+  <div id="ordersTab" style="display:none;">
+    <div class="stats-grid" id="orderStats"></div>
+    <div class="search-bar">
+      <input type="text" id="orderSearch" class="search-input" placeholder="🔍 Search orders...">
+      <button class="btn btn-outline" onclick="clearOrderSearch()">Clear</button>
+    </div>
+    <div id="ordersList" class="orders-list"></div>
+  </div>
+  
+  <!-- Analytics Tab -->
+  <div id="analyticsTab" style="display:none;">
+    <div class="stats-grid">
+      <div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div></div>
+      <div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div></div>
+      <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div></div>
+      <div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div></div>
+    </div>
+    <div class="form-card">
+      <h3>📈 Quick Insights</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;">
+        <div><strong>Pending Orders:</strong> <span id="pendingCount">0</span></div>
+        <div><strong>Paid Orders:</strong> <span id="paidCount">0</span></div>
+        <div><strong>Delivered:</strong> <span id="deliveredCount">0</span></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Settings Tab -->
+  <div id="settingsTab" style="display:none;">
+    <div class="form-card">
+      <h3>🚚 Delivery Settings</h3>
+      <div class="form-row">
+        <div><label>Delivery Fee (KES)</label><input type="number" id="deliveryFee" value="150"></div>
+        <div><label>Free Delivery Threshold (KES)</label><input type="number" id="freeThreshold" value="3000"></div>
+        <div><label style="display:flex;align-items:center;gap:10px;margin-top:30px;"><input type="checkbox" id="deliveryEnabled" checked> Enable Delivery Fee</label></div>
+      </div>
+      <button class="btn" onclick="saveDeliverySettings()">💾 Save Settings</button>
+    </div>
+    
+    <div class="form-card">
+      <h3>🔐 Change Admin Password</h3>
+      <div class="form-row">
+        <div><label>Current Password</label><input type="password" id="currentPwd"></div>
+        <div><label>New Password</label><input type="password" id="newPwd"></div>
+        <div><label>Confirm New Password</label><input type="password" id="confirmPwd"></div>
+      </div>
+      <button class="btn" onclick="changePassword()">🔐 Change Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <h3>✏️ Edit Product</h3>
+    <input type="hidden" id="editProductId">
+    <div class="form-row">
+      <input type="text" id="editName" placeholder="Product Name">
+      <select id="editCategory">
+        <option value="whisky">Whisky</option><option value="cognac">Cognac</option>
+        <option value="vodka">Vodka</option><option value="gin">Gin</option>
+        <option value="rum">Rum</option><option value="wine">Wine</option>
+        <option value="beer">Beer</option><option value="champagne">Champagne</option>
+      </select>
+      <select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select>
+      <input type="text" id="editImage" placeholder="Image URL">
+      <textarea id="editDesc" placeholder="Description" rows="2"></textarea>
+    </div>
+    
+    <h4 style="margin:16px 0 8px;">📏 Variants</h4>
+    <table class="variants-table">
+      <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th></tr></thead>
+      <tbody id="editVariantsBody"></tbody>
+     </table>
+    <button type="button" class="add-variant-btn" onclick="addEditVariantRow()">+ Add Another Size</button>
+    
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+      <button class="btn" onclick="saveProductEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+let products = [];
+let orders = [];
+let currentTab = 'products';
+let productSearch = '';
+let orderSearch = '';
+let ADMIN_PASSWORD = localStorage.getItem('liquorbelle_admin_password') || 'admin123';
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
+
+// Variant Row Functions (No Stock)
+function addVariantRow(){
+  const tbody = document.getElementById('variantsBody');
+  const row = document.createElement('tr');
+  row.className = 'variant-row';
+  row.innerHTML = `
+    <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
+    <td><input type="number" class="variant-price" placeholder="Price"></td>
+    <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td>
+    <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
+  `;
+  tbody.appendChild(row);
+}
+function removeVariantRow(btn){
+  const tbody = document.getElementById('variantsBody');
+  if(tbody.children.length > 1){
+    btn.closest('tr').remove();
+  } else {
+    showToast('At least one variant required');
+  }
+}
+function addEditVariantRow(){
+  const tbody = document.getElementById('editVariantsBody');
+  const row = document.createElement('tr');
+  row.className = 'variant-row';
+  row.innerHTML = `
+    <td><select class="edit-variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
+    <td><input type="number" class="edit-variant-price" placeholder="Price"></td>
+    <td><input type="number" class="edit-variant-discount" placeholder="0" min="0" max="100" value="0"></td>
+    <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>
+  `;
+  tbody.appendChild(row);
+}
+function removeEditVariantRow(btn){
+  const tbody = document.getElementById('editVariantsBody');
+  if(tbody.children.length > 1){
+    btn.closest('tr').remove();
+  } else {
+    showToast('At least one variant required');
+  }
+}
+
+// Add Product
+async function addProduct(){
+  const name = document.getElementById('prodName').value.trim();
+  const category = document.getElementById('prodCategory').value;
+  const badge = document.getElementById('prodBadge').value;
+  const image = document.getElementById('prodImage').value.trim();
+  const description = document.getElementById('prodDesc').value.trim();
+  
+  if(!name){ showToast('Product name required'); return; }
+  
+  const variants = [];
+  const rows = document.querySelectorAll('#variantsBody .variant-row');
+  for(let row of rows){
+    const size = row.querySelector('.variant-size').value;
+    const price = parseFloat(row.querySelector('.variant-price').value);
+    const discount = parseInt(row.querySelector('.variant-discount').value) || 0;
+    if(!price){ showToast(`Price required for ${size}`); return; }
+    variants.push({ size, price, discount });
+  }
+  
+  try{
+    const res = await fetch(`${API_BASE}/api/db/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, category, badge, image, description, variants })
+    });
+    if(res.ok){
+      showToast('✓ Product added');
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodImage').value = '';
+      document.getElementById('prodDesc').value = '';
+      document.getElementById('variantsBody').innerHTML = '';
+      addVariantRow();
+      await loadProducts();
+    } else {
+      const err = await res.json();
+      showToast(err.message || 'Error adding product');
+    }
+  } catch(e){ showToast('Error'); }
+}
+
+// Edit Product Modal
+function openEditModal(productId){
+  const p = products.find(p => p.id === productId);
+  if(!p) return;
+  document.getElementById('editProductId').value = p.id;
+  document.getElementById('editName').value = p.name || '';
+  document.getElementById('editCategory').value = p.category || 'whisky';
+  document.getElementById('editBadge').value = p.badge || '';
+  document.getElementById('editImage').value = p.image || '';
+  document.getElementById('editDesc').value = p.description || '';
+  
+  const tbody = document.getElementById('editVariantsBody');
+  tbody.innerHTML = '';
+  const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
+  variants.forEach(v => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><select class="edit-variant-size"><option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option><option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option><option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option><option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option><option value="1L" ${v.size==='1L'?'selected':''}>1L</option><option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option></select></td>
+      <td><input type="number" class="edit-variant-price" value="${v.price}"></td>
+      <td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td>
+      <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+  document.getElementById('editModal').classList.add('active');
+}
+function closeEditModal(){
+  document.getElementById('editModal').classList.remove('active');
+}
+async function saveProductEdit(){
+  const id = document.getElementById('editProductId').value;
+  const name = document.getElementById('editName').value.trim();
+  const category = document.getElementById('editCategory').value;
+  const badge = document.getElementById('editBadge').value;
+  const image = document.getElementById('editImage').value.trim();
+  const description = document.getElementById('editDesc').value.trim();
+  
+  if(!name){ showToast('Product name required'); return; }
+  
+  const variants = [];
+  const rows = document.querySelectorAll('#editVariantsBody .variant-row');
+  for(let row of rows){
+    const size = row.querySelector('.edit-variant-size').value;
+    const price = parseFloat(row.querySelector('.edit-variant-price').value);
+    const discount = parseInt(row.querySelector('.edit-variant-discount').value) || 0;
+    if(!price){ showToast(`Price required for ${size}`); return; }
+    variants.push({ size, price, discount });
+  }
+  
+  try{
+    const res = await fetch(`${API_BASE}/api/db/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, category, badge, image, description, variants })
+    });
+    if(res.ok){
+      showToast('✓ Product updated');
+      closeEditModal();
+      await loadProducts();
+    } else {
+      const err = await res.json();
+      showToast(err.message || 'Error updating product');
+    }
+  } catch(e){ showToast('Error'); }
+}
+
+async function deleteProduct(id){
+  if(!confirm('Delete this product permanently?')) return;
+  try{
+    const res = await fetch(`${API_BASE}/api/db/products/${id}`, { method: 'DELETE' });
+    if(res.ok){
+      showToast('Product deleted');
+      await loadProducts();
+    }
+  } catch(e){ showToast('Error'); }
+}
+
+// Load Products
+async function loadProducts(){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/products`);
+    const data = await res.json();
+    if(data.success) products = data.products;
+  } catch(e){ products = []; }
+  renderProducts();
+  updateStats();
+}
+function renderProducts(){
+  let filtered = products;
+  if(productSearch){
+    filtered = products.filter(p => p.name?.toLowerCase().includes(productSearch) || p.category?.toLowerCase().includes(productSearch));
+  }
+  const container = document.getElementById('productsList');
+  if(!filtered.length){
+    container.innerHTML = '<div class="empty-state" style="text-align:center;padding:40px;color:var(--muted);">No products found</div>';
+    return;
+  }
+  container.innerHTML = filtered.map(p => {
+    const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
+    const bestPrice = Math.min(...variants.map(v => v.price || 0));
+    return `
+      <div class="product-row">
+        <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'"></div>
+        <div><div class="product-name">${escapeHtml(p.name)}</div><div style="font-size:11px;color:var(--muted);">${p.category || ''}</div></div>
+        <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()} ${v.discount ? `(${v.discount}% off)` : ''}</span>`).join('')}</div>
+        <div>KES ${bestPrice.toLocaleString()}</div>
+        <div><button class="edit-btn" onclick="openEditModal(${p.id})"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(${p.id})"><i class="ph ph-trash"></i></button></div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Order Functions
+async function loadOrders(){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/orders`);
+    const data = await res.json();
+    if(data.success) orders = data.orders;
+  } catch(e){ orders = []; }
+  if(currentTab === 'orders') renderOrders();
+  if(currentTab === 'analytics') renderAnalytics();
+  updateOrderStats();
+}
+async function markOrderPaid(id){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'paid' })
+    });
+    if(res.ok){ showToast('✅ Order marked as PAID'); await loadOrders(); }
+  } catch(e){ showToast('Error'); }
+}
+async function markOrderDelivered(id){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'delivered' })
+    });
+    if(res.ok){ showToast('🚚 Order marked as DELIVERED'); await loadOrders(); }
+  } catch(e){ showToast('Error'); }
+}
+async function deleteOrder(id){
+  if(!confirm('⚠️ Delete this order permanently?')) return;
+  try{
+    const res = await fetch(`${API_BASE}/api/db/orders/${id}`, { method: 'DELETE' });
+    if(res.ok){ showToast('Order deleted'); await loadOrders(); }
+  } catch(e){ showToast('Error'); }
+}
+function renderOrders(){
+  let filtered = orders;
+  if(orderSearch){
+    filtered = orders.filter(o => o.customer_name?.toLowerCase().includes(orderSearch) || o.customer_email?.toLowerCase().includes(orderSearch));
+  }
+  const container = document.getElementById('ordersList');
+  if(!filtered.length){
+    container.innerHTML = '<div class="empty-state" style="text-align:center;padding:40px;color:var(--muted);">No orders found</div>';
+    return;
+  }
+  container.innerHTML = filtered.map(o => {
+    let items = o.items;
+    if(typeof items === 'string'){ try{ items = JSON.parse(items); } catch(e){ items = []; } }
+    return `
+      <div class="order-card">
+        <div class="order-header">
+          <div><div class="order-id">📦 ${o.order_number || o.id.slice(0,8)}</div>
+          <div style="font-weight:600;">${escapeHtml(o.customer_name)}</div>
+          <div style="font-size:11px;color:var(--muted);">📧 ${escapeHtml(o.customer_email)}</div>
+          <div style="font-size:11px;color:var(--muted);">📅 ${new Date(o.created_at).toLocaleString()}</div>
+          <div style="font-size:11px;">📞 ${o.phone || 'No phone'}</div></div>
+          <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
+        </div>
+        <div class="order-items">${items.map(i => `<div class="order-item"><span>🍾 ${escapeHtml(i.product_name)} ${i.size ? `(${i.size})` : ''} × ${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('')}</div>
+        <div class="order-footer">
+          <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
+          <div style="display:flex;gap:8px;">
+            ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o.id}')">✓ Mark Paid</button>` : ''}
+            ${o.status === 'paid' ? `<button class="btn btn-sm" style="background:var(--gold);" onclick="markOrderDelivered('${o.id}')">🚚 Delivered</button>` : ''}
+            <button class="btn btn-sm btn-red" onclick="deleteOrder('${o.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Stats
+function updateStats(){
+  document.getElementById('productStats').innerHTML = `
+    <div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div>
+    <div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div>
+    <div class="stat-card"><h4>Total Variants</h4><div class="value">${products.reduce((s,p)=>{ const v = p.variants || [{size:'750ml'}]; return s + v.length; },0)}</div></div>
+  `;
+  document.getElementById('totalProducts').innerText = products.length;
+}
+function updateOrderStats(){
+  document.getElementById('orderStats').innerHTML = `
+    <div class="stat-card"><h4>Total Orders</h4><div class="value">${orders.length}</div></div>
+    <div class="stat-card"><h4>Pending</h4><div class="value">${orders.filter(o=>o.status==='pending').length}</div></div>
+    <div class="stat-card"><h4>Paid</h4><div class="value">${orders.filter(o=>o.status==='paid').length}</div></div>
+    <div class="stat-card"><h4>Delivered</h4><div class="value">${orders.filter(o=>o.status==='delivered').length}</div></div>
+  `;
+  document.getElementById('pendingCount').innerText = orders.filter(o=>o.status==='pending').length;
+  document.getElementById('paidCount').innerText = orders.filter(o=>o.status==='paid').length;
+  document.getElementById('deliveredCount').innerText = orders.filter(o=>o.status==='delivered').length;
+}
+function renderAnalytics(){
+  const delivered = orders.filter(o => o.status === 'delivered');
+  const revenue = delivered.reduce((s,o) => s + (o.total||0), 0);
+  const avg = delivered.length ? Math.round(revenue / delivered.length) : 0;
+  document.getElementById('totalRevenue').innerHTML = `KES ${revenue.toLocaleString()}`;
+  document.getElementById('totalOrders').innerHTML = orders.length;
+  document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
+}
+
+// Delivery Settings
+async function loadDeliverySettings(){
+  try{
+    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`);
+    const data = await res.json();
+    if(data.success && data.settings){
+      document.getElementById('deliveryFee').value = data.settings.delivery_fee || 150;
+      document.getElementById('freeThreshold').value = data.settings.free_delivery_threshold || 3000;
+      document.getElementById('deliveryEnabled').checked = data.settings.delivery_enabled !== false;
+    }
+  } catch(e){}
+}
+async function saveDeliverySettings(){
+  const settings = {
+    delivery_fee: parseInt(document.getElementById('deliveryFee').value) || 0,
+    free_delivery_threshold: parseInt(document.getElementById('freeThreshold').value) || 0,
+    delivery_enabled: document.getElementById('deliveryEnabled').checked
+  };
+  try{
+    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings)
+    });
+    if(res.ok) showToast('✅ Delivery settings saved!');
+  } catch(e){ showToast('Error saving settings'); }
+}
+
+// Password Change
+function changePassword(){
+  const current = document.getElementById('currentPwd').value;
+  const newPwd = document.getElementById('newPwd').value;
+  const confirm = document.getElementById('confirmPwd').value;
+  if(current !== ADMIN_PASSWORD){ showToast('❌ Current password incorrect'); return; }
+  if(newPwd.length < 6){ showToast('❌ New password must be at least 6 characters'); return; }
+  if(newPwd !== confirm){ showToast('❌ New passwords do not match'); return; }
+  ADMIN_PASSWORD = newPwd;
+  localStorage.setItem('liquorbelle_admin_password', newPwd);
+  showToast('✅ Password changed successfully!');
+  document.getElementById('currentPwd').value = '';
+  document.getElementById('newPwd').value = '';
+  document.getElementById('confirmPwd').value = '';
+}
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab = tab.dataset.tab;
+    document.getElementById('productsTab').style.display = currentTab === 'products' ? 'block' : 'none';
+    document.getElementById('ordersTab').style.display = currentTab === 'orders' ? 'block' : 'none';
+    document.getElementById('analyticsTab').style.display = currentTab === 'analytics' ? 'block' : 'none';
+    document.getElementById('settingsTab').style.display = currentTab === 'settings' ? 'block' : 'none';
+    if(currentTab === 'orders') renderOrders();
+    if(currentTab === 'analytics') renderAnalytics();
+  });
+});
+
+// Search
+document.getElementById('productSearch')?.addEventListener('input', (e) => { productSearch = e.target.value.toLowerCase(); renderProducts(); });
+document.getElementById('orderSearch')?.addEventListener('input', (e) => { orderSearch = e.target.value.toLowerCase(); renderOrders(); });
+function clearProductSearch(){ productSearch = ''; document.getElementById('productSearch').value = ''; renderProducts(); }
+function clearOrderSearch(){ orderSearch = ''; document.getElementById('orderSearch').value = ''; renderOrders(); }
+
+function logout(){
+  sessionStorage.removeItem('liquorbelle_admin_full');
+  location.reload();
+}
+
+// Auth
+if(sessionStorage.getItem('liquorbelle_admin_full') !== 'true'){
+  const pwd = prompt('Enter Full Admin password:');
+  if(pwd === ADMIN_PASSWORD){
+    sessionStorage.setItem('liquorbelle_admin_full', 'true');
+  } else {
+    alert('Invalid password');
+    window.location.href = 'index.html';
+  }
+}
+
+// Initialize
+loadProducts();
+loadOrders();
+loadDeliverySettings();
+setInterval(loadProducts, 30000);
+</script>
+</body>
+</html>

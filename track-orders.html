@@ -4,42 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Track Orders — LiquorBelle</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --red:#e03131;
-  --red2:#ff4d4d;
-  --red-dim:rgba(224,49,49,0.12);
+  --primary:#800000;
+  --primary-light:#990000;
+  --mpesa-green:#2ecc71;
   --gold:#f0a500;
-  --gold-dim:rgba(240,165,0,0.12);
-  --green:#2ecc71;
-  --green-dim:rgba(46,204,113,0.12);
-  --bg:#0a0a0f;
-  --bg2:#111118;
-  --bg3:#17171f;
-  --bg4:#1e1e28;
-  --border:rgba(255,255,255,0.06);
-  --border2:rgba(255,255,255,0.1);
-  --ink:#f0eef8;
-  --ink2:#c8c4d8;
-  --muted:#6b6780;
-  --mid:#9994ad;
-  --fh:'Sora',sans-serif;
-  --fb:'Plus Jakarta Sans',sans-serif;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
   --radius:16px;
   --radius-sm:12px;
+  --shadow:0 4px 20px rgba(0,0,0,0.08);
 }
 body{
   background:var(--bg);
-  font-family:var(--fb);
-  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  color:var(--text);
   overflow-x:hidden;
-  padding-bottom:80px;
+  padding-bottom:0;
 }
+
+/* Header */
 .header{
-  background:rgba(10,10,15,0.95);
+  background:var(--white);
   backdrop-filter:blur(20px);
   padding:16px 5%;
   display:flex;
@@ -49,12 +43,13 @@ body{
   top:0;
   z-index:100;
   border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow);
 }
-.logo-img{height:38px;border-radius:10px;border:1px solid rgba(224,49,49,0.22);}
-.logo-name{font-family:var(--fh);font-weight:800;font-size:1.2rem;color:var(--ink);}
-.logo-name em{color:var(--red);font-style:normal;}
+.logo-img{height:44px;width:auto;border-radius:0;}
+.logo-name{font-weight:800;font-size:1.3rem;color:var(--primary);}
+.logo-name em{color:var(--primary-light);font-style:normal;}
 .back-btn{
-  background:var(--bg3);
+  background:var(--bg2);
   border:1px solid var(--border);
   width:42px;
   height:42px;
@@ -64,29 +59,30 @@ body{
   align-items:center;
   justify-content:center;
   transition:all 0.3s ease;
-  color:var(--mid);
+  color:var(--muted);
 }
-.back-btn:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
+.back-btn:hover{background:var(--primary);border-color:var(--primary);color:var(--white);transform:translateX(-3px);}
+
 .container{max-width:800px;margin:0 auto;padding:24px 5%;}
 
 /* Email lookup card */
 .lookup-card{
-  background:linear-gradient(135deg,var(--bg2),var(--bg3));
-  border-radius:24px;
-  padding:28px;
+  background:linear-gradient(135deg, var(--white), var(--bg2));
+  border-radius:var(--radius);
+  padding:32px;
   border:1px solid var(--border);
-  margin-bottom:24px;
+  margin-bottom:32px;
   text-align:center;
+  box-shadow:var(--shadow);
 }
 .lookup-title{
-  font-family:var(--fh);
-  font-size:1.3rem;
+  font-size:1.5rem;
   font-weight:800;
-  color:var(--gold);
+  color:var(--primary);
   margin-bottom:8px;
 }
 .lookup-sub{
-  font-size:12px;
+  font-size:13px;
   color:var(--muted);
   margin-bottom:24px;
 }
@@ -97,42 +93,34 @@ body{
 }
 .email-input{
   flex:1;
-  padding:16px 18px;
-  background:var(--bg4);
-  border:1px solid var(--border2);
+  padding:16px 20px;
+  background:var(--white);
+  border:1px solid var(--border);
   border-radius:60px;
-  color:var(--ink);
+  color:var(--text);
   font-size:14px;
-  font-family:var(--fb);
+  font-family:inherit;
 }
 .email-input:focus{
   outline:none;
-  border-color:var(--red);
-  box-shadow:0 0 0 3px var(--red-dim);
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(128,0,0,0.1);
 }
 .track-btn{
   padding:16px 32px;
-  background:linear-gradient(135deg,var(--red),var(--red2));
+  background:linear-gradient(135deg, var(--primary), var(--primary-light));
   border:none;
   border-radius:60px;
-  color:#fff;
+  color:white;
   font-weight:700;
-  font-family:var(--fh);
   cursor:pointer;
-  transition:transform 0.2s, box-shadow 0.2s;
+  transition:all 0.2s;
   display:flex;
   align-items:center;
   gap:8px;
 }
-.track-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(224,49,49,0.4);
-}
-.track-btn:disabled{
-  opacity:0.6;
-  transform:none;
-  cursor:not-allowed;
-}
+.track-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(128,0,0,0.3);}
+.track-btn:disabled{opacity:0.6;cursor:not-allowed;}
 
 /* Orders list */
 .orders-list{
@@ -141,22 +129,20 @@ body{
   gap:20px;
 }
 .order-card{
-  background:var(--bg2);
-  border-radius:20px;
+  background:var(--white);
+  border-radius:var(--radius);
   border:1px solid var(--border);
   overflow:hidden;
-  transition:transform 0.2s, box-shadow 0.2s;
+  box-shadow:var(--shadow);
+  transition:transform 0.2s;
 }
-.order-card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(0,0,0,0.3);
-}
+.order-card:hover{transform:translateY(-2px);}
 .order-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:16px 20px;
-  background:var(--bg3);
+  background:linear-gradient(135deg, var(--bg2), var(--white));
   border-bottom:1px solid var(--border);
   flex-wrap:wrap;
   gap:12px;
@@ -165,60 +151,44 @@ body{
   font-family:monospace;
   font-weight:700;
   font-size:14px;
-  color:var(--gold);
+  color:var(--primary);
 }
-.order-date{
-  font-size:11px;
-  color:var(--muted);
-}
+.order-date{font-size:11px;color:var(--muted);}
 .order-status{
   padding:5px 14px;
   border-radius:40px;
   font-size:11px;
   font-weight:700;
 }
-.status-pending{background:var(--gold-dim);color:var(--gold);}
-.status-paid{background:var(--green-dim);color:var(--green);}
-.status-delivered{background:var(--red-dim);color:var(--red);}
+.status-pending{background:#FFF3E0;color:#E67E22;}
+.status-paid{background:#E8F5E9;color:#2ecc71;}
+.status-delivered{background:#E3F2FD;color:#2196F3;}
 .order-items{
   padding:16px 20px;
-  max-height:250px;
+  max-height:300px;
   overflow-y:auto;
 }
 .order-item{
   display:flex;
   justify-content:space-between;
-  padding:10px 0;
+  padding:12px 0;
   border-bottom:1px solid var(--border);
-  font-size:13px;
 }
-.order-item-name{font-weight:500;}
-.order-item-price{color:var(--gold);font-weight:600;}
+.order-item-name{font-weight:500;font-size:13px;}
+.order-item-price{color:var(--primary);font-weight:700;}
 .order-footer{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:16px 20px;
-  background:var(--bg3);
+  background:var(--bg2);
   border-top:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:12px;
 }
-.order-total{
-  font-size:18px;
-  font-weight:800;
-  color:var(--red);
-  font-family:var(--fh);
-}
-.order-payment{
-  font-size:11px;
-  padding:4px 12px;
-  background:var(--bg4);
-  border-radius:40px;
-}
-.empty-state{
-  text-align:center;
-  padding:60px 20px;
-  color:var(--muted);
-}
+.order-total{font-size:18px;font-weight:800;color:var(--primary);}
+.order-payment{font-size:11px;padding:4px 12px;background:var(--white);border-radius:40px;}
+.empty-state{text-align:center;padding:60px;color:var(--muted);}
 .empty-state i{font-size:48px;margin-bottom:16px;opacity:0.5;}
 .spinner{
   display:inline-block;
@@ -226,10 +196,10 @@ body{
   height:18px;
   border:2px solid rgba(255,255,255,0.3);
   border-radius:50%;
-  border-top-color:#fff;
+  border-top-color:white;
   animation:spin 0.6s linear infinite;
-  vertical-align:middle;
   margin-right:8px;
+  vertical-align:middle;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
 .snack{
@@ -237,32 +207,48 @@ body{
   bottom:100px;
   left:50%;
   transform:translateX(-50%);
-  background:var(--bg3);
-  border:1px solid var(--green);
+  background:var(--text);
+  color:white;
   padding:12px 24px;
   border-radius:60px;
   font-size:13px;
-  color:#fff;
   opacity:0;
-  transition:opacity 0.3s;
+  transition:opacity 0.2s;
   z-index:200;
   pointer-events:none;
-  white-space:nowrap;
 }
-.snack.on{opacity:1;}
+
+/* Footer */
+.footer{
+  background:var(--primary);
+  color:rgba(255,255,255,.85);
+  padding:40px 5% 28px;
+  margin-top:48px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:32px;
+  margin-bottom:32px;
+}
+.footer-col h4{font-size:.9rem;font-weight:700;margin-bottom:16px;color:white;opacity:.9;}
+.footer-col p,.footer-col a{display:block;font-size:.75rem;margin-bottom:8px;opacity:.7;color:white;text-decoration:none;}
+.footer-col a:hover{opacity:1;}
+.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:.7rem;opacity:.6;}
 
 .bottom-nav{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
-  background:rgba(10,10,15,0.96);
-  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(12px);
   display:flex;
   justify-content:space-around;
-  padding:10px 5% 20px;
+  padding:10px 5% 22px;
   border-top:1px solid var(--border);
   z-index:100;
+  display:none;
 }
 .nav-item{
   display:flex;
@@ -274,8 +260,14 @@ body{
   font-size:.7rem;
   font-weight:600;
 }
-.nav-item.active{color:var(--red);}
-.nav-item i{font-size:20px;}
+.nav-item.active{color:var(--primary);}
+.nav-item i{font-size:22px;}
+
+@media(max-width:768px){
+  .bottom-nav{display:flex;}
+  .email-input-group{flex-direction:column;}
+  .track-btn{justify-content:center;}
+}
 </style>
 </head>
 <body>
@@ -283,7 +275,7 @@ body{
 <div class="header">
   <button class="back-btn" onclick="window.location.href='shop.html'"><i class="ph ph-arrow-left" style="font-size:20px;"></i></button>
   <a class="logo" href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-    <img class="logo-img" src="https://i.postimg.cc/PxwLVrdh/227a55e3-ad16-4893-9e87-03dfc202814f.png" alt="LiquorBelle">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
     <span class="logo-name">Liquor<em>Belle</em></span>
   </a>
   <div style="width:42px;"></div>
@@ -307,6 +299,17 @@ body{
     </div>
   </div>
 </div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="track-orders.html">Track Orders</a></div>
+    <div class="footer-col"><h4>Customer Support</h4><p><i class="ph ph-phone-call"></i> +254 748 894 443</p><p><i class="ph ph-whatsapp-logo"></i> WhatsApp 24/7</p></div>
+    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road, Nairobi</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly.</p></div>
+</footer>
 
 <div class="bottom-nav">
   <div class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></div>
@@ -346,9 +349,7 @@ function formatDate(dateStr) {
   try {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  } catch(e) {
-    return dateStr;
-  }
+  } catch(e) { return dateStr; }
 }
 
 async function lookupOrders() {
@@ -377,27 +378,18 @@ async function lookupOrders() {
     const data = await response.json();
     
     if (!data.success) {
-      container.innerHTML = `<div class="empty-state">
-        <i class="ph ph-warning-circle"></i>
-        <p>${data.message || 'Failed to fetch orders'}</p>
-        <small>Please try again</small>
-      </div>`;
+      container.innerHTML = `<div class="empty-state"><i class="ph ph-warning-circle"></i><p>${data.message || 'Failed to fetch orders'}</p><small>Please try again</small></div>`;
       return;
     }
     
     const orders = data.orders || [];
     
     if (orders.length === 0) {
-      container.innerHTML = `<div class="empty-state">
-        <i class="ph ph-inbox"></i>
-        <p>No orders found for ${escapeHtml(email)}</p>
-        <small>Orders placed with this email will appear here</small>
-      </div>`;
+      container.innerHTML = `<div class="empty-state"><i class="ph ph-inbox"></i><p>No orders found for ${escapeHtml(email)}</p><small>Orders placed with this email will appear here</small></div>`;
       toast('No orders found for this email');
       return;
     }
     
-    // Group orders by ID (in case of duplicates)
     const uniqueOrders = [];
     const seen = new Set();
     for (const order of orders) {
@@ -408,25 +400,20 @@ async function lookupOrders() {
     }
     
     container.innerHTML = `<div class="orders-list">${uniqueOrders.map(order => {
-      // Parse items if stored as JSON string
       let items = order.items;
       if (typeof items === 'string') {
         try { items = JSON.parse(items); } catch(e) { items = []; }
       }
       if (!items || !items.length) items = [];
       
-      const subtotal = order.subtotal || 0;
-      const delivery = order.delivery || 0;
-      const total = order.total || subtotal + delivery;
+      const total = order.total || (order.subtotal || 0) + (order.delivery || 0);
       
       const itemsHtml = items.map(item => `
         <div class="order-item">
-          <span class="order-item-name">${escapeHtml(item.name || item.product_name)} × ${item.quantity || 1}</span>
+          <span class="order-item-name">🍾 ${escapeHtml(item.name || item.product_name)} × ${item.quantity || 1}</span>
           <span class="order-item-price">KES ${((item.price || 0) * (item.quantity || 1)).toLocaleString()}</span>
         </div>
       `).join('');
-      
-      const emptyItemsHtml = !items.length ? '<div class="order-item"><span>No items data</span></div>' : '';
       
       return `
         <div class="order-card">
@@ -438,16 +425,11 @@ async function lookupOrders() {
             ${getStatusBadge(order.status)}
           </div>
           <div class="order-items">
-            ${itemsHtml || emptyItemsHtml}
+            ${itemsHtml || '<div class="order-item"><span>No items data</span></div>'}
           </div>
           <div class="order-footer">
-            <div>
-              <div class="order-total">KES ${total.toLocaleString()}</div>
-              <small style="color:var(--muted);">${order.payment_method || 'Not specified'}</small>
-            </div>
-            <div class="order-payment">
-              <i class="ph ph-map-pin"></i> ${escapeHtml(order.address || 'Address not specified')?.substring(0, 40) || 'No address'}
-            </div>
+            <div class="order-total">KES ${total.toLocaleString()}</div>
+            <div class="order-payment"><i class="ph ph-credit-card"></i> ${order.payment_method || 'Not specified'}</div>
           </div>
         </div>
       `;
@@ -457,11 +439,7 @@ async function lookupOrders() {
     
   } catch (error) {
     console.error('Lookup error:', error);
-    container.innerHTML = `<div class="empty-state">
-      <i class="ph ph-warning-circle"></i>
-      <p>Network error</p>
-      <small>Please check your connection and try again</small>
-    </div>`;
+    container.innerHTML = `<div class="empty-state"><i class="ph ph-warning-circle"></i><p>Network error</p><small>Please check your connection and try again</small></div>`;
     toast('Failed to load orders. Please try again.');
   } finally {
     btn.innerHTML = originalHTML;
@@ -469,7 +447,6 @@ async function lookupOrders() {
   }
 }
 
-// Auto-search if email in URL param
 const urlParams = new URLSearchParams(window.location.search);
 const emailParam = urlParams.get('email');
 if (emailParam) {
@@ -477,7 +454,6 @@ if (emailParam) {
   lookupOrders();
 }
 
-// Enter key support
 document.getElementById('trackEmail').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') lookupOrders();
 });

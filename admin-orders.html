@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>LiquorBelle — Order Manager (Last 24h)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#800000;
+  --primary-light:#990000;
+  --green:#1A8A3E;
+  --green-light:#2DBE4E;
+  --gold:#B8860B;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --radius:16px;
+  --radius-sm:12px;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
+.btn{background:var(--primary);color:white;border:none;padding:10px 20px;border-radius:40px;cursor:pointer;font-weight:600;transition:all 0.2s;}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-green{background:var(--green);}
+.btn-green:hover{background:var(--green-light);}
+.btn-wa{background:#25D366;}
+.btn-call{background:#3b82f6;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{background:var(--primary);color:white;border-color:var(--primary);}
+
+.admin-header{
+  background:var(--primary);
+  color:white;
+  padding:16px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-img{height:40px;width:auto;border-radius:0;}
+.logo-text{font-weight:700;font-size:1.2rem;}
+.container{max-width:1400px;margin:0 auto;padding:24px 5%;}
+
+/* Stats Cards */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;
+  margin-bottom:24px;
+}
+.stat-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:20px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.stat-card h4{font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.stat-card .value{font-size:28px;font-weight:800;color:var(--primary);}
+.stat-card .sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+.search-bar{
+  display:flex;
+  gap:12px;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+}
+.search-input{
+  flex:1;
+  padding:14px 18px;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:60px;
+  font-size:14px;
+  font-family:inherit;
+}
+.search-input:focus{outline:none;border-color:var(--primary);}
+.clear-btn{
+  padding:14px 24px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:60px;
+  cursor:pointer;
+  font-weight:500;
+}
+.clear-btn:hover{background:var(--primary);color:white;}
+
+/* Orders List */
+.orders-list{display:flex;flex-direction:column;gap:20px;}
+.order-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:all 0.2s;
+}
+.order-card:hover{box-shadow:0 4px 20px rgba(128,0,0,0.12);}
+.order-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:18px 22px;
+  background:linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color:white;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.order-id{font-family:monospace;font-weight:700;font-size:14px;}
+.order-customer{font-weight:600;margin-top:4px;}
+.order-email{font-size:11px;opacity:0.85;margin-top:2px;}
+.order-date{font-size:11px;opacity:0.85;margin-top:2px;}
+.order-status{
+  padding:5px 14px;
+  border-radius:40px;
+  font-size:12px;
+  font-weight:700;
+  background:white;
+}
+.status-pending{color:#E67E22;}
+.status-paid{color:var(--green);}
+.status-delivered{color:#2196F3;}
+.order-items{padding:16px 22px;max-height:280px;overflow-y:auto;}
+.order-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.order-item-img{
+  width:48px;
+  height:48px;
+  object-fit:cover;
+  border-radius:8px;
+  background:var(--bg);
+}
+.order-item-details{flex:1;}
+.order-item-name{font-weight:600;font-size:14px;}
+.order-item-qty{font-size:12px;color:var(--muted);}
+.order-item-price{color:var(--primary);font-weight:700;}
+.order-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 22px;
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:16px;
+}
+.order-total{font-size:20px;font-weight:800;color:var(--primary);}
+.order-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.phone-badge{
+  background:rgba(255,255,255,0.2);
+  padding:5px 12px;
+  border-radius:40px;
+  font-size:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.empty-state{text-align:center;padding:60px;color:var(--muted);}
+#toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--text);
+  color:white;
+  padding:12px 24px;
+  border-radius:50px;
+  font-size:14px;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:200;
+  pointer-events:none;
+}
+@media(max-width:768px){
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .order-header{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<div class="admin-header">
+  <div class="logo">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <span class="logo-text">Order Manager</span>
+  </div>
+  <button class="btn btn-outline" onclick="logout()" style="background:transparent;border:1px solid rgba(255,255,255,0.3);color:white;">Logout</button>
+</div>
+
+<div class="container">
+  <div class="stats-grid" id="statsGrid"></div>
+  
+  <div class="search-bar">
+    <input type="text" id="orderSearch" class="search-input" placeholder="🔍 Search by customer name, email, or phone...">
+    <button class="clear-btn" onclick="clearSearch()">Clear</button>
+  </div>
+  
+  <div id="ordersContainer" class="orders-list">
+    <div class="empty-state">Loading orders...</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+let orders = [];
+let products = [];
+let searchTerm = '';
+let isAuthenticated = false;
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+
+function formatPhone(phone){
+  if(!phone) return '';
+  let clean = phone.replace(/\D/g, '');
+  if(clean.startsWith('0')) clean = '254' + clean.slice(1);
+  if(!clean.startsWith('254')) clean = '254' + clean;
+  return clean;
+}
+
+function formatDisplayPhone(phone){
+  if(!phone) return 'No phone';
+  if(phone.length === 12 && phone.startsWith('254')) return '0' + phone.slice(3);
+  return phone;
+}
+
+async function verifyPassword(password){
+  try{
+    const res = await fetch(`${API_BASE}/api/admin/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password, type: 'orders' })
+    });
+    const data = await res.json();
+    return data.success === true;
+  } catch(e){ return false; }
+}
+
+async function checkAuth(){
+  const storedAuth = sessionStorage.getItem('liquorbelle_admin_orders');
+  if(storedAuth === 'true') return true;
+  
+  const pwd = prompt('🔐 Enter Order Manager Password:');
+  if(pwd && await verifyPassword(pwd)){
+    sessionStorage.setItem('liquorbelle_admin_orders', 'true');
+    return true;
+  } else {
+    alert('Invalid password');
+    window.location.href = 'index.html';
+    return false;
+  }
+}
+
+async function loadProducts(){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/products`);
+    const data = await res.json();
+    if(data.success) products = data.products;
+  } catch(e){ products = []; }
+}
+
+async function loadOrders(){
+  try{
+    const res = await fetch(`${API_BASE}/api/admin/recent-orders`);
+    const data = await res.json();
+    if(data.success) orders = data.orders;
+    else orders = [];
+  } catch(e){ orders = []; }
+  renderStats();
+  renderOrders();
+}
+
+function renderStats(){
+  const total = orders.length;
+  const pending = orders.filter(o => o.status === 'pending').length;
+  const paid = orders.filter(o => o.status === 'paid').length;
+  const delivered = orders.filter(o => o.status === 'delivered').length;
+  
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><h4>Last 24h Orders</h4><div class="value">${total}</div><div class="sub">Last 24 hours</div></div>
+    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
+    <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
+    <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
+  `;
+}
+
+function renderOrders(){
+  let filtered = [...orders];
+  if(searchTerm){
+    filtered = orders.filter(o => 
+      o.customer_name?.toLowerCase().includes(searchTerm) ||
+      o.customer_email?.toLowerCase().includes(searchTerm) ||
+      o.phone?.includes(searchTerm)
+    );
+  }
+  
+  const container = document.getElementById('ordersContainer');
+  if(!filtered.length){
+    container.innerHTML = '<div class="empty-state">No orders in the last 24 hours</div>';
+    return;
+  }
+  
+  container.innerHTML = filtered.map(o => {
+    let items = o.items;
+    if(typeof items === 'string'){ try{ items = JSON.parse(items); }catch(e){ items = []; } }
+    
+    const phoneRaw = o.phone || '';
+    const cleanPhone = formatPhone(phoneRaw);
+    const displayPhone = formatDisplayPhone(phoneRaw);
+    const waLink = `https://wa.me/${cleanPhone}`;
+    const callLink = `tel:${cleanPhone}`;
+    
+    const itemsHtml = items.map(i => {
+      const product = products.find(p => p.id === i.product_id || p.name === i.product_name);
+      const imgUrl = product?.image || 'https://placehold.co/48x48/F2EDE7/800000?text=🍾';
+      return `
+        <div class="order-item">
+          <img class="order-item-img" src="${imgUrl}" onerror="this.src='https://placehold.co/48x48/F2EDE7/800000?text=🍾'">
+          <div class="order-item-details">
+            <div class="order-item-name">${escapeHtml(i.product_name || i.name)}</div>
+            <div class="order-item-qty">Qty: ${i.quantity || i.qty || 1}</div>
+          </div>
+          <div class="order-item-price">KES ${((i.price||0) * (i.quantity||i.qty||1)).toLocaleString()}</div>
+        </div>
+      `;
+    }).join('');
+    
+    return `
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <div class="order-id">📦 ${o.order_number || o.id.slice(0,8)}</div>
+            <div class="order-customer">${escapeHtml(o.customer_name || 'Customer')}</div>
+            <div class="order-email">📧 ${escapeHtml(o.customer_email || 'No email')}</div>
+            <div class="order-date">📅 ${new Date(o.created_at).toLocaleString()}</div>
+            <div class="phone-badge">📞 ${escapeHtml(displayPhone)}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+            <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
+            <div style="display:flex; gap:6px;">
+              <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">📱 WhatsApp</a>
+              <a href="${callLink}" class="btn btn-sm btn-call" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">📞 Call</a>
+            </div>
+          </div>
+        </div>
+        <div class="order-items">${itemsHtml || '<div class="order-item">No items</div>'}</div>
+        <div class="order-footer">
+          <div>
+            <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
+            <div style="font-size:11px; color:var(--muted);">${o.payment_method || 'Unknown'}</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px;">📍 ${escapeHtml((o.address || '').substring(0, 50))}</div>
+          </div>
+          <div class="order-actions">
+            ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markPaid('${o.id}')">✓ Mark as Paid</button>` : ''}
+            ${o.status === 'paid' ? `<button class="btn btn-sm" style="background:var(--gold);" onclick="markDelivered('${o.id}')">🚚 Mark Delivered</button>` : ''}
+            ${o.status === 'delivered' ? `<span style="font-size:12px; color:var(--green);">✓ Completed</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function markPaid(id){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'paid' })
+    });
+    if(res.ok){
+      showToast('✅ Order marked as PAID');
+      await loadOrders();
+    }
+  } catch(e){ showToast('Error updating order'); }
+}
+
+async function markDelivered(id){
+  try{
+    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'delivered' })
+    });
+    if(res.ok){
+      showToast('🚚 Order marked as DELIVERED');
+      await loadOrders();
+    }
+  } catch(e){ showToast('Error updating order'); }
+}
+
+function clearSearch(){
+  searchTerm = '';
+  document.getElementById('orderSearch').value = '';
+  renderOrders();
+}
+
+document.getElementById('orderSearch').addEventListener('input', (e) => {
+  searchTerm = e.target.value.toLowerCase();
+  renderOrders();
+});
+
+function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
+
+function logout(){
+  sessionStorage.removeItem('liquorbelle_admin_orders');
+  location.reload();
+}
+
+// Initialize
+(async function init(){
+  const auth = await checkAuth();
+  if(auth){
+    await loadProducts();
+    await loadOrders();
+    setInterval(loadOrders, 30000);
+  }
+})();
+</script>
+</body>
+</html>
