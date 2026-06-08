@@ -393,6 +393,7 @@ a{color:inherit;text-decoration:none;}
 .badge-hot{background:var(--primary);color:#fff;}
 .badge-local{background:var(--gold);color:#fff;}
 .badge-prem{background:#5B3A8E;color:#fff;}
+.badge-trending{background:var(--sale-red);color:#fff;}
 .pc-wishlist{
   position:absolute;top:8px;right:8px;
   width:32px;height:32px;border-radius:50%;
@@ -1067,46 +1068,52 @@ function updateAccountUI(){}
 function openAuthModal(){ document.getElementById('authModal').classList.add('active'); }
 function closeAuthModal(){ document.getElementById('authModal').classList.remove('active'); }
 let isLoginMode = true;
-document.getElementById('toggleAuthMode').addEventListener('click',()=>{
-  isLoginMode = !isLoginMode;
-  const title = document.getElementById('modalTitle');
-  const msg = document.getElementById('modalMsg');
-  const btn = document.getElementById('modalActionBtn');
-  if(isLoginMode){
-    title.innerText = 'Welcome Back'; msg.innerText = 'Login to your account for faster checkout';
-    btn.innerText = 'Login';
-    document.getElementById('modalSwitchText').innerHTML = `Don't have an account? <span id="toggleAuthMode">Register</span>`;
-  } else {
-    title.innerText = 'Create Account'; msg.innerText = 'Register to track orders and save addresses';
-    btn.innerText = 'Register';
-    document.getElementById('modalSwitchText').innerHTML = `Already have an account? <span id="toggleAuthMode">Login</span>`;
-  }
-  document.getElementById('toggleAuthMode').addEventListener('click', arguments.callee);
-});
-document.getElementById('modalActionBtn').addEventListener('click',async()=>{
-  const email = document.getElementById('modalEmail').value.trim();
-  const password = document.getElementById('modalPassword').value.trim();
-  if(!email||!password){ toast('Please fill all fields'); return; }
-  try{
-    let url,body;
+const toggleBtn = document.getElementById('toggleAuthMode');
+if(toggleBtn) {
+  toggleBtn.addEventListener('click',()=>{
+    isLoginMode = !isLoginMode;
+    const title = document.getElementById('modalTitle');
+    const msg = document.getElementById('modalMsg');
+    const btn = document.getElementById('modalActionBtn');
     if(isLoginMode){
-      url=`${API_BASE}/api/auth/login`;
-      body={email,password};
+      title.innerText = 'Welcome Back'; msg.innerText = 'Login to your account for faster checkout';
+      btn.innerText = 'Login';
+      document.getElementById('modalSwitchText').innerHTML = `Don't have an account? <span id="toggleAuthMode">Register</span>`;
     } else {
-      url=`${API_BASE}/api/auth/register`;
-      body={email,password,name:email.split('@')[0]};
+      title.innerText = 'Create Account'; msg.innerText = 'Register to track orders and save addresses';
+      btn.innerText = 'Register';
+      document.getElementById('modalSwitchText').innerHTML = `Already have an account? <span id="toggleAuthMode">Login</span>`;
     }
-    const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const data = await res.json();
-    if(data.success){
-      currentUser = data.user;
-      localStorage.setItem('liquorbelle_user',JSON.stringify(currentUser));
-      updateAccountUI();
-      closeAuthModal();
-      toast(isLoginMode?'Logged in successfully':'Account created successfully');
-    } else { toast(data.message || 'Authentication failed'); }
-  } catch(e){ toast('Server error. Try again later.'); }
-});
+    document.getElementById('toggleAuthMode').addEventListener('click', arguments.callee);
+  });
+}
+const modalActionBtn = document.getElementById('modalActionBtn');
+if(modalActionBtn) {
+  modalActionBtn.addEventListener('click',async()=>{
+    const email = document.getElementById('modalEmail').value.trim();
+    const password = document.getElementById('modalPassword').value.trim();
+    if(!email||!password){ toast('Please fill all fields'); return; }
+    try{
+      let url,body;
+      if(isLoginMode){
+        url=`${API_BASE}/api/auth/login`;
+        body={email,password};
+      } else {
+        url=`${API_BASE}/api/auth/register`;
+        body={email,password,name:email.split('@')[0]};
+      }
+      const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const data = await res.json();
+      if(data.success){
+        currentUser = data.user;
+        localStorage.setItem('liquorbelle_user',JSON.stringify(currentUser));
+        updateAccountUI();
+        closeAuthModal();
+        toast(isLoginMode?'Logged in successfully':'Account created successfully');
+      } else { toast(data.message || 'Authentication failed'); }
+    } catch(e){ toast('Server error. Try again later.'); }
+  });
+}
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
 function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
@@ -1276,47 +1283,74 @@ function renderCategories(){
   }
 }
 
-// Load Products
+// Load Products - Show FIRST 10 products from all categories as Trending Deals
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
     if(data.success && data.products.length>0){
-      PRODUCTS = data.products.map(p => ({
-        ...p,
-        originalPrice: p.discount_percent ? Math.round(p.price * 100 / (100 - p.discount_percent)) : Math.round(p.price * 1.25),
-        discountPercent: p.discount_percent || Math.round(((Math.round(p.price*1.25)-p.price)/Math.round(p.price*1.25))*100)
-      }));
+      // Map products with variants - get cheapest variant price as main price
+      PRODUCTS = data.products.map(p => {
+        const variants = p.variants || [];
+        const cheapestVariant = variants.length ? variants.reduce((min, v) => v.price < min.price ? v : min, variants[0]) : null;
+        const price = cheapestVariant ? cheapestVariant.price : 0;
+        const originalPrice = cheapestVariant?.discount ? Math.round(price * 100 / (100 - cheapestVariant.discount)) : price;
+        const discountPercent = cheapestVariant?.discount || 0;
+        return {
+          id: p.id,
+          name: p.name,
+          capacity: cheapestVariant?.size || '750ml',
+          price: price,
+          originalPrice: originalPrice,
+          discountPercent: discountPercent,
+          category: p.category || '',
+          badge: p.badge || (discountPercent > 10 ? 'hot' : ''),
+          image: p.image || '',
+          isTrending: p.isTrending || false
+        };
+      });
     } else {
-      PRODUCTS = getSampleProductsWithDiscounts();
+      PRODUCTS = getSampleProducts();
     }
   }catch(e){
-    PRODUCTS = getSampleProductsWithDiscounts();
+    console.log('Error loading products, using samples:', e);
+    PRODUCTS = getSampleProducts();
   }
   renderTrending();
   renderRecentlyViewed();
 }
-function getSampleProductsWithDiscounts(){
+
+function getSampleProducts(){
   return [
-    {id:1,name:"Johnnie Walker Black Label",capacity:"750ml",price:3500,originalPrice:4200,discountPercent:17,category:"whisky",badge:"hot",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop"},
-    {id:2,name:"Jameson Irish Whiskey",capacity:"750ml",price:3200,originalPrice:3800,discountPercent:16,category:"whisky",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop"},
-    {id:3,name:"Hennessy VS",capacity:"750ml",price:5500,originalPrice:6200,discountPercent:11,category:"cognac",badge:"prem",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop"},
-    {id:4,name:"Smirnoff Red",capacity:"750ml",price:1800,originalPrice:2200,discountPercent:18,category:"vodka",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop"},
-    {id:5,name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1650,discountPercent:15,category:"gin",badge:"local",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop"},
-    {id:6,name:"Kenya Cane",capacity:"750ml",price:950,originalPrice:1150,discountPercent:17,category:"rum",badge:"local",image:"https://images.unsplash.com/photo-1565277408825-5da2b2a4b1dd?w=300&h=300&fit=crop"},
-    {id:7,name:"Tusker Lager",capacity:"500ml",price:230,originalPrice:280,discountPercent:18,category:"beer",badge:"local",image:"https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=300&h=300&fit=crop"},
-    {id:8,name:"Nederburg Rosé",capacity:"750ml",price:1500,originalPrice:1900,discountPercent:21,category:"wine",image:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=300&h=300&fit=crop"}
+    {id:1,name:"Johnnie Walker Black Label",capacity:"750ml",price:3500,originalPrice:4200,discountPercent:17,category:"whisky",badge:"hot",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
+    {id:2,name:"Jameson Irish Whiskey",capacity:"750ml",price:3200,originalPrice:3800,discountPercent:16,category:"whisky",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
+    {id:3,name:"Hennessy VS",capacity:"750ml",price:5500,originalPrice:6200,discountPercent:11,category:"cognac",badge:"prem",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
+    {id:4,name:"Smirnoff Red",capacity:"750ml",price:1800,originalPrice:2200,discountPercent:18,category:"vodka",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop",isTrending:true},
+    {id:5,name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1650,discountPercent:15,category:"gin",badge:"local",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop",isTrending:true},
+    {id:6,name:"Kenya Cane",capacity:"750ml",price:950,originalPrice:1150,discountPercent:17,category:"rum",badge:"local",image:"https://images.unsplash.com/photo-1565277408825-5da2b2a4b1dd?w=300&h=300&fit=crop",isTrending:true},
+    {id:7,name:"Tusker Lager",capacity:"500ml",price:230,originalPrice:280,discountPercent:18,category:"beer",badge:"local",image:"https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=300&h=300&fit=crop",isTrending:true},
+    {id:8,name:"Nederburg Rosé",capacity:"750ml",price:1500,originalPrice:1900,discountPercent:21,category:"wine",image:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=300&h=300&fit=crop",isTrending:true},
+    {id:9,name:"Absolut Vodka",capacity:"750ml",price:2200,originalPrice:2600,discountPercent:15,category:"vodka",badge:"prem",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop",isTrending:true},
+    {id:10,name:"Chrome Gin",capacity:"750ml",price:1650,originalPrice:1950,discountPercent:15,category:"gin",badge:"hot",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop",isTrending:true}
   ];
 }
+
 function renderTrending(){
-  const trendingItems = PRODUCTS.slice(0,4).map(p=>{
+  // Show first 10 products OR products marked as trending, up to 10
+  let trendingItems = PRODUCTS.filter(p => p.isTrending === true).slice(0, 10);
+  if(trendingItems.length < 4 && PRODUCTS.length >= 4) {
+    trendingItems = PRODUCTS.slice(0, 10);
+  }
+  
+  const trendingHtml = trendingItems.map(p=>{
     const original = p.originalPrice;
     const savePercent = p.discountPercent;
     const isWishlisted = wishlist.some(w=>w.id==p.id);
     return `<div class="prod-card">
       <div class="pc-img-wrap">
         <img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'" onclick="addToRecentlyViewed({id:${p.id},name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })">
-        ${p.badge?`<div class="pc-badge badge-${p.badge==='hot'?'hot':p.badge==='local'?'local':'prem'}">${p.badge==='hot'?'🔥 Hot':p.badge==='local'?'🇰🇪 Local':'⭐ Premium'}</div>`:''}
+        ${p.badge ? `<div class="pc-badge badge-${p.badge === 'hot' ? 'hot' : (p.badge === 'local' ? 'local' : 'prem')}">${p.badge === 'hot' ? '🔥 Hot' : (p.badge === 'local' ? '🇰🇪 Local' : '⭐ Premium')}</div>` : ''}
+        ${savePercent > 0 ? `<div class="pc-badge" style="top:8px;left:${p.badge ? '75px' : '8px'};background:var(--success);">-${savePercent}%</div>` : ''}
         <button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="toggleWishlist(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')">
           <i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}" style="${isWishlisted?'color:var(--sale-red)':''}"></i>
         </button>
@@ -1329,7 +1363,7 @@ function renderTrending(){
     </div>`;
   }).join('');
   const grid = document.getElementById('trendingGrid');
-  if(grid) grid.innerHTML = trendingItems;
+  if(grid) grid.innerHTML = trendingHtml || '<div class="empty-state">No products found</div>';
 }
 
 const zones = ['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata','Waithaka','Kikuyu','Runda'];
