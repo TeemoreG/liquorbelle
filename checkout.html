@@ -504,12 +504,20 @@ function toast(msg, isError = false) {
 
 async function loadDeliverySettings() {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/delivery-settings`);
+    // FIXED: Using the public endpoint (no authentication required)
+    const res = await fetch(`${API_BASE_URL}/api/delivery-settings`);
     const data = await res.json();
     if (data.success && data.settings) {
       deliverySettings = data.settings;
+      // Update the delivery fee display in the UI
+      const deliveryText = deliverySettings.delivery_enabled ? 
+        (deliverySettings.delivery_fee === 0 ? 'FREE' : `KES ${deliverySettings.delivery_fee}`) : 'FREE';
+      document.getElementById('deliveryFee').innerText = deliveryText;
+      renderCartSummary();
     }
-  } catch(e) { console.error('Failed to load delivery settings', e); }
+  } catch(e) { 
+    console.error('Failed to load delivery settings', e); 
+  }
 }
 
 // Simple reverse geocoding using OpenStreetMap (free, no API key needed)
@@ -793,6 +801,7 @@ async function placeOrder() {
   }
 }
 
+// Load delivery settings and then render cart
 loadDeliverySettings().then(() => renderCartSummary());
 </script>
 </body>
