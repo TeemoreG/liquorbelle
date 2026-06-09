@@ -27,6 +27,50 @@
 }
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 
+/* Floating WhatsApp Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #25D366;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+}
+.whatsapp-float:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+.whatsapp-float i {
+  font-size: 32px;
+}
+.whatsapp-float .tooltip {
+  position: absolute;
+  right: 70px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.whatsapp-float:hover .tooltip {
+  opacity: 1;
+}
+
 .top-bar{
   background:var(--primary);
   color:rgba(255,255,255,.92);
@@ -93,9 +137,13 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   position:absolute;top:-5px;right:-5px;
   background:var(--sale-red);color:#fff;
   font-size:9px;font-weight:700;
-  width:16px;height:16px;border-radius:50%;
+  min-width:16px;height:16px;
+  border-radius:50%;
   display:flex;
+  align-items:center;
+  justify-content:center;
   border:2px solid white;
+  padding:0 2px;
 }
 
 .track-container{
@@ -277,6 +325,8 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   .search-wrap{display:none;}
   .track-card{padding:24px;}
   .order-header{flex-direction:column;align-items:flex-start;}
+  .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
+  .whatsapp-float i{font-size:28px;}
 }
 </style>
 </head>
@@ -330,6 +380,12 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   
   <div id="ordersContainer"></div>
 </div>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+  <i class="ph ph-whatsapp-logo"></i>
+  <span class="tooltip">Chat with us</span>
+</a>
 
 <footer class="footer">
   <div class="footer-grid">
