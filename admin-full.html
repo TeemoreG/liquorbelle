@@ -385,7 +385,7 @@ textarea{resize:vertical;}
             <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
           </tr>
         </tbody>
-      </table>
+      黄花
       <button type="button" class="add-variant-btn" onclick="addVariantRow()">+ Add Another Size</button>
       <button class="btn" onclick="addProduct()" style="margin-top:16px;">💾 Save Product</button>
     </div>
@@ -478,9 +478,9 @@ textarea{resize:vertical;}
     
     <h4 style="margin:16px 0 8px;">📏 Variants</h4>
     <table class="variants-table">
-      <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th></tr></thead>
+      <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th> </thead>
       <tbody id="editVariantsBody"></tbody>
-    </table>
+    黄花
     <button type="button" class="add-variant-btn" onclick="addEditVariantRow()">+ Add Another Size</button>
     
     <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
@@ -499,7 +499,7 @@ let orders = [];
 let currentTab = 'products';
 let productSearch = '';
 let orderSearch = '';
-let ADMIN_PASSWORD = localStorage.getItem('liquorbelle_admin_password') || 'admin123';
+let adminToken = localStorage.getItem('liquorbelle_admin_token');
 
 function showToast(msg){
   const t = document.getElementById('toast');
@@ -508,6 +508,32 @@ function showToast(msg){
   setTimeout(() => t.style.opacity = '0', 2500);
 }
 function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
+
+function getAuthHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${adminToken}`
+  };
+}
+
+async function adminLogin(password) {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (data.success && data.token) {
+      adminToken = data.token;
+      localStorage.setItem('liquorbelle_admin_token', adminToken);
+      return true;
+    }
+    return false;
+  } catch(e) {
+    return false;
+  }
+}
 
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
@@ -573,7 +599,7 @@ async function addProduct(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ name, category, badge, image, description, variants, isTrending })
     });
     if(res.ok){
@@ -657,7 +683,7 @@ async function saveProductEdit(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ name, category, badge, image, description, variants, isTrending })
     });
     if(res.ok){
@@ -677,7 +703,10 @@ async function saveProductEdit(){
 async function deleteProduct(id){
   if(!confirm('Delete this product permanently?')) return;
   try{
-    const res = await fetch(`${API_BASE}/api/db/products/${id}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/api/db/products/${id}`, { 
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
     if(res.ok){
       showToast('Product deleted');
       await loadProducts();
@@ -690,11 +719,7 @@ async function loadProducts(){
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
     if(data.success) {
-      // Map products to include both _id and id alias
-      products = data.products.map(p => ({
-        ...p,
-        id: p._id  // Add id alias for compatibility
-      }));
+      products = data.products.map(p => ({ ...p, id: p._id }));
     }
   } catch(e){ products = []; }
   renderProducts();
@@ -729,7 +754,9 @@ function renderProducts(){
 
 async function loadOrders(){
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders`);
+    const res = await fetch(`${API_BASE}/api/db/orders`, {
+      headers: getAuthHeaders()
+    });
     const data = await res.json();
     if(data.success) orders = data.orders;
   } catch(e){ orders = []; }
@@ -741,7 +768,7 @@ async function markOrderPaid(id){
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'paid' })
     });
     if(res.ok){ showToast('✅ Order marked as PAID'); await loadOrders(); }
@@ -751,7 +778,7 @@ async function markOrderDelivered(id){
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'delivered' })
     });
     if(res.ok){ showToast('🚚 Order marked as DELIVERED'); await loadOrders(); }
@@ -760,7 +787,10 @@ async function markOrderDelivered(id){
 async function deleteOrder(id){
   if(!confirm('⚠️ Delete this order permanently?')) return;
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders/${id}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/api/db/orders/${id}`, { 
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
     if(res.ok){ showToast('Order deleted'); await loadOrders(); }
   } catch(e){ showToast('Error'); }
 }
@@ -833,8 +863,11 @@ function renderAnalytics(){
 }
 
 async function loadDeliverySettings(){
+  if(!adminToken) return;
   try{
-    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`);
+    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, {
+      headers: getAuthHeaders()
+    });
     const data = await res.json();
     if(data.success && data.settings){
       document.getElementById('deliveryFee').value = data.settings.delivery_fee || 150;
@@ -844,6 +877,7 @@ async function loadDeliverySettings(){
   } catch(e){}
 }
 async function saveDeliverySettings(){
+  if(!adminToken) return;
   const settings = {
     delivery_fee: parseInt(document.getElementById('deliveryFee').value) || 0,
     free_delivery_threshold: parseInt(document.getElementById('freeThreshold').value) || 0,
@@ -852,7 +886,7 @@ async function saveDeliverySettings(){
   try{
     const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(settings)
     });
     if(res.ok) showToast('✅ Delivery settings saved!');
@@ -863,12 +897,12 @@ function changePassword(){
   const current = document.getElementById('currentPwd').value;
   const newPwd = document.getElementById('newPwd').value;
   const confirm = document.getElementById('confirmPwd').value;
-  if(current !== ADMIN_PASSWORD){ showToast('❌ Current password incorrect'); return; }
+  // Password change handled by backend - this is just local simulation
   if(newPwd.length < 6){ showToast('❌ New password must be at least 6 characters'); return; }
   if(newPwd !== confirm){ showToast('❌ New passwords do not match'); return; }
-  ADMIN_PASSWORD = newPwd;
+  // In production, this would call an API endpoint
   localStorage.setItem('liquorbelle_admin_password', newPwd);
-  showToast('✅ Password changed successfully!');
+  showToast('✅ Password changed (local only)');
   document.getElementById('currentPwd').value = '';
   document.getElementById('newPwd').value = '';
   document.getElementById('confirmPwd').value = '';
@@ -894,24 +928,40 @@ function clearProductSearch(){ productSearch = ''; document.getElementById('prod
 function clearOrderSearch(){ orderSearch = ''; document.getElementById('orderSearch').value = ''; renderOrders(); }
 
 function logout(){
+  localStorage.removeItem('liquorbelle_admin_token');
   sessionStorage.removeItem('liquorbelle_admin_full');
   location.reload();
 }
 
-if(sessionStorage.getItem('liquorbelle_admin_full') !== 'true'){
-  const pwd = prompt('Enter Full Admin password:');
-  if(pwd === ADMIN_PASSWORD){
-    sessionStorage.setItem('liquorbelle_admin_full', 'true');
-  } else {
-    alert('Invalid password');
-    window.location.href = 'index.html';
+// Check authentication on load
+async function initAdmin() {
+  // Try to get existing token
+  adminToken = localStorage.getItem('liquorbelle_admin_token');
+  
+  if(!adminToken) {
+    const password = prompt('Enter Full Admin password:');
+    if(password) {
+      const success = await adminLogin(password);
+      if(!success) {
+        alert('Invalid password');
+        window.location.href = 'index.html';
+        return;
+      }
+    } else {
+      window.location.href = 'index.html';
+      return;
+    }
   }
+  
+  // Load all data
+  await loadProducts();
+  await loadOrders();
+  await loadDeliverySettings();
 }
 
-loadProducts();
-loadOrders();
-loadDeliverySettings();
+initAdmin();
 setInterval(loadProducts, 30000);
+setInterval(loadOrders, 30000);
 </script>
 </body>
 </html>

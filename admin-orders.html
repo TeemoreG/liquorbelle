@@ -220,7 +220,7 @@ const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 let orders = [];
 let products = [];
 let searchTerm = '';
-let isAuthenticated = false;
+let adminToken = localStorage.getItem('liquorbelle_cashier_token');
 
 function showToast(msg){
   const t = document.getElementById('toast');
@@ -240,28 +240,52 @@ function formatPhone(phone){
 function formatDisplayPhone(phone){
   if(!phone) return 'No phone';
   if(phone.length === 12 && phone.startsWith('254')) return '0' + phone.slice(3);
+  if(phone.length === 10 && (phone.startsWith('07') || phone.startsWith('01'))) return phone;
   return phone;
 }
 
-async function verifyPassword(password){
-  try{
-    const res = await fetch(`${API_BASE}/api/admin/verify`, {
+function getAuthHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${adminToken}`
+  };
+}
+
+async function adminLogin(password, role) {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password, type: 'orders' })
+      body: JSON.stringify({ password })
     });
     const data = await res.json();
-    return data.success === true;
-  } catch(e){ return false; }
+    if (data.success && data.token) {
+      adminToken = data.token;
+      localStorage.setItem('liquorbelle_cashier_token', adminToken);
+      localStorage.setItem('liquorbelle_admin_role', data.role);
+      return true;
+    }
+    return false;
+  } catch(e) {
+    return false;
+  }
 }
 
 async function checkAuth(){
-  const storedAuth = sessionStorage.getItem('liquorbelle_admin_orders');
-  if(storedAuth === 'true') return true;
+  // Check if we already have a token
+  if(adminToken) {
+    return true;
+  }
   
+  // Try to get token from storage
+  adminToken = localStorage.getItem('liquorbelle_cashier_token');
+  if(adminToken) {
+    return true;
+  }
+  
+  // Prompt for password
   const pwd = prompt('🔐 Enter Order Manager Password:');
-  if(pwd && await verifyPassword(pwd)){
-    sessionStorage.setItem('liquorbelle_admin_orders', 'true');
+  if(pwd && await adminLogin(pwd, 'cashier')){
     return true;
   } else {
     alert('Invalid password');
@@ -280,11 +304,16 @@ async function loadProducts(){
 
 async function loadOrders(){
   try{
-    const res = await fetch(`${API_BASE}/api/admin/recent-orders`);
+    const res = await fetch(`${API_BASE}/api/admin/recent-orders`, {
+      headers: getAuthHeaders()
+    });
     const data = await res.json();
     if(data.success) orders = data.orders;
     else orders = [];
-  } catch(e){ orders = []; }
+  } catch(e){ 
+    console.error('Error loading orders:', e);
+    orders = []; 
+  }
   renderStats();
   renderOrders();
 }
@@ -344,7 +373,6 @@ function renderOrders(){
       `;
     }).join('');
     
-    // FIXED: Use o._id instead of o.id for MongoDB compatibility
     const orderId = o.order_number || (o._id ? o._id.slice(-8) : 'N/A');
     
     return `
@@ -384,29 +412,37 @@ function renderOrders(){
 }
 
 async function markPaid(id){
+  if(!adminToken) { showToast('Please login again'); logout(); return; }
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'paid' })
     });
     if(res.ok){
       showToast('✅ Order marked as PAID');
       await loadOrders();
+    } else if(res.status === 401){
+      showToast('Session expired. Please login again.');
+      logout();
     }
   } catch(e){ showToast('Error updating order'); }
 }
 
 async function markDelivered(id){
+  if(!adminToken) { showToast('Please login again'); logout(); return; }
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'delivered' })
     });
     if(res.ok){
       showToast('🚚 Order marked as DELIVERED');
       await loadOrders();
+    } else if(res.status === 401){
+      showToast('Session expired. Please login again.');
+      logout();
     }
   } catch(e){ showToast('Error updating order'); }
 }
@@ -425,7 +461,10 @@ document.getElementById('orderSearch').addEventListener('input', (e) => {
 function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
 
 function logout(){
+  localStorage.removeItem('liquorbelle_cashier_token');
+  localStorage.removeItem('liquorbelle_admin_role');
   sessionStorage.removeItem('liquorbelle_admin_orders');
+  adminToken = null;
   location.reload();
 }
 

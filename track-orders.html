@@ -446,14 +446,12 @@ async function trackOrders(){
   container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
   
   try{
-    // Fetch all orders and filter by email (since /api/orders/track may not exist)
-    const res = await fetch(`${API_BASE}/api/db/orders`);
+    // FIXED: Using the public tracking endpoint (no authentication required)
+    const res = await fetch(`${API_BASE}/api/orders/track?email=${encodeURIComponent(email)}`);
     const data = await res.json();
     
     if(data.success && data.orders){
-      const userOrders = data.orders.filter(o => 
-        o.customer_email?.toLowerCase() === email.toLowerCase()
-      );
+      const userOrders = data.orders;
       
       if(userOrders.length > 0){
         // Sort by date (newest first)
