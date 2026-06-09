@@ -163,11 +163,11 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
 
 .category-section{padding:0 5% 24px;margin-top:24px;}
 .category-section h2{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;color:var(--text);}
-.category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;}
-.cat-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;text-align:center;border:1px solid var(--border);transition:all .2s;cursor:pointer;text-decoration:none;box-shadow:var(--shadow);}
+.category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:16px;}
+.cat-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;text-align:center;border:1px solid var(--border);transition:all .2s;cursor:pointer;text-decoration:none;box-shadow:var(--shadow);padding:12px 8px;}
 .cat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
-.cat-img{width:100%;height:100px;object-fit:cover;background:var(--bg2);}
-.cat-card span{display:block;padding:10px;font-weight:600;font-size:.8rem;color:var(--text);}
+.cat-icon{width:60px;height:60px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;}
+.cat-card span{display:block;font-weight:600;font-size:.75rem;color:var(--text);}
 
 .hot-deals{
   background:linear-gradient(135deg, var(--sale-red) 0%, var(--primary) 100%);
@@ -269,26 +269,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
 .shop-feature-bottom strong{display:block;font-size:.85rem;font-weight:800;margin-bottom:4px;color:var(--text);}
 .shop-feature-bottom small{font-size:.7rem;color:var(--muted);line-height:1.4;}
 
-.newsletter-strip{
-  margin:0 5% 32px;
-  background:linear-gradient(135deg,var(--primary) 0%,#5a0000 100%);
-  border-radius:var(--radius);
-  padding:28px 32px;
-  display:flex;
-  align-items:center;
-  gap:24px;
-  flex-wrap:wrap;
-}
-.nl-text{flex:1;min-width:200px;}
-.nl-text h4{font-family:var(--font-display);color:#fff;font-size:1.2rem;margin-bottom:4px;}
-.nl-text p{color:rgba(255,255,255,.75);font-size:.8rem;}
-.nl-form{display:flex;gap:8px;flex:1;min-width:260px;}
-.nl-input{flex:1;padding:11px 16px;border-radius:50px;border:none;background:rgba(255,255,255,.15);color:#fff;font-family:var(--font-body);font-size:.85rem;}
-.nl-input::placeholder{color:rgba(255,255,255,.55);}
-.nl-input:focus{outline:none;background:rgba(255,255,255,.2);}
-.nl-btn{padding:11px 22px;border-radius:50px;background:#fff;color:var(--primary);border:none;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .2s;}
-.nl-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
-
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}
 .overlay.open{opacity:1;pointer-events:auto;}
 .cart-drawer{position:fixed;bottom:-100%;left:0;right:0;background:var(--white);border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s;max-height:82vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.12);}
@@ -332,7 +312,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   .hero-image{max-height:180px;}
   .hot-deals{margin:16px 4% 0;flex-direction:column;align-items:flex-start;}
   .deals-scroll{width:100%;}
-  .category-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .category-grid{grid-template-columns:repeat(3,1fr);gap:10px;}
   .product-number{width:22px;height:22px;font-size:.6rem;top:4px;left:4px;}
   .category-section{margin-top:16px;}
   .footer{padding:32px 4% 24px;}
@@ -340,8 +320,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   .shop-features-bottom{gap:12px;padding:24px 4%;max-width:100%;}
   .shop-feature-bottom{padding:14px 8px;}
   .shop-feature-bottom i{font-size:24px;}
-  .newsletter-strip{margin:0 4% 24px;padding:20px;}
-  .nl-form{flex-direction:column;}
   .recently-viewed{margin:24px 4%;}
 }
 </style>
@@ -402,6 +380,11 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
 
 <div class="hero-image-section">
   <img class="hero-image" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780937909/lb2_y4bwkw.png" alt="LiquorBelle Premium Selection">
+</div>
+
+<div class="category-section">
+  <h2>Shop by Category</h2>
+  <div class="category-grid" id="categoryGrid"></div>
 </div>
 
 <div class="hot-deals">
@@ -466,17 +449,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   <div class="shop-feature-bottom"><i class="ph ph-stars"></i><strong>Top Rated</strong><small>Customer favorites</small></div>
 </div>
 
-<div class="newsletter-strip">
-  <div class="nl-text">
-    <h4>Get Exclusive Deals</h4>
-    <p>Subscribe for flash sales, new arrivals & special offers straight to your inbox.</p>
-  </div>
-  <div class="nl-form">
-    <input type="email" id="nlEmail" class="nl-input" placeholder="Enter your email address…">
-    <button class="nl-btn" onclick="subscribeNewsletter()">Subscribe</button>
-  </div>
-</div>
-
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
@@ -512,7 +484,6 @@ let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
 let currentPage = 1;
 let sizeFiltersActive = new Set();
 
-// Size order for sorting (smallest to largest)
 const sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
@@ -593,13 +564,6 @@ function renderRecentlyViewed(){
   document.getElementById('rvScroll').innerHTML = recentlyViewed.map(p=>`<div class="rv-item" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},1,'${p.capacity||'750ml'}')"><img src="${p.image||FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'"><div class="rv-item-name">${escapeHtml(p.name)}</div><div class="rv-item-price">KES ${p.price.toLocaleString()}</div></div>`).join('');
 }
 
-function subscribeNewsletter(){
-  const em = document.getElementById('nlEmail').value.trim();
-  if(!em||!em.includes('@')){toast('Please enter a valid email');return;}
-  document.getElementById('nlEmail').value='';
-  toast('Subscribed! You\'ll get exclusive deals 🎉');
-}
-
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
@@ -674,7 +638,6 @@ function renderPage(){
   const globalStartNumber = start + 1;
   grid.innerHTML = pageItems.map((p, idx) => {
     const variants = p.variants || [];
-    // Sort variants by size (smallest first) and use first as default
     const sortedVariants = [...variants].sort((a,b) => (sizeOrder[a.size]||99) - (sizeOrder[b.size]||99));
     const defaultVariant = sortedVariants[0] || {size:'750ml',price:0,discount:0};
     const productNumber = globalStartNumber + idx;
@@ -748,7 +711,9 @@ document.getElementById('searchInput').addEventListener('input',()=>{currentPage
 function openSidebar(){document.getElementById('sidebar').classList.add('mob-open');document.getElementById('sidebarOverlay').classList.add('open');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('sidebarOverlay').classList.remove('open');}
 
+// Categories with "All Products" first using your image
 const categories = [
+  { name: "All Products", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780993625/657accd01c84e92bc33b13a7_o0ywrd.jpg" },
   { name: "Whisky", cat: "whisky", image: "https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp" },
   { name: "Cognac", cat: "cognac", image: "https://i.postimg.cc/W1qvx9dw/cognacs.webp" },
   { name: "Vodka", cat: "vodka", image: "https://i.postimg.cc/xTQFy62P/vodk-AS.jpg" },
@@ -758,9 +723,10 @@ const categories = [
   { name: "Beer", cat: "beer", image: "https://i.postimg.cc/FRkMf1Qy/beer-cans.webp" },
   { name: "Champagne", cat: "champagne", image: "https://i.postimg.cc/ZqmMjjpn/champagne.jpg" }
 ];
+
 function renderCategoryCards(){
   const container = document.getElementById('categoryGrid');
-  if(container) container.innerHTML = categories.map(cat=>`<a href="shop.html?cat=${cat.cat}" class="cat-card"><img class="cat-img" src="${cat.image}" alt="${cat.name}"><span>${cat.name}</span></a>`).join('');
+  if(container) container.innerHTML = categories.map(cat=>`<a href="shop.html?cat=${cat.cat}" class="cat-card"><img class="cat-icon" src="${cat.image}" alt="${cat.name}"><span>${cat.name}</span></a>`).join('');
 }
 
 renderCategoryCards();

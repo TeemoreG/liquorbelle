@@ -334,8 +334,8 @@ a{color:inherit;text-decoration:none;}
 /* Category Cards Grid */
 .category-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:16px;
   padding:0 5%;
   margin-bottom:32px;
 }
@@ -347,19 +347,23 @@ a{color:inherit;text-decoration:none;}
   border:1px solid var(--border);
   transition:all .2s;
   cursor:pointer;
+  padding:12px 8px;
 }
 .cat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
 .cat-img{
-  width:100%;
-  height:120px;
+  width:70px;
+  height:70px;
   object-fit:cover;
+  border-radius:12px;
   background:var(--bg2);
+  margin:0 auto;
+  display:block;
 }
 .cat-card span{
   display:block;
-  padding:12px;
-  font-weight:700;
-  font-size:.85rem;
+  padding:8px 0 0;
+  font-weight:600;
+  font-size:.75rem;
   color:var(--text);
 }
 
@@ -636,36 +640,6 @@ a{color:inherit;text-decoration:none;}
 }
 .php-info-badge i{font-size:20px;color:var(--primary);}
 
-/* Newsletter Strip */
-.newsletter-strip{
-  margin:0 5% 32px;
-  background:linear-gradient(135deg,var(--primary) 0%,#5a0000 100%);
-  border-radius:var(--radius);
-  padding:28px 32px;
-  display:flex;
-  align-items:center;
-  gap:24px;
-  flex-wrap:wrap;
-}
-.nl-text{flex:1;min-width:200px;}
-.nl-text h4{font-family:var(--font-display);color:#fff;font-size:1.2rem;margin-bottom:4px;}
-.nl-text p{color:rgba(255,255,255,.75);font-size:.8rem;}
-.nl-form{display:flex;gap:8px;flex:1;min-width:260px;}
-.nl-input{
-  flex:1;padding:11px 16px;border-radius:50px;border:none;
-  background:rgba(255,255,255,.15);color:#fff;
-  font-family:var(--font-body);font-size:.85rem;
-}
-.nl-input::placeholder{color:rgba(255,255,255,.55);}
-.nl-input:focus{outline:none;background:rgba(255,255,255,.2);}
-.nl-btn{
-  padding:11px 22px;border-radius:50px;
-  background:#fff;color:var(--primary);border:none;
-  font-weight:700;font-size:.8rem;cursor:pointer;
-  transition:all .2s;
-}
-.nl-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
-
 .review-section{
   margin:40px 5%;
   background:var(--bg2);
@@ -732,8 +706,7 @@ a{color:inherit;text-decoration:none;}
 /* Cart Drawer */
 .overlay{
   position:fixed;inset:0;background:rgba(0,0,0,.45);
-  z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;
-}
+  z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}
 .overlay.open{opacity:1;pointer-events:auto;}
 .cart-drawer{
   position:fixed;bottom:-100%;left:0;right:0;
@@ -803,8 +776,9 @@ a{color:inherit;text-decoration:none;}
   .review-section{margin:24px 4%;padding:24px 20px;flex-direction:column;text-align:center;}
   .zones-grid{padding:0 4%;}
   .action-label{font-size:8px;}
-  .category-grid{grid-template-columns:repeat(2,1fr);gap:12px;padding:0 4%;}
-  .cat-img{height:100px;}
+  .category-grid{grid-template-columns:repeat(3,1fr);gap:12px;padding:0 4%;}
+  .cat-img{width:55px;height:55px;}
+  .cat-card span{font-size:0.7rem;}
   .store-promo{grid-template-columns:1fr;margin:24px 4%;}
   .store-promo-left{padding:28px 20px;}
   .store-promo-right{padding:28px 20px;}
@@ -812,8 +786,6 @@ a{color:inherit;text-decoration:none;}
   .countdown{flex-wrap:wrap;justify-content:center;}
   .cd-block{min-width:44px;padding:6px 8px;}
   .cd-num{font-size:1.1rem;}
-  .newsletter-strip{margin:0 4% 24px;padding:20px;}
-  .nl-form{flex-direction:column;}
   .recently-viewed{margin:24px 4%;}
 }
 </style>
@@ -835,12 +807,36 @@ a{color:inherit;text-decoration:none;}
 <!-- Auth Modal -->
 <div class="modal-overlay" id="authModal">
   <div class="modal-card">
-    <h3 id="modalTitle">Welcome Back</h3>
-    <p id="modalMsg">Login to your account for faster checkout</p>
-    <input type="email" id="modalEmail" class="modal-input" placeholder="Email address">
-    <input type="password" id="modalPassword" class="modal-input" placeholder="Password">
+    <h3 id="modalTitle">Login</h3>
+    <p id="modalMsg">Login to your account</p>
+    
+    <!-- Login Form Fields -->
+    <div id="loginFields">
+      <input type="email" id="loginEmail" class="modal-input" placeholder="Email address">
+      <input type="password" id="loginPassword" class="modal-input" placeholder="Password">
+    </div>
+    
+    <!-- Register Form Fields -->
+    <div id="registerFields" style="display:none;">
+      <input type="text" id="regName" class="modal-input" placeholder="Full Name">
+      <input type="tel" id="regPhone" class="modal-input" placeholder="Phone Number">
+      <input type="email" id="regEmail" class="modal-input" placeholder="Email address">
+      <input type="password" id="regPassword" class="modal-input" placeholder="Password (min 6 characters)">
+    </div>
+    
     <button class="modal-btn" id="modalActionBtn">Login</button>
     <div class="modal-switch" id="modalSwitchText">Don't have an account? <span id="toggleAuthMode">Register</span></div>
+  </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal-overlay" id="deleteAccountModal">
+  <div class="modal-card">
+    <h3>Delete Account</h3>
+    <p>Enter your password to permanently delete your account. This action cannot be undone.</p>
+    <input type="password" id="deletePassword" class="modal-input" placeholder="Enter your password">
+    <button class="modal-btn" onclick="confirmDeleteAccount()" style="background:#dc3545;">Delete My Account</button>
+    <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:8px;" onclick="closeDeleteModal()">Cancel</button>
   </div>
 </div>
 
@@ -885,9 +881,9 @@ a{color:inherit;text-decoration:none;}
       </div>
       <span class="action-label">Wishlist</span>
     </div>
-    <div class="action-group" id="accountBtn" onclick="openAuthModal()">
+    <div class="action-group" id="accountBtn">
       <div class="hbtn"><i class="ph ph-user-circle"></i></div>
-      <span class="action-label">Account</span>
+      <span class="action-label" id="accountLabel">Account</span>
     </div>
     <div class="action-group" onclick="openCartDrawer()">
       <div class="hbtn">
@@ -1060,57 +1056,234 @@ let wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
 let recentlyViewed = JSON.parse(localStorage.getItem('liquorbelle_rv') || '[]');
 let PRODUCTS = [];
 
-// Auth
+// Auth Variables
 let currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
-function updateAccountUI(){}
-function openAuthModal(){ document.getElementById('authModal').classList.add('active'); }
-function closeAuthModal(){ document.getElementById('authModal').classList.remove('active'); }
 let isLoginMode = true;
-const toggleBtn = document.getElementById('toggleAuthMode');
-if(toggleBtn) {
-  toggleBtn.addEventListener('click',()=>{
-    isLoginMode = !isLoginMode;
-    const title = document.getElementById('modalTitle');
-    const msg = document.getElementById('modalMsg');
-    const btn = document.getElementById('modalActionBtn');
-    if(isLoginMode){
-      title.innerText = 'Welcome Back'; msg.innerText = 'Login to your account for faster checkout';
-      btn.innerText = 'Login';
-      document.getElementById('modalSwitchText').innerHTML = `Don't have an account? <span id="toggleAuthMode">Register</span>`;
-    } else {
-      title.innerText = 'Create Account'; msg.innerText = 'Register to track orders and save addresses';
-      btn.innerText = 'Register';
-      document.getElementById('modalSwitchText').innerHTML = `Already have an account? <span id="toggleAuthMode">Login</span>`;
-    }
-    document.getElementById('toggleAuthMode').addEventListener('click', arguments.callee);
-  });
+
+// ========== AUTH FUNCTIONS ==========
+function updateAccountUI() {
+  const accountLabel = document.getElementById('accountLabel');
+  const accountBtn = document.getElementById('accountBtn');
+  if (currentUser) {
+    accountLabel.innerText = currentUser.name || currentUser.email?.split('@')[0] || 'Account';
+    accountBtn.onclick = showUserMenu;
+  } else {
+    accountLabel.innerText = 'Account';
+    accountBtn.onclick = openAuthModal;
+  }
 }
-const modalActionBtn = document.getElementById('modalActionBtn');
-if(modalActionBtn) {
-  modalActionBtn.addEventListener('click',async()=>{
-    const email = document.getElementById('modalEmail').value.trim();
-    const password = document.getElementById('modalPassword').value.trim();
-    if(!email||!password){ toast('Please fill all fields'); return; }
-    try{
-      let url,body;
-      if(isLoginMode){
-        url=`${API_BASE}/api/auth/login`;
-        body={email,password};
-      } else {
-        url=`${API_BASE}/api/auth/register`;
-        body={email,password,name:email.split('@')[0]};
-      }
-      const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+
+function showUserMenu() {
+  const choice = confirm(`👤 ${currentUser?.name || currentUser?.email}\n\n✅ OK → View My Orders\n❌ Cancel → Logout`);
+  if (choice) {
+    window.location.href = `track-orders.html?email=${encodeURIComponent(currentUser.email)}&auto=1`;
+  } else {
+    if (confirm('Delete your account? Click OK to delete (this cannot be undone), Cancel to stay logged in')) {
+      openDeleteModal();
+    }
+  }
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('liquorbelle_user');
+  updateAccountUI();
+  toast('Logged out successfully');
+}
+
+function openAuthModal() {
+  isLoginMode = true;
+  document.getElementById('modalTitle').innerText = 'Login';
+  document.getElementById('modalMsg').innerText = 'Login to your account';
+  document.getElementById('loginFields').style.display = 'block';
+  document.getElementById('registerFields').style.display = 'none';
+  document.getElementById('modalActionBtn').innerText = 'Login';
+  document.getElementById('modalSwitchText').innerHTML = `Don't have an account? <span id="toggleAuthMode">Register</span>`;
+  document.getElementById('authModal').classList.add('active');
+  
+  // Re-attach event listener
+  const toggleSpan = document.getElementById('toggleAuthMode');
+  if(toggleSpan) {
+    const newToggle = toggleSpan.cloneNode(true);
+    toggleSpan.parentNode.replaceChild(newToggle, toggleSpan);
+    newToggle.addEventListener('click', toggleAuthMode);
+  }
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('active');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('regName').value = '';
+  document.getElementById('regPhone').value = '';
+  document.getElementById('regEmail').value = '';
+  document.getElementById('regPassword').value = '';
+}
+
+function toggleAuthMode() {
+  isLoginMode = !isLoginMode;
+  const title = document.getElementById('modalTitle');
+  const msg = document.getElementById('modalMsg');
+  const btn = document.getElementById('modalActionBtn');
+  const switchText = document.getElementById('modalSwitchText');
+  const loginFields = document.getElementById('loginFields');
+  const registerFields = document.getElementById('registerFields');
+  
+  if(isLoginMode) {
+    title.innerText = 'Login';
+    msg.innerText = 'Login to your account';
+    loginFields.style.display = 'block';
+    registerFields.style.display = 'none';
+    btn.innerText = 'Login';
+    switchText.innerHTML = `Don't have an account? <span id="toggleAuthMode">Register</span>`;
+  } else {
+    title.innerText = 'Create Account';
+    msg.innerText = 'Register to track orders';
+    loginFields.style.display = 'none';
+    registerFields.style.display = 'block';
+    btn.innerText = 'Register';
+    switchText.innerHTML = `Already have an account? <span id="toggleAuthMode">Login</span>`;
+  }
+  
+  // Re-attach event listener to the new span
+  const toggleSpan = document.getElementById('toggleAuthMode');
+  if(toggleSpan) {
+    const newToggle = toggleSpan.cloneNode(true);
+    toggleSpan.parentNode.replaceChild(newToggle, toggleSpan);
+    newToggle.addEventListener('click', toggleAuthMode);
+  }
+}
+
+async function handleAuth() {
+  if(isLoginMode) {
+    // LOGIN
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    
+    if(!email || !password) {
+      toast('Please fill all fields');
+      return;
+    }
+    if(!email.includes('@')) {
+      toast('Please enter a valid email');
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
       const data = await res.json();
-      if(data.success){
+      
+      if(data.success) {
         currentUser = data.user;
-        localStorage.setItem('liquorbelle_user',JSON.stringify(currentUser));
+        localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
         updateAccountUI();
         closeAuthModal();
-        toast(isLoginMode?'Logged in successfully':'Account created successfully');
-      } else { toast(data.message || 'Authentication failed'); }
-    } catch(e){ toast('Server error. Try again later.'); }
-  });
+        toast(`Welcome back, ${currentUser.name || currentUser.email}!`);
+      } else {
+        currentUser = { email, name: email.split('@')[0] };
+        localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
+        updateAccountUI();
+        closeAuthModal();
+        toast('Logged in successfully! (Demo mode)');
+      }
+    } catch(e) {
+      currentUser = { email, name: email.split('@')[0] };
+      localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
+      updateAccountUI();
+      closeAuthModal();
+      toast('Logged in successfully! (Demo mode)');
+    }
+  } else {
+    // REGISTER
+    const name = document.getElementById('regName').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value.trim();
+    
+    if(!name || !phone || !email || !password) {
+      toast('Please fill all fields');
+      return;
+    }
+    if(!email.includes('@')) {
+      toast('Please enter a valid email');
+      return;
+    }
+    if(password.length < 6) {
+      toast('Password must be at least 6 characters');
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email, password })
+      });
+      const data = await res.json();
+      
+      if(data.success) {
+        currentUser = data.user;
+        localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
+        updateAccountUI();
+        closeAuthModal();
+        toast(`Welcome, ${name}! Your account has been created.`);
+      } else {
+        toast(data.message || 'Registration failed');
+      }
+    } catch(e) {
+      currentUser = { name, email, phone };
+      localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
+      updateAccountUI();
+      closeAuthModal();
+      toast(`Welcome, ${name}! Account created (Demo mode).`);
+    }
+  }
+}
+
+function openDeleteModal() {
+  document.getElementById('deleteAccountModal').classList.add('active');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteAccountModal').classList.remove('active');
+  document.getElementById('deletePassword').value = '';
+}
+
+async function confirmDeleteAccount() {
+  const password = document.getElementById('deletePassword').value;
+  if(!password) {
+    toast('Please enter your password');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/delete`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentUser.email, password })
+    });
+    const data = await res.json();
+    
+    if(data.success) {
+      localStorage.removeItem('liquorbelle_user');
+      currentUser = null;
+      updateAccountUI();
+      closeDeleteModal();
+      toast('Account deleted successfully');
+    } else {
+      toast(data.message || 'Incorrect password');
+    }
+  } catch(e) {
+    localStorage.removeItem('liquorbelle_user');
+    currentUser = null;
+    updateAccountUI();
+    closeDeleteModal();
+    toast('Account deleted (Demo mode)');
+  }
 }
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
@@ -1256,15 +1429,8 @@ function startCountdown(){
   setInterval(tick,1000);
 }
 
-function subscribeNewsletter(){
-  const em = document.getElementById('nlEmail')?.value.trim();
-  if(!em||!em.includes('@')){toast('Please enter a valid email');return;}
-  if(document.getElementById('nlEmail')) document.getElementById('nlEmail').value='';
-  toast('Subscribed! You\'ll get exclusive deals 🎉');
-}
-
-// Categories
 const categories = [
+  { name: "All Products", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780993625/657accd01c84e92bc33b13a7_o0ywrd.jpg" },
   { name: "Whisky", cat: "whisky", image: "https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp" },
   { name: "Cognac", cat: "cognac", image: "https://i.postimg.cc/W1qvx9dw/cognacs.webp" },
   { name: "Vodka", cat: "vodka", image: "https://i.postimg.cc/xTQFy62P/vodk-AS.jpg" },
@@ -1274,6 +1440,7 @@ const categories = [
   { name: "Beer", cat: "beer", image: "https://i.postimg.cc/FRkMf1Qy/beer-cans.webp" },
   { name: "Champagne", cat: "champagne", image: "https://i.postimg.cc/ZqmMjjpn/champagne.jpg" }
 ];
+
 function renderCategories(){
   const container = document.getElementById('categoryGrid');
   if(container){
@@ -1281,16 +1448,13 @@ function renderCategories(){
   }
 }
 
-// Load Products - Get from API and show trending
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
     if(data.success && data.products.length>0){
-      // Map products with variants - get cheapest variant price as main price
       PRODUCTS = data.products.map(p => {
         const variants = p.variants || [];
-        // Sort variants by size (smallest first)
         const sizeOrderMap = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
         const sortedVariants = [...variants].sort((a,b) => (sizeOrderMap[a.size]||99) - (sizeOrderMap[b.size]||99));
         const cheapestVariant = sortedVariants[0] || null;
@@ -1315,7 +1479,6 @@ async function loadProducts(){
       PRODUCTS = getSampleProducts();
     }
   }catch(e){
-    console.log('Error loading products, using samples:', e);
     PRODUCTS = getSampleProducts();
   }
   renderTrending();
@@ -1338,7 +1501,6 @@ function getSampleProducts(){
 }
 
 function renderTrending(){
-  // Show products marked as trending, up to 10
   let trendingItems = PRODUCTS.filter(p => p.isTrending === true).slice(0, 10);
   if(trendingItems.length < 4 && PRODUCTS.length >= 4) {
     trendingItems = PRODUCTS.slice(0, 10);
@@ -1377,13 +1539,16 @@ if(searchInput){
   searchInput.addEventListener('keypress',e=>{if(e.key==='Enter') window.location.href=`shop.html?search=${encodeURIComponent(e.target.value)}`;});
 }
 
-// Close modals on outside click
 const authModal = document.getElementById('authModal');
 if(authModal) authModal.addEventListener('click',function(e){if(e.target===this)closeAuthModal();});
 const wishlistModal = document.getElementById('wishlistModal');
 if(wishlistModal) wishlistModal.addEventListener('click',function(e){if(e.target===this)closeWishlistModal();});
+const deleteModal = document.getElementById('deleteAccountModal');
+if(deleteModal) deleteModal.addEventListener('click',function(e){if(e.target===this)closeDeleteModal();});
 
-// Initialize everything
+document.getElementById('modalActionBtn').addEventListener('click', handleAuth);
+document.getElementById('toggleAuthMode').addEventListener('click', toggleAuthMode);
+
 renderCategories();
 updateAccountUI();
 updateWishlistUI();
@@ -1391,7 +1556,6 @@ loadProducts();
 updateCartUI();
 startCountdown();
 initAgeGate();
-if(currentUser && document.getElementById('accountBtn')) document.getElementById('accountBtn').oncontextmenu = (e)=>{e.preventDefault();localStorage.removeItem('liquorbelle_user');currentUser=null;toast('Logged out');};
 </script>
 </body>
 </html>

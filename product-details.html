@@ -226,12 +226,14 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   min-width: 40px;
   text-align: center;
 }
-.add-to-cart-btn{
-  width: 100%;
+.action-buttons{
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+.add-to-cart-btn, .buy-now-btn{
+  flex: 1;
   padding: 16px;
-  background: var(--primary);
-  color: white;
-  border: none;
   border-radius: 50px;
   font-weight: 700;
   font-size: 1rem;
@@ -241,8 +243,24 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   align-items: center;
   justify-content: center;
   gap: 10px;
+  text-decoration: none;
+}
+.add-to-cart-btn{
+  background: white;
+  color: var(--primary);
+  border: 2px solid var(--primary);
 }
 .add-to-cart-btn:hover{
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+}
+.buy-now-btn{
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+.buy-now-btn:hover{
   background: var(--primary-bright);
   transform: translateY(-2px);
 }
@@ -301,6 +319,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     gap: 24px;
   }
   .search-wrap{display:none;}
+  .action-buttons{flex-direction:column;}
 }
 </style>
 </head>
@@ -373,9 +392,14 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       </div>
     </div>
     
-    <button class="add-to-cart-btn" onclick="addToCartFromDetail()">
-      <i class="ph ph-shopping-bag"></i> Add to Cart
-    </button>
+    <div class="action-buttons">
+      <button class="add-to-cart-btn" onclick="addToCartFromDetail()">
+        <i class="ph ph-shopping-bag"></i> Add to Cart
+      </button>
+      <button class="buy-now-btn" onclick="buyNow()">
+        <i class="ph ph-credit-card"></i> Buy Now
+      </button>
+    </div>
   </div>
 </div>
 
@@ -409,7 +433,6 @@ let selectedVariant = null;
 let quantity = 1;
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 
-// Get product ID from URL
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
 
@@ -445,7 +468,6 @@ function renderProductDetails() {
   document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
   document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
   
-  // Badge
   const badgeContainer = document.getElementById('productBadge');
   if(currentProduct.badge) {
     let badgeText = '';
@@ -457,7 +479,6 @@ function renderProductDetails() {
     badgeContainer.innerHTML = '';
   }
   
-  // Variant buttons - sort by size (smallest first)
   const variants = currentProduct.variants || [];
   const sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
   variants.sort((a,b) => (sizeOrder[a.size] || 99) - (sizeOrder[b.size] || 99));
@@ -469,7 +490,6 @@ function renderProductDetails() {
     </button>
   `).join('');
   
-  // Select first variant (smallest size) by default
   if(variants.length > 0) {
     selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
   }
@@ -478,7 +498,6 @@ function renderProductDetails() {
 function selectVariant(size, price, discount) {
   selectedVariant = { size, price, discount };
   
-  // Update UI
   document.querySelectorAll('.variant-btn').forEach(btn => {
     if(btn.dataset.size === size) {
       btn.classList.add('selected');
@@ -487,7 +506,6 @@ function selectVariant(size, price, discount) {
     }
   });
   
-  // Update price display
   const hasDiscount = discount > 0;
   const originalPrice = hasDiscount ? Math.round(price * 100 / (100 - discount)) : price;
   
@@ -548,10 +566,37 @@ function addToCartFromDetail() {
   
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   updateCartUI();
-  toast(`${quantity}× ${productName} (${size}) added ✓`);
+  toast(`${quantity}× ${productName} (${size}) added to cart ✓`);
 }
 
-// Cart functions
+function buyNow() {
+  if(!currentProduct || !selectedVariant) {
+    toast('Please select a size');
+    return;
+  }
+  
+  const productId = currentProduct._id;
+  const productName = currentProduct.name;
+  const price = selectedVariant.price;
+  const size = selectedVariant.size;
+  
+  if(cart[productId]) {
+    cart[productId].qty += quantity;
+  } else {
+    cart[productId] = {
+      id: productId,
+      name: productName,
+      price: price,
+      qty: quantity,
+      capacity: size,
+      size: size
+    };
+  }
+  
+  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+  window.location.href = 'checkout.html';
+}
+
 function updateCartUI(){
   const items = Object.values(cart);
   const count = items.reduce((s,i)=>s+i.qty,0);
@@ -584,7 +629,6 @@ function updateQty(id,delta){
 function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
 function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
 
-// Add cart drawer styles if not present
 const style = document.createElement('style');
 style.textContent = `
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}

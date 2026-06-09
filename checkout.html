@@ -32,7 +32,6 @@ body{
   padding-bottom:0;
 }
 
-/* Header */
 .header{
   background:var(--white);
   backdrop-filter:blur(20px);
@@ -68,7 +67,6 @@ body{
 .checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
 @media(max-width:768px){.checkout-grid{grid-template-columns:1fr;}}
 
-/* Order Summary */
 .order-summary{
   background:var(--white);
   border-radius:var(--radius);
@@ -102,8 +100,13 @@ body{
   border-top:2px solid var(--primary);
   margin-top:8px;
 }
+.free-delivery-note{
+  font-size:11px;
+  color:var(--mpesa-green);
+  margin-top:4px;
+  text-align:right;
+}
 
-/* Checkout Form */
 .checkout-form{
   background:var(--white);
   border-radius:var(--radius);
@@ -136,7 +139,6 @@ body{
   box-shadow:0 0 0 3px rgba(128,0,0,0.1);
 }
 
-/* Location Button */
 .location-pin-btn{
   cursor:pointer;
   display:inline-flex;
@@ -161,7 +163,6 @@ body{
 .location-status{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;}
 .location-helper{display:block;margin-top:6px;font-size:10px;color:var(--muted);}
 
-/* Payment Options */
 .payment-options{
   display:flex;
   gap:16px;
@@ -293,7 +294,6 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Footer */
 .footer{
   background:var(--primary);
   color:rgba(255,255,255,.85);
@@ -330,6 +330,7 @@ body{
       <div id="cartSummaryItems" class="cart-items"></div>
       <div class="summary-row"><span>Subtotal</span><span id="subtotalAmount">KES 0</span></div>
       <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 150</span></div>
+      <div class="free-delivery-note" id="freeDeliveryNote"></div>
       <div class="summary-total"><span>Total</span><span id="totalAmount">KES 0</span></div>
     </div>
 
@@ -343,7 +344,12 @@ body{
       </div>
       
       <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" placeholder="e.g. John Mwangi"></div>
-      <div class="form-group"><label>Phone Number *</label><input type="tel" id="phone" placeholder="0712345678"></div>
+      
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input type="tel" id="phone" placeholder="0712345678">
+        <small style="display:block; margin-top:4px; font-size:10px; color:var(--muted);">📱 Kenyan number format (07XX XXX XXX or 01XX XXX XXX)</small>
+      </div>
       
       <div class="form-group">
         <label>Street / Road / Estate</label>
@@ -392,7 +398,6 @@ body{
   </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
@@ -417,7 +422,6 @@ body{
 <script>
 const API_BASE_URL = 'https://liquorbelle-mpesa-backend.onrender.com';
 let deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
-let geocoder = null;
 
 function showSuccessModal(message) {
   const modal = document.getElementById('successModal');
@@ -433,8 +437,8 @@ function closeSuccessModal() {
 function toast(msg) {
   const t = document.getElementById('snack');
   t.innerText = msg;
-  t.classList.add('on');
-  setTimeout(() => t.classList.remove('on'), 3000);
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 3000);
 }
 
 async function loadDeliverySettings() {
@@ -447,67 +451,68 @@ async function loadDeliverySettings() {
   } catch(e) { console.error('Failed to load delivery settings', e); }
 }
 
-function initGoogleMaps() {
-  if (typeof google !== 'undefined' && google.maps) {
-    geocoder = new google.maps.Geocoder();
-  } else {
-    setTimeout(initGoogleMaps, 500);
+// Simple reverse geocoding using OpenStreetMap (free, no API key needed)
+async function getAddressFromCoords(lat, lng) {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+    const data = await response.json();
+    
+    if (data && data.address) {
+      let streetName = '';
+      if (data.address.road) streetName = data.address.road;
+      else if (data.address.suburb) streetName = data.address.suburb;
+      else if (data.address.village) streetName = data.address.village;
+      else if (data.address.town) streetName = data.address.town;
+      
+      if (streetName) {
+        return streetName;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Geocoding error:', error);
+    return null;
   }
-}
-
-function loadGoogleMapsAPI() {
-  if (document.querySelector('script[src*="maps.googleapis.com"]')) return;
-  const script = document.createElement('script');
-  script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places&callback=initGoogleMaps';
-  script.async = true;
-  script.defer = true;
-  document.head.appendChild(script);
 }
 
 document.getElementById('getLocationBtn').addEventListener('click', () => {
   const statusDiv = document.getElementById('locationStatus');
   statusDiv.innerHTML = '<span class="spinner"></span> Getting your exact location...';
+  statusDiv.style.color = '#666';
   
   if (!navigator.geolocation) { 
     statusDiv.innerHTML = '❌ Geolocation not supported'; 
+    statusDiv.style.color = '#e03131';
     return; 
   }
   
   navigator.geolocation.getCurrentPosition(async (position) => {
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
-    statusDiv.innerHTML = '<span class="spinner"></span> Fetching your street address...';
+    statusDiv.innerHTML = '<span class="spinner"></span> Finding your street address...';
     
-    try {
-      if (!geocoder) {
-        await new Promise(resolve => {
-          const wait = setInterval(() => { if (geocoder) { clearInterval(wait); resolve(); } }, 100);
-        });
-      }
-      
-      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-        if (status === 'OK' && results && results.length > 0) {
-          let streetName = '';
-          for (let component of results[0].address_components) {
-            if (component.types.includes('route')) { streetName = component.long_name; break; }
-            if (component.types.includes('sublocality')) { streetName = component.long_name; }
-          }
-          if (!streetName) streetName = results[0].formatted_address.split(',')[0];
-          document.getElementById('street').value = streetName;
-          statusDiv.innerHTML = `✅ Location found: ${streetName.substring(0, 50)}`;
-          statusDiv.style.color = '#2ecc71';
-        } else {
-          statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
-          statusDiv.style.color = '#e03131';
+    const streetName = await getAddressFromCoords(lat, lng);
+    
+    if (streetName) {
+      document.getElementById('street').value = streetName;
+      statusDiv.innerHTML = `✅ Location found: ${streetName.substring(0, 50)}`;
+      statusDiv.style.color = '#2ecc71';
+      setTimeout(() => {
+        if (statusDiv.innerHTML.includes('✅')) {
+          setTimeout(() => statusDiv.innerHTML = '', 4000);
         }
-        setTimeout(() => { if (statusDiv.innerHTML.includes('✅')) setTimeout(() => statusDiv.innerHTML = '', 4000); }, 5000);
-      });
-    } catch (error) { 
-      statusDiv.innerHTML = '⚠️ Address lookup failed. Please enter manually.'; 
+      }, 5000);
+    } else {
+      statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
       statusDiv.style.color = '#e03131';
     }
   }, (error) => { 
-    statusDiv.innerHTML = '❌ Location access denied. Please enter address manually.';
+    let errorMsg = '❌ Location access denied. Please enter address manually.';
+    if (error.code === 1) errorMsg = '❌ Please allow location access to use this feature';
+    else if (error.code === 2) errorMsg = '❌ Location unavailable. Please enter manually.';
+    else if (error.code === 3) errorMsg = '❌ Location request timed out. Please enter manually.';
+    
+    statusDiv.innerHTML = errorMsg;
     statusDiv.style.color = '#e03131';
     setTimeout(() => statusDiv.innerHTML = '', 5000);
   });
@@ -518,18 +523,51 @@ let selectedPayment = 'cod';
 const mpesaOption = document.getElementById('mpesaOption');
 const codOption = document.getElementById('codOption');
 
-mpesaOption.addEventListener('click', () => { selectedPayment = 'mpesa'; mpesaOption.classList.add('selected'); codOption.classList.remove('selected'); document.getElementById('mpesaInfo').style.display = 'block'; });
-codOption.addEventListener('click', () => { selectedPayment = 'cod'; codOption.classList.add('selected'); mpesaOption.classList.remove('selected'); document.getElementById('mpesaInfo').style.display = 'none'; });
+mpesaOption.addEventListener('click', () => { 
+  selectedPayment = 'mpesa'; 
+  mpesaOption.classList.add('selected'); 
+  codOption.classList.remove('selected'); 
+  document.getElementById('mpesaInfo').style.display = 'block'; 
+});
+codOption.addEventListener('click', () => { 
+  selectedPayment = 'cod'; 
+  codOption.classList.add('selected'); 
+  mpesaOption.classList.remove('selected'); 
+  document.getElementById('mpesaInfo').style.display = 'none'; 
+});
 codOption.classList.add('selected');
+
+function validatePhone(phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) {
+    return true;
+  }
+  if (cleaned.length === 12 && cleaned.startsWith('254')) {
+    return true;
+  }
+  return false;
+}
+
+function formatPhoneForDisplay(phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 12 && cleaned.startsWith('254')) {
+    return '0' + cleaned.slice(3);
+  }
+  return phone;
+}
 
 function calculateTotals() {
   const items = Object.values(cart);
   const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
   let delivery = 0;
+  let isFreeDelivery = false;
   if (deliverySettings.delivery_enabled && subtotal < deliverySettings.free_delivery_threshold) {
     delivery = deliverySettings.delivery_fee;
+    isFreeDelivery = false;
+  } else if (subtotal >= deliverySettings.free_delivery_threshold) {
+    isFreeDelivery = true;
   }
-  return { subtotal, delivery, total: subtotal + delivery };
+  return { subtotal, delivery, total: subtotal + delivery, isFreeDelivery };
 }
 
 function getFullAddress() { 
@@ -545,13 +583,28 @@ function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m =
 function renderCartSummary() {
   const items = Object.values(cart);
   const container = document.getElementById('cartSummaryItems');
-  if (items.length === 0) { container.innerHTML = '<div class="empty-cart">Your cart is empty<br><a href="shop.html" style="color:var(--primary);">Continue Shopping →</a></div>'; document.getElementById('subtotalAmount').innerText = 'KES 0'; document.getElementById('totalAmount').innerText = 'KES 0'; return; }
+  if (items.length === 0) { 
+    container.innerHTML = '<div class="empty-cart">Your cart is empty<br><a href="shop.html" style="color:var(--primary);">Continue Shopping →</a></div>'; 
+    document.getElementById('subtotalAmount').innerText = 'KES 0'; 
+    document.getElementById('totalAmount').innerText = 'KES 0';
+    document.getElementById('freeDeliveryNote').innerHTML = '';
+    return; 
+  }
   container.innerHTML = items.map(item => `<div class="cart-item"><span class="item-name">${escapeHtml(item.name)} x${item.qty}</span><span class="item-price">KES ${(item.price * item.qty).toLocaleString()}</span></div>`).join('');
-  const { subtotal, delivery, total } = calculateTotals();
+  const { subtotal, delivery, total, isFreeDelivery } = calculateTotals();
   document.getElementById('subtotalAmount').innerText = `KES ${subtotal.toLocaleString()}`;
   const deliveryText = deliverySettings.delivery_enabled ? (delivery === 0 ? 'FREE' : `KES ${delivery}`) : 'FREE';
   document.getElementById('deliveryFee').innerText = deliveryText;
   document.getElementById('totalAmount').innerText = `KES ${total.toLocaleString()}`;
+  
+  if (deliverySettings.delivery_enabled && !isFreeDelivery && subtotal > 0) {
+    const remaining = deliverySettings.free_delivery_threshold - subtotal;
+    document.getElementById('freeDeliveryNote').innerHTML = `✨ Add KES ${remaining.toLocaleString()} more for FREE delivery`;
+  } else if (isFreeDelivery && subtotal > 0) {
+    document.getElementById('freeDeliveryNote').innerHTML = `🎉 FREE Delivery applied!`;
+  } else {
+    document.getElementById('freeDeliveryNote').innerHTML = '';
+  }
 }
 
 async function saveOrderToDatabase(orderId, email, fullName, phone, address, notes, items, subtotal, delivery, total, paymentMethod, timestamp, status) {
@@ -559,7 +612,7 @@ async function saveOrderToDatabase(orderId, email, fullName, phone, address, not
     const orderData = {
       orderNumber: orderId, userId: null, customerName: fullName, customerEmail: email,
       phone, address, notes, subtotal, delivery, total, paymentMethod, status,
-      items: items.map(i => ({ productId: i.id, name: i.name, quantity: i.qty, price: i.price }))
+      items: items.map(i => ({ productId: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size }))
     };
     await fetch(`${API_BASE_URL}/api/db/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderData) });
   } catch(e) { console.error('Database save error:', e); }
@@ -570,7 +623,7 @@ async function sendOrderConfirmationEmail(orderId, email, fullName, phone, addre
   try {
     await fetch(`${API_BASE_URL}/api/send-order-email`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, orderId, customerName: fullName, phone, items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price })), subtotal, delivery, total, address, timestamp, paymentMethod })
+      body: JSON.stringify({ email, orderId, customerName: fullName, phone, items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price, size: i.size })), subtotal, delivery, total, address, timestamp, paymentMethod })
     });
   } catch (err) { console.error('Email error:', err); }
 }
@@ -581,14 +634,18 @@ async function placeOrder() {
   
   const email = document.getElementById('customerEmail').value.trim();
   const fullName = document.getElementById('fullName').value.trim();
-  const phone = document.getElementById('phone').value.trim();
+  let phone = document.getElementById('phone').value.trim();
   const street = document.getElementById('street').value.trim();
   const building = document.getElementById('building').value.trim();
   const notes = document.getElementById('notes').value.trim();
   
   if (!email || !email.includes('@')) { toast('Please enter a valid email address'); return; }
-  if (!fullName || !phone) { toast('Please fill in your name and phone number'); return; }
+  if (!fullName) { toast('Please enter your full name'); return; }
+  if (!phone) { toast('Please enter your phone number'); return; }
+  if (!validatePhone(phone)) { toast('Please enter a valid Kenyan phone number (e.g., 0712345678)'); return; }
   if (!street && !building) { toast('Please enter at least Street OR Building name'); return; }
+  
+  const displayPhone = formatPhoneForDisplay(phone);
   
   const address = getFullAddress();
   const { subtotal, delivery, total } = calculateTotals();
@@ -618,8 +675,8 @@ async function placeOrder() {
           const statusData = await statusRes.json();
           if (statusData.status === 'paid') {
             clearInterval(interval);
-            await saveOrderToDatabase(orderId, email, fullName, phone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, 'paid');
-            await sendOrderConfirmationEmail(orderId, email, fullName, phone, address, items, subtotal, delivery, total, timestamp, 'mpesa');
+            await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, 'paid');
+            await sendOrderConfirmationEmail(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, timestamp, 'mpesa');
             cart = {};
             localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
             btn.innerHTML = originalHTML;
@@ -636,8 +693,8 @@ async function placeOrder() {
       btn.disabled = false;
     }
   } else {
-    await saveOrderToDatabase(orderId, email, fullName, phone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
-    await sendOrderConfirmationEmail(orderId, email, fullName, phone, address, items, subtotal, delivery, total, timestamp, 'cod');
+    await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
+    await sendOrderConfirmationEmail(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, timestamp, 'cod');
     cart = {};
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
     btn.innerHTML = originalHTML;
@@ -646,7 +703,6 @@ async function placeOrder() {
   }
 }
 
-loadGoogleMapsAPI();
 loadDeliverySettings().then(() => renderCartSummary());
 </script>
 </body>
