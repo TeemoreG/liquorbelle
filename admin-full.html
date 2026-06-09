@@ -35,6 +35,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
 .btn-outline:hover{background:var(--primary);color:white;border-color:var(--primary);}
 .btn-red{background:var(--red);}
 .btn-red:hover{background:#c62828;}
+.btn:disabled{opacity:0.6;cursor:not-allowed;}
 
 .admin-header{
   background:var(--primary);
@@ -84,9 +85,11 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
   padding:20px;
   border:1px solid var(--border);
   box-shadow:var(--shadow);
+  transition:transform 0.2s;
 }
 .stat-card h4{font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
 .stat-card .value{font-size:28px;font-weight:800;color:var(--primary);}
+.stat-card .sub{font-size:11px;color:var(--muted);margin-top:4px;}
 
 .form-card{
   background:var(--white);
@@ -203,6 +206,7 @@ textarea{resize:vertical;}
   align-items:center;
   border-bottom:1px solid var(--border);
   font-size:13px;
+  transition:background 0.1s;
 }
 .product-row:hover{background:rgba(0,0,0,0.02);}
 .product-img{width:40px;height:40px;object-fit:cover;border-radius:8px;}
@@ -240,6 +244,7 @@ textarea{resize:vertical;}
   border-radius:var(--radius);
   border:1px solid var(--border);
   overflow:hidden;
+  transition:all 0.2s;
 }
 .order-header{
   display:flex;
@@ -310,6 +315,18 @@ textarea{resize:vertical;}
 
 .search-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
 .search-input{flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:60px;font-size:14px;}
+.loading-spinner{
+  display:inline-block;
+  width:16px;
+  height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-radius:50%;
+  border-top-color:white;
+  animation:spin 0.6s linear infinite;
+  margin-right:6px;
+  vertical-align:middle;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
 .toast{
   position:fixed;
   bottom:30px;
@@ -374,20 +391,13 @@ textarea{resize:vertical;}
       
       <h4 style="margin:16px 0 8px;">📏 Bottle Size Variants</h4>
       <table class="variants-table" id="variantsTable">
-        <thead>
-          <tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th></tr>
-        </thead>
+        <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th></tr></thead>
         <tbody id="variantsBody">
-          <tr class="variant-row">
-            <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
-            <td><input type="number" class="variant-price" placeholder="Price"></td>
-            <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td>
-            <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
-          </tr>
+          <tr class="variant-row"><td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="variant-price" placeholder="Price"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td></tr>
         </tbody>
-      黄花
+      </table>
       <button type="button" class="add-variant-btn" onclick="addVariantRow()">+ Add Another Size</button>
-      <button class="btn" onclick="addProduct()" style="margin-top:16px;">💾 Save Product</button>
+      <button class="btn" id="addProductBtn" onclick="addProduct()" style="margin-top:16px;">💾 Save Product</button>
     </div>
     
     <div class="search-bar">
@@ -396,9 +406,7 @@ textarea{resize:vertical;}
     </div>
     
     <div class="table-container">
-      <div class="table-header">
-        <div>Image</div><div>Product</div><div>Variants</div><div>Trending</div><div>Best Price</div><div>Actions</div>
-      </div>
+      <div class="table-header"><div>Image</div><div>Product</div><div>Variants</div><div>Trending</div><div>Best Price</div><div>Actions</div></div>
       <div id="productsList"></div>
     </div>
   </div>
@@ -440,16 +448,6 @@ textarea{resize:vertical;}
       </div>
       <button class="btn" onclick="saveDeliverySettings()">💾 Save Settings</button>
     </div>
-    
-    <div class="form-card">
-      <h3>🔐 Change Admin Password</h3>
-      <div class="form-row">
-        <div><label>Current Password</label><input type="password" id="currentPwd"></div>
-        <div><label>New Password</label><input type="password" id="newPwd"></div>
-        <div><label>Confirm New Password</label><input type="password" id="confirmPwd"></div>
-      </div>
-      <button class="btn" onclick="changePassword()">🔐 Change Password</button>
-    </div>
   </div>
 </div>
 
@@ -470,19 +468,10 @@ textarea{resize:vertical;}
       <input type="text" id="editImage" placeholder="Image URL">
       <textarea id="editDesc" placeholder="Description" rows="2"></textarea>
     </div>
-    
-    <div class="trending-toggle">
-      <label><input type="checkbox" id="editTrending"> 🔥 Mark as Trending</label>
-      <span style="font-size:12px;color:var(--muted);">Trending products appear on homepage</span>
-    </div>
-    
+    <div class="trending-toggle"><label><input type="checkbox" id="editTrending"> 🔥 Mark as Trending</label></div>
     <h4 style="margin:16px 0 8px;">📏 Variants</h4>
-    <table class="variants-table">
-      <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th> </thead>
-      <tbody id="editVariantsBody"></tbody>
-    黄花
+    <table class="variants-table"><tbody id="editVariantsBody"></tbody></table>
     <button type="button" class="add-variant-btn" onclick="addEditVariantRow()">+ Add Another Size</button>
-    
     <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
       <button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
       <button class="btn" onclick="saveProductEdit()">Save Changes</button>
@@ -500,13 +489,17 @@ let currentTab = 'products';
 let productSearch = '';
 let orderSearch = '';
 let adminToken = localStorage.getItem('liquorbelle_admin_token');
+let pendingActions = new Map(); // Track pending actions for optimistic updates
 
-function showToast(msg){
+function showToast(msg, isError = false){
   const t = document.getElementById('toast');
   t.innerText = msg;
   t.style.opacity = '1';
+  t.style.background = isError ? 'var(--red)' : 'var(--text)';
   setTimeout(() => t.style.opacity = '0', 2500);
+  setTimeout(() => t.style.background = 'var(--text)', 3000);
 }
+
 function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
 
 function getAuthHeaders() {
@@ -530,78 +523,70 @@ async function adminLogin(password) {
       return true;
     }
     return false;
-  } catch(e) {
-    return false;
-  }
+  } catch(e) { return false; }
 }
 
+// ========== PRODUCT FUNCTIONS with Optimistic Updates ==========
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `
-    <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
-    <td><input type="number" class="variant-price" placeholder="Price"></td>
-    <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td>
-    <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
-  `;
+  row.innerHTML = `<td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="variant-price" placeholder="Price"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>`;
   tbody.appendChild(row);
 }
+
 function removeVariantRow(btn){
   const tbody = btn.closest('tbody');
-  if(tbody.children.length > 1){
-    btn.closest('tr').remove();
-  } else {
-    showToast('At least one variant required');
-  }
+  if(tbody.children.length > 1) btn.closest('tr').remove();
+  else showToast('At least one variant required');
 }
+
 function addEditVariantRow(){
   const tbody = document.getElementById('editVariantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `
-    <td><select class="edit-variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
-    <td><input type="number" class="edit-variant-price" placeholder="Price"></td>
-    <td><input type="number" class="edit-variant-discount" placeholder="0" min="0" max="100" value="0"></td>
-    <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>
-  `;
+  row.innerHTML = `<td><select class="edit-variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price"></td><td><input type="number" class="edit-variant-discount" placeholder="0" min="0" max="100" value="0"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>`;
   tbody.appendChild(row);
 }
+
 function removeEditVariantRow(btn){
   const tbody = btn.closest('tbody');
-  if(tbody.children.length > 1){
-    btn.closest('tr').remove();
-  } else {
-    showToast('At least one variant required');
-  }
+  if(tbody.children.length > 1) btn.closest('tr').remove();
+  else showToast('At least one variant required');
 }
 
 async function addProduct(){
-  const name = document.getElementById('prodName').value.trim();
-  const category = document.getElementById('prodCategory').value;
-  const badge = document.getElementById('prodBadge').value;
-  const image = document.getElementById('prodImage').value.trim();
-  const description = document.getElementById('prodDesc').value.trim();
-  const isTrending = document.getElementById('prodTrending').checked;
+  const btn = document.getElementById('addProductBtn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+  btn.disabled = true;
   
-  if(!name){ showToast('Product name required'); return; }
-  
-  const variants = [];
-  const rows = document.querySelectorAll('#variantsBody .variant-row');
-  for(let row of rows){
-    const size = row.querySelector('.variant-size').value;
-    const price = parseFloat(row.querySelector('.variant-price').value);
-    const discount = parseInt(row.querySelector('.variant-discount').value) || 0;
-    if(!price){ showToast(`Price required for ${size}`); return; }
-    variants.push({ size, price, discount });
-  }
-  
-  try{
+  try {
+    const name = document.getElementById('prodName').value.trim();
+    const category = document.getElementById('prodCategory').value;
+    const badge = document.getElementById('prodBadge').value;
+    const image = document.getElementById('prodImage').value.trim();
+    const description = document.getElementById('prodDesc').value.trim();
+    const isTrending = document.getElementById('prodTrending').checked;
+    
+    if(!name){ showToast('Product name required'); btn.innerHTML = originalText; btn.disabled = false; return; }
+    
+    const variants = [];
+    const rows = document.querySelectorAll('#variantsBody .variant-row');
+    for(let row of rows){
+      const size = row.querySelector('.variant-size').value;
+      const price = parseFloat(row.querySelector('.variant-price').value);
+      const discount = parseInt(row.querySelector('.variant-discount').value) || 0;
+      if(!price){ showToast(`Price required for ${size}`); btn.innerHTML = originalText; btn.disabled = false; return; }
+      variants.push({ size, price, discount });
+    }
+    
     const res = await fetch(`${API_BASE}/api/db/products`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ name, category, badge, image, description, variants, isTrending })
     });
+    
     if(res.ok){
       showToast('✓ Product added');
       document.getElementById('prodName').value = '';
@@ -613,17 +598,16 @@ async function addProduct(){
       await loadProducts();
     } else {
       const err = await res.json();
-      showToast(err.message || 'Error adding product');
+      showToast(err.message || 'Error adding product', true);
     }
-  } catch(e){ showToast('Error'); }
+  } catch(e){ showToast('Error adding product', true); }
+  finally { btn.innerHTML = originalText; btn.disabled = false; }
 }
 
 function openEditModal(productId){
   const p = products.find(p => p._id === productId);
-  if(!p) {
-    showToast('Product not found');
-    return;
-  }
+  if(!p) { showToast('Product not found', true); return; }
+  
   document.getElementById('editProductId').value = p._id;
   document.getElementById('editName').value = p.name || '';
   document.getElementById('editCategory').value = p.category || 'whisky';
@@ -634,97 +618,120 @@ function openEditModal(productId){
   
   const tbody = document.getElementById('editVariantsBody');
   tbody.innerHTML = '';
-  const variants = p.variants || [];
-  if(variants.length === 0) {
-    variants.push({ size: '750ml', price: 0, discount: 0 });
-  }
+  const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
   variants.forEach(v => {
     const row = document.createElement('tr');
     row.className = 'variant-row';
-    row.innerHTML = `
-      <td><select class="edit-variant-size"><option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option><option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option><option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option><option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option><option value="1L" ${v.size==='1L'?'selected':''}>1L</option><option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option></select></td>
-      <td><input type="number" class="edit-variant-price" value="${v.price}"></td>
-      <td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td>
-      <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>
-    `;
+    row.innerHTML = `<td><select class="edit-variant-size"><option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option><option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option><option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option><option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option><option value="1L" ${v.size==='1L'?'selected':''}>1L</option><option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option></select></td><td><input type="number" class="edit-variant-price" value="${v.price}"></td><td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>`;
     tbody.appendChild(row);
   });
   document.getElementById('editModal').classList.add('active');
 }
-function closeEditModal(){
-  document.getElementById('editModal').classList.remove('active');
-}
+
+function closeEditModal(){ document.getElementById('editModal').classList.remove('active'); }
+
 async function saveProductEdit(){
-  const id = document.getElementById('editProductId').value;
-  if(!id){
-    showToast('Error: No product selected');
-    return;
-  }
+  const saveBtn = document.querySelector('#editModal .btn:last-child');
+  const originalText = saveBtn.innerHTML;
+  saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+  saveBtn.disabled = true;
   
-  const name = document.getElementById('editName').value.trim();
-  const category = document.getElementById('editCategory').value;
-  const badge = document.getElementById('editBadge').value;
-  const image = document.getElementById('editImage').value.trim();
-  const description = document.getElementById('editDesc').value.trim();
-  const isTrending = document.getElementById('editTrending').checked;
-  
-  if(!name){ showToast('Product name required'); return; }
-  
-  const variants = [];
-  const rows = document.querySelectorAll('#editVariantsBody .variant-row');
-  for(let row of rows){
-    const size = row.querySelector('.edit-variant-size').value;
-    const price = parseFloat(row.querySelector('.edit-variant-price').value);
-    const discount = parseInt(row.querySelector('.edit-variant-discount').value) || 0;
-    if(!price){ showToast(`Price required for ${size}`); return; }
-    variants.push({ size, price, discount });
-  }
-  
-  try{
+  try {
+    const id = document.getElementById('editProductId').value;
+    if(!id){ showToast('Error: No product selected', true); return; }
+    
+    const name = document.getElementById('editName').value.trim();
+    const category = document.getElementById('editCategory').value;
+    const badge = document.getElementById('editBadge').value;
+    const image = document.getElementById('editImage').value.trim();
+    const description = document.getElementById('editDesc').value.trim();
+    const isTrending = document.getElementById('editTrending').checked;
+    
+    if(!name){ showToast('Product name required', true); return; }
+    
+    const variants = [];
+    const rows = document.querySelectorAll('#editVariantsBody .variant-row');
+    for(let row of rows){
+      const size = row.querySelector('.edit-variant-size').value;
+      const price = parseFloat(row.querySelector('.edit-variant-price').value);
+      const discount = parseInt(row.querySelector('.edit-variant-discount').value) || 0;
+      if(!price){ showToast(`Price required for ${size}`, true); return; }
+      variants.push({ size, price, discount });
+    }
+    
+    // Optimistic update
+    const productIndex = products.findIndex(p => p._id === id);
+    const originalProduct = productIndex !== -1 ? {...products[productIndex]} : null;
+    if(productIndex !== -1){
+      products[productIndex] = { ...products[productIndex], name, category, badge, image, description, variants, isTrending };
+      renderProducts();
+      updateStats();
+    }
+    
     const res = await fetch(`${API_BASE}/api/db/products/${id}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ name, category, badge, image, description, variants, isTrending })
     });
+    
     if(res.ok){
       showToast('✓ Product updated');
       closeEditModal();
-      await loadProducts();
     } else {
-      const err = await res.json();
-      showToast(err.message || 'Error updating product');
+      if(originalProduct && productIndex !== -1) products[productIndex] = originalProduct;
+      renderProducts();
+      updateStats();
+      showToast('Error updating product', true);
     }
   } catch(e){ 
-    console.error('Update error:', e);
-    showToast('Error updating product'); 
+    showToast('Error updating product', true);
+    await loadProducts();
+  } finally {
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
   }
 }
 
 async function deleteProduct(id){
   if(!confirm('Delete this product permanently?')) return;
+  
+  // Optimistic update - remove from UI immediately
+  const productIndex = products.findIndex(p => p._id === id);
+  const deletedProduct = productIndex !== -1 ? products[productIndex] : null;
+  if(productIndex !== -1){
+    products.splice(productIndex, 1);
+    renderProducts();
+    updateStats();
+  }
+  
   try{
-    const res = await fetch(`${API_BASE}/api/db/products/${id}`, { 
-      method: 'DELETE',
-      headers: getAuthHeaders()
-    });
-    if(res.ok){
+    const res = await fetch(`${API_BASE}/api/db/products/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    if(!res.ok){
+      if(deletedProduct) products.splice(productIndex, 0, deletedProduct);
+      renderProducts();
+      updateStats();
+      showToast('Error deleting product', true);
+    } else {
       showToast('Product deleted');
-      await loadProducts();
     }
-  } catch(e){ showToast('Error'); }
+  } catch(e){ 
+    if(deletedProduct) products.splice(productIndex, 0, deletedProduct);
+    renderProducts();
+    updateStats();
+    showToast('Error', true); 
+  }
 }
 
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
-    if(data.success) {
-      products = data.products.map(p => ({ ...p, id: p._id }));
-    }
+    if(data.success) products = data.products.map(p => ({ ...p, id: p._id }));
   } catch(e){ products = []; }
   renderProducts();
   updateStats();
 }
+
 function renderProducts(){
   let filtered = products;
   if(productSearch){
@@ -739,24 +746,21 @@ function renderProducts(){
     const variants = p.variants || [];
     const bestPrice = variants.length ? Math.min(...variants.map(v => v.price || 0)) : 0;
     const isTrending = p.isTrending || false;
-    return `
-      <div class="product-row">
-        <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'"></div>
-        <div><div class="product-name">${escapeHtml(p.name)}</div><div style="font-size:11px;color:var(--muted);">${p.category || ''}</div></div>
-        <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()} ${v.discount ? `(${v.discount}% off)` : ''}</span>`).join('')}</div>
-        <div>${isTrending ? '<span class="trending-badge">🔥 Trending</span>' : '-'}</div>
-        <div>KES ${bestPrice.toLocaleString()}</div>
-        <div><button class="edit-btn" onclick="openEditModal('${p._id}')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')"><i class="ph ph-trash"></i></button></div>
-      </div>
-    `;
+    return `<div class="product-row">
+      <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'"></div>
+      <div><div class="product-name">${escapeHtml(p.name)}</div><div style="font-size:11px;color:var(--muted);">${p.category || ''}</div></div>
+      <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()} ${v.discount ? `(${v.discount}% off)` : ''}</span>`).join('')}</div>
+      <div>${isTrending ? '<span class="trending-badge">🔥 Trending</span>' : '-'}</div>
+      <div>KES ${bestPrice.toLocaleString()}</div>
+      <div><button class="edit-btn" onclick="openEditModal('${p._id}')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')"><i class="ph ph-trash"></i></button></div>
+    </div>`;
   }).join('');
 }
 
+// ========== ORDER FUNCTIONS with Optimistic Updates ==========
 async function loadOrders(){
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders`, {
-      headers: getAuthHeaders()
-    });
+    const res = await fetch(`${API_BASE}/api/db/orders`, { headers: getAuthHeaders() });
     const data = await res.json();
     if(data.success) orders = data.orders;
   } catch(e){ orders = []; }
@@ -764,36 +768,119 @@ async function loadOrders(){
   if(currentTab === 'analytics') renderAnalytics();
   updateOrderStats();
 }
+
 async function markOrderPaid(id){
+  const orderIndex = orders.findIndex(o => o._id === id);
+  if(orderIndex === -1) return;
+  
+  const originalOrder = { ...orders[orderIndex] };
+  orders[orderIndex].status = 'paid';
+  if(currentTab === 'orders') renderOrders();
+  updateOrderStats();
+  if(currentTab === 'analytics') renderAnalytics();
+  
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'paid' })
     });
-    if(res.ok){ showToast('✅ Order marked as PAID'); await loadOrders(); }
-  } catch(e){ showToast('Error'); }
+    if(res.status === 429){
+      showToast('⚠️ Server busy, retrying...');
+      setTimeout(() => markOrderPaid(id), 2000);
+      return;
+    }
+    if(!res.ok){
+      orders[orderIndex] = originalOrder;
+      if(currentTab === 'orders') renderOrders();
+      updateOrderStats();
+      if(currentTab === 'analytics') renderAnalytics();
+      showToast('Error updating order', true);
+    } else {
+      showToast('✅ Order marked as PAID');
+    }
+  } catch(e){
+    orders[orderIndex] = originalOrder;
+    if(currentTab === 'orders') renderOrders();
+    updateOrderStats();
+    if(currentTab === 'analytics') renderAnalytics();
+    showToast('Error', true);
+  }
 }
+
 async function markOrderDelivered(id){
+  const orderIndex = orders.findIndex(o => o._id === id);
+  if(orderIndex === -1) return;
+  
+  const originalOrder = { ...orders[orderIndex] };
+  orders[orderIndex].status = 'delivered';
+  if(currentTab === 'orders') renderOrders();
+  updateOrderStats();
+  if(currentTab === 'analytics') renderAnalytics();
+  
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'delivered' })
     });
-    if(res.ok){ showToast('🚚 Order marked as DELIVERED'); await loadOrders(); }
-  } catch(e){ showToast('Error'); }
+    if(res.status === 429){
+      showToast('⚠️ Server busy, retrying...');
+      setTimeout(() => markOrderDelivered(id), 2000);
+      return;
+    }
+    if(!res.ok){
+      orders[orderIndex] = originalOrder;
+      if(currentTab === 'orders') renderOrders();
+      updateOrderStats();
+      if(currentTab === 'analytics') renderAnalytics();
+      showToast('Error updating order', true);
+    } else {
+      showToast('🚚 Order marked as DELIVERED');
+    }
+  } catch(e){
+    orders[orderIndex] = originalOrder;
+    if(currentTab === 'orders') renderOrders();
+    updateOrderStats();
+    if(currentTab === 'analytics') renderAnalytics();
+    showToast('Error', true);
+  }
 }
+
 async function deleteOrder(id){
   if(!confirm('⚠️ Delete this order permanently?')) return;
+  
+  const orderIndex = orders.findIndex(o => o._id === id);
+  const deletedOrder = orderIndex !== -1 ? orders[orderIndex] : null;
+  if(orderIndex !== -1){
+    orders.splice(orderIndex, 1);
+    if(currentTab === 'orders') renderOrders();
+    updateOrderStats();
+    if(currentTab === 'analytics') renderAnalytics();
+  }
+  
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders/${id}`, { 
-      method: 'DELETE',
-      headers: getAuthHeaders()
-    });
-    if(res.ok){ showToast('Order deleted'); await loadOrders(); }
-  } catch(e){ showToast('Error'); }
+    const res = await fetch(`${API_BASE}/api/db/orders/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    if(!res.ok && deletedOrder){
+      orders.splice(orderIndex, 0, deletedOrder);
+      if(currentTab === 'orders') renderOrders();
+      updateOrderStats();
+      if(currentTab === 'analytics') renderAnalytics();
+      showToast('Error deleting order', true);
+    } else {
+      showToast('Order deleted');
+    }
+  } catch(e){
+    if(deletedOrder){
+      orders.splice(orderIndex, 0, deletedOrder);
+      if(currentTab === 'orders') renderOrders();
+      updateOrderStats();
+      if(currentTab === 'analytics') renderAnalytics();
+    }
+    showToast('Error', true);
+  }
 }
+
 function renderOrders(){
   let filtered = orders;
   if(orderSearch){
@@ -807,30 +894,39 @@ function renderOrders(){
   container.innerHTML = filtered.map(o => {
     let items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); } catch(e){ items = []; } }
-    return `
-      <div class="order-card">
-        <div class="order-header">
-          <div><div class="order-id">📦 ${o.order_number || o._id?.slice(0,8) || 'N/A'}</div>
-          <div style="font-weight:600;">${escapeHtml(o.customer_name)}</div>
-          <div style="font-size:11px;color:var(--muted);">📧 ${escapeHtml(o.customer_email)}</div>
-          <div style="font-size:11px;color:var(--muted);">📅 ${new Date(o.created_at).toLocaleString()}</div>
-          <div style="font-size:11px;">📞 ${o.phone || 'No phone'}</div></div>
+    const phoneRaw = o.phone || '';
+    const cleanPhone = phoneRaw.replace(/\D/g, '');
+    const waLink = `https://wa.me/${cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone}`;
+    const callLink = `tel:${cleanPhone}`;
+    return `<div class="order-card">
+      <div class="order-header">
+        <div><div class="order-id">📦 ${o.order_number || o._id?.slice(0,8) || 'N/A'}</div>
+        <div style="font-weight:600;">${escapeHtml(o.customer_name)}</div>
+        <div style="font-size:11px;">📧 ${escapeHtml(o.customer_email)}</div>
+        <div style="font-size:11px;">📅 ${new Date(o.created_at).toLocaleString()}</div>
+        <div style="font-size:11px;">📞 ${o.phone || 'No phone'}</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
           <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
-        </div>
-        <div class="order-items">${items.map(i => `<div class="order-item"><span>🍾 ${escapeHtml(i.product_name)} ${i.size ? `(${i.size})` : ''} × ${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('')}</div>
-        <div class="order-footer">
-          <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
-          <div style="display:flex;gap:8px;">
-            ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')">✓ Mark Paid</button>` : ''}
-            ${o.status === 'paid' ? `<button class="btn btn-sm" style="background:var(--gold);" onclick="markOrderDelivered('${o._id}')">🚚 Delivered</button>` : ''}
-            <button class="btn btn-sm btn-red" onclick="deleteOrder('${o._id}')">🗑️ Delete</button>
+          <div style="display:flex; gap:6px;">
+            <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa" style="background:#25D366;text-decoration:none;">📱 WhatsApp</a>
+            <a href="${callLink}" class="btn btn-sm btn-call" style="background:#3b82f6;text-decoration:none;">📞 Call</a>
           </div>
         </div>
       </div>
-    `;
+      <div class="order-items">${items.map(i => `<div class="order-item"><span>🍾 ${escapeHtml(i.product_name)} ${i.size ? `(${i.size})` : ''} × ${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('')}</div>
+      <div class="order-footer">
+        <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
+        <div style="display:flex;gap:8px;">
+          ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')">✓ Mark Paid</button>` : ''}
+          ${o.status === 'paid' ? `<button class="btn btn-sm" style="background:var(--gold);" onclick="markOrderDelivered('${o._id}')">🚚 Delivered</button>` : ''}
+          <button class="btn btn-sm btn-red" onclick="deleteOrder('${o._id}')">🗑️ Delete</button>
+        </div>
+      </div>
+    </div>`;
   }).join('');
 }
 
+// ========== STATS & ANALYTICS ==========
 function updateStats(){
   const trendingCount = products.filter(p => p.isTrending === true).length;
   document.getElementById('productStats').innerHTML = `
@@ -842,17 +938,22 @@ function updateStats(){
   document.getElementById('totalProducts').innerText = products.length;
   if(document.getElementById('trendingCount')) document.getElementById('trendingCount').innerText = trendingCount;
 }
+
 function updateOrderStats(){
+  const pending = orders.filter(o=>o.status==='pending').length;
+  const paid = orders.filter(o=>o.status==='paid').length;
+  const delivered = orders.filter(o=>o.status==='delivered').length;
   document.getElementById('orderStats').innerHTML = `
     <div class="stat-card"><h4>Total Orders</h4><div class="value">${orders.length}</div></div>
-    <div class="stat-card"><h4>Pending</h4><div class="value">${orders.filter(o=>o.status==='pending').length}</div></div>
-    <div class="stat-card"><h4>Paid</h4><div class="value">${orders.filter(o=>o.status==='paid').length}</div></div>
-    <div class="stat-card"><h4>Delivered</h4><div class="value">${orders.filter(o=>o.status==='delivered').length}</div></div>
+    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div></div>
+    <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div></div>
+    <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div></div>
   `;
-  document.getElementById('pendingCount').innerText = orders.filter(o=>o.status==='pending').length;
-  document.getElementById('paidCount').innerText = orders.filter(o=>o.status==='paid').length;
-  document.getElementById('deliveredCount').innerText = orders.filter(o=>o.status==='delivered').length;
+  document.getElementById('pendingCount').innerText = pending;
+  document.getElementById('paidCount').innerText = paid;
+  document.getElementById('deliveredCount').innerText = delivered;
 }
+
 function renderAnalytics(){
   const delivered = orders.filter(o => o.status === 'delivered');
   const revenue = delivered.reduce((s,o) => s + (o.total||0), 0);
@@ -862,12 +963,11 @@ function renderAnalytics(){
   document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
 }
 
+// ========== SETTINGS ==========
 async function loadDeliverySettings(){
   if(!adminToken) return;
   try{
-    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, {
-      headers: getAuthHeaders()
-    });
+    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, { headers: getAuthHeaders() });
     const data = await res.json();
     if(data.success && data.settings){
       document.getElementById('deliveryFee').value = data.settings.delivery_fee || 150;
@@ -876,8 +976,8 @@ async function loadDeliverySettings(){
     }
   } catch(e){}
 }
+
 async function saveDeliverySettings(){
-  if(!adminToken) return;
   const settings = {
     delivery_fee: parseInt(document.getElementById('deliveryFee').value) || 0,
     free_delivery_threshold: parseInt(document.getElementById('freeThreshold').value) || 0,
@@ -890,24 +990,11 @@ async function saveDeliverySettings(){
       body: JSON.stringify(settings)
     });
     if(res.ok) showToast('✅ Delivery settings saved!');
-  } catch(e){ showToast('Error saving settings'); }
+    else showToast('Error saving settings', true);
+  } catch(e){ showToast('Error', true); }
 }
 
-function changePassword(){
-  const current = document.getElementById('currentPwd').value;
-  const newPwd = document.getElementById('newPwd').value;
-  const confirm = document.getElementById('confirmPwd').value;
-  // Password change handled by backend - this is just local simulation
-  if(newPwd.length < 6){ showToast('❌ New password must be at least 6 characters'); return; }
-  if(newPwd !== confirm){ showToast('❌ New passwords do not match'); return; }
-  // In production, this would call an API endpoint
-  localStorage.setItem('liquorbelle_admin_password', newPwd);
-  showToast('✅ Password changed (local only)');
-  document.getElementById('currentPwd').value = '';
-  document.getElementById('newPwd').value = '';
-  document.getElementById('confirmPwd').value = '';
-}
-
+// ========== UI EVENT HANDLERS ==========
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -926,42 +1013,28 @@ document.getElementById('productSearch')?.addEventListener('input', (e) => { pro
 document.getElementById('orderSearch')?.addEventListener('input', (e) => { orderSearch = e.target.value.toLowerCase(); renderOrders(); });
 function clearProductSearch(){ productSearch = ''; document.getElementById('productSearch').value = ''; renderProducts(); }
 function clearOrderSearch(){ orderSearch = ''; document.getElementById('orderSearch').value = ''; renderOrders(); }
+function logout(){ localStorage.removeItem('liquorbelle_admin_token'); adminToken = null; location.reload(); }
 
-function logout(){
-  localStorage.removeItem('liquorbelle_admin_token');
-  sessionStorage.removeItem('liquorbelle_admin_full');
-  location.reload();
-}
-
-// Check authentication on load
+// ========== INITIALIZATION ==========
 async function initAdmin() {
-  // Try to get existing token
   adminToken = localStorage.getItem('liquorbelle_admin_token');
-  
   if(!adminToken) {
     const password = prompt('Enter Full Admin password:');
     if(password) {
       const success = await adminLogin(password);
-      if(!success) {
-        alert('Invalid password');
-        window.location.href = 'index.html';
-        return;
-      }
-    } else {
-      window.location.href = 'index.html';
-      return;
-    }
+      if(!success) { alert('Invalid password'); window.location.href = 'index.html'; return; }
+    } else { window.location.href = 'index.html'; return; }
   }
-  
-  // Load all data
   await loadProducts();
   await loadOrders();
   await loadDeliverySettings();
 }
 
 initAdmin();
-setInterval(loadProducts, 30000);
-setInterval(loadOrders, 30000);
+
+// Background refresh every 2 minutes (much slower to prevent rate limits)
+setInterval(() => { loadProducts(); }, 120000);
+setInterval(() => { loadOrders(); }, 120000);
 </script>
 </body>
 </html>
