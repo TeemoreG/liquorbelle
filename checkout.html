@@ -477,6 +477,8 @@ body{
 <script>
 const API_BASE_URL = 'https://liquorbelle-mpesa-backend.onrender.com';
 let deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
+let paymentInterval = null;
+let paymentTimeout = null;
 
 function showSuccessModal(message) {
   const modal = document.getElementById('successModal');
@@ -489,11 +491,15 @@ function closeSuccessModal() {
   window.location.href = 'track-orders.html';
 }
 
-function toast(msg) {
+function toast(msg, isError = false) {
   const t = document.getElementById('snack');
   t.innerText = msg;
   t.style.opacity = '1';
-  setTimeout(() => t.style.opacity = '0', 3000);
+  t.style.background = isError ? '#D50000' : 'var(--text)';
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.background = 'var(--text)';
+  }, 5000);
 }
 
 async function loadDeliverySettings() {
@@ -683,6 +689,19 @@ async function sendOrderConfirmationEmail(orderId, email, fullName, phone, addre
   } catch (err) { console.error('Email error:', err); }
 }
 
+function resetPlaceOrderButton(btn, originalHTML) {
+  if (paymentInterval) {
+    clearInterval(paymentInterval);
+    paymentInterval = null;
+  }
+  if (paymentTimeout) {
+    clearTimeout(paymentTimeout);
+    paymentTimeout = null;
+  }
+  btn.innerHTML = originalHTML;
+  btn.disabled = false;
+}
+
 async function placeOrder() {
   const items = Object.values(cart);
   if (items.length === 0) { toast('Your cart is empty'); return; }
@@ -717,43 +736,59 @@ async function placeOrder() {
       const res = await fetch(`${API_BASE_URL}/api/stkpush`, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ phone, amount: total, orderId, customerName: fullName, address, items, subtotal, delivery, total, paymentMethod: 'mpesa' }) 
+        body: JSON.stringify({ phone, amount: total, orderId, customerName: fullName, address, items, subtotal, delivery, total, paymentMethod: 'mpesa', customerEmail: email }) 
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.message || 'STK push failed');
       
-      toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay.');
+      toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay. You have 90 seconds to complete payment.');
       
-      const interval = setInterval(async () => {
+      let paymentCompleted = false;
+      
+      // Set timeout for payment (90 seconds)
+      paymentTimeout = setTimeout(() => {
+        if (!paymentCompleted) {
+          if (paymentInterval) clearInterval(paymentInterval);
+          resetPlaceOrderButton(btn, originalHTML);
+          toast('❌ Payment timeout. You did not complete the payment in time. Please try again.', true);
+        }
+      }, 90000);
+      
+      // Check payment status every 3 seconds
+      paymentInterval = setInterval(async () => {
+        if (paymentCompleted) return;
         try {
           const statusRes = await fetch(`${API_BASE_URL}/api/status/${orderId}`);
           const statusData = await statusRes.json();
           if (statusData.status === 'paid') {
-            clearInterval(interval);
+            paymentCompleted = true;
+            clearInterval(paymentInterval);
+            clearTimeout(paymentTimeout);
+            paymentInterval = null;
+            paymentTimeout = null;
+            
             await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, 'paid');
             await sendOrderConfirmationEmail(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, timestamp, 'mpesa');
             cart = {};
             localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-            btn.innerHTML = originalHTML;
-            btn.disabled = false;
+            renderCartSummary();
             showSuccessModal('✅ Payment confirmed! Check your email for order details.');
           }
-        } catch (e) { console.error(e); }
+        } catch (e) { console.error('Status check error:', e); }
       }, 3000);
-      setTimeout(() => clearInterval(interval), 120000);
       
     } catch (err) {
-      toast('Payment initiation failed. Try again or use Cash on Delivery');
-      btn.innerHTML = originalHTML;
-      btn.disabled = false;
+      resetPlaceOrderButton(btn, originalHTML);
+      toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
     }
   } else {
+    // COD - immediate success
     await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
     await sendOrderConfirmationEmail(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, timestamp, 'cod');
     cart = {};
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    btn.innerHTML = originalHTML;
-    btn.disabled = false;
+    renderCartSummary();
+    resetPlaceOrderButton(btn, originalHTML);
     showSuccessModal('📋 Order placed! Check your email for confirmation and tracking link.');
   }
 }
