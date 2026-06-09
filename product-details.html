@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<title>LiquorBelle — Product Details</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --primary:#800000;
+  --primary-bright:#990000;
+  --sale-red:#D50000;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --success:#1A8A3E;
+  --gold:#B8860B;
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 2px 12px rgba(128,0,0,0.08);
+  --shadow-lg:0 8px 32px rgba(128,0,0,0.14);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans',-apple-system,sans-serif;
+}
+body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
+
+.top-bar{
+  background:var(--primary);
+  color:rgba(255,255,255,.92);
+  padding:8px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.top-bar-left{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.top-bar-left span{display:inline-flex;align-items:center;gap:5px;opacity:.9;}
+.badge-24h{
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  padding:3px 12px;border-radius:50px;
+  font-size:11px;font-weight:600;color:#fff;
+}
+
+.main-header{
+  background:var(--primary);
+  padding:14px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+  position:sticky;top:0;z-index:200;
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-img{height:44px;width:44px;object-fit:cover;background:white;padding:2px;border-radius:8px;}
+.logo-text{font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;text-decoration:none;text-shadow:0 1px 2px rgba(0,0,0,0.1);}
+.logo-text small{display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:2px;text-transform:uppercase;}
+.search-wrap{flex:1;max-width:460px;position:relative;}
+.search-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px;}
+.search-wrap input{
+  width:100%;
+  padding:11px 16px 11px 44px;
+  background:rgba(255,255,255,0.92);
+  border:1.5px solid transparent;
+  border-radius:50px;
+  font-size:13.5px;font-family:var(--font-body);color:var(--text);
+}
+.search-wrap input:focus{outline:none;background:#fff;border-color:var(--white);}
+.header-actions{display:flex;align-items:center;gap:8px;}
+.action-group{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+.action-label{font-size:8px;font-weight:600;color:rgba(255,255,255,0.85);text-transform:uppercase;}
+.hbtn{
+  width:35px;height:35px;border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:white;
+  color:var(--primary);
+  border:none;
+  cursor:pointer;
+  position:relative;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.hbtn:hover{background:var(--bg2);transform:translateY(-2px);}
+.hbtn i{font-size:15px;color:var(--primary);}
+.cart-count{
+  position:absolute;top:-5px;right:-5px;
+  background:var(--sale-red);color:#fff;
+  font-size:9px;font-weight:700;
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid white;
+}
+
+.product-detail-container{
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 5%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+.product-image-section img{
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  background: white;
+  padding: 20px;
+}
+.product-info-section h1{
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.product-category{
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.product-badge{
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.badge-hot{background:var(--primary);color:white;}
+.badge-local{background:var(--gold);color:white;}
+.badge-prem{background:#5B3A8E;color:white;}
+.product-description{
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.variant-selector{
+  margin-bottom: 24px;
+}
+.variant-selector label{
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.variant-buttons{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.variant-btn{
+  padding: 10px 20px;
+  border: 2px solid var(--border);
+  background: white;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.variant-btn:hover{
+  border-color: var(--primary);
+}
+.variant-btn.selected{
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.price-display{
+  margin-bottom: 24px;
+}
+.price-old{
+  font-size: 1rem;
+  color: var(--muted);
+  text-decoration: line-through;
+  margin-right: 12px;
+}
+.price-new{
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--sale-red);
+}
+.discount-badge{
+  background: rgba(26,138,62,0.1);
+  color: var(--success);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-left: 12px;
+}
+.quantity-selector{
+  margin-bottom: 24px;
+}
+.quantity-selector label{
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.qty-control{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.qty-btn{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.qty-value{
+  font-size: 1.2rem;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+.add-to-cart-btn{
+  width: 100%;
+  padding: 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.add-to-cart-btn:hover{
+  background: var(--primary-bright);
+  transform: translateY(-2px);
+}
+.back-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  text-decoration: none;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+.footer{
+  background:var(--primary);
+  color:rgba(255,255,255,.85);
+  padding:40px 5% 28px;
+  margin-top:40px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:32px;
+  margin-bottom:32px;
+}
+.footer-col h4{font-size:.9rem;font-weight:700;margin-bottom:16px;color:#fff;}
+.footer-col p,.footer-col a{display:block;font-size:.75rem;margin-bottom:8px;opacity:.7;color:#fff;text-decoration:none;}
+.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:.7rem;opacity:.6;}
+.cart-remove-btn {
+  background: #dc3545 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 5px 12px !important;
+  font-size: 0.7rem !important;
+  cursor: pointer !important;
+}
+#toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--text);
+  color:#fff;
+  padding:10px 22px;
+  border-radius:50px;
+  font-size:.8rem;
+  opacity:0;
+  transition:opacity .2s;
+  z-index:600;
+  pointer-events:none;
+  white-space:nowrap;
+}
+@media(max-width:768px){
+  .product-detail-container{
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .search-wrap{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <span><i class="ph ph-map-pin"></i>Dagoretti Road, Nairobi</span>
+    <span><i class="ph ph-phone-call"></i>+254 748 894 443</span>
+  </div>
+  <div class="badge-24h"><i class="ph ph-clock"></i>&nbsp;Open 24/7</div>
+</div>
+
+<header class="main-header">
+  <a class="logo" href="index.html" style="text-decoration:none;">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle logo">
+    <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
+  </a>
+  <div class="search-wrap">
+    <i class="ph ph-magnifying-glass"></i>
+    <input type="text" id="searchInput" placeholder="Search whisky, wine, beer…">
+  </div>
+  <div class="header-actions">
+    <div class="action-group" onclick="window.location.href='checkout.html'">
+      <div class="hbtn"><i class="ph ph-credit-card"></i></div>
+      <span class="action-label">Checkout</span>
+    </div>
+    <div class="action-group" onclick="window.location.href='index.html'">
+      <div class="hbtn"><i class="ph ph-house"></i></div>
+      <span class="action-label">Home</span>
+    </div>
+    <div class="action-group" onclick="openCartDrawer()">
+      <div class="hbtn">
+        <i class="ph ph-shopping-bag"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
+      <span class="action-label">Cart</span>
+    </div>
+  </div>
+</header>
+
+<div class="product-detail-container">
+  <div class="product-image-section">
+    <img id="productImage" src="" alt="Product Image">
+  </div>
+  <div class="product-info-section">
+    <a href="shop.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Shop</a>
+    <h1 id="productName">Loading...</h1>
+    <div class="product-category" id="productCategory"></div>
+    <div id="productBadge"></div>
+    <p class="product-description" id="productDescription"></p>
+    
+    <div class="variant-selector">
+      <label>Select Size:</label>
+      <div class="variant-buttons" id="variantButtons"></div>
+    </div>
+    
+    <div class="price-display">
+      <span class="price-old" id="priceOld" style="display:none;"></span>
+      <span class="price-new" id="priceNew">KES 0</span>
+      <span class="discount-badge" id="discountBadge" style="display:none;"></span>
+    </div>
+    
+    <div class="quantity-selector">
+      <label>Quantity:</label>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="decreaseQty()">−</button>
+        <span class="qty-value" id="qtyValue">1</span>
+        <button class="qty-btn" onclick="increaseQty()">+</button>
+      </div>
+    </div>
+    
+    <button class="add-to-cart-btn" onclick="addToCartFromDetail()">
+      <i class="ph ph-shopping-bag"></i> Add to Cart
+    </button>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a></div>
+    <div class="footer-col"><h4>Customer Support</h4><p><i class="ph ph-phone-call"></i> +254 748 894 443</p><p><i class="ph ph-whatsapp-logo"></i> WhatsApp 24/7</p></div>
+    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly.</p></div>
+</footer>
+
+<div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><span>Your Cart</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
+  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
+    <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout →</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
+
+let currentProduct = null;
+let selectedVariant = null;
+let quantity = 1;
+let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+
+// Get product ID from URL
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id');
+
+function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
+function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
+
+async function loadProduct() {
+  if(!productId) {
+    toast('Product not found');
+    return;
+  }
+  try{
+    const res = await fetch(`${API_BASE}/api/db/products`);
+    const data = await res.json();
+    if(data.success && data.products) {
+      currentProduct = data.products.find(p => p._id === productId);
+      if(currentProduct) {
+        renderProductDetails();
+      } else {
+        toast('Product not found');
+      }
+    }
+  } catch(e){
+    console.error('Error loading product:', e);
+    toast('Error loading product');
+  }
+}
+
+function renderProductDetails() {
+  document.getElementById('productName').innerText = currentProduct.name;
+  document.getElementById('productCategory').innerText = currentProduct.category || '';
+  document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
+  document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
+  document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
+  
+  // Badge
+  const badgeContainer = document.getElementById('productBadge');
+  if(currentProduct.badge) {
+    let badgeText = '';
+    if(currentProduct.badge === 'hot') badgeText = '🔥 Hot Deal';
+    else if(currentProduct.badge === 'local') badgeText = '🇰🇪 Local Favorite';
+    else if(currentProduct.badge === 'prem') badgeText = '⭐ Premium';
+    badgeContainer.innerHTML = `<div class="product-badge badge-${currentProduct.badge}">${badgeText}</div>`;
+  } else {
+    badgeContainer.innerHTML = '';
+  }
+  
+  // Variant buttons - sort by size (smallest first)
+  const variants = currentProduct.variants || [];
+  const sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
+  variants.sort((a,b) => (sizeOrder[a.size] || 99) - (sizeOrder[b.size] || 99));
+  
+  const variantContainer = document.getElementById('variantButtons');
+  variantContainer.innerHTML = variants.map(v => `
+    <button class="variant-btn" data-size="${v.size}" data-price="${v.price}" data-discount="${v.discount || 0}" onclick="selectVariant('${v.size}', ${v.price}, ${v.discount || 0})">
+      ${v.size}
+    </button>
+  `).join('');
+  
+  // Select first variant (smallest size) by default
+  if(variants.length > 0) {
+    selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
+  }
+}
+
+function selectVariant(size, price, discount) {
+  selectedVariant = { size, price, discount };
+  
+  // Update UI
+  document.querySelectorAll('.variant-btn').forEach(btn => {
+    if(btn.dataset.size === size) {
+      btn.classList.add('selected');
+    } else {
+      btn.classList.remove('selected');
+    }
+  });
+  
+  // Update price display
+  const hasDiscount = discount > 0;
+  const originalPrice = hasDiscount ? Math.round(price * 100 / (100 - discount)) : price;
+  
+  const priceOldEl = document.getElementById('priceOld');
+  const priceNewEl = document.getElementById('priceNew');
+  const discountBadge = document.getElementById('discountBadge');
+  
+  if(hasDiscount) {
+    priceOldEl.style.display = 'inline';
+    priceOldEl.innerHTML = `KES ${originalPrice.toLocaleString()}`;
+    priceNewEl.innerHTML = `KES ${price.toLocaleString()}`;
+    discountBadge.style.display = 'inline';
+    discountBadge.innerHTML = `-${discount}%`;
+  } else {
+    priceOldEl.style.display = 'none';
+    priceNewEl.innerHTML = `KES ${price.toLocaleString()}`;
+    discountBadge.style.display = 'none';
+  }
+}
+
+function increaseQty() {
+  if(quantity < 10) {
+    quantity++;
+    document.getElementById('qtyValue').innerText = quantity;
+  }
+}
+
+function decreaseQty() {
+  if(quantity > 1) {
+    quantity--;
+    document.getElementById('qtyValue').innerText = quantity;
+  }
+}
+
+function addToCartFromDetail() {
+  if(!currentProduct || !selectedVariant) {
+    toast('Please select a size');
+    return;
+  }
+  
+  const productId = currentProduct._id;
+  const productName = currentProduct.name;
+  const price = selectedVariant.price;
+  const size = selectedVariant.size;
+  
+  if(cart[productId]) {
+    cart[productId].qty += quantity;
+  } else {
+    cart[productId] = {
+      id: productId,
+      name: productName,
+      price: price,
+      qty: quantity,
+      capacity: size,
+      size: size
+    };
+  }
+  
+  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+  updateCartUI();
+  toast(`${quantity}× ${productName} (${size}) added ✓`);
+}
+
+// Cart functions
+function updateCartUI(){
+  const items = Object.values(cart);
+  const count = items.reduce((s,i)=>s+i.qty,0);
+  const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('cartCount').innerText = count;
+  const container = document.getElementById('cartItemsList');
+  const footer = document.getElementById('cartFooter');
+  if(!items.length){
+    container.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div>';
+    footer.style.display='none';
+    return;
+  }
+  footer.style.display='block';
+  const hasBig = items.some(i=>['750ml','1L','1.5L'].includes(i.capacity));
+  const delivery = hasBig?0:150;
+  document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`;
+  container.innerHTML = items.map(item=>`<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} ${item.size ? `(${item.size})` : ''} x${item.qty}</div><div class="cart-item-price">KES ${(item.price*item.qty).toLocaleString()}</div><div class="cart-qty"><button onclick="updateQty('${item.id}',-1)">−</button><span>${item.qty}</span><button onclick="updateQty('${item.id}',1)">+</button><button onclick="removeCartItem('${item.id}')" class="cart-remove-btn">Remove</button></div></div></div>`).join('');
+}
+function removeCartItem(id){
+  if(cart[id]){
+    delete cart[id];
+    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+    updateCartUI();
+    toast('Item removed from cart');
+  }
+}
+function updateQty(id,delta){
+  if(cart[id]){cart[id].qty+=delta;if(cart[id].qty<=0)delete cart[id];localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));updateCartUI();}
+}
+function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
+function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
+
+// Add cart drawer styles if not present
+const style = document.createElement('style');
+style.textContent = `
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .cart-drawer{position:fixed;bottom:-100%;left:0;right:0;background:white;border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s;max-height:82vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.12);}
+  .cart-drawer.open{bottom:0;}
+  .cart-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:white;}
+  .cart-head span{font-weight:800;font-size:1.05rem;font-family:var(--font-display);}
+  .cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;}
+  .cart-items{padding:14px 18px;}
+  .cart-item{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:8px;}
+  .cart-item-name{font-weight:700;font-size:.875rem;}
+  .cart-item-price{color:var(--sale-red);font-weight:700;}
+  .cart-qty{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .cart-qty button{width:28px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;}
+  .cart-footer{padding:14px 18px 22px;border-top:1px solid var(--border);}
+  .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:14px;}
+  .btn-checkout{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
+  .btn-checkout:hover{background:var(--primary-bright);}
+`;
+document.head.appendChild(style);
+
+const searchInput = document.getElementById('searchInput');
+if(searchInput){
+  searchInput.addEventListener('keypress',e=>{if(e.key==='Enter') window.location.href=`shop.html?search=${encodeURIComponent(e.target.value)}`;});
+}
+
+loadProduct();
+updateCartUI();
+</script>
+</body>
+</html>

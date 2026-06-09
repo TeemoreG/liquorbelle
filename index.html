@@ -32,7 +32,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 img{display:block;}
 a{color:inherit;text-decoration:none;}
 
-/* Age Gate - FIXED for index page only */
+/* Age Gate */
 .age-gate{
   position:fixed;inset:0;background:rgba(0,0,0,0.92);
   display:flex;align-items:center;justify-content:center;
@@ -150,7 +150,6 @@ a{color:inherit;text-decoration:none;}
   text-transform:uppercase;
   letter-spacing:.3px;
 }
-/* WHITE buttons with primary icons */
 .hbtn{
   width:35px;height:35px;border-radius:50%;
   display:flex;
@@ -377,11 +376,10 @@ a{color:inherit;text-decoration:none;}
   border-radius:var(--radius-sm);
   overflow:hidden;
   transition:all .25s;
-  cursor:pointer;
   position:relative;
 }
 .prod-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(128,0,0,.2);}
-.pc-img-wrap{position:relative;overflow:hidden;background:var(--bg);}
+.pc-img-wrap{position:relative;overflow:hidden;background:var(--bg);cursor:pointer;}
 .pc-img{width:100%;height:170px;object-fit:cover;transition:transform .4s;}
 .prod-card:hover .pc-img{transform:scale(1.05);}
 .pc-badge{
@@ -822,7 +820,7 @@ a{color:inherit;text-decoration:none;}
 </head>
 <body>
 
-<!-- Age Gate - FIXED for index page only -->
+<!-- Age Gate -->
 <div class="age-gate" id="ageGate">
   <div class="age-gate-card">
     <h2>Are you 18+?</h2>
@@ -1029,7 +1027,7 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <script>
-// AGE GATE - FIXED for index page only (proper event listeners)
+// AGE GATE
 function initAgeGate() {
   const ageGate = document.getElementById('ageGate');
   const ageYesBtn = document.getElementById('ageYesBtn');
@@ -1283,7 +1281,7 @@ function renderCategories(){
   }
 }
 
-// Load Products - Show FIRST 10 products from all categories as Trending Deals
+// Load Products - Get from API and show trending
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
@@ -1292,12 +1290,16 @@ async function loadProducts(){
       // Map products with variants - get cheapest variant price as main price
       PRODUCTS = data.products.map(p => {
         const variants = p.variants || [];
-        const cheapestVariant = variants.length ? variants.reduce((min, v) => v.price < min.price ? v : min, variants[0]) : null;
+        // Sort variants by size (smallest first)
+        const sizeOrderMap = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
+        const sortedVariants = [...variants].sort((a,b) => (sizeOrderMap[a.size]||99) - (sizeOrderMap[b.size]||99));
+        const cheapestVariant = sortedVariants[0] || null;
         const price = cheapestVariant ? cheapestVariant.price : 0;
         const originalPrice = cheapestVariant?.discount ? Math.round(price * 100 / (100 - cheapestVariant.discount)) : price;
         const discountPercent = cheapestVariant?.discount || 0;
         return {
-          id: p.id,
+          _id: p._id,
+          id: p._id,
           name: p.name,
           capacity: cheapestVariant?.size || '750ml',
           price: price,
@@ -1322,21 +1324,21 @@ async function loadProducts(){
 
 function getSampleProducts(){
   return [
-    {id:1,name:"Johnnie Walker Black Label",capacity:"750ml",price:3500,originalPrice:4200,discountPercent:17,category:"whisky",badge:"hot",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
-    {id:2,name:"Jameson Irish Whiskey",capacity:"750ml",price:3200,originalPrice:3800,discountPercent:16,category:"whisky",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
-    {id:3,name:"Hennessy VS",capacity:"750ml",price:5500,originalPrice:6200,discountPercent:11,category:"cognac",badge:"prem",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
-    {id:4,name:"Smirnoff Red",capacity:"750ml",price:1800,originalPrice:2200,discountPercent:18,category:"vodka",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop",isTrending:true},
-    {id:5,name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1650,discountPercent:15,category:"gin",badge:"local",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop",isTrending:true},
-    {id:6,name:"Kenya Cane",capacity:"750ml",price:950,originalPrice:1150,discountPercent:17,category:"rum",badge:"local",image:"https://images.unsplash.com/photo-1565277408825-5da2b2a4b1dd?w=300&h=300&fit=crop",isTrending:true},
-    {id:7,name:"Tusker Lager",capacity:"500ml",price:230,originalPrice:280,discountPercent:18,category:"beer",badge:"local",image:"https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=300&h=300&fit=crop",isTrending:true},
-    {id:8,name:"Nederburg Rosé",capacity:"750ml",price:1500,originalPrice:1900,discountPercent:21,category:"wine",image:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=300&h=300&fit=crop",isTrending:true},
-    {id:9,name:"Absolut Vodka",capacity:"750ml",price:2200,originalPrice:2600,discountPercent:15,category:"vodka",badge:"prem",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop",isTrending:true},
-    {id:10,name:"Chrome Gin",capacity:"750ml",price:1650,originalPrice:1950,discountPercent:15,category:"gin",badge:"hot",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop",isTrending:true}
+    {_id:"1",id:"1",name:"Johnnie Walker Black Label",capacity:"750ml",price:3500,originalPrice:4200,discountPercent:17,category:"whisky",badge:"hot",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"2",id:"2",name:"Jameson Irish Whiskey",capacity:"750ml",price:3200,originalPrice:3800,discountPercent:16,category:"whisky",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"3",id:"3",name:"Hennessy VS",capacity:"750ml",price:5500,originalPrice:6200,discountPercent:11,category:"cognac",badge:"prem",image:"https://images.unsplash.com/photo-1584211065398-1acb769997e0?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"4",id:"4",name:"Smirnoff Red",capacity:"750ml",price:1800,originalPrice:2200,discountPercent:18,category:"vodka",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"5",id:"5",name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1650,discountPercent:15,category:"gin",badge:"local",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"6",id:"6",name:"Kenya Cane",capacity:"750ml",price:950,originalPrice:1150,discountPercent:17,category:"rum",badge:"local",image:"https://images.unsplash.com/photo-1565277408825-5da2b2a4b1dd?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"7",id:"7",name:"Tusker Lager",capacity:"500ml",price:230,originalPrice:280,discountPercent:18,category:"beer",badge:"local",image:"https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"8",id:"8",name:"Nederburg Rosé",capacity:"750ml",price:1500,originalPrice:1900,discountPercent:21,category:"wine",image:"https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"9",id:"9",name:"Absolut Vodka",capacity:"750ml",price:2200,originalPrice:2600,discountPercent:15,category:"vodka",badge:"prem",image:"https://images.unsplash.com/photo-1614313913007-2f5ad100323c?w=300&h=300&fit=crop",isTrending:true},
+    {_id:"10",id:"10",name:"Chrome Gin",capacity:"750ml",price:1650,originalPrice:1950,discountPercent:15,category:"gin",badge:"hot",image:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop",isTrending:true}
   ];
 }
 
 function renderTrending(){
-  // Show first 10 products OR products marked as trending, up to 10
+  // Show products marked as trending, up to 10
   let trendingItems = PRODUCTS.filter(p => p.isTrending === true).slice(0, 10);
   if(trendingItems.length < 4 && PRODUCTS.length >= 4) {
     trendingItems = PRODUCTS.slice(0, 10);
@@ -1345,20 +1347,20 @@ function renderTrending(){
   const trendingHtml = trendingItems.map(p=>{
     const original = p.originalPrice;
     const savePercent = p.discountPercent;
-    const isWishlisted = wishlist.some(w=>w.id==p.id);
+    const isWishlisted = wishlist.some(w=>w.id==p._id);
     return `<div class="prod-card">
-      <div class="pc-img-wrap">
-        <img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'" onclick="addToRecentlyViewed({id:${p.id},name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })">
+      <div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'">
+        <img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'">
         ${p.badge ? `<div class="pc-badge badge-${p.badge === 'hot' ? 'hot' : (p.badge === 'local' ? 'local' : 'prem')}">${p.badge === 'hot' ? '🔥 Hot' : (p.badge === 'local' ? '🇰🇪 Local' : '⭐ Premium')}</div>` : ''}
         ${savePercent > 0 ? `<div class="pc-badge" style="top:8px;left:${p.badge ? '75px' : '8px'};background:var(--success);">-${savePercent}%</div>` : ''}
-        <button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="toggleWishlist(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')">
+        <button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')">
           <i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}" style="${isWishlisted?'color:var(--sale-red)':''}"></i>
         </button>
       </div>
       <div class="pc-body">
         <div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}
         <div class="pc-price-wrap"><span class="pc-price-old">KES ${original.toLocaleString()}</span><span class="pc-price-new">KES ${p.price.toLocaleString()}</span><span class="pc-save">-${savePercent}%</span></div>
-        <button class="atc-btn" onclick="addToCart(${p.id},'${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:${p.id},name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Cart</button>
+        <button class="atc-btn" onclick="addToCart('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:'${p._id}',name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Cart</button>
       </div>
     </div>`;
   }).join('');
@@ -1388,7 +1390,7 @@ updateWishlistUI();
 loadProducts();
 updateCartUI();
 startCountdown();
-initAgeGate(); // Age gate only for this page
+initAgeGate();
 if(currentUser && document.getElementById('accountBtn')) document.getElementById('accountBtn').oncontextmenu = (e)=>{e.preventDefault();localStorage.removeItem('liquorbelle_user');currentUser=null;toast('Logged out');};
 </script>
 </body>

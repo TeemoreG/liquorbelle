@@ -36,7 +36,6 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
 .btn-red{background:var(--red);}
 .btn-red:hover{background:#c62828;}
 
-/* Header */
 .admin-header{
   background:var(--primary);
   color:white;
@@ -73,7 +72,6 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
 .tab.active{background:white;color:var(--primary);}
 .container{max-width:1400px;margin:0 auto;padding:24px 5%;}
 
-/* Stats Grid */
 .stats-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -90,7 +88,6 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
 .stat-card h4{font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
 .stat-card .value{font-size:28px;font-weight:800;color:var(--primary);}
 
-/* Product Form - Variants Section */
 .form-card{
   background:var(--white);
   border-radius:var(--radius);
@@ -115,7 +112,6 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);}
 .form-row input:focus, .form-row select:focus, .form-row textarea:focus{outline:none;border-color:var(--primary);}
 textarea{resize:vertical;}
 
-/* Trending Toggle */
 .trending-toggle{
   display:flex;
   align-items:center;
@@ -140,7 +136,6 @@ textarea{resize:vertical;}
   accent-color:var(--primary);
 }
 
-/* Variants Table */
 .variants-table{
   width:100%;
   border-collapse:collapse;
@@ -186,7 +181,6 @@ textarea{resize:vertical;}
   font-size:14px;
 }
 
-/* Products Table */
 .table-container{
   background:var(--white);
   border-radius:var(--radius);
@@ -195,7 +189,7 @@ textarea{resize:vertical;}
 }
 .table-header{
   display:grid;
-  grid-template-columns:60px 1.5fr 160px 100px 100px 80px;
+  grid-template-columns:60px 1.5fr 200px 100px 100px 80px;
   background:var(--bg2);
   padding:14px 16px;
   font-weight:600;
@@ -204,7 +198,7 @@ textarea{resize:vertical;}
 }
 .product-row{
   display:grid;
-  grid-template-columns:60px 1.5fr 160px 100px 100px 80px;
+  grid-template-columns:60px 1.5fr 200px 100px 100px 80px;
   padding:12px 16px;
   align-items:center;
   border-bottom:1px solid var(--border);
@@ -240,7 +234,6 @@ textarea{resize:vertical;}
 .edit-btn:hover{color:var(--primary);background:rgba(128,0,0,0.1);}
 .delete-btn:hover{color:var(--red);background:rgba(211,47,47,0.1);}
 
-/* Orders List */
 .orders-list{display:flex;flex-direction:column;gap:16px;}
 .order-card{
   background:var(--white);
@@ -284,7 +277,6 @@ textarea{resize:vertical;}
 }
 .order-total{font-size:18px;font-weight:800;color:var(--primary);}
 
-/* Product Edit Modal */
 .modal-overlay{
   position:fixed;
   inset:0;
@@ -307,7 +299,7 @@ textarea{resize:vertical;}
   overflow-y:auto;
   padding:28px;
 }
-.modal-card h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;}
+.modal-card h3{font-size:1.3rem;margin-bottom:16px;}
 .modal-close{
   float:right;
   background:none;
@@ -357,14 +349,13 @@ textarea{resize:vertical;}
 </div>
 
 <div class="container">
-  <!-- Products Tab -->
   <div id="productsTab">
     <div class="stats-grid" id="productStats"></div>
     
     <div class="form-card">
       <h3 style="margin-bottom:16px;">➕ Add New Product</h3>
       <div class="form-row">
-        <input type="text" id="prodName" placeholder="Product Name (e.g., Chrome Gin)">
+        <input type="text" id="prodName" placeholder="Product Name">
         <select id="prodCategory">
           <option value="whisky">Whisky</option><option value="cognac">Cognac</option>
           <option value="vodka">Vodka</option><option value="gin">Gin</option>
@@ -376,30 +367,24 @@ textarea{resize:vertical;}
         <textarea id="prodDesc" placeholder="Product description..." rows="2"></textarea>
       </div>
       
-      <!-- Trending Toggle for Add Product -->
       <div class="trending-toggle">
-        <label>
-          <input type="checkbox" id="prodTrending"> 🔥 Mark as Trending
-        </label>
+        <label><input type="checkbox" id="prodTrending"> 🔥 Mark as Trending</label>
         <span style="font-size:12px;color:var(--muted);">Trending products appear on homepage</span>
       </div>
       
-      <h4 style="margin:16px 0 8px;">📏 Bottle Size Variants (Price per size)</h4>
+      <h4 style="margin:16px 0 8px;">📏 Bottle Size Variants</h4>
       <table class="variants-table" id="variantsTable">
-        <thead>
-          <tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th></tr>
-        </thead>
+        <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th></th></tr></thead>
         <tbody id="variantsBody">
           <tr class="variant-row">
-            <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
+            <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
             <td><input type="number" class="variant-price" placeholder="Price"></td>
             <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td>
             <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
-           </tr>
+          </tr>
         </tbody>
       </table>
       <button type="button" class="add-variant-btn" onclick="addVariantRow()">+ Add Another Size</button>
-      
       <button class="btn" onclick="addProduct()" style="margin-top:16px;">💾 Save Product</button>
     </div>
     
@@ -416,7 +401,6 @@ textarea{resize:vertical;}
     </div>
   </div>
   
-  <!-- Orders Tab -->
   <div id="ordersTab" style="display:none;">
     <div class="stats-grid" id="orderStats"></div>
     <div class="search-bar">
@@ -426,7 +410,6 @@ textarea{resize:vertical;}
     <div id="ordersList" class="orders-list"></div>
   </div>
   
-  <!-- Analytics Tab -->
   <div id="analyticsTab" style="display:none;">
     <div class="stats-grid">
       <div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div></div>
@@ -445,7 +428,6 @@ textarea{resize:vertical;}
     </div>
   </div>
   
-  <!-- Settings Tab -->
   <div id="settingsTab" style="display:none;">
     <div class="form-card">
       <h3>🚚 Delivery Settings</h3>
@@ -469,7 +451,6 @@ textarea{resize:vertical;}
   </div>
 </div>
 
-<!-- Product Edit Modal -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
     <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -488,11 +469,8 @@ textarea{resize:vertical;}
       <textarea id="editDesc" placeholder="Description" rows="2"></textarea>
     </div>
     
-    <!-- Trending Toggle for Edit Product -->
     <div class="trending-toggle">
-      <label>
-        <input type="checkbox" id="editTrending"> 🔥 Mark as Trending
-      </label>
+      <label><input type="checkbox" id="editTrending"> 🔥 Mark as Trending</label>
       <span style="font-size:12px;color:var(--muted);">Trending products appear on homepage</span>
     </div>
     
@@ -529,13 +507,12 @@ function showToast(msg){
 }
 function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
 
-// Variant Row Functions
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
   row.innerHTML = `
-    <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
+    <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
     <td><input type="number" class="variant-price" placeholder="Price"></td>
     <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td>
     <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
@@ -571,7 +548,6 @@ function removeEditVariantRow(btn){
   }
 }
 
-// Add Product with trending flag
 async function addProduct(){
   const name = document.getElementById('prodName').value.trim();
   const category = document.getElementById('prodCategory').value;
@@ -614,9 +590,7 @@ async function addProduct(){
   } catch(e){ showToast('Error'); }
 }
 
-// Edit Product Modal - FIXED: using _id instead of id
 function openEditModal(productId){
-  // Use _id field from MongoDB
   const p = products.find(p => p._id === productId);
   if(!p) {
     showToast('Product not found');
@@ -632,9 +606,13 @@ function openEditModal(productId){
   
   const tbody = document.getElementById('editVariantsBody');
   tbody.innerHTML = '';
-  const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
+  const variants = p.variants || [];
+  if(variants.length === 0) {
+    variants.push({ size: '750ml', price: 0, discount: 0 });
+  }
   variants.forEach(v => {
     const row = document.createElement('tr');
+    row.className = 'variant-row';
     row.innerHTML = `
       <td><select class="edit-variant-size"><option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option><option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option><option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option><option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option><option value="1L" ${v.size==='1L'?'selected':''}>1L</option><option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option></select></td>
       <td><input type="number" class="edit-variant-price" value="${v.price}"></td>
@@ -675,7 +653,6 @@ async function saveProductEdit(){
   }
   
   try{
-    console.log('Updating product with ID:', id);
     const res = await fetch(`${API_BASE}/api/db/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -706,16 +683,12 @@ async function deleteProduct(id){
   } catch(e){ showToast('Error'); }
 }
 
-// Load Products - FIXED: map _id to id for compatibility
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
     if(data.success) {
-      products = data.products.map(p => ({
-        ...p,
-        id: p._id  // Add id alias for compatibility
-      }));
+      products = data.products;
     }
   } catch(e){ products = []; }
   renderProducts();
@@ -732,10 +705,9 @@ function renderProducts(){
     return;
   }
   container.innerHTML = filtered.map(p => {
-    const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
-    const bestPrice = Math.min(...variants.map(v => v.price || 0));
+    const variants = p.variants || [];
+    const bestPrice = variants.length ? Math.min(...variants.map(v => v.price || 0)) : 0;
     const isTrending = p.isTrending || false;
-    // Use p._id for the onclick handlers
     return `
       <div class="product-row">
         <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'"></div>
@@ -749,7 +721,6 @@ function renderProducts(){
   }).join('');
 }
 
-// Order Functions
 async function loadOrders(){
   try{
     const res = await fetch(`${API_BASE}/api/db/orders`);
@@ -824,13 +795,12 @@ function renderOrders(){
   }).join('');
 }
 
-// Stats
 function updateStats(){
   const trendingCount = products.filter(p => p.isTrending === true).length;
   document.getElementById('productStats').innerHTML = `
     <div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div>
     <div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div>
-    <div class="stat-card"><h4>Total Variants</h4><div class="value">${products.reduce((s,p)=>{ const v = p.variants || [{size:'750ml'}]; return s + v.length; },0)}</div></div>
+    <div class="stat-card"><h4>Total Variants</h4><div class="value">${products.reduce((s,p)=>{ const v = p.variants || []; return s + v.length; },0)}</div></div>
     <div class="stat-card"><h4>🔥 Trending</h4><div class="value">${trendingCount}</div></div>
   `;
   document.getElementById('totalProducts').innerText = products.length;
@@ -856,7 +826,6 @@ function renderAnalytics(){
   document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
 }
 
-// Delivery Settings
 async function loadDeliverySettings(){
   try{
     const res = await fetch(`${API_BASE}/api/admin/delivery-settings`);
@@ -884,7 +853,6 @@ async function saveDeliverySettings(){
   } catch(e){ showToast('Error saving settings'); }
 }
 
-// Password Change
 function changePassword(){
   const current = document.getElementById('currentPwd').value;
   const newPwd = document.getElementById('newPwd').value;
@@ -900,7 +868,6 @@ function changePassword(){
   document.getElementById('confirmPwd').value = '';
 }
 
-// Tab switching
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -915,7 +882,6 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-// Search
 document.getElementById('productSearch')?.addEventListener('input', (e) => { productSearch = e.target.value.toLowerCase(); renderProducts(); });
 document.getElementById('orderSearch')?.addEventListener('input', (e) => { orderSearch = e.target.value.toLowerCase(); renderOrders(); });
 function clearProductSearch(){ productSearch = ''; document.getElementById('productSearch').value = ''; renderProducts(); }
@@ -926,7 +892,6 @@ function logout(){
   location.reload();
 }
 
-// Auth
 if(sessionStorage.getItem('liquorbelle_admin_full') !== 'true'){
   const pwd = prompt('Enter Full Admin password:');
   if(pwd === ADMIN_PASSWORD){
@@ -937,7 +902,6 @@ if(sessionStorage.getItem('liquorbelle_admin_full') !== 'true'){
   }
 }
 
-// Initialize
 loadProducts();
 loadOrders();
 loadDeliverySettings();
