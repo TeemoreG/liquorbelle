@@ -21,6 +21,7 @@
   --text:#1A1A1A;
   --muted:#7A7368;
   --red:#D32F2F;
+  --sale-red:#D50000;
   --radius:16px;
   --radius-sm:12px;
   --shadow:0 2px 12px rgba(0,0,0,0.06);
@@ -613,11 +614,15 @@ async function addProduct(){
   } catch(e){ showToast('Error'); }
 }
 
-// Edit Product Modal
+// Edit Product Modal - FIXED: using _id instead of id
 function openEditModal(productId){
-  const p = products.find(p => p.id === productId);
-  if(!p) return;
-  document.getElementById('editProductId').value = p.id;
+  // Use _id field from MongoDB
+  const p = products.find(p => p._id === productId);
+  if(!p) {
+    showToast('Product not found');
+    return;
+  }
+  document.getElementById('editProductId').value = p._id;
   document.getElementById('editName').value = p.name || '';
   document.getElementById('editCategory').value = p.category || 'whisky';
   document.getElementById('editBadge').value = p.badge || '';
@@ -645,6 +650,11 @@ function closeEditModal(){
 }
 async function saveProductEdit(){
   const id = document.getElementById('editProductId').value;
+  if(!id){
+    showToast('Error: No product selected');
+    return;
+  }
+  
   const name = document.getElementById('editName').value.trim();
   const category = document.getElementById('editCategory').value;
   const badge = document.getElementById('editBadge').value;
@@ -665,6 +675,7 @@ async function saveProductEdit(){
   }
   
   try{
+    console.log('Updating product with ID:', id);
     const res = await fetch(`${API_BASE}/api/db/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -678,7 +689,10 @@ async function saveProductEdit(){
       const err = await res.json();
       showToast(err.message || 'Error updating product');
     }
-  } catch(e){ showToast('Error'); }
+  } catch(e){ 
+    console.error('Update error:', e);
+    showToast('Error updating product'); 
+  }
 }
 
 async function deleteProduct(id){
@@ -692,12 +706,17 @@ async function deleteProduct(id){
   } catch(e){ showToast('Error'); }
 }
 
-// Load Products
+// Load Products - FIXED: map _id to id for compatibility
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
-    if(data.success) products = data.products;
+    if(data.success) {
+      products = data.products.map(p => ({
+        ...p,
+        id: p._id  // Add id alias for compatibility
+      }));
+    }
   } catch(e){ products = []; }
   renderProducts();
   updateStats();
@@ -716,6 +735,7 @@ function renderProducts(){
     const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
     const bestPrice = Math.min(...variants.map(v => v.price || 0));
     const isTrending = p.isTrending || false;
+    // Use p._id for the onclick handlers
     return `
       <div class="product-row">
         <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'"></div>
@@ -723,7 +743,7 @@ function renderProducts(){
         <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()} ${v.discount ? `(${v.discount}% off)` : ''}</span>`).join('')}</div>
         <div>${isTrending ? '<span class="trending-badge">🔥 Trending</span>' : '-'}</div>
         <div>KES ${bestPrice.toLocaleString()}</div>
-        <div><button class="edit-btn" onclick="openEditModal(${p.id})"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(${p.id})"><i class="ph ph-trash"></i></button></div>
+        <div><button class="edit-btn" onclick="openEditModal('${p._id}')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')"><i class="ph ph-trash"></i></button></div>
       </div>
     `;
   }).join('');
@@ -783,7 +803,7 @@ function renderOrders(){
     return `
       <div class="order-card">
         <div class="order-header">
-          <div><div class="order-id">📦 ${o.order_number || o.id.slice(0,8)}</div>
+          <div><div class="order-id">📦 ${o.order_number || o._id?.slice(0,8) || 'N/A'}</div>
           <div style="font-weight:600;">${escapeHtml(o.customer_name)}</div>
           <div style="font-size:11px;color:var(--muted);">📧 ${escapeHtml(o.customer_email)}</div>
           <div style="font-size:11px;color:var(--muted);">📅 ${new Date(o.created_at).toLocaleString()}</div>
@@ -794,9 +814,9 @@ function renderOrders(){
         <div class="order-footer">
           <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
           <div style="display:flex;gap:8px;">
-            ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o.id}')">✓ Mark Paid</button>` : ''}
-            ${o.status === 'paid' ? `<button class="btn btn-sm" style="background:var(--gold);" onclick="markOrderDelivered('${o.id}')">🚚 Delivered</button>` : ''}
-            <button class="btn btn-sm btn-red" onclick="deleteOrder('${o.id}')">🗑️ Delete</button>
+            ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')">✓ Mark Paid</button>` : ''}
+            ${o.status === 'paid' ? `<button class="btn btn-sm" style="background:var(--gold);" onclick="markOrderDelivered('${o._id}')">🚚 Delivered</button>` : ''}
+            <button class="btn btn-sm btn-red" onclick="deleteOrder('${o._id}')">🗑️ Delete</button>
           </div>
         </div>
       </div>
