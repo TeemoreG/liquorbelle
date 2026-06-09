@@ -267,10 +267,22 @@ textarea{resize:vertical;}
 .order-items{padding:16px 20px;max-height:250px;overflow-y:auto;}
 .order-item{
   display:flex;
-  justify-content:space-between;
+  align-items:center;
+  gap:14px;
   padding:8px 0;
   border-bottom:1px solid var(--border);
 }
+.order-item-img{
+  width:48px;
+  height:48px;
+  object-fit:cover;
+  border-radius:8px;
+  background:var(--bg);
+}
+.order-item-details{flex:1;}
+.order-item-name{font-weight:600;font-size:14px;}
+.order-item-qty{font-size:12px;color:var(--muted);}
+.order-item-price{color:var(--primary);font-weight:700;}
 .order-footer{
   display:flex;
   justify-content:space-between;
@@ -342,6 +354,7 @@ textarea{resize:vertical;}
   z-index:200;
   pointer-events:none;
 }
+.toast.error{background:var(--red);}
 @media(max-width:768px){
   .table-header,.product-row{grid-template-columns:50px 1fr 120px 80px 60px 50px;}
   .tabs{width:100%;justify-content:center;}
@@ -489,15 +502,17 @@ let currentTab = 'products';
 let productSearch = '';
 let orderSearch = '';
 let adminToken = localStorage.getItem('liquorbelle_admin_token');
-let pendingActions = new Map(); // Track pending actions for optimistic updates
+let pendingActions = new Map();
 
 function showToast(msg, isError = false){
   const t = document.getElementById('toast');
   t.innerText = msg;
   t.style.opacity = '1';
-  t.style.background = isError ? 'var(--red)' : 'var(--text)';
-  setTimeout(() => t.style.opacity = '0', 2500);
-  setTimeout(() => t.style.background = 'var(--text)', 3000);
+  t.classList.toggle('error', isError);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.classList.remove('error');
+  }, 3000);
 }
 
 function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
@@ -526,7 +541,7 @@ async function adminLogin(password) {
   } catch(e) { return false; }
 }
 
-// ========== PRODUCT FUNCTIONS with Optimistic Updates ==========
+// ========== PRODUCT FUNCTIONS ==========
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
@@ -659,7 +674,6 @@ async function saveProductEdit(){
       variants.push({ size, price, discount });
     }
     
-    // Optimistic update
     const productIndex = products.findIndex(p => p._id === id);
     const originalProduct = productIndex !== -1 ? {...products[productIndex]} : null;
     if(productIndex !== -1){
@@ -695,7 +709,6 @@ async function saveProductEdit(){
 async function deleteProduct(id){
   if(!confirm('Delete this product permanently?')) return;
   
-  // Optimistic update - remove from UI immediately
   const productIndex = products.findIndex(p => p._id === id);
   const deletedProduct = productIndex !== -1 ? products[productIndex] : null;
   if(productIndex !== -1){
@@ -757,7 +770,7 @@ function renderProducts(){
   }).join('');
 }
 
-// ========== ORDER FUNCTIONS with Optimistic Updates ==========
+// ========== ORDER FUNCTIONS ==========
 async function loadOrders(){
   try{
     const res = await fetch(`${API_BASE}/api/db/orders`, { headers: getAuthHeaders() });
@@ -881,6 +894,7 @@ async function deleteOrder(id){
   }
 }
 
+// FIXED: renderOrders with product images
 function renderOrders(){
   let filtered = orders;
   if(orderSearch){
@@ -898,22 +912,47 @@ function renderOrders(){
     const cleanPhone = phoneRaw.replace(/\D/g, '');
     const waLink = `https://wa.me/${cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone}`;
     const callLink = `tel:${cleanPhone}`;
+    
+    // Build items HTML with product images - FIXED to show actual product images
+    const itemsHtml = items.map(i => {
+      // Try to find product by multiple matching methods
+      let product = null;
+      if(i.product_id) product = products.find(p => p._id === i.product_id);
+      if(!product && i.id) product = products.find(p => p._id === i.id);
+      if(!product && i.product_name) product = products.find(p => p.name === i.product_name);
+      if(!product && i.name) product = products.find(p => p.name === i.name);
+      
+      const imgUrl = product?.image || 'https://placehold.co/48x48/F2EDE7/800000?text=🍾';
+      return `
+        <div class="order-item">
+          <img class="order-item-img" src="${imgUrl}" onerror="this.src='https://placehold.co/48x48/F2EDE7/800000?text=🍾'">
+          <div class="order-item-details">
+            <div class="order-item-name">${escapeHtml(i.product_name || i.name)} ${i.size ? `(${i.size})` : ''}</div>
+            <div class="order-item-qty">Qty: ${i.quantity || i.qty || 1}</div>
+          </div>
+          <div class="order-item-price">KES ${((i.price||0) * (i.quantity||i.qty||1)).toLocaleString()}</div>
+        </div>
+      `;
+    }).join('');
+    
     return `<div class="order-card">
       <div class="order-header">
-        <div><div class="order-id">📦 ${o.order_number || o._id?.slice(0,8) || 'N/A'}</div>
-        <div style="font-weight:600;">${escapeHtml(o.customer_name)}</div>
-        <div style="font-size:11px;">📧 ${escapeHtml(o.customer_email)}</div>
-        <div style="font-size:11px;">📅 ${new Date(o.created_at).toLocaleString()}</div>
-        <div style="font-size:11px;">📞 ${o.phone || 'No phone'}</div></div>
+        <div>
+          <div class="order-id">📦 ${o.order_number || o._id?.slice(0,8) || 'N/A'}</div>
+          <div style="font-weight:600;">${escapeHtml(o.customer_name)}</div>
+          <div style="font-size:11px;">📧 ${escapeHtml(o.customer_email)}</div>
+          <div style="font-size:11px;">📅 ${new Date(o.created_at).toLocaleString()}</div>
+          <div style="font-size:11px;">📞 ${o.phone || 'No phone'}</div>
+        </div>
         <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
           <span class="order-status status-${o.status}">${o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : '🚚 Delivered'}</span>
           <div style="display:flex; gap:6px;">
-            <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa" style="background:#25D366;text-decoration:none;">📱 WhatsApp</a>
-            <a href="${callLink}" class="btn btn-sm btn-call" style="background:#3b82f6;text-decoration:none;">📞 Call</a>
+            <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa" style="background:#25D366;text-decoration:none;color:white;">📱 WhatsApp</a>
+            <a href="${callLink}" class="btn btn-sm btn-call" style="background:#3b82f6;text-decoration:none;color:white;">📞 Call</a>
           </div>
         </div>
       </div>
-      <div class="order-items">${items.map(i => `<div class="order-item"><span>🍾 ${escapeHtml(i.product_name)} ${i.size ? `(${i.size})` : ''} × ${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('')}</div>
+      <div class="order-items">${itemsHtml}</div>
       <div class="order-footer">
         <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
         <div style="display:flex;gap:8px;">
