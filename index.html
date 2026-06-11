@@ -27,6 +27,8 @@
   --shadow-lg:0 8px 32px rgba(90,20,30,0.14);
   --font-display:'Playfair Display',Georgia,serif;
   --font-body:'DM Sans',-apple-system,sans-serif;
+  --btn-green:#22C55E;
+  --btn-green-hover:#16A34A;
 }
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 img{display:block;}
@@ -101,7 +103,8 @@ a{color:inherit;text-decoration:none;}
 .wishlist-item-info{flex:1;}
 .wishlist-item-name{font-weight:700;font-size:.85rem;}
 .wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.8rem;}
-.wishlist-atc{padding:6px 14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-size:.7rem;font-weight:700;cursor:pointer;}
+.wishlist-atc{padding:6px 14px;background:var(--btn-green);color:#fff;border:none;border-radius:50px;font-size:.7rem;font-weight:700;cursor:pointer;}
+.wishlist-atc:hover{background:var(--btn-green-hover);}
 .wishlist-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px;}
 
 /* Header */
@@ -387,11 +390,11 @@ a{color:inherit;text-decoration:none;}
 .pc-save{font-size:.65rem;color:var(--success);font-weight:700;}
 .atc-btn{
   width:100%;padding:9px;
-  background:var(--primary);color:#fff;border:none;
+  background:var(--btn-green);color:#fff;border:none;
   border-radius:50px;font-weight:700;font-size:.75rem;
   cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;
 }
-.atc-btn:hover{background:var(--primary-bright);transform:scale(1.02);}
+.atc-btn:hover{background:var(--btn-green-hover);transform:scale(1.02);}
 
 /* Recently Viewed */
 .recently-viewed{
@@ -866,7 +869,7 @@ a{color:inherit;text-decoration:none;}
 <div class="modal-overlay wishlist-modal" id="wishlistModal" style="display:none;">
   <div class="modal-card">
     <h3>My Wishlist <i class="ph ph-heart" style="color:var(--sale-red);"></i></h3>
-    <p>Save your favourites and add them to cart anytime.</p>
+    <p>Save your favourites and add them to basket anytime.</p>
     <div id="wishlistItems"></div>
     <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:12px;" onclick="closeWishlistModal()">Close</button>
   </div>
@@ -1056,8 +1059,8 @@ a{color:inherit;text-decoration:none;}
 
 <div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
-  <div class="cart-head"><span>Your Cart</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
-  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div></div>
+  <div class="cart-head"><span>Your Basket</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
+  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:48px 20px;color:var(--muted);">Your basket is empty</div></div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
     <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
     <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout →</button>
@@ -1086,14 +1089,14 @@ let PRODUCTS = [];
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
 function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
-function updateCartUI(){ const items = Object.values(cart); const count = items.reduce((s,i)=>s+i.qty,0); document.getElementById('cartCount').innerText = count; const container = document.getElementById('cartItemsList'); const footer = document.getElementById('cartFooter'); if(!items.length){ container.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div>'; footer.style.display = 'none'; return; } footer.style.display = 'block'; const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0); const hasBig = items.some(i=>['750ml','1L','1.5L'].includes(i.capacity)); const delivery = hasBig?0:150; document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`; container.innerHTML = items.map(item=>`<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} <span style="color:var(--primary);">x${item.qty}</span></div><div class="cart-item-price">KES ${(item.price*item.qty).toLocaleString()}</div><div class="cart-qty"><button onclick="updateQty('${item.id}',-1)">−</button><span>${item.qty}</span><button onclick="updateQty('${item.id}',1)">+</button><button onclick="removeCartItem('${item.id}')" class="cart-remove-btn">Remove</button></div></div></div>`).join(''); }
-function removeCartItem(id){ if(cart[id]){ delete cart[id]; localStorage.setItem('liquorbelle_cart', JSON.stringify(cart)); updateCartUI(); toast('Item removed from cart'); } }
+function updateCartUI(){ const items = Object.values(cart); const count = items.reduce((s,i)=>s+i.qty,0); document.getElementById('cartCount').innerText = count; const container = document.getElementById('cartItemsList'); const footer = document.getElementById('cartFooter'); if(!items.length){ container.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--muted);">Your basket is empty</div>'; footer.style.display = 'none'; return; } footer.style.display = 'block'; const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0); const hasBig = items.some(i=>['750ml','1L','1.5L'].includes(i.capacity)); const delivery = hasBig?0:150; document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`; container.innerHTML = items.map(item=>`<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} <span style="color:var(--primary);">x${item.qty}</span></div><div class="cart-item-price">KES ${(item.price*item.qty).toLocaleString()}</div><div class="cart-qty"><button onclick="updateQty('${item.id}',-1)">−</button><span>${item.qty}</span><button onclick="updateQty('${item.id}',1)">+</button><button onclick="removeCartItem('${item.id}')" class="cart-remove-btn">Remove</button></div></div></div>`).join(''); }
+function removeCartItem(id){ if(cart[id]){ delete cart[id]; localStorage.setItem('liquorbelle_cart', JSON.stringify(cart)); updateCartUI(); toast('Item removed from basket'); } }
 function updateQty(id,delta){ if(cart[id]){ cart[id].qty+=delta; if(cart[id].qty<=0) delete cart[id]; localStorage.setItem('liquorbelle_cart',JSON.stringify(cart)); updateCartUI(); } }
 function openCartDrawer(){ document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
 function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
-function addToCart(id,name,price,capacity){ if(cart[id]){ cart[id].qty+=1; } else { cart[id]={id,name,price,qty:1,capacity:capacity}; } localStorage.setItem('liquorbelle_cart',JSON.stringify(cart)); updateCartUI(); toast(`${name} added to cart ✓`); }
+function addToCart(id,name,price,capacity){ if(cart[id]){ cart[id].qty+=1; } else { cart[id]={id,name,price,qty:1,capacity:capacity}; } localStorage.setItem('liquorbelle_cart',JSON.stringify(cart)); updateCartUI(); toast(`${name} added to basket ✓`); }
 function toggleWishlist(id,name,price,image,capacity){ const idx = wishlist.findIndex(w=>w.id==id); if(idx>-1){ wishlist.splice(idx,1); toast(`Removed from wishlist`); } else { wishlist.push({id,name,price,image,capacity}); toast(`${name} added to wishlist ♥`); } localStorage.setItem('liquorbelle_wishlist',JSON.stringify(wishlist)); renderAllProductSections(); }
-function openWishlistModal(){ const container = document.getElementById('wishlistItems'); if(!wishlist.length){ container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>'; } else { container.innerHTML = wishlist.map(w=>`<div class="wishlist-item"><img src="${w.image||FALLBACK_IMG}" alt="${escapeHtml(w.name)}" onerror="this.src='${FALLBACK_IMG}'"><div class="wishlist-item-info"><div class="wishlist-item-name">${escapeHtml(w.name)}</div><div class="wishlist-item-price">KES ${w.price.toLocaleString()}</div></div><button class="wishlist-atc" onclick="addToCart('${w.id}','${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},'${w.capacity||''}');closeWishlistModal();">Add to Cart</button><button class="wishlist-remove" onclick="toggleWishlist('${w.id}','${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},'${w.image||''}','${w.capacity||''}');openWishlistModal();"><i class="ph ph-trash"></i></button></div>`).join(''); } document.getElementById('wishlistModal').style.display = 'flex'; }
+function openWishlistModal(){ const container = document.getElementById('wishlistItems'); if(!wishlist.length){ container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>'; } else { container.innerHTML = wishlist.map(w=>`<div class="wishlist-item"><img src="${w.image||FALLBACK_IMG}" alt="${escapeHtml(w.name)}" onerror="this.src='${FALLBACK_IMG}'"><div class="wishlist-item-info"><div class="wishlist-item-name">${escapeHtml(w.name)}</div><div class="wishlist-item-price">KES ${w.price.toLocaleString()}</div></div><button class="wishlist-atc" onclick="addToCart('${w.id}','${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},'${w.capacity||''}');closeWishlistModal();">Add to Basket</button><button class="wishlist-remove" onclick="toggleWishlist('${w.id}','${escapeHtml(w.name).replace(/'/g,"\\'")}',${w.price},'${w.image||''}','${w.capacity||''}');openWishlistModal();"><i class="ph ph-trash"></i></button></div>`).join(''); } document.getElementById('wishlistModal').style.display = 'flex'; }
 function closeWishlistModal(){ document.getElementById('wishlistModal').style.display = 'none'; }
 function addToRecentlyViewed(product){ recentlyViewed = recentlyViewed.filter(r=>r.id!=product.id); recentlyViewed.unshift(product); if(recentlyViewed.length>8) recentlyViewed = recentlyViewed.slice(0,8); localStorage.setItem('liquorbelle_rv',JSON.stringify(recentlyViewed)); renderRecentlyViewed(); }
 function clearRecentlyViewed(){ recentlyViewed=[]; localStorage.removeItem('liquorbelle_rv'); document.getElementById('recentlyViewedSection').style.display='none'; }
@@ -1109,7 +1112,7 @@ function renderAllProductSections(){
     const original = p.originalPrice;
     const savePercent = p.discountPercent;
     const isWishlisted = wishlist.some(w=>w.id==p._id);
-    return `<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'"><img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'">${savePercent > 0 ? `<div class="discount-circle">-${savePercent}%</div>` : ''}<button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')"><i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}"></i></button></div><div class="pc-body"><div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}<div class="pc-price-wrap">${savePercent > 0 ? `<span class="pc-price-old">KES ${original.toLocaleString()}</span>` : ''}<span class="pc-price-new">KES ${p.price.toLocaleString()}</span></div><button class="atc-btn" onclick="addToCart('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:'${p._id}',name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Cart</button></div></div>`;
+    return `<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'"><img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'">${savePercent > 0 ? `<div class="discount-circle">-${savePercent}%</div>` : ''}<button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')"><i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}"></i></button></div><div class="pc-body"><div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}<div class="pc-price-wrap">${savePercent > 0 ? `<span class="pc-price-old">KES ${original.toLocaleString()}</span>` : ''}<span class="pc-price-new">KES ${p.price.toLocaleString()}</span></div><button class="atc-btn" onclick="addToCart('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:'${p._id}',name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Basket</button></div></div>`;
   }).join('');
   const allGrid = document.getElementById('allProductsGrid');
   if(allGrid) allGrid.innerHTML = allHtml || '<div class="empty-state">No products found</div>';
@@ -1120,7 +1123,7 @@ function renderAllProductSections(){
     const original = p.originalPrice;
     const savePercent = p.discountPercent;
     const isWishlisted = wishlist.some(w=>w.id==p._id);
-    return `<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'"><img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'">${savePercent > 0 ? `<div class="discount-circle">-${savePercent}%</div>` : ''}<button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')"><i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}"></i></button></div><div class="pc-body"><div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}<div class="pc-price-wrap">${savePercent > 0 ? `<span class="pc-price-old">KES ${original.toLocaleString()}</span>` : ''}<span class="pc-price-new">KES ${p.price.toLocaleString()}</span></div><button class="atc-btn" onclick="addToCart('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:'${p._id}',name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Cart</button></div></div>`;
+    return `<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'"><img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'">${savePercent > 0 ? `<div class="discount-circle">-${savePercent}%</div>` : ''}<button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')"><i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}"></i></button></div><div class="pc-body"><div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}<div class="pc-price-wrap">${savePercent > 0 ? `<span class="pc-price-old">KES ${original.toLocaleString()}</span>` : ''}<span class="pc-price-new">KES ${p.price.toLocaleString()}</span></div><button class="atc-btn" onclick="addToCart('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:'${p._id}',name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Basket</button></div></div>`;
   }).join('');
   const trendingGrid = document.getElementById('trendingGrid');
   if(trendingGrid) trendingGrid.innerHTML = trendingHtml || '<div class="empty-state">No trending products</div>';
@@ -1131,7 +1134,7 @@ function renderAllProductSections(){
     const original = p.originalPrice;
     const savePercent = p.discountPercent;
     const isWishlisted = wishlist.some(w=>w.id==p._id);
-    return `<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'"><img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'"><div class="badge-new">NEW</div>${savePercent > 0 ? `<div class="discount-circle" style="top:50px;left:10px;">-${savePercent}%</div>` : ''}<button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')"><i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}"></i></button></div><div class="pc-body"><div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}<div class="pc-price-wrap">${savePercent > 0 ? `<span class="pc-price-old">KES ${original.toLocaleString()}</span>` : ''}<span class="pc-price-new">KES ${p.price.toLocaleString()}</span></div><button class="atc-btn" onclick="addToCart('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:'${p._id}',name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Cart</button></div></div>`;
+    return `<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'"><img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'"><div class="badge-new">NEW</div>${savePercent > 0 ? `<div class="discount-circle" style="top:50px;left:10px;">-${savePercent}%</div>` : ''}<button class="pc-wishlist ${isWishlisted?'wishlisted':''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.image||''}','${p.capacity||''}')"><i class="ph ${isWishlisted?'ph-heart-fill':'ph-heart'}"></i></button></div><div class="pc-body"><div class="pc-name">${escapeHtml(p.name)}</div>${p.capacity?`<div class="pc-vol">${escapeHtml(p.capacity)}</div>`:''}<div class="pc-price-wrap">${savePercent > 0 ? `<span class="pc-price-old">KES ${original.toLocaleString()}</span>` : ''}<span class="pc-price-new">KES ${p.price.toLocaleString()}</span></div><button class="atc-btn" onclick="addToCart('${p._id}','${escapeHtml(p.name).replace(/'/g,"\\'")}',${p.price},'${p.capacity||''}');addToRecentlyViewed({id:'${p._id}',name:'${escapeHtml(p.name).replace(/'/g,"\\'")}',price:${p.price},image:'${p.image||''}',capacity:'${p.capacity||''}' })"><i class="ph ph-plus"></i> Add to Basket</button></div></div>`;
   }).join('');
   const newGrid = document.getElementById('newArrivalsGrid');
   if(newGrid) newGrid.innerHTML = newHtml || '<div class="empty-state">No new arrivals</div>';
