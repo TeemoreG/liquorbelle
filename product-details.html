@@ -171,6 +171,8 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-weight: 600;
 }
 
+/* ========== FIXED PRODUCT DETAILS LAYOUT ========== */
+/* Desktop side-by-side with proper constraints */
 .product-detail-container{
   max-width: 1200px;
   margin: 40px auto;
@@ -178,7 +180,74 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
+  align-items: start;       /* KEY FIX: prevents vertical stretching, aligns both columns to top */
 }
+
+/* Image section: no extra flex interference, maintains aspect ratio */
+.product-image-section{
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Image styling: responsive, not oversized, centered */
+.product-image-section img{
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  background: white;
+  padding: 20px;
+  display: block;
+}
+
+/* Info section aligns naturally to top (due to align-items: start on grid) */
+.product-info-section{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0; /* prevents overflow from long content */
+}
+
+/* Force proper stacking on mobile (≤ 768px) */
+@media(max-width: 768px){
+  .product-detail-container{
+    grid-template-columns: 1fr;   /* stack vertically on mobile */
+    gap: 28px;
+    align-items: stretch;
+  }
+  .product-image-section{
+    max-width: 80%;
+    margin: 0 auto;
+  }
+  .product-image-section img{
+    max-width: 100%;
+    padding: 12px;
+  }
+  .search-wrap{display:none;}
+  .action-buttons{flex-direction:column;}
+  .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
+  .whatsapp-float i{font-size:28px;}
+  .stars .star-filled, .stars .star-empty{font-size:14px;}
+  .rating-text{font-size:11px;}
+  .share-section{flex-wrap:wrap;}
+  .breadcrumb{font-size:11px;}
+}
+
+/* For extra-large screens, keep image nicely contained */
+@media(min-width: 1200px){
+  .product-image-section img{
+    max-width: 100%;
+    transition: transform 0.2s ease;
+  }
+}
+
+/* preserve all existing styles for other components (rating, variants, cart, etc.) */
 .product-image-section img{
   width: 100%;
   border-radius: var(--radius);
@@ -520,24 +589,9 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   pointer-events:none;
 }
 
-@media(max-width:768px){
-  .product-detail-container{
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .product-image-section img{
-    max-width: 70%;
-    margin: 0 auto;
-    display: block;
-  }
-  .search-wrap{display:none;}
-  .action-buttons{flex-direction:column;}
-  .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
-  .whatsapp-float i{font-size:28px;}
-  .stars .star-filled, .stars .star-empty{font-size:14px;}
-  .rating-text{font-size:11px;}
-  .share-section{flex-wrap:wrap;}
-  .breadcrumb{font-size:11px;}
+/* extra spacing for product info section components */
+.product-info-section .action-buttons {
+  margin-top: 8px;
 }
 </style>
 </head>
@@ -782,10 +836,8 @@ function renderProductDetails() {
   document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
   document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
   
-  // Update Breadcrumb
   updateBreadcrumb(category, productName);
   
-  // Render Star Rating
   const rating = currentProduct.rating || 4.0;
   const starsContainer = document.getElementById('starsContainer');
   const ratingText = document.getElementById('ratingText');
@@ -803,7 +855,6 @@ function renderProductDetails() {
     badgeContainer.innerHTML = '';
   }
   
-  // Get variants from database - ONLY what admin added
   const variants = currentProduct.variants || [];
   const sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
   variants.sort((a,b) => (sizeOrder[a.size] || 99) - (sizeOrder[b.size] || 99));
@@ -820,7 +871,6 @@ function renderProductDetails() {
     </button>
   `).join('');
   
-  // Select first variant by default
   selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
 }
 

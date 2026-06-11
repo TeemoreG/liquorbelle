@@ -353,7 +353,7 @@ textarea{resize:vertical;}
   cursor:pointer;
 }
 
-/* VARIANTS TABLE */
+/* VARIANTS TABLE - Updated with all Kenyan sizes */
 .variants-section{margin:18px 0 10px;}
 .variants-label{font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .variants-table{
@@ -885,7 +885,7 @@ textarea{resize:vertical;}
         </select>
       </div>
 
-      <!-- Variants Section -->
+      <!-- Variants Section - UPDATED WITH ALL KENYAN SIZES -->
       <div class="variants-section">
         <div class="variants-label"><i class="ph ph-ruler"></i> Bottle Sizes & Prices</div>
         <div class="help-text" style="margin-bottom:10px;"><i class="ph ph-info"></i> Enter the ORIGINAL price for each size. Discount % is applied automatically. Example: Price=500, Discount=20 → Customer pays 400</div>
@@ -895,7 +895,20 @@ textarea{resize:vertical;}
           </thead>
           <tbody id="variantsBody">
             <tr class="variant-row">
-              <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
+              <td><select class="variant-size">
+                <option value="200ml">200ml</option>
+                <option value="250ml">250ml</option>
+                <option value="300ml">300ml</option>
+                <option value="330ml">330ml</option>
+                <option value="350ml">350ml</option>
+                <option value="500ml">500ml</option>
+                <option value="700ml">700ml</option>
+                <option value="750ml" selected>750ml</option>
+                <option value="1L">1L</option>
+                <option value="1.5L">1.5L</option>
+                <option value="2L">2L</option>
+                <option value="5L">5L</option>
+              </select></td>
               <td><input type="number" class="variant-price" placeholder="e.g. 1500" step="1"></td>
               <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
               <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove row">✕</button></td>
@@ -1096,12 +1109,28 @@ function submitAdminLogin() {
   });
 }
 
-// Variant Functions
+// Variant Functions - UPDATED WITH ALL KENYAN SIZES
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="variant-size">
+      <option value="200ml">200ml</option>
+      <option value="250ml">250ml</option>
+      <option value="300ml">300ml</option>
+      <option value="330ml">330ml</option>
+      <option value="350ml">350ml</option>
+      <option value="500ml">500ml</option>
+      <option value="700ml">700ml</option>
+      <option value="750ml">750ml</option>
+      <option value="1L">1L</option>
+      <option value="1.5L">1.5L</option>
+      <option value="2L">2L</option>
+      <option value="5L">5L</option>
+    </select></td>
+    <td><input type="number" class="variant-price" placeholder="Price" step="1"></td>
+    <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
+    <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
 function removeVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
@@ -1109,7 +1138,23 @@ function addEditVariantRow(){
   const tbody = document.getElementById('editVariantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="edit-variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="edit-variant-size">
+      <option value="200ml">200ml</option>
+      <option value="250ml">250ml</option>
+      <option value="300ml">300ml</option>
+      <option value="330ml">330ml</option>
+      <option value="350ml">350ml</option>
+      <option value="500ml">500ml</option>
+      <option value="700ml">700ml</option>
+      <option value="750ml">750ml</option>
+      <option value="1L">1L</option>
+      <option value="1.5L">1.5L</option>
+      <option value="2L">2L</option>
+      <option value="5L">5L</option>
+    </select></td>
+    <td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td>
+    <td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td>
+    <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
 function removeEditVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
@@ -1176,7 +1221,23 @@ function openEditModal(productId){
   variants.forEach(v => {
     const row = document.createElement('tr');
     row.className = 'variant-row';
-    row.innerHTML = `<td><select class="edit-variant-size"><option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option><option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option><option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option><option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option><option value="1L" ${v.size==='1L'?'selected':''}>1L</option><option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option></select></td><td><input type="number" class="edit-variant-price" value="${v.price}"></td><td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+    row.innerHTML = `<td><select class="edit-variant-size">
+        <option value="200ml" ${v.size==='200ml'?'selected':''}>200ml</option>
+        <option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option>
+        <option value="300ml" ${v.size==='300ml'?'selected':''}>300ml</option>
+        <option value="330ml" ${v.size==='330ml'?'selected':''}>330ml</option>
+        <option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option>
+        <option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option>
+        <option value="700ml" ${v.size==='700ml'?'selected':''}>700ml</option>
+        <option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option>
+        <option value="1L" ${v.size==='1L'?'selected':''}>1L</option>
+        <option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option>
+        <option value="2L" ${v.size==='2L'?'selected':''}>2L</option>
+        <option value="5L" ${v.size==='5L'?'selected':''}>5L</option>
+      </select></td>
+      <td><input type="number" class="edit-variant-price" value="${v.price}"></td>
+      <td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td>
+      <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
     tbody.appendChild(row);
   });
   document.getElementById('editModal').classList.add('active');
