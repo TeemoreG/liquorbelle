@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, user-scalable=yes, viewport-fit=cover">
-<title>LiquorBelle — My Account</title>
+<title>LiquorBelle — Track Your Orders</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
 <style>
@@ -22,7 +22,6 @@
   --radius:16px;
   --radius-sm:10px;
   --shadow:0 2px 12px rgba(0,0,0,0.08);
-  --shadow-md:0 4px 20px rgba(0,0,0,0.1);
   --font-display:'Playfair Display',Georgia,serif;
   --font-body:'DM Sans',-apple-system,sans-serif;
 }
@@ -148,140 +147,10 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 }
 
 .track-container{
-  max-width: 1200px;
+  max-width: 800px;
   margin: 40px auto;
   padding: 0 5%;
 }
-
-/* Profile Card */
-.profile-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  border:1px solid var(--border);
-  padding: 28px;
-  margin-bottom: 32px;
-  box-shadow:var(--shadow);
-}
-.profile-header{
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-.profile-info h2{
-  font-family: var(--font-display);
-  color: var(--primary);
-  font-size: 1.6rem;
-  margin-bottom: 8px;
-}
-.profile-info p{
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.profile-stats{
-  display: flex;
-  gap: 24px;
-  background: var(--bg);
-  padding: 16px 24px;
-  border-radius: var(--radius-sm);
-}
-.stat-item{
-  text-align: center;
-}
-.stat-value{
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--primary);
-}
-.stat-label{
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-}
-.logout-btn{
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  padding: 10px 20px;
-  border-radius: 40px;
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--text);
-  transition: all 0.2s;
-}
-.logout-btn:hover{
-  background: var(--sale-red);
-  color: white;
-  border-color: var(--sale-red);
-}
-
-/* Edit Profile Modal */
-.modal-overlay{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.6);
-  backdrop-filter:blur(4px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-  visibility:hidden;
-  opacity:0;
-  transition:all 0.2s;
-}
-.modal-overlay.active{visibility:visible;opacity:1;}
-.modal-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  width:90%;
-  max-width:420px;
-  padding:28px 24px;
-  box-shadow:var(--shadow-md);
-  border-top:4px solid var(--primary);
-}
-.modal-card h3{font-family:var(--font-display);font-size:1.4rem;margin-bottom:6px;}
-.modal-input{
-  width:100%;
-  padding:12px 14px;
-  margin-bottom:12px;
-  background:var(--bg);
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-family:var(--font-body);
-  font-size:.85rem;
-}
-.modal-input:focus{outline:none;border-color:var(--primary);}
-.modal-btn{
-  width:100%;
-  padding:12px;
-  background:var(--primary);
-  color:#fff;
-  border:none;
-  border-radius:50px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:8px;
-}
-.edit-profile-btn{
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 40px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.edit-profile-btn:hover{
-  background: var(--primary-bright);
-  transform: translateY(-2px);
-}
-
-/* Track Card (Guest Mode) */
 .track-card{
   background:var(--white);
   border-radius:var(--radius);
@@ -289,8 +158,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   padding: 32px;
   box-shadow:var(--shadow);
   text-align: center;
-  max-width: 500px;
-  margin: 0 auto;
 }
 .track-card h1{
   font-family:var(--font-display);
@@ -331,7 +198,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   background: var(--primary-bright);
   transform: translateY(-2px);
 }
-
 .orders-list{
   margin-top: 32px;
   display: flex;
@@ -476,8 +342,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 @keyframes spin{to{transform:rotate(360deg);}}
 @media(max-width:768px){
   .search-wrap{display:none;}
-  .profile-header{flex-direction:column;align-items:flex-start;}
-  .profile-stats{width:100%;justify-content:center;}
   .order-header{flex-direction:column;align-items:flex-start;}
   .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
   .whatsapp-float i{font-size:28px;}
@@ -525,20 +389,14 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 <div class="track-container">
   <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Home</a>
   
-  <div id="mainContent"></div>
-</div>
-
-<!-- Edit Profile Modal -->
-<div class="modal-overlay" id="editProfileModal">
-  <div class="modal-card">
-    <h3>Edit Profile</h3>
-    <p>Update your account information</p>
-    <input type="text" id="editName" class="modal-input" placeholder="Full Name">
-    <input type="tel" id="editPhone" class="modal-input" placeholder="Phone Number">
-    <button class="modal-btn" onclick="saveProfile()">Save Changes</button>
-    <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:8px;" onclick="closeEditModal()">Cancel</button>
-    <div id="editError" style="color:var(--sale-red);font-size:12px;text-align:center;margin-top:8px;"></div>
+  <div class="track-card">
+    <h1>Track Your Order</h1>
+    <p>Enter your email address to see all your orders</p>
+    <input type="email" id="trackEmail" class="track-input" placeholder="Email address" autocomplete="email">
+    <button class="track-btn" onclick="trackOrders()"><i class="ph ph-magnifying-glass"></i> Track Orders</button>
   </div>
+  
+  <div id="ordersContainer"></div>
 </div>
 
 <!-- Floating WhatsApp Button -->
@@ -570,109 +428,64 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 
 <script>
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
-let currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
-let authToken = localStorage.getItem('liquorbelle_auth_token') || null;
-let orders = [];
+
+// Get email from URL parameter (if coming from account button)
+const urlParams = new URLSearchParams(window.location.search);
+let emailParam = urlParams.get('email') || '';
+if(emailParam){
+  document.getElementById('trackEmail').value = emailParam;
+  setTimeout(() => trackOrders(), 500);
+}
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
 function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
 
-function getAuthHeaders() {
-  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` };
-}
-
-async function loadUserProfile() {
-  if (!authToken || !currentUser) return null;
-  try {
-    const res = await fetch(`${API_BASE}/api/auth/profile`, { headers: getAuthHeaders() });
-    const data = await res.json();
-    if (data.success) {
-      currentUser = data.user;
-      localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
-      return currentUser;
-    }
-  } catch(e) { console.error('Profile load error:', e); }
-  return currentUser;
-}
-
-async function saveProfile() {
-  const name = document.getElementById('editName').value.trim();
-  const phone = document.getElementById('editPhone').value.trim();
-  const errorDiv = document.getElementById('editError');
-  errorDiv.innerText = '';
-  
-  if (!name) { errorDiv.innerText = 'Name is required'; return; }
-  if (!phone) { errorDiv.innerText = 'Phone is required'; return; }
-  
-  try {
-    const res = await fetch(`${API_BASE}/api/auth/profile`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ name, phone })
-    });
-    const data = await res.json();
-    if (data.success) {
-      currentUser = data.user;
-      localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
-      if (data.token) {
-        authToken = data.token;
-        localStorage.setItem('liquorbelle_auth_token', authToken);
-      }
-      closeEditModal();
-      toast('Profile updated successfully!');
-      renderDashboard();
-    } else {
-      errorDiv.innerText = data.message || 'Update failed';
-    }
-  } catch(e) {
-    errorDiv.innerText = 'Network error. Please try again.';
+async function trackOrders(){
+  const email = document.getElementById('trackEmail').value.trim();
+  if(!email){
+    toast('Please enter your email address');
+    return;
   }
-}
-
-function openEditModal() {
-  document.getElementById('editName').value = currentUser?.name || '';
-  document.getElementById('editPhone').value = currentUser?.phone || '';
-  document.getElementById('editError').innerText = '';
-  document.getElementById('editProfileModal').classList.add('active');
-}
-function closeEditModal() { document.getElementById('editProfileModal').classList.remove('active'); }
-
-async function loadUserOrders() {
-  if (!authToken) return [];
-  try {
-    const res = await fetch(`${API_BASE}/api/auth/orders`, { headers: getAuthHeaders() });
-    const data = await res.json();
-    if (data.success) return data.orders;
-  } catch(e) { console.error('Orders load error:', e); }
-  return [];
-}
-
-async function trackGuestOrders(email) {
-  try {
-    const res = await fetch(`${API_BASE}/api/orders/track?email=${encodeURIComponent(email)}`);
-    const data = await res.json();
-    if (data.success && data.orders) return data.orders;
-  } catch(e) { console.error('Guest orders error:', e); }
-  return [];
-}
-
-function renderOrders(ordersList, containerId) {
-  const container = document.getElementById(containerId);
-  if (!ordersList || ordersList.length === 0) {
-    container.innerHTML = `<div class="empty-state"><i class="ph ph-package" style="font-size:48px;display:block;margin-bottom:16px;"></i>No orders found<br><small>Your orders will appear here once you place one</small></div>`;
+  if(!email.includes('@')){
+    toast('Please enter a valid email');
     return;
   }
   
-  ordersList.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  const container = document.getElementById('ordersContainer');
+  container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
   
-  container.innerHTML = `<div class="orders-list">${ordersList.map(o => {
+  try{
+    const res = await fetch(`${API_BASE}/api/orders/track?email=${encodeURIComponent(email)}`);
+    const data = await res.json();
+    
+    if(data.success && data.orders){
+      const userOrders = data.orders;
+      
+      if(userOrders.length > 0){
+        userOrders.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+        renderOrders(userOrders);
+      } else {
+        container.innerHTML = `<div class="empty-state"><i class="ph ph-package" style="font-size:48px;display:block;margin-bottom:16px;"></i>No orders found for ${escapeHtml(email)}<br><small>Make sure you used this email when checking out</small></div>`;
+      }
+    } else {
+      container.innerHTML = '<div class="empty-state">Unable to fetch orders. Please try again.</div>';
+    }
+  } catch(e){
+    console.error('Error tracking orders:', e);
+    container.innerHTML = '<div class="empty-state">Error loading orders. Please try again.</div>';
+  }
+}
+
+function renderOrders(orders){
+  const container = document.getElementById('ordersContainer');
+  container.innerHTML = `<div class="orders-list">${orders.map(o => {
     let items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); }catch(e){ items = []; } }
     
     const statusText = o.status === 'pending' ? '⏳ Pending' : (o.status === 'paid' ? '✅ Paid' : '🚚 Delivered');
     const statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'paid' ? 'status-paid' : 'status-delivered');
+    
     const deliveryFee = o.delivery || 0;
     const subtotal = o.subtotal || (o.total - deliveryFee);
     const deliveryDisplay = deliveryFee === 0 ? '<span style="color:var(--green);">FREE</span>' : `KES ${deliveryFee.toLocaleString()}`;
@@ -708,90 +521,6 @@ function renderOrders(ordersList, containerId) {
       </div>
     `;
   }).join('')}</div>`;
-}
-
-async function renderDashboard() {
-  const container = document.getElementById('mainContent');
-  const user = await loadUserProfile();
-  const userOrders = await loadUserOrders();
-  
-  const totalSpent = userOrders.filter(o => o.status === 'delivered').reduce((sum, o) => sum + (o.total || 0), 0);
-  const orderCount = userOrders.length;
-  
-  container.innerHTML = `
-    <div class="profile-card">
-      <div class="profile-header">
-        <div class="profile-info">
-          <h2>Welcome back, ${escapeHtml(user?.name || 'Customer')}!</h2>
-          <p><i class="ph ph-envelope"></i> ${escapeHtml(user?.email || '')} &nbsp;|&nbsp; <i class="ph ph-phone"></i> ${escapeHtml(user?.phone || 'Not set')}</p>
-          <p><i class="ph ph-calendar"></i> Member since ${user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'recently'}</p>
-        </div>
-        <div class="profile-stats">
-          <div class="stat-item"><div class="stat-value">${orderCount}</div><div class="stat-label">Orders</div></div>
-          <div class="stat-item"><div class="stat-value">KES ${totalSpent.toLocaleString()}</div><div class="stat-label">Total Spent</div></div>
-        </div>
-        <div style="display:flex; gap:10px;">
-          <button class="edit-profile-btn" onclick="openEditModal()"><i class="ph ph-pencil-simple"></i> Edit Profile</button>
-          <button class="logout-btn" onclick="logout()"><i class="ph ph-sign-out"></i> Logout</button>
-        </div>
-      </div>
-    </div>
-    <div class="section-header" style="margin-bottom:20px;">
-      <h2 style="font-family:var(--font-display); font-size:1.3rem;">📋 Your Order History</h2>
-    </div>
-    <div id="ordersContainer"></div>
-  `;
-  
-  renderOrders(userOrders, 'ordersContainer');
-}
-
-function renderGuestMode() {
-  const container = document.getElementById('mainContent');
-  container.innerHTML = `
-    <div class="track-card">
-      <h1>Track Your Order</h1>
-      <p>Enter your email address to see all your orders</p>
-      <input type="email" id="trackEmail" class="track-input" placeholder="Email address" autocomplete="email">
-      <button class="track-btn" onclick="trackGuest()"><i class="ph ph-magnifying-glass"></i> Track Orders</button>
-    </div>
-    <div id="ordersContainer"></div>
-  `;
-}
-
-async function trackGuest() {
-  const email = document.getElementById('trackEmail').value.trim();
-  if(!email){ toast('Please enter your email address'); return; }
-  if(!email.includes('@')){ toast('Please enter a valid email'); return; }
-  
-  const container = document.getElementById('ordersContainer');
-  container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
-  
-  const guestOrders = await trackGuestOrders(email);
-  renderOrders(guestOrders, 'ordersContainer');
-  if(guestOrders.length === 0 && container.innerHTML.includes('No orders found') === false) {
-    // Already handled in renderOrders
-  }
-}
-
-function logout() {
-  localStorage.removeItem('liquorbelle_user');
-  localStorage.removeItem('liquorbelle_auth_token');
-  currentUser = null;
-  authToken = null;
-  toast('Logged out successfully');
-  renderGuestMode();
-  document.getElementById('ordersContainer').innerHTML = '';
-}
-
-async function checkAuthAndRender() {
-  authToken = localStorage.getItem('liquorbelle_auth_token');
-  currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
-  
-  if (authToken && currentUser) {
-    await renderDashboard();
-  } else {
-    renderGuestMode();
-  }
 }
 
 // Cart functions
@@ -847,8 +576,6 @@ style.textContent = `
   .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:14px;}
   .btn-checkout{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
   .btn-checkout:hover{background:var(--primary-bright);}
-  .section-header{margin-bottom:20px;}
-  .section-header h2{font-family:var(--font-display);font-size:1.3rem;color:var(--text);}
 `;
 document.head.appendChild(style);
 
@@ -857,11 +584,7 @@ if(searchInput){
   searchInput.addEventListener('keypress',e=>{if(e.key==='Enter') window.location.href=`shop.html?search=${encodeURIComponent(e.target.value)}`;});
 }
 
-const editModal = document.getElementById('editProfileModal');
-if(editModal) editModal.addEventListener('click', function(e){ if(e.target === this) closeEditModal(); });
-
 updateCartUI();
-checkAuthAndRender();
 </script>
 </body>
 </html>

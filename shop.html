@@ -84,23 +84,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
 }
 .cart-remove-btn:hover { background: #c82333 !important; }
 
-.modal-overlay{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
-  display:flex;align-items:center;justify-content:center;
-  z-index:1000;visibility:hidden;opacity:0;transition:all 0.2s;
-}
-.modal-overlay.active{visibility:visible;opacity:1;}
-.modal-card{
-  background:var(--white);border-radius:var(--radius);width:90%;max-width:420px;
-  padding:28px 24px;box-shadow:var(--shadow-lg);border-top:4px solid var(--primary);
-}
-.modal-card h3{font-family:var(--font-display);font-size:1.4rem;margin-bottom:6px;}
-.modal-card p{font-size:.8rem;color:var(--muted);margin-bottom:20px;}
-.modal-btn{padding:10px 20px;border-radius:50px;border:none;cursor:pointer;font-weight:600;}
-.modal-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;margin-bottom:12px;font-family:inherit;}
-.modal-switch{text-align:center;margin-top:12px;}
-
 /* Header */
 .main-header{
   background:var(--primary);
@@ -252,9 +235,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   width: 100%;
   height: auto;
   display: block;
-  /* Remove object-fit property entirely */
   background: var(--bg);
-  /* Remove max-height */
 }
 
 /* Shop Body */
@@ -860,47 +841,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   gap: 6px;
 }
 
-.hot-deals-bottom{
-  margin: 40px 5% 0;
-  background: linear-gradient(135deg, var(--sale-red) 0%, var(--primary) 100%);
-  border-radius: var(--radius);
-  padding: 24px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 20px;
-  box-shadow: var(--shadow-lg);
-}
-.hot-deals-bottom h3{
-  font-family: var(--font-display);
-  color: white;
-  font-size: 1.3rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.deals-scroll-bottom{
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.deal-item-bottom{
-  background: rgba(255,255,255,0.18);
-  border-radius: 50px;
-  padding: 8px 20px;
-  color: white;
-  font-size: .85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  backdrop-filter: blur(4px);
-}
-
 .shop-features-bottom{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1201,16 +1141,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
     height: 38px;
     font-size: 11px;
   }
-  .hot-deals-bottom{
-    padding: 18px 24px;
-  }
-  .hot-deals-bottom h3{
-    font-size: 1.1rem;
-  }
-  .deal-item-bottom{
-    padding: 5px 14px;
-    font-size: .75rem;
-  }
   .shop-tabs{
     gap: 16px;
   }
@@ -1237,9 +1167,9 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
     <input type="text" id="searchInput" placeholder="Search whisky, wine, beer…">
   </div>
   <div class="header-actions">
-    <div class="action-group" id="accountBtn">
+    <div class="action-group" onclick="window.location.href='track-orders.html'">
       <div class="hbtn"><i class="ph ph-user-circle"></i></div>
-      <span class="action-label" id="accountLabel">Account</span>
+      <span class="action-label">Account</span>
     </div>
     <div class="action-group" onclick="openCartDrawer()">
       <div class="hbtn">
@@ -1254,12 +1184,12 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
 <!-- Moving Marquee / Ticker Strip - RED, right to left -->
 <div class="marquee-strip">
   <div class="marquee-content">
-    <span><i class="ph ph-truck"></i> Fast Delivery • 45-90 minutes across Nairobi</span>
+    <span><i class="ph ph-truck"></i> Fast Delivery • 10-45 minutes across Nairobi</span>
     <span><i class="ph ph-seal-check"></i> 100% Authentic Products • Official Distributors</span>
     <span><i class="ph ph-credit-card"></i> Automatic Payment • M-PESA, Card, Cash on Delivery</span>
     <span><i class="ph ph-clock"></i> LiquorBelle is Open 24/7 • We Never Close</span>
     <span><i class="ph ph-whatsapp-logo"></i> Order via WhatsApp • +254 748 894 443</span>
-    <span><i class="ph ph-truck"></i> Fast Delivery • 45-90 minutes across Nairobi</span>
+    <span><i class="ph ph-truck"></i> Fast Delivery • 10-45 minutes across Nairobi</span>
     <span><i class="ph ph-seal-check"></i> 100% Authentic Products • Official Distributors</span>
     <span><i class="ph ph-credit-card"></i> Automatic Payment • M-PESA, Card, Cash on Delivery</span>
     <span><i class="ph ph-clock"></i> LiquorBelle is Open 24/7 • We Never Close</span>
@@ -1332,18 +1262,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   </main>
 </div>
 
-<!-- Hot Deals Section -->
-<div class="hot-deals-bottom">
-  <h3><i class="ph ph-fire"></i> Hot Deals & Offers</h3>
-  <div class="deals-scroll-bottom">
-    <div class="deal-item-bottom"><i class="ph ph-tag"></i> Up to 30% OFF Whisky</div>
-    <div class="deal-item-bottom"><i class="ph ph-gift"></i> Buy 2 Get 10% OFF</div>
-    <div class="deal-item-bottom"><i class="ph ph-truck"></i> Free Delivery over 750ml</div>
-    <div class="deal-item-bottom"><i class="ph ph-star"></i> New Arrivals</div>
-    <div class="deal-item-bottom"><i class="ph ph-discount"></i> M-PESA Till: 6927569</div>
-  </div>
-</div>
-
 <div class="recently-viewed" id="recentlyViewedSection" style="display:none;">
   <div class="rv-header">
     <h3>Recently Viewed</h3>
@@ -1352,13 +1270,13 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   <div class="rv-scroll" id="rvScroll"></div>
 </div>
 
-<!-- Store Info Card - MOVED TO BOTTOM (below products) -->
+<!-- Store Info Card -->
 <div class="store-info-card">
   <div class="info-left">
     <div class="info-icon"><i class="ph ph-storefront"></i></div>
     <div class="info-text">
       <h3>Dagoretti Road, Nairobi</h3>
-      <p>Open daily 10AM–10PM • Delivery: 45–90 minutes<br>Same-day dispatch before 4PM</p>
+      <p>Open 24 hours daily • Delivery: 10–45 minutes<br>Rider will call before arrival</p>
     </div>
   </div>
   <div class="info-badge">
@@ -1427,16 +1345,6 @@ function renderStars(rating){
   for(let i = 0; i < emptyStars; i++) starsHtml += '<i class="ph ph-star star-empty"></i>';
   return `<div class="star-rating">${starsHtml}<span class="rating-number">(${rating.toFixed(1)})</span></div>`;
 }
-
-// Auth
-let currentUser = JSON.parse(localStorage.getItem('liquorbelle_user') || 'null');
-function openAuthModal(){ const modal = document.getElementById('authModal'); if(modal) modal.classList.add('active'); }
-function closeAuthModal(){ const modal = document.getElementById('authModal'); if(modal) modal.classList.remove('active'); }
-async function handleAuth(){ const email = document.getElementById('loginEmail')?.value.trim(); if(!email){ toast('Enter email'); return; } currentUser = { email, name: email.split('@')[0] }; localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser)); updateAccountUI(); closeAuthModal(); toast('Logged in'); }
-function updateAccountUI(){ const lbl = document.getElementById('accountLabel'); if(lbl) lbl.innerText = currentUser ? (currentUser.name || currentUser.email?.split('@')[0] || 'Account') : 'Account'; const btn = document.getElementById('accountBtn'); if(btn) btn.onclick = currentUser ? () => { if(confirm('View Orders?')) window.location.href='track-orders.html'; } : openAuthModal; }
-const authModalHtml = `<div class="modal-overlay" id="authModal"><div class="modal-card"><h3>Login</h3><input type="email" id="loginEmail" class="modal-input" placeholder="Email"><input type="password" id="loginPassword" class="modal-input" placeholder="Password"><button class="modal-btn" onclick="handleAuth()">Login</button><div class="modal-switch"><span onclick="closeAuthModal()">Cancel</span></div></div></div>`;
-document.body.insertAdjacentHTML('beforeend', authModalHtml);
-document.getElementById('authModal')?.addEventListener('click', function(e){ if(e.target === this) closeAuthModal(); });
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
 function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
@@ -1703,7 +1611,6 @@ function closeSidebar(){ const sidebar = document.getElementById('sidebar'); if(
 renderCategoryCards();
 renderCategoryStrip();
 initShopTabs();
-updateAccountUI();
 updateCartUI();
 loadProducts();
 renderRecentlyViewed();

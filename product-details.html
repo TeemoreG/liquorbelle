@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, user-scalable=yes, viewport-fit=cover">
 <title>LiquorBelle — Product Details</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
@@ -145,6 +145,28 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   display:flex;align-items:center;justify-content:center;
   border:2px solid white;
   padding:0 2px;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb{
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+.breadcrumb a{
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.breadcrumb a:hover{
+  color: var(--primary);
+}
+.breadcrumb .separator{
+  color: var(--muted);
+  margin: 0 6px;
+}
+.breadcrumb .current{
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .product-detail-container{
@@ -369,32 +391,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-size: 18px;
 }
 
-/* Delivery Guarantee Badge */
-.delivery-guarantee{
-  background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
-  border-radius: 14px;
-  padding: 12px 16px;
-  margin: 16px 0;
-  border-left: 3px solid #22C55E;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.delivery-guarantee i{
-  font-size: 24px;
-  color: #22C55E;
-}
-.delivery-guarantee-content strong{
-  font-size: 13px;
-  display: block;
-  color: #22C55E;
-}
-.delivery-guarantee-content p{
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
 /* Payment Icons - M-PESA Only */
 .payment-icons{
   display: flex;
@@ -427,6 +423,32 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-size: 12px;
   font-weight: 700;
   color: #2ecc71;
+}
+
+/* Delivery Guarantee Badge - MOVED BELOW SHARE BUTTONS */
+.delivery-guarantee{
+  background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-left: 3px solid #22C55E;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.delivery-guarantee i{
+  font-size: 24px;
+  color: #22C55E;
+}
+.delivery-guarantee-content strong{
+  font-size: 13px;
+  display: block;
+  color: #22C55E;
+}
+.delivery-guarantee-content p{
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
 }
 
 .back-link{
@@ -508,6 +530,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   .stars .star-filled, .stars .star-empty{font-size:14px;}
   .rating-text{font-size:11px;}
   .share-section{flex-wrap:wrap;}
+  .breadcrumb{font-size:11px;}
 }
 </style>
 </head>
@@ -554,7 +577,17 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <img id="productImage" src="" alt="Product Image">
   </div>
   <div class="product-info-section">
-    <a href="shop.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Shop</a>
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb" id="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="separator">/</span>
+      <a href="shop.html">Shop</a>
+      <span class="separator">/</span>
+      <span class="current" id="breadcrumbCategory">Loading...</span>
+      <span class="separator">/</span>
+      <span class="current" id="breadcrumbProduct">Loading...</span>
+    </div>
+    
     <h1 id="productName">Loading...</h1>
     <div class="product-category" id="productCategory"></div>
     
@@ -566,15 +599,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     
     <div id="productBadge"></div>
     <p class="product-description" id="productDescription"></p>
-    
-    <!-- Delivery Guarantee Badge -->
-    <div class="delivery-guarantee">
-      <i class="ph ph-seal-check"></i>
-      <div class="delivery-guarantee-content">
-        <strong>Delivery Guarantee</strong>
-        <p>Fast delivery within 45-90 minutes • Rider will call before arrival</p>
-      </div>
-    </div>
     
     <div class="variant-selector">
       <label>Select Size:</label>
@@ -623,6 +647,16 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
         <i class="ph ph-link"></i> Copy Link
       </button>
     </div>
+    
+    <!-- Delivery Guarantee Badge - NOW BELOW SHARE BUTTONS -->
+    <div class="delivery-guarantee">
+      <i class="ph ph-seal-check"></i>
+      <div class="delivery-guarantee-content">
+        <strong>Delivery Guarantee</strong>
+        <p>Fast delivery within 10-45 minutes • Rider will call before arrival</p>
+      </div>
+    </div>
+    
   </div>
 </div>
 
@@ -681,6 +715,18 @@ function renderStars(rating){
   return starsHtml;
 }
 
+function formatCategoryName(category){
+  if(!category) return 'Product';
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+function updateBreadcrumb(category, productName){
+  const categorySpan = document.getElementById('breadcrumbCategory');
+  const productSpan = document.getElementById('breadcrumbProduct');
+  if(categorySpan) categorySpan.innerText = formatCategoryName(category);
+  if(productSpan) productSpan.innerText = productName || 'Loading...';
+}
+
 function shareProductWhatsApp() {
   if(!currentProduct) return;
   const url = window.location.href;
@@ -720,11 +766,17 @@ async function loadProduct() {
 }
 
 function renderProductDetails() {
-  document.getElementById('productName').innerText = currentProduct.name;
-  document.getElementById('productCategory').innerText = currentProduct.category || '';
+  const productName = currentProduct.name;
+  const category = currentProduct.category || '';
+  
+  document.getElementById('productName').innerText = productName;
+  document.getElementById('productCategory').innerText = category;
   document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
   document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
   document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
+  
+  // Update Breadcrumb
+  updateBreadcrumb(category, productName);
   
   // Render Star Rating
   const rating = currentProduct.rating || 4.0;
