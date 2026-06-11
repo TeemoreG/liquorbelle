@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, user-scalable=yes, viewport-fit=cover">
 <title>LiquorBelle — Product Details</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
@@ -171,7 +171,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-weight: 600;
 }
 
-/* Product Detail Container */
 .product-detail-container{
   max-width: 1200px;
   margin: 40px auto;
@@ -180,20 +179,12 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   grid-template-columns: 1fr 1fr;
   gap: 48px;
 }
-.product-image-section{
-  text-align: center;
-}
 .product-image-section img{
   width: 100%;
-  max-width: 400px;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
   background: white;
   padding: 20px;
-  margin: 0 auto;
-  display: block;
 }
 .product-info-section h1{
   font-family: var(--font-display);
@@ -529,206 +520,24 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   pointer-events:none;
 }
 
-/* ==================== MOBILE RESPONSIVE ==================== */
-@media(max-width: 768px){
+@media(max-width:768px){
   .product-detail-container{
     grid-template-columns: 1fr;
     gap: 24px;
-    margin: 20px auto;
   }
-  
-  /* Product Image - Properly sized on mobile */
   .product-image-section img{
-    max-width: 250px;
-    aspect-ratio: 1 / 1;
-    object-fit: contain;
-    padding: 15px;
+    max-width: 70%;
+    margin: 0 auto;
+    display: block;
   }
-  
-  /* Hide search on mobile */
-  .search-wrap{
-    display: none;
-  }
-  
-  /* Action buttons column on mobile */
-  .action-buttons{
-    flex-direction: column;
-    gap: 12px;
-  }
-  .add-to-cart-btn, .buy-now-btn{
-    width: 100%;
-    padding: 14px;
-  }
-  
-  /* WhatsApp button smaller */
-  .whatsapp-float{
-    width: 50px;
-    height: 50px;
-    bottom: 20px;
-    right: 20px;
-  }
-  .whatsapp-float i{
-    font-size: 28px;
-  }
-  
-  /* Star rating smaller */
-  .stars .star-filled, .stars .star-empty{
-    font-size: 14px;
-  }
-  .rating-text{
-    font-size: 11px;
-  }
-  
-  /* Share section wrap */
-  .share-section{
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .share-btn{
-    flex: 1;
-    justify-content: center;
-  }
-  
-  /* Breadcrumb smaller */
-  .breadcrumb{
-    font-size: 11px;
-    margin-bottom: 16px;
-  }
-  
-  /* Product title smaller */
-  .product-info-section h1{
-    font-size: 1.5rem;
-  }
-  
-  /* Price smaller */
-  .price-new{
-    font-size: 1.5rem;
-  }
-  .price-old{
-    font-size: 0.9rem;
-  }
-  
-  /* Variant buttons wrap */
-  .variant-buttons{
-    gap: 8px;
-  }
-  .variant-btn{
-    padding: 8px 14px;
-    font-size: 0.8rem;
-  }
-  
-  /* Quantity controls */
-  .qty-control{
-    gap: 8px;
-  }
-  .qty-btn{
-    width: 32px;
-    height: 32px;
-    font-size: 1rem;
-  }
-  .qty-value{
-    font-size: 1rem;
-    min-width: 32px;
-  }
-  
-  /* Payment icons */
-  .payment-icons{
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-  }
-  
-  /* Delivery guarantee */
-  .delivery-guarantee{
-    padding: 10px 12px;
-  }
-  .delivery-guarantee i{
-    font-size: 20px;
-  }
-  .delivery-guarantee-content strong{
-    font-size: 12px;
-  }
-  .delivery-guarantee-content p{
-    font-size: 10px;
-  }
-  
-  /* Top bar */
-  .top-bar{
-    padding: 8px 4%;
-    font-size: 10px;
-  }
-  .top-bar-left{
-    gap: 12px;
-  }
-  .badge-24h{
-    font-size: 9px;
-    padding: 2px 8px;
-  }
-  
-  /* Header */
-  .main-header{
-    padding: 10px 4%;
-  }
-  .logo-img{
-    height: 38px;
-    width: 38px;
-  }
-  .logo-text{
-    font-size: 1.1rem;
-  }
-  .logo-text small{
-    font-size: 8px;
-  }
-  .hbtn{
-    width: 32px;
-    height: 32px;
-  }
-  .hbtn i{
-    font-size: 14px;
-  }
-  .action-label{
-    font-size: 7px;
-  }
-  
-  /* Footer */
-  .footer{
-    padding: 30px 4% 20px;
-    margin-top: 30px;
-  }
-  .footer-grid{
-    gap: 20px;
-  }
-  .footer-col h4{
-    font-size: 0.8rem;
-  }
-  .footer-col p, .footer-col a{
-    font-size: 0.7rem;
-  }
-}
-
-/* Extra small devices (phones under 480px) */
-@media(max-width: 480px){
-  .product-image-section img{
-    max-width: 200px;
-    padding: 10px;
-  }
-  .product-info-section h1{
-    font-size: 1.3rem;
-  }
-  .price-new{
-    font-size: 1.3rem;
-  }
-  .variant-btn{
-    padding: 6px 12px;
-    font-size: 0.75rem;
-  }
-  .share-btn{
-    padding: 6px 12px;
-    font-size: 11px;
-  }
-  .delivery-guarantee{
-    padding: 8px 10px;
-  }
+  .search-wrap{display:none;}
+  .action-buttons{flex-direction:column;}
+  .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
+  .whatsapp-float i{font-size:28px;}
+  .stars .star-filled, .stars .star-empty{font-size:14px;}
+  .rating-text{font-size:11px;}
+  .share-section{flex-wrap:wrap;}
+  .breadcrumb{font-size:11px;}
 }
 </style>
 </head>
@@ -994,20 +803,25 @@ function renderProductDetails() {
     badgeContainer.innerHTML = '';
   }
   
+  // Get variants from database - ONLY what admin added
   const variants = currentProduct.variants || [];
   const sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
   variants.sort((a,b) => (sizeOrder[a.size] || 99) - (sizeOrder[b.size] || 99));
   
   const variantContainer = document.getElementById('variantButtons');
+  if(variants.length === 0) {
+    variantContainer.innerHTML = '<p style="color:var(--muted);">No sizes available</p>';
+    return;
+  }
+  
   variantContainer.innerHTML = variants.map(v => `
     <button class="variant-btn" data-size="${v.size}" data-price="${v.price}" data-discount="${v.discount || 0}" onclick="selectVariant('${v.size}', ${v.price}, ${v.discount || 0})">
       ${v.size}
     </button>
   `).join('');
   
-  if(variants.length > 0) {
-    selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
-  }
+  // Select first variant by default
+  selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
 }
 
 function selectVariant(size, price, discount) {
