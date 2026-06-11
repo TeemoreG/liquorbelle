@@ -36,11 +36,82 @@
   --radius-xs:7px;
   --shadow:0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
   --shadow-md:0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+  --font-display:'Inter',sans-serif;
+  --font-body:'Inter',sans-serif;
 }
 
 body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;}
 
-/* ── BUTTONS ── */
+/* LOGIN MODAL */
+.login-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+}
+.login-modal-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:40px 32px;
+  width:90%;
+  max-width:400px;
+  text-align:center;
+  border-top:4px solid var(--primary);
+}
+.login-logo img{
+  width:70px;
+  height:70px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+.login-logo h2{
+  font-family:var(--font-display);
+  color:var(--primary);
+  margin-bottom:8px;
+  font-size:1.5rem;
+}
+.login-logo p{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:24px;
+}
+.login-input{
+  width:100%;
+  padding:14px 16px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  font-size:15px;
+  font-family:inherit;
+  margin-bottom:16px;
+}
+.login-input:focus{
+  outline:none;
+  border-color:var(--primary);
+}
+.login-btn{
+  width:100%;
+  padding:14px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+}
+.login-btn:hover{
+  background:var(--primary-light);
+}
+.login-error{
+  color:var(--red);
+  font-size:13px;
+  margin-top:12px;
+}
+
+/* BUTTONS */
 .btn{
   background:var(--primary);
   color:white;
@@ -74,7 +145,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .btn-call:hover{background:#1e40af;box-shadow:0 2px 8px rgba(29,78,216,0.3);}
 .btn:disabled{opacity:0.55;cursor:not-allowed;box-shadow:none;transform:none;}
 
-/* ── HEADER ── */
+/* HEADER */
 .admin-header{
   background:var(--primary);
   color:white;
@@ -114,7 +185,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 
 .container{max-width:1380px;margin:0 auto;padding:24px 5%;}
 
-/* ── STAT CARDS ── */
+/* STAT CARDS */
 .stats-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
@@ -151,8 +222,14 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .stat-card .value{font-size:26px;font-weight:800;color:var(--text);line-height:1;}
 .stat-card .sub{font-size:11px;color:var(--muted);margin-top:5px;}
 
-/* ── SEARCH BAR ── */
-.search-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+/* SEARCH BAR */
+.search-bar{
+  display:flex;
+  gap:10px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+  align-items:center;
+}
 .search-input-wrap{
   flex:1;
   min-width:200px;
@@ -188,8 +265,23 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   color:var(--text-secondary);
 }
 .clear-btn:hover{background:var(--primary);color:white;border-color:var(--primary);}
+.refresh-btn{
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:10px 18px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:500;
+  font-size:13px;
+  transition:all 0.15s;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.refresh-btn:hover{background:var(--primary-light);transform:translateY(-1px);}
 
-/* ── HELP TEXT ── */
+/* HELP TEXT */
 .help-text{
   font-size:12px;
   color:var(--muted);
@@ -202,7 +294,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 }
 .help-text i{color:var(--primary);margin-right:4px;}
 
-/* ── ORDERS ── */
+/* ORDERS */
 .orders-list{display:flex;flex-direction:column;gap:16px;}
 .order-card{
   background:var(--white);
@@ -351,7 +443,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 }
 .order-meta-small span{display:inline-flex;align-items:center;gap:5px;}
 
-/* ── MISC ── */
+/* MISC */
 .loading-spinner{
   display:inline-block;
   width:14px;height:14px;
@@ -392,7 +484,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .empty-state i{font-size:40px;display:block;margin-bottom:12px;color:var(--border);}
 .empty-state p{font-size:14px;}
 
-/* ── RESPONSIVE ── */
+/* RESPONSIVE */
 @media(max-width:768px){
   .admin-header{padding:0 4%;height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;gap:10px;}
   .stats-grid{grid-template-columns:repeat(2,1fr);}
@@ -406,7 +498,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   .order-item{flex-wrap:wrap;}
   .order-item-img{width:40px;height:40px;}
   .search-bar{flex-direction:column;}
-  .clear-btn{justify-content:center;}
+  .clear-btn,.refresh-btn{justify-content:center;width:100%;}
   .order-meta-small{font-size:9px;}
 }
 
@@ -418,6 +510,22 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 </style>
 </head>
 <body>
+
+<!-- Custom Login Modal -->
+<div id="cashierLoginModal" class="login-modal-overlay">
+  <div class="login-modal-card">
+    <div class="login-logo">
+      <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+      <h2>Cashier Login</h2>
+      <p>Enter password to access order manager</p>
+    </div>
+    <form id="cashierLoginForm" onsubmit="event.preventDefault(); submitCashierLogin();">
+      <input type="password" id="cashierPassword" class="login-input" placeholder="Enter cashier password" autocomplete="off">
+      <button type="submit" class="login-btn">Login</button>
+      <div id="loginError" class="login-error"></div>
+    </form>
+  </div>
+</div>
 
 <div class="admin-header">
   <div class="logo">
@@ -439,6 +547,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
       <input type="text" id="orderSearch" class="search-input" placeholder="Search by customer name, email, or phone...">
     </div>
     <button class="clear-btn" onclick="clearSearch()"><i class="ph ph-x"></i> Clear</button>
+    <button class="refresh-btn" onclick="manualRefresh()"><i class="ph ph-arrow-clockwise"></i> Refresh</button>
   </div>
   
   <div id="ordersContainer" class="orders-list">
@@ -477,9 +586,10 @@ function formatPhone(phone){
 
 function formatDisplayPhone(phone){
   if(!phone) return 'No phone';
-  if(phone.length === 12 && phone.startsWith('254')) return '0' + phone.slice(3);
-  if(phone.length === 10 && (phone.startsWith('07') || phone.startsWith('01'))) return phone;
-  return phone;
+  const display = phone.toString();
+  if(display.length === 12 && display.startsWith('254')) return '0' + display.slice(3);
+  if(display.length === 10 && (display.startsWith('07') || display.startsWith('01'))) return display;
+  return display;
 }
 
 function getAuthHeaders() {
@@ -509,19 +619,20 @@ async function adminLogin(password) {
   }
 }
 
-async function checkAuth(){
-  if(adminToken) return true;
-  adminToken = localStorage.getItem('liquorbelle_cashier_token');
-  if(adminToken) return true;
+function submitCashierLogin() {
+  const password = document.getElementById('cashierPassword').value;
+  const errorDiv = document.getElementById('loginError');
+  errorDiv.innerText = '';
   
-  const pwd = prompt('🔐 Enter Order Manager Password:');
-  if(pwd && await adminLogin(pwd)){
-    return true;
-  } else {
-    alert('Invalid password');
-    window.location.href = 'index.html';
-    return false;
-  }
+  adminLogin(password).then(success => {
+    if(success) {
+      document.getElementById('cashierLoginModal').style.display = 'none';
+      initAfterLogin();
+    } else {
+      errorDiv.innerText = 'Invalid password. Try again.';
+      document.getElementById('cashierPassword').value = '';
+    }
+  });
 }
 
 async function loadProducts(){
@@ -533,10 +644,16 @@ async function loadProducts(){
 }
 
 async function loadOrders(){
+  if(!adminToken) return;
   try{
     const res = await fetch(`${API_BASE}/api/admin/recent-orders`, {
       headers: getAuthHeaders()
     });
+    if(res.status === 401){
+      showToast('Session expired. Please login again.', true);
+      logout();
+      return;
+    }
     if(res.status === 429){
       showToast('⚠️ Too many requests. Please wait...', true);
       return;
@@ -552,6 +669,11 @@ async function loadOrders(){
   renderOrders();
 }
 
+function manualRefresh(){
+  showToast('Refreshing orders...');
+  loadOrders();
+}
+
 function renderStats(){
   const total = orders.length;
   const pending = orders.filter(o => o.status === 'pending').length;
@@ -564,6 +686,15 @@ function renderStats(){
     <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
     <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
   `;
+}
+
+function getOrderDisplayId(order){
+  if(order.order_number) return order.order_number;
+  if(order._id){
+    const idStr = order._id.toString();
+    return idStr.slice(-8).toUpperCase();
+  }
+  return 'N/A';
 }
 
 function renderOrders(){
@@ -585,12 +716,13 @@ function renderOrders(){
   container.innerHTML = filtered.map(o => {
     let items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); }catch(e){ items = []; } }
+    if(!items || !items.length) items = [];
     
     const phoneRaw = o.phone || '';
     const cleanPhone = formatPhone(phoneRaw);
     const displayPhone = formatDisplayPhone(phoneRaw);
-    const waLink = `https://wa.me/${cleanPhone}`;
-    const callLink = `tel:${cleanPhone}`;
+    const waLink = cleanPhone ? `https://wa.me/${cleanPhone}` : '#';
+    const callLink = cleanPhone ? `tel:${cleanPhone}` : '#';
     
     const itemsHtml = items.map(i => {
       const product = products.find(p => p._id === i.product_id || p.name === i.product_name || p._id === i.id);
@@ -607,12 +739,11 @@ function renderOrders(){
       `;
     }).join('');
     
-    const orderId = o.order_number || (o._id ? o._id.slice(-8) : 'N/A');
+    const orderId = getOrderDisplayId(o);
     const isProcessing = pendingActions.has(o._id);
     const statusLabel = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : 'Delivered';
     const statusIcon = o.status === 'pending' ? 'ph-clock' : o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
     
-    // Calculate delivery fee display
     const deliveryFee = o.delivery || 0;
     const subtotal = o.subtotal || (o.total - deliveryFee);
     const deliveryDisplay = deliveryFee === 0 ? '<span style="color:var(--green);">FREE</span>' : `KES ${deliveryFee.toLocaleString()}`;
@@ -634,8 +765,8 @@ function renderOrders(){
           <div class="order-header-right">
             <span class="order-status status-${o.status}"><i class="ph ${statusIcon}"></i> ${statusLabel}</span>
             <div class="contact-buttons">
-              <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
-              <a href="${callLink}" class="btn btn-sm btn-call"><i class="ph ph-phone-call"></i> Call</a>
+              <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa" ${!cleanPhone ? 'style="opacity:0.5;pointer-events:none;"' : ''}><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
+              <a href="${callLink}" class="btn btn-sm btn-call" ${!cleanPhone ? 'style="opacity:0.5;pointer-events:none;"' : ''}><i class="ph ph-phone-call"></i> Call</a>
             </div>
           </div>
         </div>
@@ -770,12 +901,10 @@ function clearSearch(){
   renderOrders();
 }
 
-document.getElementById('orderSearch').addEventListener('input', (e) => {
-  searchTerm = e.target.value.toLowerCase();
-  renderOrders();
-});
-
-function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
+function escapeHtml(str){ 
+  if(!str) return '';
+  return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); 
+}
 
 function logout(){
   localStorage.removeItem('liquorbelle_cashier_token');
@@ -784,16 +913,29 @@ function logout(){
   location.reload();
 }
 
-// Initialize
-(async function init(){
-  const auth = await checkAuth();
-  if(auth){
-    await loadProducts();
-    await loadOrders();
-    // Refresh every 3 minutes (reduced from 2 minutes to prevent rate limits)
-    setInterval(loadOrders, 180000);
+async function initAfterLogin() {
+  await loadProducts();
+  await loadOrders();
+  setInterval(loadOrders, 180000);
+}
+
+// Initialize with custom login
+async function init() {
+  adminToken = localStorage.getItem('liquorbelle_cashier_token');
+  if(adminToken) {
+    document.getElementById('cashierLoginModal').style.display = 'none';
+    await initAfterLogin();
+  } else {
+    document.getElementById('cashierLoginModal').style.display = 'flex';
   }
-})();
+}
+
+document.getElementById('orderSearch').addEventListener('input', (e) => {
+  searchTerm = e.target.value.toLowerCase();
+  renderOrders();
+});
+
+init();
 </script>
 </body>
 </html>

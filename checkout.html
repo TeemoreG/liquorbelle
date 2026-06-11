@@ -23,6 +23,8 @@
   --radius:16px;
   --radius-sm:12px;
   --shadow:0 4px 20px rgba(0,0,0,0.08);
+  --btn-green:#22C55E;
+  --btn-green-hover:#16A34A;
 }
 body{
   background:var(--bg);
@@ -151,6 +153,33 @@ body{
   text-align:right;
 }
 
+/* Delivery Estimate Card */
+.delivery-estimate{
+  background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
+  border-radius:14px;
+  padding:14px 16px;
+  margin-top:24px;
+  border-left:3px solid var(--btn-green);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.delivery-estimate i{
+  font-size:28px;
+  color:var(--btn-green);
+}
+.delivery-estimate-content strong{
+  font-size:13px;
+  display:block;
+  margin-bottom:2px;
+  color:var(--btn-green);
+}
+.delivery-estimate-content p{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
 .checkout-form{
   background:var(--white);
   border-radius:var(--radius);
@@ -253,7 +282,7 @@ body{
 .btn-place{
   width:100%;
   padding:18px;
-  background:linear-gradient(135deg, var(--primary), var(--primary-light));
+  background:var(--btn-green);
   border:none;
   border-radius:60px;
   color:white;
@@ -261,8 +290,16 @@ body{
   font-size:16px;
   cursor:pointer;
   transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
 }
-.btn-place:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(128,0,0,0.3);}
+.btn-place:hover{
+  background:var(--btn-green-hover);
+  transform:translateY(-2px);
+  box-shadow:0 10px 20px rgba(34,197,94,0.3);
+}
 .btn-place:disabled{opacity:0.6;cursor:not-allowed;}
 
 .empty-cart{text-align:center;padding:60px 20px;color:var(--muted);}
@@ -358,6 +395,9 @@ body{
 @media(max-width:768px){
   .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
   .whatsapp-float i{font-size:28px;}
+  .delivery-estimate{padding:10px 12px;margin-top:20px;}
+  .delivery-estimate i{font-size:22px;}
+  .delivery-estimate-content strong{font-size:12px;}
 }
 </style>
 </head>
@@ -381,6 +421,15 @@ body{
       <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 150</span></div>
       <div class="free-delivery-note" id="freeDeliveryNote"></div>
       <div class="summary-total"><span>Total</span><span id="totalAmount">KES 0</span></div>
+      
+      <!-- Delivery Estimate Card - moved further from total with margin-top -->
+      <div class="delivery-estimate">
+        <i class="ph ph-truck"></i>
+        <div class="delivery-estimate-content">
+          <strong>🚚 Estimated Delivery: 10-45 minutes</strong>
+          <p>Based on your location in Nairobi • Rider will call before arrival</p>
+        </div>
+      </div>
     </div>
 
     <div class="checkout-form">
@@ -419,7 +468,6 @@ body{
       </div>
       
       <div class="form-group"><label>Building / Apartment Name</label><input type="text" id="building" placeholder="e.g. Quickmart Plaza"></div>
-      <div class="form-group"><label>Additional Instructions</label><textarea id="notes" rows="2" placeholder="Gate number, floor, call on arrival..."></textarea></div>
       
       <div class="summary-title" style="margin:20px 0 16px;"><i class="ph ph-credit-card"></i> Payment Method</div>
       <div class="payment-options">
@@ -504,12 +552,10 @@ function toast(msg, isError = false) {
 
 async function loadDeliverySettings() {
   try {
-    // FIXED: Using the public endpoint (no authentication required)
     const res = await fetch(`${API_BASE_URL}/api/delivery-settings`);
     const data = await res.json();
     if (data.success && data.settings) {
       deliverySettings = data.settings;
-      // Update the delivery fee display in the UI
       const deliveryText = deliverySettings.delivery_enabled ? 
         (deliverySettings.delivery_fee === 0 ? 'FREE' : `KES ${deliverySettings.delivery_fee}`) : 'FREE';
       document.getElementById('deliveryFee').innerText = deliveryText;
@@ -520,7 +566,6 @@ async function loadDeliverySettings() {
   }
 }
 
-// Simple reverse geocoding using OpenStreetMap (free, no API key needed)
 async function getAddressFromCoords(lat, lng) {
   try {
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
@@ -676,11 +721,11 @@ function renderCartSummary() {
   }
 }
 
-async function saveOrderToDatabase(orderId, email, fullName, phone, address, notes, items, subtotal, delivery, total, paymentMethod, timestamp, status) {
+async function saveOrderToDatabase(orderId, email, fullName, phone, address, items, subtotal, delivery, total, paymentMethod, timestamp, status) {
   try {
     const orderData = {
       orderNumber: orderId, userId: null, customerName: fullName, customerEmail: email,
-      phone, address, notes, subtotal, delivery, total, paymentMethod, status,
+      phone, address, notes: '', subtotal, delivery, total, paymentMethod, status,
       items: items.map(i => ({ productId: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size }))
     };
     await fetch(`${API_BASE_URL}/api/db/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderData) });
@@ -719,7 +764,6 @@ async function placeOrder() {
   let phone = document.getElementById('phone').value.trim();
   const street = document.getElementById('street').value.trim();
   const building = document.getElementById('building').value.trim();
-  const notes = document.getElementById('notes').value.trim();
   
   if (!email || !email.includes('@')) { toast('Please enter a valid email address'); return; }
   if (!fullName) { toast('Please enter your full name'); return; }
@@ -753,7 +797,6 @@ async function placeOrder() {
       
       let paymentCompleted = false;
       
-      // Set timeout for payment (90 seconds)
       paymentTimeout = setTimeout(() => {
         if (!paymentCompleted) {
           if (paymentInterval) clearInterval(paymentInterval);
@@ -762,7 +805,6 @@ async function placeOrder() {
         }
       }, 90000);
       
-      // Check payment status every 3 seconds
       paymentInterval = setInterval(async () => {
         if (paymentCompleted) return;
         try {
@@ -775,7 +817,7 @@ async function placeOrder() {
             paymentInterval = null;
             paymentTimeout = null;
             
-            await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, notes, items, subtotal, delivery, total, 'M-PESA', timestamp, 'paid');
+            await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, 'M-PESA', timestamp, 'paid');
             await sendOrderConfirmationEmail(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, timestamp, 'mpesa');
             cart = {};
             localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
@@ -790,8 +832,7 @@ async function placeOrder() {
       toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
     }
   } else {
-    // COD - immediate success
-    await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, notes, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
+    await saveOrderToDatabase(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, 'Cash on Delivery', timestamp, 'pending');
     await sendOrderConfirmationEmail(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, timestamp, 'cod');
     cart = {};
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
@@ -801,7 +842,6 @@ async function placeOrder() {
   }
 }
 
-// Load delivery settings and then render cart
 loadDeliverySettings().then(() => renderCartSummary());
 </script>
 </body>

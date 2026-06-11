@@ -20,6 +20,7 @@
   --muted:#7A7368;
   --success:#1A8A3E;
   --gold:#B8860B;
+  --star-color:#EAB308;
   --radius:16px;
   --radius-sm:10px;
   --shadow:0 2px 12px rgba(128,0,0,0.08);
@@ -170,10 +171,35 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 .product-category{
   color: var(--muted);
   font-size: 0.85rem;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
+/* Star Rating */
+.rating-container{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.stars{
+  display: flex;
+  gap: 3px;
+}
+.star-filled{
+  color: var(--star-color);
+  font-size: 18px;
+}
+.star-empty{
+  color: #d1d5db;
+  font-size: 18px;
+}
+.rating-text{
+  font-size: 13px;
+  color: var(--muted);
+}
+
 .product-badge{
   display: inline-block;
   padding: 4px 12px;
@@ -185,6 +211,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
 .badge-hot{background:var(--primary);color:white;}
 .badge-local{background:var(--gold);color:white;}
 .badge-prem{background:#5B3A8E;color:white;}
+
 .product-description{
   color: var(--muted);
   line-height: 1.6;
@@ -310,6 +337,98 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   background: var(--primary-bright);
   transform: translateY(-2px);
 }
+
+/* Share Button */
+.share-section{
+  display: flex;
+  gap: 12px;
+  margin: 20px 0 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.share-btn{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  transition: all 0.2s;
+}
+.share-btn:hover{
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.share-btn i{
+  font-size: 18px;
+}
+
+/* Delivery Guarantee Badge */
+.delivery-guarantee{
+  background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-left: 3px solid #22C55E;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.delivery-guarantee i{
+  font-size: 24px;
+  color: #22C55E;
+}
+.delivery-guarantee-content strong{
+  font-size: 13px;
+  display: block;
+  color: #22C55E;
+}
+.delivery-guarantee-content p{
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Payment Icons - M-PESA Only */
+.payment-icons{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.payment-label{
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.mpesa-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(46,204,113,0.1);
+  padding: 6px 14px;
+  border-radius: 50px;
+}
+.mpesa-badge img{
+  width: 24px;
+  height: 24px;
+}
+.mpesa-badge span{
+  font-size: 12px;
+  font-weight: 700;
+  color: #2ecc71;
+}
+
 .back-link{
   display: inline-flex;
   align-items: center;
@@ -359,6 +478,24 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   pointer-events:none;
   white-space:nowrap;
 }
+
+/* Share Toast */
+.share-toast{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#22C55E;
+  color:white;
+  padding:10px 20px;
+  border-radius:50px;
+  font-size:13px;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:601;
+  pointer-events:none;
+}
+
 @media(max-width:768px){
   .product-detail-container{
     grid-template-columns: 1fr;
@@ -368,6 +505,9 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   .action-buttons{flex-direction:column;}
   .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
   .whatsapp-float i{font-size:28px;}
+  .stars .star-filled, .stars .star-empty{font-size:14px;}
+  .rating-text{font-size:11px;}
+  .share-section{flex-wrap:wrap;}
 }
 </style>
 </head>
@@ -417,8 +557,24 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <a href="shop.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Shop</a>
     <h1 id="productName">Loading...</h1>
     <div class="product-category" id="productCategory"></div>
+    
+    <!-- Star Rating -->
+    <div class="rating-container" id="ratingContainer">
+      <div class="stars" id="starsContainer"></div>
+      <span class="rating-text" id="ratingText"></span>
+    </div>
+    
     <div id="productBadge"></div>
     <p class="product-description" id="productDescription"></p>
+    
+    <!-- Delivery Guarantee Badge -->
+    <div class="delivery-guarantee">
+      <i class="ph ph-seal-check"></i>
+      <div class="delivery-guarantee-content">
+        <strong>Delivery Guarantee</strong>
+        <p>Fast delivery within 45-90 minutes • Rider will call before arrival</p>
+      </div>
+    </div>
     
     <div class="variant-selector">
       <label>Select Size:</label>
@@ -429,6 +585,15 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       <span class="price-old" id="priceOld" style="display:none;"></span>
       <span class="price-new" id="priceNew">KES 0</span>
       <span class="discount-badge" id="discountBadge" style="display:none;"></span>
+    </div>
+    
+    <!-- Payment Icons - M-PESA Only -->
+    <div class="payment-icons">
+      <span class="payment-label">Secure Payment:</span>
+      <div class="mpesa-badge">
+        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780934550/mpesa_w3qmr0.png" alt="M-PESA" onerror="this.style.display='none'">
+        <span>M-PESA</span>
+      </div>
     </div>
     
     <div class="quantity-selector">
@@ -446,6 +611,16 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       </button>
       <button class="buy-now-btn" onclick="buyNow()">
         <i class="ph ph-credit-card"></i> Buy Now
+      </button>
+    </div>
+    
+    <!-- Share Section -->
+    <div class="share-section">
+      <button class="share-btn" onclick="shareProductWhatsApp()">
+        <i class="ph ph-whatsapp-logo"></i> Share on WhatsApp
+      </button>
+      <button class="share-btn" onclick="copyProductLink()">
+        <i class="ph ph-link"></i> Copy Link
       </button>
     </div>
   </div>
@@ -477,6 +652,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   </div>
 </div>
 <div id="toast"></div>
+<div id="shareToast" class="share-toast"></div>
 
 <script>
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
@@ -492,6 +668,34 @@ const productId = urlParams.get('id');
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
 function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
+function showShareToast(msg){const t=document.getElementById('shareToast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2000);}
+
+function renderStars(rating){
+  const fullStars = Math.floor(rating);
+  const hasHalf = rating - fullStars >= 0.5;
+  let starsHtml = '';
+  for(let i = 0; i < fullStars; i++) starsHtml += '<i class="ph ph-star-fill star-filled"></i>';
+  if(hasHalf) starsHtml += '<i class="ph ph-star-half star-filled"></i>';
+  const emptyStars = 5 - Math.ceil(rating);
+  for(let i = 0; i < emptyStars; i++) starsHtml += '<i class="ph ph-star star-empty"></i>';
+  return starsHtml;
+}
+
+function shareProductWhatsApp() {
+  if(!currentProduct) return;
+  const url = window.location.href;
+  const text = `🍾 Check out ${currentProduct.name} at LiquorBelle! ${selectedVariant ? selectedVariant.size : ''} - KES ${selectedVariant ? selectedVariant.price.toLocaleString() : ''}\n\n${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+function copyProductLink() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    showShareToast('✅ Product link copied to clipboard!');
+  }).catch(() => {
+    showShareToast('❌ Failed to copy link');
+  });
+}
 
 async function loadProduct() {
   if(!productId) {
@@ -521,6 +725,13 @@ function renderProductDetails() {
   document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
   document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
   document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
+  
+  // Render Star Rating
+  const rating = currentProduct.rating || 4.0;
+  const starsContainer = document.getElementById('starsContainer');
+  const ratingText = document.getElementById('ratingText');
+  if(starsContainer) starsContainer.innerHTML = renderStars(rating);
+  if(ratingText) ratingText.innerText = `${rating.toFixed(1)} out of 5 stars`;
   
   const badgeContainer = document.getElementById('productBadge');
   if(currentProduct.badge) {

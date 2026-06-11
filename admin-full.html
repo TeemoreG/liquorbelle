@@ -36,11 +36,82 @@
   --radius-xs:7px;
   --shadow:0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
   --shadow-md:0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+  --font-display:'Inter',sans-serif;
+  --font-body:'Inter',sans-serif;
 }
 
 body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;}
 
-/* ── BUTTONS ── */
+/* LOGIN MODAL */
+.login-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+}
+.login-modal-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:40px 32px;
+  width:90%;
+  max-width:400px;
+  text-align:center;
+  border-top:4px solid var(--primary);
+}
+.login-logo img{
+  width:70px;
+  height:70px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+.login-logo h2{
+  font-family:var(--font-display);
+  color:var(--primary);
+  margin-bottom:8px;
+  font-size:1.5rem;
+}
+.login-logo p{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:24px;
+}
+.login-input{
+  width:100%;
+  padding:14px 16px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  font-size:15px;
+  font-family:inherit;
+  margin-bottom:16px;
+}
+.login-input:focus{
+  outline:none;
+  border-color:var(--primary);
+}
+.login-btn{
+  width:100%;
+  padding:14px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+}
+.login-btn:hover{
+  background:var(--primary-light);
+}
+.login-error{
+  color:var(--red);
+  font-size:13px;
+  margin-top:12px;
+}
+
+/* BUTTONS */
 .btn{
   background:var(--primary);
   color:white;
@@ -77,7 +148,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .btn-call:hover{background:#1e40af;box-shadow:0 2px 8px rgba(29,78,216,0.3);}
 .btn:disabled{opacity:0.55;cursor:not-allowed;box-shadow:none;transform:none;}
 
-/* ── HEADER ── */
+/* HEADER */
 .admin-header{
   background:var(--primary);
   color:white;
@@ -97,7 +168,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .logo-text{font-weight:700;font-size:1rem;letter-spacing:0.02em;white-space:nowrap;}
 .logo-divider{width:1px;height:20px;background:rgba(255,255,255,0.25);display:block;}
 
-/* ── NAV TABS ── */
+/* NAV TABS */
 .tabs{
   display:flex;
   gap:2px;
@@ -124,7 +195,6 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .tab:hover{background:rgba(255,255,255,0.12);color:white;}
 .tab.active{background:white;color:var(--primary);}
 .tab i{font-size:15px;}
-
 .header-logout{
   background:transparent;
   border:1px solid rgba(255,255,255,0.3);
@@ -142,10 +212,9 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   flex-shrink:0;
 }
 .header-logout:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.5);color:white;}
-
 .container{max-width:1380px;margin:0 auto;padding:24px 5%;}
 
-/* ── STAT CARDS ── */
+/* STAT CARDS */
 .stats-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
@@ -171,18 +240,11 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   opacity:0.7;
 }
 .stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
-.stat-card h4{
-  font-size:10.5px;
-  color:var(--muted);
-  margin-bottom:8px;
-  text-transform:uppercase;
-  letter-spacing:0.06em;
-  font-weight:600;
-}
+.stat-card h4{font-size:10.5px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;}
 .stat-card .value{font-size:26px;font-weight:800;color:var(--text);line-height:1;}
 .stat-card .sub{font-size:11px;color:var(--muted);margin-top:5px;}
 
-/* ── FORM CARD ── */
+/* FORM CARD */
 .form-card{
   background:var(--white);
   border-radius:var(--radius);
@@ -203,7 +265,6 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   border-bottom:1px solid var(--border-light);
 }
 .form-card-title i{color:var(--primary);font-size:18px;}
-
 .form-row{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -213,13 +274,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-label{font-size:12px;font-weight:600;color:var(--text-secondary);letter-spacing:0.01em;}
 .form-hint{font-size:11px;color:var(--muted);margin-top:3px;}
-
-.form-row input,
-.form-row select,
-.form-row textarea,
-.form-group input,
-.form-group select,
-.form-group textarea{
+.form-row input,.form-row select,.form-row textarea,.form-group input,.form-group select,.form-group textarea{
   padding:10px 13px;
   background:var(--bg);
   border:1.5px solid var(--border);
@@ -230,12 +285,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   transition:border-color 0.15s, box-shadow 0.15s;
   width:100%;
 }
-.form-row input:focus,
-.form-row select:focus,
-.form-row textarea:focus,
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus{
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
   outline:none;
   border-color:var(--primary);
   box-shadow:0 0 0 3px rgba(128,0,0,0.08);
@@ -243,7 +293,13 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 }
 textarea{resize:vertical;}
 
-/* ── TRENDING TOGGLE ── */
+/* TOGGLES - Two column layout */
+.toggles-row{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
 .trending-toggle{
   display:flex;
   align-items:center;
@@ -254,6 +310,8 @@ textarea{resize:vertical;}
   border:1.5px solid var(--border);
   cursor:pointer;
   transition:border-color 0.15s;
+  flex:1;
+  min-width:180px;
 }
 .trending-toggle:hover{border-color:var(--primary);}
 .trending-toggle label{
@@ -273,7 +331,29 @@ textarea{resize:vertical;}
 }
 .trending-hint{font-size:11.5px;color:var(--muted);}
 
-/* ── VARIANTS TABLE ── */
+/* Rating Input */
+.rating-input{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 14px;
+  background:var(--bg);
+  border-radius:var(--radius-xs);
+  border:1.5px solid var(--border);
+  margin-bottom:16px;
+}
+.rating-input label{font-weight:600;font-size:13px;color:var(--text);}
+.rating-input select{
+  padding:6px 12px;
+  background:white;
+  border:1.5px solid var(--border);
+  border-radius:6px;
+  font-size:13px;
+  font-family:inherit;
+  cursor:pointer;
+}
+
+/* VARIANTS TABLE */
 .variants-section{margin:18px 0 10px;}
 .variants-label{font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .variants-table{
@@ -299,8 +379,7 @@ textarea{resize:vertical;}
   padding:8px 10px;
 }
 .variants-table tbody tr:last-child td{border-bottom:none;}
-.variants-table input,
-.variants-table select{
+.variants-table input,.variants-table select{
   width:100%;
   padding:7px 10px;
   border:1.5px solid var(--border);
@@ -310,8 +389,7 @@ textarea{resize:vertical;}
   background:white;
   transition:border-color 0.15s;
 }
-.variants-table input:focus,
-.variants-table select:focus{
+.variants-table input:focus,.variants-table select:focus{
   outline:none;
   border-color:var(--primary);
   box-shadow:0 0 0 2px rgba(128,0,0,0.07);
@@ -346,7 +424,7 @@ textarea{resize:vertical;}
 }
 .remove-variant:hover{background:var(--red);color:white;border-color:var(--red);}
 
-/* ── PRODUCT TABLE ── */
+/* PRODUCT TABLE */
 .table-container{
   background:var(--white);
   border-radius:var(--radius);
@@ -356,7 +434,7 @@ textarea{resize:vertical;}
 }
 .table-header{
   display:grid;
-  grid-template-columns:56px 1.8fr 220px 110px 120px 88px;
+  grid-template-columns:56px 1.8fr 220px 100px 100px 88px;
   background:var(--bg2);
   padding:11px 16px;
   font-weight:700;
@@ -368,7 +446,7 @@ textarea{resize:vertical;}
 }
 .product-row{
   display:grid;
-  grid-template-columns:56px 1.8fr 220px 110px 120px 88px;
+  grid-template-columns:56px 1.8fr 220px 100px 100px 88px;
   padding:12px 16px;
   align-items:center;
   border-bottom:1px solid var(--border-light);
@@ -410,6 +488,25 @@ textarea{resize:vertical;}
   border:1px solid #FED7AA;
   display:inline-flex;align-items:center;gap:4px;
 }
+.new-badge{
+  background:#EFF6FF;
+  color:#1D4ED8;
+  padding:3px 9px;
+  border-radius:5px;
+  font-size:11px;
+  font-weight:700;
+  border:1px solid #BFDBFE;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.star-badge{
+  background:var(--gold-bg);
+  color:var(--gold);
+  padding:3px 8px;
+  border-radius:5px;
+  font-size:11px;
+  font-weight:600;
+  display:inline-flex;align-items:center;gap:3px;
+}
 .edit-btn,.delete-btn{
   background:transparent;
   border:none;
@@ -423,7 +520,7 @@ textarea{resize:vertical;}
 .edit-btn:hover{color:var(--primary);background:rgba(128,0,0,0.07);}
 .delete-btn:hover{color:var(--red);background:var(--red-bg);}
 
-/* ── ORDERS ── */
+/* ORDERS */
 .orders-list{display:flex;flex-direction:column;gap:16px;}
 .order-card{
   background:var(--white);
@@ -434,7 +531,6 @@ textarea{resize:vertical;}
   transition:box-shadow 0.2s;
 }
 .order-card:hover{box-shadow:var(--shadow-md);}
-
 .order-header{
   display:grid;
   grid-template-columns:1fr auto;
@@ -467,7 +563,6 @@ textarea{resize:vertical;}
   gap:5px;
   color:rgba(255,255,255,0.9);
 }
-.order-meta-chip i{font-size:13px;}
 .order-header-right{
   display:flex;
   flex-direction:column;
@@ -475,8 +570,6 @@ textarea{resize:vertical;}
   align-items:flex-end;
   flex-shrink:0;
 }
-
-/* Status badges */
 .order-status{
   padding:5px 12px;
   border-radius:6px;
@@ -490,17 +583,8 @@ textarea{resize:vertical;}
 .status-pending{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;}
 .status-paid{background:#F0FDF4;color:#15803D;border:1px solid #bbf7d0;}
 .status-delivered{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
-
-/* Contact buttons */
-.contact-buttons{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
+.contact-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
 .contact-buttons a{text-decoration:none;}
-
-/* Order items */
 .order-items{
   padding:12px 18px;
   background:var(--bg);
@@ -530,8 +614,6 @@ textarea{resize:vertical;}
 .order-item-name{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .order-item-qty{font-size:12px;color:var(--muted);margin-top:2px;}
 .order-item-price{font-weight:700;color:var(--text);font-size:14px;flex-shrink:0;}
-
-/* Order footer */
 .order-footer{
   display:flex;
   justify-content:space-between;
@@ -543,7 +625,6 @@ textarea{resize:vertical;}
   background:white;
 }
 .order-total{font-size:19px;font-weight:800;color:var(--text);}
-.order-total-label{font-size:11px;color:var(--muted);margin-top:1px;}
 .order-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .order-actions .btn{padding:8px 15px;font-size:12.5px;}
 .completed-chip{
@@ -553,7 +634,7 @@ textarea{resize:vertical;}
   border:1px solid #bbf7d0;
 }
 
-/* ── MODAL ── */
+/* MODAL */
 .modal-overlay{
   position:fixed;inset:0;
   background:rgba(0,0,0,0.5);
@@ -571,7 +652,7 @@ textarea{resize:vertical;}
   background:var(--white);
   border-radius:var(--radius);
   width:100%;
-  max-width:780px;
+  max-width:820px;
   max-height:88vh;
   overflow-y:auto;
   padding:26px;
@@ -602,7 +683,7 @@ textarea{resize:vertical;}
   display:flex;gap:10px;justify-content:flex-end;
 }
 
-/* ── SEARCH BAR ── */
+/* SEARCH BAR */
 .search-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
 .search-input-wrap{
   flex:1;
@@ -625,7 +706,6 @@ textarea{resize:vertical;}
 }
 .search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,0.08);}
 
-/* ── MISC ── */
 .loading-spinner{
   display:inline-block;
   width:14px;height:14px;
@@ -636,7 +716,6 @@ textarea{resize:vertical;}
   vertical-align:middle;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
-
 .toast{
   position:fixed;
   bottom:28px;
@@ -657,15 +736,8 @@ textarea{resize:vertical;}
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.error{background:var(--red);}
-
-.empty-state{
-  text-align:center;
-  padding:56px 24px;
-  color:var(--muted);
-}
+.empty-state{text-align:center;padding:56px 24px;color:var(--muted);}
 .empty-state i{font-size:40px;display:block;margin-bottom:12px;color:var(--border);}
-.empty-state p{font-size:14px;}
-
 .help-text{
   font-size:12px;
   color:var(--muted);
@@ -678,11 +750,9 @@ textarea{resize:vertical;}
 }
 .help-text i{color:var(--primary);margin-right:4px;}
 
-/* ── RESPONSIVE ── */
 @media(max-width:900px){
-  .table-header,.product-row{grid-template-columns:48px 1fr 150px 90px 90px 60px;}
+  .table-header,.product-row{grid-template-columns:48px 1fr 150px 80px 80px 60px;}
 }
-
 @media(max-width:768px){
   .admin-header{padding:0 4%;height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;gap:10px;}
   .tabs{width:100%;justify-content:flex-start;background:rgba(0,0,0,0.2);}
@@ -701,27 +771,32 @@ textarea{resize:vertical;}
   .order-header-right{align-items:flex-start;flex-direction:row;flex-wrap:wrap;gap:8px;}
   .contact-buttons{justify-content:flex-start;}
   .order-footer{flex-direction:column;align-items:stretch;}
-  .order-footer-left{display:flex;justify-content:space-between;align-items:center;}
-  .order-actions{justify-content:flex-end;}
   .container{padding:16px 4%;}
   .form-card{padding:16px;}
   .modal-card{padding:18px;}
-  .btn-sm{padding:7px 11px;font-size:12px;}
   .order-item{flex-wrap:wrap;}
   .order-item-img{width:40px;height:40px;}
-  .variants-table{font-size:12px;}
-}
-
-@media(max-width:480px){
-  .tab span{display:none;}
-  .tab i{font-size:17px;}
-  .stats-grid{grid-template-columns:1fr 1fr;}
-  .stat-card .value{font-size:22px;}
-  .order-actions .btn{flex:1;justify-content:center;}
+  .toggles-row{flex-direction:column;}
 }
 </style>
 </head>
 <body>
+
+<!-- Custom Login Modal -->
+<div id="adminLoginModal" class="login-modal-overlay">
+  <div class="login-modal-card">
+    <div class="login-logo">
+      <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+      <h2>Admin Login</h2>
+      <p>Enter password to access admin panel</p>
+    </div>
+    <form id="adminLoginForm" onsubmit="event.preventDefault(); submitAdminLogin();">
+      <input type="password" id="adminPassword" class="login-input" placeholder="Enter admin password" autocomplete="off">
+      <button type="submit" class="login-btn">Login</button>
+      <div id="loginError" class="login-error"></div>
+    </form>
+  </div>
+</div>
 
 <div class="admin-header">
   <div class="logo">
@@ -746,7 +821,7 @@ textarea{resize:vertical;}
 
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
-      <div class="help-text"><i class="ph ph-info"></i> Fill in the product details below. All fields with a price are required. You can add multiple bottle sizes for the same product.</div>
+      <div class="help-text"><i class="ph ph-info"></i> Fill in the product details. Add multiple bottle sizes. Discount % is applied to the price you enter (e.g., Price 500, Discount 20% = Sale Price 400).</div>
 
       <div class="form-row">
         <div class="form-group">
@@ -763,7 +838,7 @@ textarea{resize:vertical;}
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Badge <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <label class="form-label">Badge</label>
           <select id="prodBadge">
             <option value="">No Badge</option>
             <option value="hot">🔥 Hot</option>
@@ -772,34 +847,57 @@ textarea{resize:vertical;}
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Image URL <span style="font-weight:400;color:var(--muted)">(paste link)</span></label>
+          <label class="form-label">Image URL</label>
           <input type="text" id="prodImage" placeholder="https://...">
           <span class="form-hint">Paste the image web address here</span>
         </div>
         <div class="form-group" style="grid-column:1/-1">
-          <label class="form-label">Description <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <label class="form-label">Description</label>
           <textarea id="prodDesc" placeholder="Brief description of the product..." rows="2"></textarea>
         </div>
       </div>
 
-      <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()">
-        <input type="checkbox" id="prodTrending" onclick="event.stopPropagation()">
-        <label for="prodTrending" onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Mark as Trending</label>
-        <span class="trending-hint">Trending products are shown first on the homepage</span>
+      <!-- Toggles Row: Trending + New Arrival -->
+      <div class="toggles-row">
+        <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()">
+          <input type="checkbox" id="prodTrending" onclick="event.stopPropagation()">
+          <label for="prodTrending" onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Mark as Trending</label>
+          <span class="trending-hint">Shown in "Trending Deals" section</span>
+        </div>
+        <div class="trending-toggle" onclick="document.getElementById('prodNew').click()">
+          <input type="checkbox" id="prodNew" onclick="event.stopPropagation()">
+          <label for="prodNew" onclick="event.preventDefault()"><i class="ph ph-star" style="color:#1D4ED8;"></i> Mark as New Arrival</label>
+          <span class="trending-hint">Shown in "New Arrivals" section</span>
+        </div>
       </div>
 
+      <!-- Rating Input -->
+      <div class="rating-input">
+        <label><i class="ph ph-star" style="color:var(--gold);"></i> Rating (1-5 stars):</label>
+        <select id="prodRating">
+          <option value="5">★★★★★ (5.0)</option>
+          <option value="4.5">★★★★½ (4.5)</option>
+          <option value="4" selected>★★★★☆ (4.0)</option>
+          <option value="3.5">★★★½☆ (3.5)</option>
+          <option value="3">★★★☆☆ (3.0)</option>
+          <option value="2.5">★★½☆☆ (2.5)</option>
+          <option value="2">★★☆☆☆ (2.0)</option>
+        </select>
+      </div>
+
+      <!-- Variants Section -->
       <div class="variants-section">
-        <div class="variants-label"><i class="ph ph-ruler" style="color:var(--primary);font-size:15px;"></i> Bottle Sizes & Prices</div>
-        <div class="help-text" style="margin-bottom:10px;"><i class="ph ph-info"></i> Add each bottle size with its price. The "Discount %" field is optional — e.g. enter 10 for a 10% discount.</div>
+        <div class="variants-label"><i class="ph ph-ruler"></i> Bottle Sizes & Prices</div>
+        <div class="help-text" style="margin-bottom:10px;"><i class="ph ph-info"></i> Enter the ORIGINAL price for each size. Discount % is applied automatically. Example: Price=500, Discount=20 → Customer pays 400</div>
         <table class="variants-table" id="variantsTable">
           <thead>
-            <tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th style="width:40px;"></th></tr>
+            <tr><th>Size</th><th>Original Price (KES)</th><th>Discount %</th><th style="width:40px;"></th></tr>
           </thead>
           <tbody id="variantsBody">
             <tr class="variant-row">
               <td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td>
-              <td><input type="number" class="variant-price" placeholder="e.g. 1500"></td>
-              <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td>
+              <td><input type="number" class="variant-price" placeholder="e.g. 1500" step="1"></td>
+              <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
               <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove row">✕</button></td>
             </tr>
           </tbody>
@@ -807,7 +905,7 @@ textarea{resize:vertical;}
         <button type="button" class="add-variant-btn" onclick="addVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button>
       </div>
 
-      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;gap:10px;align-items:center;">
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;gap:10px;">
         <button class="btn" id="addProductBtn" onclick="addProduct()"><i class="ph ph-floppy-disk"></i> Save Product</button>
       </div>
     </div>
@@ -822,7 +920,7 @@ textarea{resize:vertical;}
 
     <div class="table-container">
       <div class="table-header">
-        <div>Image</div><div>Product</div><div>Sizes & Prices</div><div>Trending</div><div>Best Price</div><div>Edit / Delete</div>
+        <div>Image</div><div>Product</div><div>Sizes & Prices</div><div>Badges</div><div>Rating</div><div>Actions</div>
       </div>
       <div id="productsList"></div>
     </div>
@@ -838,7 +936,7 @@ textarea{resize:vertical;}
       </div>
       <button class="btn btn-outline" onclick="clearOrderSearch()"><i class="ph ph-x"></i> Clear</button>
     </div>
-    <div class="help-text"><i class="ph ph-info"></i> Each card below is one customer order. Use <strong>Mark Paid</strong> once payment is confirmed, then <strong>Mark Delivered</strong> once the order is handed to the customer. Use the WhatsApp or Call buttons to contact the customer directly.</div>
+    <div class="help-text"><i class="ph ph-info"></i> Manage customer orders. Use <strong>Mark Paid</strong> after payment confirmation, then <strong>Mark Delivered</strong> when handed over.</div>
     <div id="ordersList" class="orders-list"></div>
   </div>
 
@@ -847,7 +945,7 @@ textarea{resize:vertical;}
     <div class="stats-grid">
       <div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div>
       <div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div><div class="sub">All time</div></div>
-      <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In your catalogue</div></div>
+      <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In catalogue</div></div>
       <div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per delivered order</div></div>
     </div>
     <div class="form-card">
@@ -865,12 +963,12 @@ textarea{resize:vertical;}
   <div id="settingsTab" style="display:none;">
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div>
-      <div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout. If an order is above the "Free Delivery Threshold", delivery is automatically free.</div>
+      <div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout.</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Delivery Fee (KES)</label>
           <input type="number" id="deliveryFee" value="150">
-          <span class="form-hint">Amount charged for delivery on standard orders</span>
+          <span class="form-hint">Standard delivery charge</span>
         </div>
         <div class="form-group">
           <label class="form-label">Free Delivery Threshold (KES)</label>
@@ -883,7 +981,6 @@ textarea{resize:vertical;}
             <input type="checkbox" id="deliveryEnabled" checked style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;">
             <span style="font-size:13.5px;color:var(--text-secondary);">Charge delivery fee at checkout</span>
           </div>
-          <span class="form-hint">Uncheck to offer free delivery on all orders</span>
         </div>
       </div>
       <div style="padding-top:14px;border-top:1px solid var(--border-light);margin-top:4px;">
@@ -903,17 +1000,34 @@ textarea{resize:vertical;}
     </div>
     <input type="hidden" id="editProductId">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName" placeholder="Product Name"></div>
+      <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div>
       <div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div>
       <div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
-      <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage" placeholder="https://..."></div>
-      <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" placeholder="Description" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div>
+      <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div>
     </div>
-    <div class="trending-toggle" style="margin-bottom:16px;" onclick="document.getElementById('editTrending').click()">
-      <input type="checkbox" id="editTrending" onclick="event.stopPropagation()">
-      <label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Mark as Trending</label>
+    
+    <div class="toggles-row">
+      <div class="trending-toggle" onclick="document.getElementById('editTrending').click()">
+        <input type="checkbox" id="editTrending" onclick="event.stopPropagation()">
+        <label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label>
+      </div>
+      <div class="trending-toggle" onclick="document.getElementById('editNew').click()">
+        <input type="checkbox" id="editNew" onclick="event.stopPropagation()">
+        <label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label>
+      </div>
     </div>
-    <div class="variants-label"><i class="ph ph-ruler" style="color:var(--primary);font-size:15px;"></i> Bottle Sizes & Prices</div>
+    
+    <div class="rating-input" style="margin-bottom:16px;">
+      <label>Rating:</label>
+      <select id="editRating">
+        <option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option>
+        <option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option>
+        <option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option>
+      </select>
+    </div>
+    
+    <div class="variants-label">Bottle Sizes & Prices</div>
     <table class="variants-table"><tbody id="editVariantsBody"></tbody></table>
     <button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button>
     <div class="modal-footer">
@@ -933,7 +1047,6 @@ let currentTab = 'products';
 let productSearch = '';
 let orderSearch = '';
 let adminToken = localStorage.getItem('liquorbelle_admin_token');
-let pendingActions = new Map();
 
 function showToast(msg, isError = false){
   const t = document.getElementById('toast');
@@ -941,18 +1054,13 @@ function showToast(msg, isError = false){
   t.classList.toggle('error', isError);
   t.classList.add('show');
   clearTimeout(t._timeout);
-  t._timeout = setTimeout(() => {
-    t.classList.remove('show','error');
-  }, 3200);
+  t._timeout = setTimeout(() => { t.classList.remove('show','error'); }, 3200);
 }
 
 function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
 
 function getAuthHeaders() {
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${adminToken}`
-  };
+  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` };
 }
 
 async function adminLogin(password) {
@@ -972,41 +1080,45 @@ async function adminLogin(password) {
   } catch(e) { return false; }
 }
 
-// ========== PRODUCT FUNCTIONS ==========
+function submitAdminLogin() {
+  const password = document.getElementById('adminPassword').value;
+  const errorDiv = document.getElementById('loginError');
+  errorDiv.innerText = '';
+  
+  adminLogin(password).then(success => {
+    if(success) {
+      document.getElementById('adminLoginModal').style.display = 'none';
+      initAdminAfterLogin();
+    } else {
+      errorDiv.innerText = 'Invalid password. Try again.';
+      document.getElementById('adminPassword').value = '';
+    }
+  });
+}
+
+// Variant Functions
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="variant-price" placeholder="e.g. 1500"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
-
-function removeVariantRow(btn){
-  const tbody = btn.closest('tbody');
-  if(tbody.children.length > 1) btn.closest('tr').remove();
-  else showToast('At least one size variant is required');
-}
-
+function removeVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
 function addEditVariantRow(){
   const tbody = document.getElementById('editVariantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="edit-variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price"></td><td><input type="number" class="edit-variant-discount" placeholder="0" min="0" max="100" value="0"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="edit-variant-size"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
+function removeEditVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
 
-function removeEditVariantRow(btn){
-  const tbody = btn.closest('tbody');
-  if(tbody.children.length > 1) btn.closest('tr').remove();
-  else showToast('At least one size variant is required');
-}
-
+// Product Functions
 async function addProduct(){
   const btn = document.getElementById('addProductBtn');
-  const originalText = btn.innerHTML;
   btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
   btn.disabled = true;
-
   try {
     const name = document.getElementById('prodName').value.trim();
     const category = document.getElementById('prodCategory').value;
@@ -1014,46 +1126,40 @@ async function addProduct(){
     const image = document.getElementById('prodImage').value.trim();
     const description = document.getElementById('prodDesc').value.trim();
     const isTrending = document.getElementById('prodTrending').checked;
-
-    if(!name){ showToast('Product name is required', true); btn.innerHTML = originalText; btn.disabled = false; return; }
-
+    const isNew = document.getElementById('prodNew').checked;
+    const rating = parseFloat(document.getElementById('prodRating').value);
+    if(!name){ showToast('Product name required', true); return; }
     const variants = [];
-    const rows = document.querySelectorAll('#variantsBody .variant-row');
-    for(let row of rows){
+    document.querySelectorAll('#variantsBody .variant-row').forEach(row => {
       const size = row.querySelector('.variant-size').value;
       const price = parseFloat(row.querySelector('.variant-price').value);
       const discount = parseInt(row.querySelector('.variant-discount').value) || 0;
-      if(!price){ showToast(`Price is required for ${size}`, true); btn.innerHTML = originalText; btn.disabled = false; return; }
-      variants.push({ size, price, discount });
-    }
-
+      if(price && price > 0) variants.push({ size, price, discount });
+    });
+    if(variants.length === 0){ showToast('At least one size/price required', true); return; }
     const res = await fetch(`${API_BASE}/api/db/products`, {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ name, category, badge, image, description, variants, isTrending })
+      body: JSON.stringify({ name, category, badge, image, description, variants, isTrending, isNew, rating })
     });
-
     if(res.ok){
-      showToast('✓ Product saved successfully');
+      showToast('✓ Product saved');
       document.getElementById('prodName').value = '';
       document.getElementById('prodImage').value = '';
       document.getElementById('prodDesc').value = '';
       document.getElementById('prodTrending').checked = false;
+      document.getElementById('prodNew').checked = false;
       document.getElementById('variantsBody').innerHTML = '';
       addVariantRow();
       await loadProducts();
-    } else {
-      const err = await res.json();
-      showToast(err.message || 'Error adding product', true);
-    }
-  } catch(e){ showToast('Error saving product', true); }
-  finally { btn.innerHTML = originalText; btn.disabled = false; }
+    } else { showToast('Error saving product', true); }
+  } catch(e){ showToast('Error: ' + e.message, true); }
+  finally { btn.innerHTML = '<i class="ph ph-floppy-disk"></i> Save Product'; btn.disabled = false; }
 }
 
 function openEditModal(productId){
   const p = products.find(p => p._id === productId);
-  if(!p) { showToast('Product not found', true); return; }
-
+  if(!p) return;
   document.getElementById('editProductId').value = p._id;
   document.getElementById('editName').value = p.name || '';
   document.getElementById('editCategory').value = p.category || 'whisky';
@@ -1061,7 +1167,9 @@ function openEditModal(productId){
   document.getElementById('editImage').value = p.image || '';
   document.getElementById('editDesc').value = p.description || '';
   document.getElementById('editTrending').checked = p.isTrending || false;
-
+  document.getElementById('editNew').checked = p.isNew || false;
+  const ratingVal = p.rating || 4;
+  document.getElementById('editRating').value = ratingVal;
   const tbody = document.getElementById('editVariantsBody');
   tbody.innerHTML = '';
   const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
@@ -1073,135 +1181,80 @@ function openEditModal(productId){
   });
   document.getElementById('editModal').classList.add('active');
 }
-
 function closeEditModal(){ document.getElementById('editModal').classList.remove('active'); }
-
 async function saveProductEdit(){
   const saveBtn = document.querySelector('#editModal .modal-footer .btn:last-child');
   const originalText = saveBtn.innerHTML;
   saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
   saveBtn.disabled = true;
-
   try {
     const id = document.getElementById('editProductId').value;
-    if(!id){ showToast('Error: No product selected', true); return; }
-
     const name = document.getElementById('editName').value.trim();
     const category = document.getElementById('editCategory').value;
     const badge = document.getElementById('editBadge').value;
     const image = document.getElementById('editImage').value.trim();
     const description = document.getElementById('editDesc').value.trim();
     const isTrending = document.getElementById('editTrending').checked;
-
-    if(!name){ showToast('Product name is required', true); return; }
-
+    const isNew = document.getElementById('editNew').checked;
+    const rating = parseFloat(document.getElementById('editRating').value);
+    if(!name){ showToast('Product name required', true); return; }
     const variants = [];
-    const rows = document.querySelectorAll('#editVariantsBody .variant-row');
-    for(let row of rows){
+    document.querySelectorAll('#editVariantsBody .variant-row').forEach(row => {
       const size = row.querySelector('.edit-variant-size').value;
       const price = parseFloat(row.querySelector('.edit-variant-price').value);
       const discount = parseInt(row.querySelector('.edit-variant-discount').value) || 0;
-      if(!price){ showToast(`Price required for ${size}`, true); return; }
-      variants.push({ size, price, discount });
-    }
-
-    const productIndex = products.findIndex(p => p._id === id);
-    const originalProduct = productIndex !== -1 ? {...products[productIndex]} : null;
-    if(productIndex !== -1){
-      products[productIndex] = { ...products[productIndex], name, category, badge, image, description, variants, isTrending };
-      renderProducts();
-      updateStats();
-    }
-
+      if(price && price > 0) variants.push({ size, price, discount });
+    });
     const res = await fetch(`${API_BASE}/api/db/products/${id}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ name, category, badge, image, description, variants, isTrending })
+      body: JSON.stringify({ name, category, badge, image, description, variants, isTrending, isNew, rating })
     });
-
     if(res.ok){
       showToast('✓ Product updated');
       closeEditModal();
-    } else {
-      if(originalProduct && productIndex !== -1) products[productIndex] = originalProduct;
-      renderProducts();
-      updateStats();
-      showToast('Error updating product', true);
-    }
-  } catch(e){
-    showToast('Error updating product', true);
-    await loadProducts();
-  } finally {
-    saveBtn.innerHTML = originalText;
-    saveBtn.disabled = false;
-  }
+      await loadProducts();
+    } else { showToast('Error updating product', true); }
+  } catch(e){ showToast('Error: ' + e.message, true); }
+  finally { saveBtn.innerHTML = originalText; saveBtn.disabled = false; }
 }
-
 async function deleteProduct(id){
-  if(!confirm('Delete this product permanently? This cannot be undone.')) return;
-
-  const productIndex = products.findIndex(p => p._id === id);
-  const deletedProduct = productIndex !== -1 ? products[productIndex] : null;
-  if(productIndex !== -1){
-    products.splice(productIndex, 1);
-    renderProducts();
-    updateStats();
-  }
-
+  if(!confirm('Delete permanently?')) return;
   try{
-    const res = await fetch(`${API_BASE}/api/db/products/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
-    if(!res.ok){
-      if(deletedProduct) products.splice(productIndex, 0, deletedProduct);
-      renderProducts();
-      updateStats();
-      showToast('Error deleting product', true);
-    } else {
-      showToast('Product deleted');
-    }
-  } catch(e){
-    if(deletedProduct) products.splice(productIndex, 0, deletedProduct);
-    renderProducts();
-    updateStats();
-    showToast('Error', true);
-  }
+    await fetch(`${API_BASE}/api/db/products/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    await loadProducts();
+    showToast('Product deleted');
+  } catch(e){ showToast('Error deleting', true); }
 }
-
 async function loadProducts(){
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
-    if(data.success) products = data.products.map(p => ({ ...p, id: p._id }));
+    if(data.success) products = data.products;
   } catch(e){ products = []; }
   renderProducts();
   updateStats();
 }
-
 function renderProducts(){
   let filtered = products;
-  if(productSearch){
-    filtered = products.filter(p => p.name?.toLowerCase().includes(productSearch) || p.category?.toLowerCase().includes(productSearch));
-  }
+  if(productSearch) filtered = products.filter(p => p.name?.toLowerCase().includes(productSearch) || p.category?.toLowerCase().includes(productSearch));
   const container = document.getElementById('productsList');
-  if(!filtered.length){
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products found</p></div>';
-    return;
-  }
+  if(!filtered.length){ container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products found</p></div>'; return; }
   container.innerHTML = filtered.map(p => {
     const variants = p.variants || [];
     const bestPrice = variants.length ? Math.min(...variants.map(v => v.price || 0)) : 0;
-    const isTrending = p.isTrending || false;
     return `<div class="product-row">
-      <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'" loading="lazy"></div>
+      <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'"></div>
       <div><div class="product-name">${escapeHtml(p.name)}</div><div class="product-cat">${p.category || ''}</div></div>
-      <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()}${v.discount ? ` <span class="discount-badge">${v.discount}% off</span>` : ''}</span>`).join('')}</div>
-      <div>${isTrending ? '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span>' : '<span style="color:var(--muted-light);font-size:13px;">—</span>'}</div>
-      <div style="font-weight:700;font-size:13.5px;">KES ${bestPrice.toLocaleString()}</div>
-      <div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal('${p._id}')" title="Edit product"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')" title="Delete product"><i class="ph ph-trash"></i></button></div>
+      <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()}${v.discount ? `<span class="discount-badge"> ${v.discount}% OFF → KES ${Math.round(v.price * (100 - v.discount) / 100).toLocaleString()}</span>` : ''}</span>`).join('')}</div>
+      <div>${p.isTrending ? '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span>' : ''} ${p.isNew ? '<span class="new-badge"><i class="ph ph-star"></i> New</span>' : ''}</div>
+      <div><span class="star-badge"><i class="ph ph-star-fill"></i> ${(p.rating || 4).toFixed(1)}</span></div>
+      <div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal('${p._id}')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')"><i class="ph ph-trash"></i></button></div>
     </div>`;
   }).join('');
 }
 
-// ========== ORDER FUNCTIONS ==========
+// Order Functions
 async function loadOrders(){
   try{
     const res = await fetch(`${API_BASE}/api/db/orders`, { headers: getAuthHeaders() });
@@ -1212,130 +1265,51 @@ async function loadOrders(){
   if(currentTab === 'analytics') renderAnalytics();
   updateOrderStats();
 }
-
 async function markOrderPaid(id){
-  const orderIndex = orders.findIndex(o => o._id === id);
-  if(orderIndex === -1) return;
-
-  const originalOrder = { ...orders[orderIndex] };
-  orders[orderIndex].status = 'paid';
+  const idx = orders.findIndex(o => o._id === id);
+  if(idx === -1) return;
+  const original = { ...orders[idx] };
+  orders[idx].status = 'paid';
   if(currentTab === 'orders') renderOrders();
   updateOrderStats();
-  if(currentTab === 'analytics') renderAnalytics();
-
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ status: 'paid' })
+      method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ status: 'paid' })
     });
-    if(res.status === 429){
-      showToast('Server is busy, retrying in 2 seconds...');
-      setTimeout(() => markOrderPaid(id), 2000);
-      return;
-    }
-    if(!res.ok){
-      orders[orderIndex] = originalOrder;
-      if(currentTab === 'orders') renderOrders();
-      updateOrderStats();
-      if(currentTab === 'analytics') renderAnalytics();
-      showToast('Error updating order', true);
-    } else {
-      showToast('Order marked as Paid');
-    }
-  } catch(e){
-    orders[orderIndex] = originalOrder;
-    if(currentTab === 'orders') renderOrders();
-    updateOrderStats();
-    if(currentTab === 'analytics') renderAnalytics();
-    showToast('Network error', true);
-  }
+    if(!res.ok){ orders[idx] = original; renderOrders(); updateOrderStats(); showToast('Error', true); }
+    else showToast('Marked as Paid');
+  } catch(e){ orders[idx] = original; renderOrders(); updateOrderStats(); showToast('Error', true); }
 }
-
 async function markOrderDelivered(id){
-  const orderIndex = orders.findIndex(o => o._id === id);
-  if(orderIndex === -1) return;
-
-  const originalOrder = { ...orders[orderIndex] };
-  orders[orderIndex].status = 'delivered';
+  const idx = orders.findIndex(o => o._id === id);
+  if(idx === -1) return;
+  const original = { ...orders[idx] };
+  orders[idx].status = 'delivered';
   if(currentTab === 'orders') renderOrders();
   updateOrderStats();
-  if(currentTab === 'analytics') renderAnalytics();
-
   try{
     const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ status: 'delivered' })
+      method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ status: 'delivered' })
     });
-    if(res.status === 429){
-      showToast('Server is busy, retrying in 2 seconds...');
-      setTimeout(() => markOrderDelivered(id), 2000);
-      return;
-    }
-    if(!res.ok){
-      orders[orderIndex] = originalOrder;
-      if(currentTab === 'orders') renderOrders();
-      updateOrderStats();
-      if(currentTab === 'analytics') renderAnalytics();
-      showToast('Error updating order', true);
-    } else {
-      showToast('Order marked as Delivered');
-    }
-  } catch(e){
-    orders[orderIndex] = originalOrder;
-    if(currentTab === 'orders') renderOrders();
-    updateOrderStats();
-    if(currentTab === 'analytics') renderAnalytics();
-    showToast('Network error', true);
-  }
+    if(!res.ok){ orders[idx] = original; renderOrders(); updateOrderStats(); showToast('Error', true); }
+    else showToast('Marked as Delivered');
+  } catch(e){ orders[idx] = original; renderOrders(); updateOrderStats(); showToast('Error', true); }
 }
-
 async function deleteOrder(id){
-  if(!confirm('Delete this order permanently? This cannot be undone.')) return;
-
-  const orderIndex = orders.findIndex(o => o._id === id);
-  const deletedOrder = orderIndex !== -1 ? orders[orderIndex] : null;
-  if(orderIndex !== -1){
-    orders.splice(orderIndex, 1);
-    if(currentTab === 'orders') renderOrders();
-    updateOrderStats();
-    if(currentTab === 'analytics') renderAnalytics();
-  }
-
+  if(!confirm('Delete order?')) return;
+  const idx = orders.findIndex(o => o._id === id);
+  const deleted = idx !== -1 ? orders[idx] : null;
+  if(idx !== -1){ orders.splice(idx,1); if(currentTab === 'orders') renderOrders(); updateOrderStats(); }
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
-    if(!res.ok && deletedOrder){
-      orders.splice(orderIndex, 0, deletedOrder);
-      if(currentTab === 'orders') renderOrders();
-      updateOrderStats();
-      if(currentTab === 'analytics') renderAnalytics();
-      showToast('Error deleting order', true);
-    } else {
-      showToast('Order deleted');
-    }
-  } catch(e){
-    if(deletedOrder){
-      orders.splice(orderIndex, 0, deletedOrder);
-      if(currentTab === 'orders') renderOrders();
-      updateOrderStats();
-      if(currentTab === 'analytics') renderAnalytics();
-    }
-    showToast('Network error', true);
-  }
+    await fetch(`${API_BASE}/api/db/orders/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    showToast('Order deleted');
+  } catch(e){ if(deleted && idx!==-1){ orders.splice(idx,0,deleted); renderOrders(); updateOrderStats(); } showToast('Error', true); }
 }
-
-// UPDATED: renderOrders with delivery fee display
 function renderOrders(){
   let filtered = orders;
-  if(orderSearch){
-    filtered = orders.filter(o => o.customer_name?.toLowerCase().includes(orderSearch) || o.customer_email?.toLowerCase().includes(orderSearch));
-  }
+  if(orderSearch) filtered = orders.filter(o => o.customer_name?.toLowerCase().includes(orderSearch) || o.customer_email?.toLowerCase().includes(orderSearch));
   const container = document.getElementById('ordersList');
-  if(!filtered.length){
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>';
-    return;
-  }
+  if(!filtered.length){ container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>'; return; }
   container.innerHTML = filtered.map(o => {
     let items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); } catch(e){ items = []; } }
@@ -1343,95 +1317,30 @@ function renderOrders(){
     const cleanPhone = phoneRaw.replace(/\D/g, '');
     const waLink = `https://wa.me/${cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone}`;
     const callLink = `tel:${cleanPhone}`;
-
-    const itemsHtml = items.map(i => {
-      let product = null;
-      if(i.product_id) product = products.find(p => p._id === i.product_id);
-      if(!product && i.id) product = products.find(p => p._id === i.id);
-      if(!product && i.product_name) product = products.find(p => p.name === i.product_name);
-      if(!product && i.name) product = products.find(p => p.name === i.name);
-      const imgUrl = product?.image || 'https://placehold.co/46x46/F2EDE7/800000?text=🍾';
-      return `<div class="order-item"><img class="order-item-img" src="${imgUrl}" onerror="this.src='https://placehold.co/46x46/F2EDE7/800000?text=🍾'" loading="lazy"><div class="order-item-details"><div class="order-item-name">${escapeHtml(i.product_name || i.name)} ${i.size ? `<span style="font-weight:400;color:var(--muted)">(${i.size})</span>` : ''}</div><div class="order-item-qty">Qty: ${i.quantity || i.qty || 1}</div></div><div class="order-item-price">KES ${((i.price||0) * (i.quantity||i.qty||1)).toLocaleString()}</div></div>`;
-    }).join('');
-
-    const statusLabel = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : 'Delivered';
-    const statusIcon = o.status === 'pending' ? 'ph-clock' : o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
-    
-    // Calculate delivery fee display
+    const itemsHtml = (items || []).map(i => `<div class="order-item"><img class="order-item-img" src="https://placehold.co/46x46/F2EDE7/800000?text=🍾" onerror="this.src='https://placehold.co/46x46/F2EDE7/800000?text=🍾'"><div class="order-item-details"><div class="order-item-name">${escapeHtml(i.product_name || i.name)} ${i.size ? `(${i.size})` : ''}</div><div class="order-item-qty">Qty: ${i.quantity || i.qty || 1}</div></div><div class="order-item-price">KES ${((i.price||0) * (i.quantity||i.qty||1)).toLocaleString()}</div></div>`).join('');
     const deliveryFee = o.delivery || 0;
     const subtotal = o.subtotal || (o.total - deliveryFee);
-    const deliveryDisplay = deliveryFee === 0 ? '<span style="color:var(--green);">FREE</span>' : `KES ${deliveryFee.toLocaleString()}`;
-
-    return `<div class="order-card">
-      <div class="order-header">
-        <div>
-          <div class="order-id"><i class="ph ph-package"></i> ${o.order_number || o._id?.slice(0,8) || 'N/A'}</div>
-          <div class="order-customer">${escapeHtml(o.customer_name)}</div>
-          <div class="order-meta-row">
-            <span class="order-meta-chip"><i class="ph ph-envelope"></i> ${escapeHtml(o.customer_email)}</span>
-            <span class="order-meta-chip"><i class="ph ph-phone"></i> ${o.phone || 'No phone'}</span>
-            <span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleString()}</span>
-          </div>
-        </div>
-        <div class="order-header-right">
-          <span class="order-status status-${o.status}"><i class="ph ${statusIcon}"></i> ${statusLabel}</span>
-          <div class="contact-buttons">
-            <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
-            <a href="${callLink}" class="btn btn-sm btn-call"><i class="ph ph-phone-call"></i> Call</a>
-          </div>
-        </div>
-      </div>
-      <div class="order-items">${itemsHtml || '<div style="color:var(--muted);font-size:13px;padding:8px 0;">No items found</div>'}</div>
-      <div class="order-footer">
-        <div>
-          <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
-          <div class="order-total-label">Order Total</div>
-          <div class="order-meta-small" style="margin-top:4px; display:flex; flex-direction:column; gap:2px;">
-            <span><i class="ph ph-package"></i> Subtotal: KES ${(subtotal || 0).toLocaleString()}</span>
-            <span><i class="ph ph-truck"></i> Delivery: ${deliveryDisplay}</span>
-            <span><i class="ph ph-credit-card"></i> ${o.payment_method || 'Unknown'}</span>
-            <span><i class="ph ph-map-pin"></i> ${escapeHtml((o.address || '').substring(0, 40))}</span>
-          </div>
-        </div>
-        <div class="order-actions">
-          ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}
-          ${o.status === 'paid' ? `<button class="btn btn-sm btn-gold" onclick="markOrderDelivered('${o._id}')"><i class="ph ph-truck"></i> Mark Delivered</button>` : ''}
-          ${o.status === 'delivered' ? `<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>` : ''}
-          <button class="btn btn-sm btn-red" onclick="deleteOrder('${o._id}')"><i class="ph ph-trash"></i></button>
-        </div>
-      </div>
-    </div>`;
+    return `<div class="order-card"><div class="order-header"><div><div class="order-id"><i class="ph ph-package"></i> ${o.order_number || o._id?.slice(0,8)}</div><div class="order-customer">${escapeHtml(o.customer_name)}</div><div class="order-meta-row"><span class="order-meta-chip"><i class="ph ph-envelope"></i> ${escapeHtml(o.customer_email)}</span><span class="order-meta-chip"><i class="ph ph-phone"></i> ${o.phone || 'No phone'}</span><span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleString()}</span></div></div><div class="order-header-right"><span class="order-status status-${o.status}"><i class="ph ${o.status==='pending'?'ph-clock':o.status==='paid'?'ph-check-circle':'ph-truck'}"></i> ${o.status==='pending'?'Pending':o.status==='paid'?'Paid':'Delivered'}</span><div class="contact-buttons"><a href="${waLink}" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a><a href="${callLink}" class="btn btn-sm btn-call"><i class="ph ph-phone-call"></i> Call</a></div></div></div><div class="order-items">${itemsHtml}</div><div class="order-footer"><div><div class="order-total">KES ${(o.total || 0).toLocaleString()}</div><div class="order-total-label">Total</div><div style="font-size:11px;margin-top:4px;"><span>Subtotal: KES ${(subtotal||0).toLocaleString()}</span> | <span>Delivery: ${deliveryFee===0?'FREE':`KES ${deliveryFee.toLocaleString()}`}</span></div></div><div class="order-actions">${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}${o.status === 'paid' ? `<button class="btn btn-sm btn-gold" onclick="markOrderDelivered('${o._id}')"><i class="ph ph-truck"></i> Mark Delivered</button>` : ''}${o.status === 'delivered' ? '<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>' : ''}<button class="btn btn-sm btn-red" onclick="deleteOrder(\''+o._id+'\')"><i class="ph ph-trash"></i></button></div></div></div>`;
   }).join('');
 }
 
-// ========== STATS & ANALYTICS ==========
+// Stats
 function updateStats(){
   const trendingCount = products.filter(p => p.isTrending === true).length;
-  document.getElementById('productStats').innerHTML = `
-    <div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div><div class="sub">In catalogue</div></div>
-    <div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div><div class="sub">Product types</div></div>
-    <div class="stat-card"><h4>Total Variants</h4><div class="value">${products.reduce((s,p)=>{ const v = p.variants || []; return s + v.length; },0)}</div><div class="sub">Bottle sizes</div></div>
-    <div class="stat-card"><h4>Trending</h4><div class="value">${trendingCount}</div><div class="sub">On homepage</div></div>
-  `;
+  const newCount = products.filter(p => p.isNew === true).length;
+  document.getElementById('productStats').innerHTML = `<div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div><div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div><div class="stat-card"><h4>Variants</h4><div class="value">${products.reduce((s,p)=>s+(p.variants?.length||0),0)}</div></div><div class="stat-card"><h4>Trending</h4><div class="value">${trendingCount}</div></div>`;
   document.getElementById('totalProducts').innerText = products.length;
-  if(document.getElementById('trendingCount')) document.getElementById('trendingCount').innerText = trendingCount;
+  document.getElementById('trendingCount').innerText = trendingCount;
 }
-
 function updateOrderStats(){
   const pending = orders.filter(o=>o.status==='pending').length;
   const paid = orders.filter(o=>o.status==='paid').length;
   const delivered = orders.filter(o=>o.status==='delivered').length;
-  document.getElementById('orderStats').innerHTML = `
-    <div class="stat-card"><h4>Total Orders</h4><div class="value">${orders.length}</div><div class="sub">All time</div></div>
-    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div><div class="sub">Awaiting payment</div></div>
-    <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
-    <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
-  `;
+  document.getElementById('orderStats').innerHTML = `<div class="stat-card"><h4>Total Orders</h4><div class="value">${orders.length}</div></div><div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div></div><div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div></div><div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div></div>`;
   document.getElementById('pendingCount').innerText = pending;
   document.getElementById('paidCount').innerText = paid;
   document.getElementById('deliveredCount').innerText = delivered;
 }
-
 function renderAnalytics(){
   const delivered = orders.filter(o => o.status === 'delivered');
   const revenue = delivered.reduce((s,o) => s + (o.total||0), 0);
@@ -1441,7 +1350,7 @@ function renderAnalytics(){
   document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
 }
 
-// ========== SETTINGS ==========
+// Settings
 async function loadDeliverySettings(){
   if(!adminToken) return;
   try{
@@ -1454,7 +1363,6 @@ async function loadDeliverySettings(){
     }
   } catch(e){}
 }
-
 async function saveDeliverySettings(){
   const settings = {
     delivery_fee: parseInt(document.getElementById('deliveryFee').value) || 0,
@@ -1463,16 +1371,14 @@ async function saveDeliverySettings(){
   };
   try{
     const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(settings)
+      method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(settings)
     });
     if(res.ok) showToast('Delivery settings saved');
-    else showToast('Error saving settings', true);
+    else showToast('Error', true);
   } catch(e){ showToast('Error', true); }
 }
 
-// ========== UI EVENT HANDLERS ==========
+// UI Events
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1486,35 +1392,33 @@ document.querySelectorAll('.tab').forEach(tab => {
     if(currentTab === 'analytics') renderAnalytics();
   });
 });
-
 document.getElementById('productSearch')?.addEventListener('input', (e) => { productSearch = e.target.value.toLowerCase(); renderProducts(); });
 document.getElementById('orderSearch')?.addEventListener('input', (e) => { orderSearch = e.target.value.toLowerCase(); renderOrders(); });
 function clearProductSearch(){ productSearch = ''; document.getElementById('productSearch').value = ''; renderProducts(); }
 function clearOrderSearch(){ orderSearch = ''; document.getElementById('orderSearch').value = ''; renderOrders(); }
 function logout(){ localStorage.removeItem('liquorbelle_admin_token'); adminToken = null; location.reload(); }
+document.getElementById('editModal').addEventListener('click', function(e){ if(e.target === this) closeEditModal(); });
 
-document.getElementById('editModal').addEventListener('click', function(e){
-  if(e.target === this) closeEditModal();
-});
-
-// ========== INITIALIZATION ==========
+// Initialize with custom login
 async function initAdmin() {
   adminToken = localStorage.getItem('liquorbelle_admin_token');
-  if(!adminToken) {
-    const password = prompt('Enter Full Admin password:');
-    if(password) {
-      const success = await adminLogin(password);
-      if(!success) { alert('Invalid password'); window.location.href = 'index.html'; return; }
-    } else { window.location.href = 'index.html'; return; }
+  if(adminToken) {
+    document.getElementById('adminLoginModal').style.display = 'none';
+    await initAdminAfterLogin();
+  } else {
+    document.getElementById('adminLoginModal').style.display = 'flex';
   }
+}
+
+async function initAdminAfterLogin() {
   await loadProducts();
   await loadOrders();
   await loadDeliverySettings();
 }
 
 initAdmin();
-setInterval(() => { loadProducts(); }, 120000);
-setInterval(() => { loadOrders(); }, 120000);
+setInterval(() => { if(adminToken) loadProducts(); }, 120000);
+setInterval(() => { if(adminToken) loadOrders(); }, 120000);
 </script>
 </body>
 </html>
