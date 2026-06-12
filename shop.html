@@ -172,7 +172,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   animation-play-state: paused;
 }
 
-/* HERO BANNER (replaces categories section) */
+/* HERO BANNER */
 .hero-banner{
   margin: 20px 5% 24px;
   border-radius: var(--radius);
@@ -301,8 +301,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   flex: 1;
   min-width: 0;
 }
-
-/* Shop Tabs - removed, now we have separate sections below */
 
 /* Filter & Sort Bar */
 .filter-sort-bar{
@@ -520,6 +518,36 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   background: #5B3A8E;
   color: #fff;
 }
+/* Wishlist Heart Button */
+.wishlist-heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.2s;
+  font-size: 18px;
+  color: #9ca3af;
+}
+.wishlist-heart:hover {
+  transform: scale(1.1);
+}
+.wishlist-heart.wishlisted {
+  color: #DC2626;
+  border-color: #DC2626;
+  background: #fff5f5;
+}
+.wishlist-heart.wishlisted i {
+  color: #DC2626;
+}
 .pc-body{
   padding: 12px;
 }
@@ -653,7 +681,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   grid-column: 1/-1;
 }
 
-/* Trending & New Sections - separate, visually distinct */
+/* Trending & New Sections */
 .special-sections{
   margin: 32px 5% 0;
   display: flex;
@@ -695,6 +723,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   overflow: hidden;
   transition: all 0.2s;
   cursor: pointer;
+  position: relative;
 }
 .special-card:hover{
   transform: translateY(-4px);
@@ -720,7 +749,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
 }
 .special-card .atc-mini{
   margin-top: 10px;
-  background: var(--primary);
+  background: #22C55E;
   border: none;
   padding: 6px 12px;
   border-radius: 50px;
@@ -729,6 +758,35 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   font-weight: 600;
   cursor: pointer;
   width: 100%;
+}
+.special-card .atc-mini:hover {
+  background: #16A34A;
+}
+.special-wishlist{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  font-size: 16px;
+  color: #9ca3af;
+  transition: all 0.2s;
+}
+.special-wishlist:hover {
+  transform: scale(1.1);
+}
+.special-wishlist.wishlisted {
+  color: #DC2626;
+  border-color: #DC2626;
+  background: #fff5f5;
 }
 .recently-viewed{
   margin: 32px 5%;
@@ -1185,7 +1243,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   </div>
 </div>
 
-<!-- Hero Banner - replaces categories section -->
+<!-- Hero Banner -->
 <div class="hero-banner">
   <img class="hero-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png" alt="Special Offers" onerror="this.style.display='none'">
 </div>
@@ -1231,7 +1289,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);padding
   </main>
 </div>
 
-<!-- Trending & New Arrivals Sections - separate, visually distinct -->
+<!-- Trending & New Arrivals Sections -->
 <div class="special-sections" id="specialSections"></div>
 
 <div class="recently-viewed" id="recentlyViewedSection" style="display:none;">
@@ -1296,6 +1354,7 @@ const PER_PAGE = 12;
 let PRODUCTS = [];
 let filtered = [];
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+let wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
 let recentlyViewed = JSON.parse(localStorage.getItem('liquorbelle_rv') || '[]');
 let currentCat = new URLSearchParams(location.search).get('cat') || 'all';
 let currentPage = 1;
@@ -1318,7 +1377,26 @@ function renderStars(rating){
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]):'';}
 function toast(msg){const t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
 
-// Cart functions (kept identical)
+// Wishlist Functions
+function isInWishlist(productId) {
+  return wishlist.some(w => w.id === productId);
+}
+
+function toggleWishlist(productId, productName, productPrice, productImage, productSize) {
+  const index = wishlist.findIndex(w => w.id === productId);
+  if(index > -1) {
+    wishlist.splice(index, 1);
+    toast(`Removed from wishlist`);
+  } else {
+    wishlist.push({ id: productId, name: productName, price: productPrice, image: productImage, capacity: productSize });
+    toast(`Added to wishlist ♥`);
+  }
+  localStorage.setItem('liquorbelle_wishlist', JSON.stringify(wishlist));
+  // Re-render all product sections to update heart icons
+  renderPage();
+  renderSpecialSections();
+}
+
 function updateCartUI(){
   const items = Object.values(cart);
   const count = items.reduce((s,i)=>s+i.qty,0);
@@ -1454,11 +1532,15 @@ function renderPage(){
     const originalPrice = defaultVariant.discount ? Math.round(defaultVariant.price * 100 / (100 - defaultVariant.discount)) : defaultVariant.price;
     const hasDiscount = defaultVariant.discount > 0;
     const productRating = p.rating || 4.2;
+    const isWishlisted = isInWishlist(p._id);
     return `<div class="prod-card">
       <div class="pc-img-wrap" onclick="window.location.href='product-details.html?id=${p._id}'">
         <img class="pc-img" src="${p.image || FALLBACK_IMG}" alt="${escapeHtml(p.name)}" onerror="this.src='${FALLBACK_IMG}'">
         ${hasDiscount ? `<div class="discount-circle-badge">-${defaultVariant.discount}%</div>` : ''}
         ${p.badge ? `<div class="pc-badge badge-${p.badge}" style="top:8px;${hasDiscount ? 'left:58px;' : 'left:8px;'}">${p.badge === 'hot' ? '🔥 Hot' : p.badge === 'local' ? '🇰🇪 Local' : '⭐ Premium'}</div>` : ''}
+        <div class="wishlist-heart ${isWishlisted ? 'wishlisted' : ''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}', '${escapeHtml(p.name).replace(/'/g, "\\'")}', ${defaultVariant.price}, '${p.image || ''}', '${defaultVariant.size}')">
+          <i class="ph ${isWishlisted ? 'ph-heart-fill' : 'ph-heart'}"></i>
+        </div>
       </div>
       <div class="pc-body">
         <div class="pc-name">${escapeHtml(p.name)}</div>
@@ -1523,7 +1605,7 @@ function renderCategoryStrip(){
   });
 }
 
-// Render Trending & New Arrivals as separate sections
+// Render Trending & New Arrivals as separate sections with wishlist hearts
 function renderSpecialSections(){
   const container = document.getElementById('specialSections');
   if(!container) return;
@@ -1536,8 +1618,12 @@ function renderSpecialSections(){
       <div class="special-grid">
         ${products.map(p => {
           const variant = (p.variants || [])[0] || {price:0, size:'750ml'};
+          const isWishlisted = isInWishlist(p._id);
           return `<div class="special-card" onclick="window.location.href='product-details.html?id=${p._id}'">
             <img class="special-img" src="${p.image || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'">
+            <div class="special-wishlist ${isWishlisted ? 'wishlisted' : ''}" onclick="event.stopPropagation(); toggleWishlist('${p._id}', '${escapeHtml(p.name).replace(/'/g, "\\'")}', ${variant.price}, '${p.image || ''}', '${variant.size}')">
+              <i class="ph ${isWishlisted ? 'ph-heart-fill' : 'ph-heart'}"></i>
+            </div>
             <div class="special-info">
               <div class="special-name">${escapeHtml(p.name)}</div>
               <div class="special-price">KES ${variant.price.toLocaleString()}</div>
@@ -1548,7 +1634,7 @@ function renderSpecialSections(){
       </div>
     </div>`;
   };
-  container.innerHTML = renderSpecialGrid(trending, '🔥 Trending Deals', 'ph-fire') + renderSpecialGrid(newArrivals, '✨ New Arrivals', 'ph-sparkle');
+  container.innerHTML = renderSpecialGrid(trending, 'Trending Deals', 'ph-fire') + renderSpecialGrid(newArrivals, 'New Arrivals', 'ph-sparkle');
 }
 
 // Event Listeners
