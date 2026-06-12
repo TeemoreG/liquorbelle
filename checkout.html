@@ -422,7 +422,7 @@ body{
       <div class="free-delivery-note" id="freeDeliveryNote"></div>
       <div class="summary-total"><span>Total</span><span id="totalAmount">KES 0</span></div>
       
-      <!-- Delivery Estimate Card - moved further from total with margin-top -->
+      <!-- Delivery Estimate Card -->
       <div class="delivery-estimate">
         <i class="ph ph-truck"></i>
         <div class="delivery-estimate-content">
@@ -793,17 +793,18 @@ async function placeOrder() {
       const data = await res.json();
       if (!data.success) throw new Error(data.message || 'STK push failed');
       
-      toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay. You have 90 seconds to complete payment.');
+      toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay. You have 35 seconds to complete payment.');
       
       let paymentCompleted = false;
       
+      // TIMEOUT CHANGED TO 35 SECONDS (35000 milliseconds)
       paymentTimeout = setTimeout(() => {
         if (!paymentCompleted) {
           if (paymentInterval) clearInterval(paymentInterval);
           resetPlaceOrderButton(btn, originalHTML);
           toast('❌ Payment timeout. You did not complete the payment in time. Please try again.', true);
         }
-      }, 90000);
+      }, 35000);
       
       paymentInterval = setInterval(async () => {
         if (paymentCompleted) return;
