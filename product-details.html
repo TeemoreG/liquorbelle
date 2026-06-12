@@ -74,25 +74,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   opacity: 1;
 }
 
-.top-bar{
-  background:var(--primary);
-  color:rgba(255,255,255,.92);
-  padding:8px 5%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:12px;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.top-bar-left{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
-.top-bar-left span{display:inline-flex;align-items:center;gap:5px;opacity:.9;}
-.badge-24h{
-  background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.25);
-  padding:3px 12px;border-radius:50px;
-  font-size:11px;font-weight:600;color:#fff;
-}
+/* REMOVED top-bar completely */
 
 .main-header{
   background:var(--primary);
@@ -171,8 +153,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-weight: 600;
 }
 
-/* ========== FIXED PRODUCT DETAILS LAYOUT ========== */
-/* Desktop side-by-side with proper constraints */
 .product-detail-container{
   max-width: 1200px;
   margin: 40px auto;
@@ -180,10 +160,9 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
-  align-items: start;       /* KEY FIX: prevents vertical stretching, aligns both columns to top */
+  align-items: start;
 }
 
-/* Image section: no extra flex interference, maintains aspect ratio */
 .product-image-section{
   position: relative;
   width: 100%;
@@ -193,7 +172,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   justify-content: flex-start;
 }
 
-/* Image styling: responsive, not oversized, centered */
 .product-image-section img{
   width: 100%;
   max-width: 100%;
@@ -206,76 +184,43 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   display: block;
 }
 
-/* Info section aligns naturally to top (due to align-items: start on grid) */
 .product-info-section{
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-width: 0; /* prevents overflow from long content */
+  min-width: 0;
 }
 
-/* Tablet/medium phones (≤ 768px): keep image and info side by side, narrower columns */
+/* Mobile: stack vertically */
 @media(max-width: 768px){
   .product-detail-container{
-    grid-template-columns: 40% 1fr;   /* keep side-by-side, image takes less width */
-    gap: 16px;
-    align-items: start;
-    padding: 0 4%;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin: 20px auto;
   }
   .product-image-section{
-    max-width: 100%;
-    margin: 0;
-    position: static;
-  }
-  .product-image-section img{
-    max-width: 100%;
-    padding: 8px;
+    max-width: 70%;
+    margin: 0 auto;
   }
   .search-wrap{display:none;}
-  .action-buttons{flex-direction:column;}
   .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
   .whatsapp-float i{font-size:28px;}
   .stars .star-filled, .stars .star-empty{font-size:14px;}
   .rating-text{font-size:11px;}
   .share-section{flex-wrap:wrap;}
   .breadcrumb{font-size:11px;}
-
-  /* Shrink info-section content so it fits beside the image */
-  .product-info-section h1{font-size:1.1rem; line-height:1.3;}
-  .product-category{font-size:0.75rem;}
-  .product-description{font-size:0.8rem;}
-  .price-new{font-size:1.2rem;}
-  .price-old{font-size:0.85rem;}
-  .variant-btn{padding:6px 10px; font-size:0.75rem;}
-  .breadcrumb{display:none;}
+  .action-buttons{flex-direction:column;}
+  .related-grid{
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
 }
 @media(max-width: 480px){
-  .product-detail-container{
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
   .product-image-section{
     max-width: 80%;
-    margin: 0 auto;
   }
 }
 
-/* For extra-large screens, keep image nicely contained */
-@media(min-width: 1200px){
-  .product-image-section img{
-    max-width: 100%;
-    transition: transform 0.2s ease;
-  }
-}
-
-/* preserve all existing styles for other components (rating, variants, cart, etc.) */
-.product-image-section img{
-  width: 100%;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  background: white;
-  padding: 20px;
-}
 .product-info-section h1{
   font-family: var(--font-display);
   font-size: 2rem;
@@ -290,7 +235,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   letter-spacing: 1px;
 }
 
-/* Star Rating */
 .rating-container{
   display: flex;
   align-items: center;
@@ -331,6 +275,154 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   line-height: 1.6;
   margin-bottom: 24px;
 }
+
+/* Product Highlights - NEW */
+.product-highlights{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.highlight-item{
+  background: var(--bg2);
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.highlight-item i{
+  font-size: 14px;
+}
+
+/* Stock Status - NEW */
+.stock-status{
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.in-stock{
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.low-stock{
+  color: #e67e22;
+}
+
+/* Tab Section - NEW */
+.product-tabs{
+  margin: 24px 0;
+  border-top: 1px solid var(--border);
+}
+.tab-headers{
+  display: flex;
+  gap: 24px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 8px;
+  flex-wrap: wrap;
+}
+.tab-btn{
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px 0;
+  transition: all 0.2s;
+}
+.tab-btn.active{
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+  margin-bottom: -2px;
+}
+.tab-content{
+  padding: 16px 0;
+}
+.tab-pane{
+  display: none;
+  line-height: 1.6;
+  color: var(--muted);
+  font-size: 14px;
+}
+.tab-pane.active{
+  display: block;
+}
+.specs-list{
+  list-style: none;
+}
+.specs-list li{
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 16px;
+}
+.spec-label{
+  font-weight: 700;
+  width: 100px;
+  color: var(--text);
+}
+.spec-value{
+  color: var(--muted);
+}
+
+/* Related Products - NEW */
+.related-products-section{
+  max-width: 1200px;
+  margin: 48px auto 0;
+  padding: 0 5%;
+}
+.related-header{
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.related-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+.related-card{
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.related-card:hover{
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+.related-img{
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.related-info{
+  padding: 10px;
+}
+.related-name{
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.related-price{
+  color: var(--sale-red);
+  font-weight: 700;
+  font-size: 12px;
+}
+
 .variant-selector{
   margin-bottom: 24px;
 }
@@ -452,7 +544,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   transform: translateY(-2px);
 }
 
-/* Share Button */
 .share-section{
   display: flex;
   gap: 12px;
@@ -483,7 +574,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-size: 18px;
 }
 
-/* Payment Icons - M-PESA Only */
 .payment-icons{
   display: flex;
   align-items: center;
@@ -507,51 +597,12 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   padding: 6px 14px;
   border-radius: 50px;
 }
-.mpesa-badge img{
-  width: 24px;
-  height: 24px;
-}
 .mpesa-badge span{
   font-size: 12px;
   font-weight: 700;
   color: #2ecc71;
 }
 
-/* Delivery Guarantee Badge */
-.delivery-guarantee{
-  background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
-  border-radius: 14px;
-  padding: 12px 16px;
-  margin: 16px 0;
-  border-left: 3px solid #22C55E;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.delivery-guarantee i{
-  font-size: 24px;
-  color: #22C55E;
-}
-.delivery-guarantee-content strong{
-  font-size: 13px;
-  display: block;
-  color: #22C55E;
-}
-.delivery-guarantee-content p{
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.back-link{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--primary);
-  text-decoration: none;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
 .footer{
   background:var(--primary);
   color:rgba(255,255,255,.85);
@@ -592,8 +643,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   pointer-events:none;
   white-space:nowrap;
 }
-
-/* Share Toast */
 .share-toast{
   position:fixed;
   bottom:100px;
@@ -609,22 +658,116 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   z-index:601;
   pointer-events:none;
 }
-
-/* extra spacing for product info section components */
-.product-info-section .action-buttons {
-  margin-top: 8px;
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:400;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s;
+}
+.overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+.cart-drawer{
+  position:fixed;
+  bottom:-100%;
+  left:0;
+  right:0;
+  background:white;
+  border-radius:24px 24px 0 0;
+  z-index:500;
+  transition:bottom .35s;
+  max-height:82vh;
+  overflow-y:auto;
+}
+.cart-drawer.open{
+  bottom:0;
+}
+.cart-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 22px;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  background:white;
+}
+.cart-head span{
+  font-weight:800;
+  font-size:1.05rem;
+  font-family:var(--font-display);
+}
+.cart-close{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:var(--bg);
+  border:none;
+  cursor:pointer;
+}
+.cart-items{
+  padding:14px 18px;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+  gap:8px;
+}
+.cart-item-name{
+  font-weight:700;
+  font-size:.875rem;
+}
+.cart-item-price{
+  color:var(--sale-red);
+  font-weight:700;
+}
+.cart-qty{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+}
+.cart-qty button{
+  width:28px;
+  height:28px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:50%;
+  cursor:pointer;
+}
+.cart-footer{
+  padding:14px 18px 22px;
+  border-top:1px solid var(--border);
+}
+.cart-total{
+  display:flex;
+  justify-content:space-between;
+  font-weight:800;
+  font-size:1rem;
+  margin-bottom:14px;
+}
+.btn-checkout{
+  width:100%;
+  padding:14px;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:50px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-checkout:hover{
+  background:var(--primary-bright);
 }
 </style>
 </head>
 <body>
-
-<div class="top-bar">
-  <div class="top-bar-left">
-    <span><i class="ph ph-map-pin"></i>Dagoretti Road, Nairobi</span>
-    <span><i class="ph ph-phone-call"></i>+254 748 894 443</span>
-  </div>
-  <div class="badge-24h"><i class="ph ph-clock"></i>&nbsp;Open 24/7</div>
-</div>
 
 <header class="main-header">
   <a class="logo" href="index.html" style="text-decoration:none;">
@@ -659,7 +802,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <img id="productImage" src="" alt="Product Image">
   </div>
   <div class="product-info-section">
-    <!-- Breadcrumb Navigation -->
     <div class="breadcrumb" id="breadcrumb">
       <a href="index.html">Home</a>
       <span class="separator">/</span>
@@ -673,7 +815,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <h1 id="productName">Loading...</h1>
     <div class="product-category" id="productCategory"></div>
     
-    <!-- Star Rating -->
     <div class="rating-container" id="ratingContainer">
       <div class="stars" id="starsContainer"></div>
       <span class="rating-text" id="ratingText"></span>
@@ -681,6 +822,12 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     
     <div id="productBadge"></div>
     <p class="product-description" id="productDescription"></p>
+    
+    <!-- NEW: Product Highlights -->
+    <div class="product-highlights" id="productHighlights"></div>
+    
+    <!-- NEW: Stock Status -->
+    <div class="stock-status" id="stockStatus"></div>
     
     <div class="variant-selector">
       <label>Select Size:</label>
@@ -693,12 +840,10 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       <span class="discount-badge" id="discountBadge" style="display:none;"></span>
     </div>
     
-    <!-- Payment Icons - M-PESA Only -->
     <div class="payment-icons">
       <span class="payment-label">Secure Payment:</span>
       <div class="mpesa-badge">
-        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780934550/mpesa_w3qmr0.png" alt="M-PESA" onerror="this.style.display='none'">
-        <span>M-PESA</span>
+        <span>💳 M-PESA</span>
       </div>
     </div>
     
@@ -720,7 +865,35 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       </button>
     </div>
     
-    <!-- Share Section -->
+    <!-- NEW: Tabbed Information Section -->
+    <div class="product-tabs">
+      <div class="tab-headers">
+        <button class="tab-btn active" data-tab="details">Product Details</button>
+        <button class="tab-btn" data-tab="specs">Specifications</button>
+        <button class="tab-btn" data-tab="delivery">Delivery Info</button>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane active" id="tab-details">
+          <p id="tabDescription"></p>
+        </div>
+        <div class="tab-pane" id="tab-specs">
+          <ul class="specs-list">
+            <li><span class="spec-label">Brand:</span><span class="spec-value" id="specBrand">Premium Selection</span></li>
+            <li><span class="spec-label">Category:</span><span class="spec-value" id="specCategory">-</span></li>
+            <li><span class="spec-label">Alcohol Content:</span><span class="spec-value">40% ABV</span></li>
+            <li><span class="spec-label">Origin:</span><span class="spec-value">Imported</span></li>
+          </ul>
+        </div>
+        <div class="tab-pane" id="tab-delivery">
+          <p>🚚 <strong>Fast Delivery:</strong> 10-45 minutes within Nairobi<br>
+          📞 Rider will call before arrival<br>
+          💳 Pay via M-PESA or Cash on Delivery<br>
+          ✅ 100% Authentic Products Guaranteed<br>
+          🍾 Free delivery on orders over KES 3,000 or 750ml+ bottles</p>
+        </div>
+      </div>
+    </div>
+    
     <div class="share-section">
       <button class="share-btn" onclick="shareProductWhatsApp()">
         <i class="ph ph-whatsapp-logo"></i> Share on WhatsApp
@@ -729,20 +902,15 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
         <i class="ph ph-link"></i> Copy Link
       </button>
     </div>
-    
-    <!-- Delivery Guarantee Badge -->
-    <div class="delivery-guarantee">
-      <i class="ph ph-seal-check"></i>
-      <div class="delivery-guarantee-content">
-        <strong>Delivery Guarantee</strong>
-        <p>Fast delivery within 10-45 minutes • Rider will call before arrival</p>
-      </div>
-    </div>
-    
   </div>
 </div>
 
-<!-- Floating WhatsApp Button -->
+<!-- NEW: Related Products Section -->
+<div class="related-products-section" id="relatedSection" style="display:none;">
+  <h3 class="related-header"><i class="ph ph-books"></i> You May Also Like</h3>
+  <div class="related-grid" id="relatedGrid"></div>
+</div>
+
 <a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
   <i class="ph ph-whatsapp-logo"></i>
   <span class="tooltip">Chat with us</span>
@@ -752,8 +920,8 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   <div class="footer-grid">
     <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
     <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a></div>
-    <div class="footer-col"><h4>Customer Support</h4><p><i class="ph ph-phone-call"></i> +254 748 894 443</p><p><i class="ph ph-whatsapp-logo"></i> WhatsApp 24/7</p></div>
-    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
+    <div class="footer-col"><h4>Customer Support</h4><p><i class="ph ph-whatsapp-logo"></i> WhatsApp 24/7</p></div>
+    <div class="footer-col"><h4>Contact</h4><p>Nairobi, Kenya</p></div>
   </div>
   <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly.</p></div>
 </footer>
@@ -778,6 +946,7 @@ let currentProduct = null;
 let selectedVariant = null;
 let quantity = 1;
 let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+let allProducts = [];
 
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
@@ -798,201 +967,180 @@ function renderStars(rating){
 }
 
 function formatCategoryName(category){
-  if(!category) return 'Product';
-  return category.charAt(0).toUpperCase() + category.slice(1);
+  return category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Product';
 }
 
 function updateBreadcrumb(category, productName){
-  const categorySpan = document.getElementById('breadcrumbCategory');
-  const productSpan = document.getElementById('breadcrumbProduct');
-  if(categorySpan) categorySpan.innerText = formatCategoryName(category);
-  if(productSpan) productSpan.innerText = productName || 'Loading...';
+  const catSpan = document.getElementById('breadcrumbCategory');
+  const prodSpan = document.getElementById('breadcrumbProduct');
+  if(catSpan) catSpan.innerText = formatCategoryName(category);
+  if(prodSpan) prodSpan.innerText = productName || 'Loading...';
 }
 
 function shareProductWhatsApp() {
   if(!currentProduct) return;
   const url = window.location.href;
-  const text = `🍾 Check out ${currentProduct.name} at LiquorBelle! ${selectedVariant ? selectedVariant.size : ''} - KES ${selectedVariant ? selectedVariant.price.toLocaleString() : ''}\n\n${url}`;
+  const text = `🍾 ${currentProduct.name} at LiquorBelle! ${selectedVariant?.size || ''} - KES ${selectedVariant?.price.toLocaleString() || ''}\n${url}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
 function copyProductLink() {
-  const url = window.location.href;
-  navigator.clipboard.writeText(url).then(() => {
-    showShareToast('✅ Product link copied to clipboard!');
-  }).catch(() => {
-    showShareToast('❌ Failed to copy link');
-  });
+  navigator.clipboard.writeText(window.location.href).then(() => showShareToast('✅ Link copied!'));
 }
 
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
 async function loadProduct() {
-  if(!productId) {
-    toast('Product not found');
-    return;
-  }
+  if(!productId) { toast('Product not found'); return; }
   try{
     const res = await fetch(`${API_BASE}/api/db/products`);
     const data = await res.json();
     if(data.success && data.products) {
-      currentProduct = data.products.find(p => p._id === productId);
+      allProducts = data.products;
+      currentProduct = allProducts.find(p => p._id === productId);
       if(currentProduct) {
         renderProductDetails();
-      } else {
-        toast('Product not found');
-      }
+        renderRelatedProducts();
+      } else toast('Product not found');
     }
-  } catch(e){
-    console.error('Error loading product:', e);
-    toast('Error loading product');
-  }
+  } catch(e){ toast('Error loading product'); }
 }
 
 function renderProductDetails() {
-  const productName = currentProduct.name;
+  const name = currentProduct.name;
   const category = currentProduct.category || '';
   
-  document.getElementById('productName').innerText = productName;
+  document.getElementById('productName').innerText = name;
   document.getElementById('productCategory').innerText = category;
   document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
+  document.getElementById('tabDescription').innerHTML = currentProduct.description || 'Premium quality spirit from selected distilleries.';
   document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
   document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
+  document.getElementById('specCategory').innerText = category || 'Premium Spirit';
   
-  updateBreadcrumb(category, productName);
+  updateBreadcrumb(category, name);
   
   const rating = currentProduct.rating || 4.0;
-  const starsContainer = document.getElementById('starsContainer');
-  const ratingText = document.getElementById('ratingText');
-  if(starsContainer) starsContainer.innerHTML = renderStars(rating);
-  if(ratingText) ratingText.innerText = `${rating.toFixed(1)} out of 5 stars`;
+  document.getElementById('starsContainer').innerHTML = renderStars(rating);
+  document.getElementById('ratingText').innerText = `${rating.toFixed(1)} out of 5 stars`;
   
   const badgeContainer = document.getElementById('productBadge');
   if(currentProduct.badge) {
-    let badgeText = '';
-    if(currentProduct.badge === 'hot') badgeText = '🔥 Hot Deal';
-    else if(currentProduct.badge === 'local') badgeText = '🇰🇪 Local Favorite';
-    else if(currentProduct.badge === 'prem') badgeText = '⭐ Premium';
+    let badgeText = currentProduct.badge === 'hot' ? '🔥 Hot Deal' : currentProduct.badge === 'local' ? '🇰🇪 Local Favorite' : '⭐ Premium';
     badgeContainer.innerHTML = `<div class="product-badge badge-${currentProduct.badge}">${badgeText}</div>`;
-  } else {
-    badgeContainer.innerHTML = '';
-  }
+  } else badgeContainer.innerHTML = '';
+  
+  // Product Highlights
+  const highlights = document.getElementById('productHighlights');
+  highlights.innerHTML = `
+    <div class="highlight-item"><i class="ph ph-check-circle"></i> 100% Authentic</div>
+    <div class="highlight-item"><i class="ph ph-truck"></i> Fast Delivery</div>
+    <div class="highlight-item"><i class="ph ph-thermometer"></i> Temperature Controlled</div>
+    <div class="highlight-item"><i class="ph ph-seal-check"></i> Quality Guaranteed</div>
+  `;
+  
+  // Stock Status
+  const stockDiv = document.getElementById('stockStatus');
+  stockDiv.innerHTML = '<div class="in-stock"><i class="ph ph-check-circle"></i> In Stock • Ready for Delivery</div>';
   
   const variants = currentProduct.variants || [];
   const sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
-  variants.sort((a,b) => (sizeOrder[a.size] || 99) - (sizeOrder[b.size] || 99));
+  variants.sort((a,b) => (sizeOrder[a.size]||99) - (sizeOrder[b.size]||99));
   
   const variantContainer = document.getElementById('variantButtons');
-  if(variants.length === 0) {
-    variantContainer.innerHTML = '<p style="color:var(--muted);">No sizes available</p>';
-    return;
-  }
+  if(!variants.length) { variantContainer.innerHTML = '<p>No sizes available</p>'; return; }
   
-  variantContainer.innerHTML = variants.map(v => `
-    <button class="variant-btn" data-size="${v.size}" data-price="${v.price}" data-discount="${v.discount || 0}" onclick="selectVariant('${v.size}', ${v.price}, ${v.discount || 0})">
-      ${v.size}
-    </button>
-  `).join('');
-  
+  variantContainer.innerHTML = variants.map(v => `<button class="variant-btn" data-size="${v.size}" data-price="${v.price}" data-discount="${v.discount||0}" onclick="selectVariant('${v.size}', ${v.price}, ${v.discount||0})">${v.size}</button>`).join('');
   selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
 }
 
 function selectVariant(size, price, discount) {
   selectedVariant = { size, price, discount };
-  
   document.querySelectorAll('.variant-btn').forEach(btn => {
-    if(btn.dataset.size === size) {
-      btn.classList.add('selected');
-    } else {
-      btn.classList.remove('selected');
-    }
+    btn.classList.toggle('selected', btn.dataset.size === size);
   });
   
   const hasDiscount = discount > 0;
   const originalPrice = hasDiscount ? Math.round(price * 100 / (100 - discount)) : price;
-  
-  const priceOldEl = document.getElementById('priceOld');
-  const priceNewEl = document.getElementById('priceNew');
+  const priceOld = document.getElementById('priceOld');
+  const priceNew = document.getElementById('priceNew');
   const discountBadge = document.getElementById('discountBadge');
   
   if(hasDiscount) {
-    priceOldEl.style.display = 'inline';
-    priceOldEl.innerHTML = `KES ${originalPrice.toLocaleString()}`;
-    priceNewEl.innerHTML = `KES ${price.toLocaleString()}`;
+    priceOld.style.display = 'inline';
+    priceOld.innerHTML = `KES ${originalPrice.toLocaleString()}`;
+    priceNew.innerHTML = `KES ${price.toLocaleString()}`;
     discountBadge.style.display = 'inline';
     discountBadge.innerHTML = `-${discount}%`;
   } else {
-    priceOldEl.style.display = 'none';
-    priceNewEl.innerHTML = `KES ${price.toLocaleString()}`;
+    priceOld.style.display = 'none';
+    priceNew.innerHTML = `KES ${price.toLocaleString()}`;
     discountBadge.style.display = 'none';
   }
 }
 
-function increaseQty() {
-  if(quantity < 10) {
-    quantity++;
-    document.getElementById('qtyValue').innerText = quantity;
-  }
-}
-
-function decreaseQty() {
-  if(quantity > 1) {
-    quantity--;
-    document.getElementById('qtyValue').innerText = quantity;
-  }
-}
-
-function addToCartFromDetail() {
-  if(!currentProduct || !selectedVariant) {
-    toast('Please select a size');
+function renderRelatedProducts() {
+  if(!allProducts.length || !currentProduct) return;
+  const related = allProducts.filter(p => p._id !== currentProduct._id && p.category === currentProduct.category).slice(0, 4);
+  if(!related.length) {
+    const sameBrand = allProducts.filter(p => p._id !== currentProduct._id).slice(0, 4);
+    if(!sameBrand.length) return;
+    const section = document.getElementById('relatedSection');
+    const grid = document.getElementById('relatedGrid');
+    section.style.display = 'block';
+    grid.innerHTML = sameBrand.map(p => {
+      const price = p.variants?.[0]?.price || 0;
+      return `<div class="related-card" onclick="window.location.href='product-details.html?id=${p._id}'">
+        <img class="related-img" src="${p.image || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'">
+        <div class="related-info">
+          <div class="related-name">${escapeHtml(p.name)}</div>
+          <div class="related-price">KES ${price.toLocaleString()}</div>
+        </div>
+      </div>`;
+    }).join('');
     return;
   }
-  
-  const productId = currentProduct._id;
-  const productName = currentProduct.name;
-  const price = selectedVariant.price;
-  const size = selectedVariant.size;
-  
-  if(cart[productId]) {
-    cart[productId].qty += quantity;
-  } else {
-    cart[productId] = {
-      id: productId,
-      name: productName,
-      price: price,
-      qty: quantity,
-      capacity: size,
-      size: size
-    };
-  }
-  
+  const section = document.getElementById('relatedSection');
+  const grid = document.getElementById('relatedGrid');
+  section.style.display = 'block';
+  grid.innerHTML = related.map(p => {
+    const price = p.variants?.[0]?.price || 0;
+    return `<div class="related-card" onclick="window.location.href='product-details.html?id=${p._id}'">
+      <img class="related-img" src="${p.image || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'">
+      <div class="related-info">
+        <div class="related-name">${escapeHtml(p.name)}</div>
+        <div class="related-price">KES ${price.toLocaleString()}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function increaseQty() { if(quantity < 10) { quantity++; document.getElementById('qtyValue').innerText = quantity; } }
+function decreaseQty() { if(quantity > 1) { quantity--; document.getElementById('qtyValue').innerText = quantity; } }
+
+function addToCartFromDetail() {
+  if(!currentProduct || !selectedVariant) { toast('Select a size'); return; }
+  const id = currentProduct._id;
+  if(cart[id]) cart[id].qty += quantity;
+  else cart[id] = { id, name: currentProduct.name, price: selectedVariant.price, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size };
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   updateCartUI();
-  toast(`${quantity}× ${productName} (${size}) added to cart ✓`);
+  toast(`${quantity}× ${currentProduct.name} (${selectedVariant.size}) added ✓`);
 }
 
 function buyNow() {
-  if(!currentProduct || !selectedVariant) {
-    toast('Please select a size');
-    return;
-  }
-  
-  const productId = currentProduct._id;
-  const productName = currentProduct.name;
-  const price = selectedVariant.price;
-  const size = selectedVariant.size;
-  
-  if(cart[productId]) {
-    cart[productId].qty += quantity;
-  } else {
-    cart[productId] = {
-      id: productId,
-      name: productName,
-      price: price,
-      qty: quantity,
-      capacity: size,
-      size: size
-    };
-  }
-  
+  if(!currentProduct || !selectedVariant) { toast('Select a size'); return; }
+  const id = currentProduct._id;
+  if(cart[id]) cart[id].qty += quantity;
+  else cart[id] = { id, name: currentProduct.name, price: selectedVariant.price, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size };
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   window.location.href = 'checkout.html';
 }
@@ -1000,61 +1148,27 @@ function buyNow() {
 function updateCartUI(){
   const items = Object.values(cart);
   const count = items.reduce((s,i)=>s+i.qty,0);
-  const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0);
   document.getElementById('cartCount').innerText = count;
   const container = document.getElementById('cartItemsList');
   const footer = document.getElementById('cartFooter');
   if(!items.length){
-    container.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--muted);">Your cart is empty</div>';
-    footer.style.display='none';
+    container.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--muted);">Cart empty</div>';
+    footer.style.display = 'none';
     return;
   }
-  footer.style.display='block';
+  footer.style.display = 'block';
+  const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0);
   const hasBig = items.some(i=>['750ml','1L','1.5L'].includes(i.capacity));
-  const delivery = hasBig?0:150;
+  const delivery = hasBig ? 0 : 150;
   document.getElementById('cartTotalAmount').innerHTML = `KES ${(subtotal+delivery).toLocaleString()}`;
-  container.innerHTML = items.map(item=>`<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} ${item.size ? `(${item.size})` : ''} x${item.qty}</div><div class="cart-item-price">KES ${(item.price*item.qty).toLocaleString()}</div><div class="cart-qty"><button onclick="updateQty('${item.id}',-1)">−</button><span>${item.qty}</span><button onclick="updateQty('${item.id}',1)">+</button><button onclick="removeCartItem('${item.id}')" class="cart-remove-btn">Remove</button></div></div></div>`).join('');
+  container.innerHTML = items.map(item => `<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(item.name)} (${item.size}) x${item.qty}</div><div class="cart-item-price">KES ${(item.price*item.qty).toLocaleString()}</div><div class="cart-qty"><button onclick="updateQty('${item.id}',-1)">−</button><span>${item.qty}</span><button onclick="updateQty('${item.id}',1)">+</button><button onclick="removeCartItem('${item.id}')" class="cart-remove-btn">Remove</button></div></div></div>`).join('');
 }
-function removeCartItem(id){
-  if(cart[id]){
-    delete cart[id];
-    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    updateCartUI();
-    toast('Item removed from cart');
-  }
-}
-function updateQty(id,delta){
-  if(cart[id]){cart[id].qty+=delta;if(cart[id].qty<=0)delete cart[id];localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));updateCartUI();}
-}
-function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
-function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
+function removeCartItem(id){ if(cart[id]){ delete cart[id]; localStorage.setItem('liquorbelle_cart',JSON.stringify(cart)); updateCartUI(); toast('Removed'); } }
+function updateQty(id,delta){ if(cart[id]){ cart[id].qty+=delta; if(cart[id].qty<=0)delete cart[id]; localStorage.setItem('liquorbelle_cart',JSON.stringify(cart)); updateCartUI(); } }
+function openCartDrawer(){ document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
+function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
 
-const style = document.createElement('style');
-style.textContent = `
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}
-  .overlay.open{opacity:1;pointer-events:auto;}
-  .cart-drawer{position:fixed;bottom:-100%;left:0;right:0;background:white;border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s;max-height:82vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.12);}
-  .cart-drawer.open{bottom:0;}
-  .cart-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:white;}
-  .cart-head span{font-weight:800;font-size:1.05rem;font-family:var(--font-display);}
-  .cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;}
-  .cart-items{padding:14px 18px;}
-  .cart-item{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:8px;}
-  .cart-item-name{font-weight:700;font-size:.875rem;}
-  .cart-item-price{color:var(--sale-red);font-weight:700;}
-  .cart-qty{display:flex;align-items:center;gap:10px;margin-top:8px;}
-  .cart-qty button{width:28px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;}
-  .cart-footer{padding:14px 18px 22px;border-top:1px solid var(--border);}
-  .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:14px;}
-  .btn-checkout{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
-  .btn-checkout:hover{background:var(--primary-bright);}
-`;
-document.head.appendChild(style);
-
-const searchInput = document.getElementById('searchInput');
-if(searchInput){
-  searchInput.addEventListener('keypress',e=>{if(e.key==='Enter') window.location.href=`shop.html?search=${encodeURIComponent(e.target.value)}`;});
-}
+document.getElementById('searchInput')?.addEventListener('keypress', e => { if(e.key === 'Enter') window.location.href = `shop.html?search=${encodeURIComponent(e.target.value)}`; });
 
 loadProduct();
 updateCartUI();
