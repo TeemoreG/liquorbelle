@@ -74,8 +74,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   opacity: 1;
 }
 
-/* REMOVED top-bar completely */
-
 .main-header{
   background:var(--primary);
   padding:14px 5%;
@@ -276,7 +274,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   margin-bottom: 24px;
 }
 
-/* Product Highlights - NEW */
+/* Product Highlights */
 .product-highlights{
   display: flex;
   gap: 12px;
@@ -298,7 +296,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-size: 14px;
 }
 
-/* Stock Status - NEW */
+/* Stock Status */
 .stock-status{
   margin-bottom: 20px;
   font-size: 14px;
@@ -310,11 +308,8 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   align-items: center;
   gap: 6px;
 }
-.low-stock{
-  color: #e67e22;
-}
 
-/* Tab Section - NEW */
+/* Tab Section */
 .product-tabs{
   margin: 24px 0;
   border-top: 1px solid var(--border);
@@ -371,7 +366,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   color: var(--muted);
 }
 
-/* Related Products - NEW */
+/* Related Products */
 .related-products-section{
   max-width: 1200px;
   margin: 48px auto 0;
@@ -596,6 +591,10 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   background: rgba(46,204,113,0.1);
   padding: 6px 14px;
   border-radius: 50px;
+}
+.mpesa-badge img{
+  width: 24px;
+  height: 24px;
 }
 .mpesa-badge span{
   font-size: 12px;
@@ -823,10 +822,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <div id="productBadge"></div>
     <p class="product-description" id="productDescription"></p>
     
-    <!-- NEW: Product Highlights -->
     <div class="product-highlights" id="productHighlights"></div>
-    
-    <!-- NEW: Stock Status -->
     <div class="stock-status" id="stockStatus"></div>
     
     <div class="variant-selector">
@@ -843,7 +839,8 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <div class="payment-icons">
       <span class="payment-label">Secure Payment:</span>
       <div class="mpesa-badge">
-        <span>💳 M-PESA</span>
+        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780934550/mpesa_w3qmr0.png" alt="M-PESA" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/M-PESA_Logo.svg/1200px-M-PESA_Logo.svg.png'">
+        <span>M-PESA</span>
       </div>
     </div>
     
@@ -865,7 +862,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       </button>
     </div>
     
-    <!-- NEW: Tabbed Information Section -->
     <div class="product-tabs">
       <div class="tab-headers">
         <button class="tab-btn active" data-tab="details">Product Details</button>
@@ -905,7 +901,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   </div>
 </div>
 
-<!-- NEW: Related Products Section -->
 <div class="related-products-section" id="relatedSection" style="display:none;">
   <h3 class="related-header"><i class="ph ph-books"></i> You May Also Like</h3>
   <div class="related-grid" id="relatedGrid"></div>
@@ -988,7 +983,6 @@ function copyProductLink() {
   navigator.clipboard.writeText(window.location.href).then(() => showShareToast('✅ Link copied!'));
 }
 
-// Tab switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1038,7 +1032,6 @@ function renderProductDetails() {
     badgeContainer.innerHTML = `<div class="product-badge badge-${currentProduct.badge}">${badgeText}</div>`;
   } else badgeContainer.innerHTML = '';
   
-  // Product Highlights
   const highlights = document.getElementById('productHighlights');
   highlights.innerHTML = `
     <div class="highlight-item"><i class="ph ph-check-circle"></i> 100% Authentic</div>
@@ -1047,7 +1040,6 @@ function renderProductDetails() {
     <div class="highlight-item"><i class="ph ph-seal-check"></i> Quality Guaranteed</div>
   `;
   
-  // Stock Status
   const stockDiv = document.getElementById('stockStatus');
   stockDiv.innerHTML = '<div class="in-stock"><i class="ph ph-check-circle"></i> In Stock • Ready for Delivery</div>';
   
