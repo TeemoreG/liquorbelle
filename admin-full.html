@@ -353,7 +353,7 @@ textarea{resize:vertical;}
   cursor:pointer;
 }
 
-/* VARIANTS TABLE - ALL KENYAN SIZES INCLUDING 330ml */
+/* VARIANTS TABLE */
 .variants-section{margin:18px 0 10px;}
 .variants-label{font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .variants-table{
@@ -588,7 +588,7 @@ textarea{resize:vertical;}
 .order-items{
   padding:12px 18px;
   background:var(--bg);
-  max-height:260px;
+  max-height:320px;
   overflow-y:auto;
   display:flex;
   flex-direction:column;
@@ -602,18 +602,26 @@ textarea{resize:vertical;}
   background:white;
   border-radius:var(--radius-xs);
   border:1px solid var(--border-light);
+  transition:all 0.15s;
+}
+.order-item:hover{
+  background:var(--bg);
+  border-color:var(--border);
 }
 .order-item-img{
-  width:46px;height:46px;
+  width:48px;
+  height:48px;
   object-fit:cover;
-  border-radius:7px;
+  border-radius:8px;
   background:var(--bg2);
   flex-shrink:0;
+  border:1px solid var(--border-light);
 }
 .order-item-details{flex:1;min-width:0;}
-.order-item-name{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.order-item-qty{font-size:12px;color:var(--muted);margin-top:2px;}
-.order-item-price{font-weight:700;color:var(--text);font-size:14px;flex-shrink:0;}
+.order-item-name{font-weight:700;font-size:13.5px;color:var(--text);margin-bottom:2px;}
+.order-item-size{font-size:11px;color:var(--primary);font-weight:600;margin-top:2px;}
+.order-item-qty{font-size:11px;color:var(--muted);margin-top:2px;}
+.order-item-price{font-weight:800;color:var(--sale-red);font-size:14px;flex-shrink:0;background:var(--red-bg);padding:4px 10px;border-radius:20px;}
 .order-footer{
   display:flex;
   justify-content:space-between;
@@ -857,7 +865,7 @@ textarea{resize:vertical;}
         </div>
       </div>
 
-      <!-- Toggles Row: Trending + New Arrival -->
+      <!-- Toggles Row -->
       <div class="toggles-row">
         <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()">
           <input type="checkbox" id="prodTrending" onclick="event.stopPropagation()">
@@ -885,10 +893,10 @@ textarea{resize:vertical;}
         </select>
       </div>
 
-      <!-- Variants Section - ALL KENYAN SIZES INCLUDING 330ml -->
+      <!-- Variants Section -->
       <div class="variants-section">
         <div class="variants-label"><i class="ph ph-ruler"></i> Bottle Sizes & Prices</div>
-        <div class="help-text" style="margin-bottom:10px;"><i class="ph ph-info"></i> Enter the ORIGINAL price for each size. Discount % is applied automatically. Example: Price=500, Discount=20 → Customer pays 400</div>
+        <div class="help-text" style="margin-bottom:10px;"><i class="ph ph-info"></i> Enter the ORIGINAL price for each size. Discount % is applied automatically.</div>
         <table class="variants-table" id="variantsTable">
           <thead>
             <tr><th>Size</th><th>Original Price (KES)</th><th>Discount %</th><th style="width:40px;"></th></tr>
@@ -1054,6 +1062,7 @@ textarea{resize:vertical;}
 
 <script>
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
 let products = [];
 let orders = [];
 let currentTab = 'products';
@@ -1109,7 +1118,7 @@ function submitAdminLogin() {
   });
 }
 
-// Variant Functions - ALL SIZES INCLUDING 330ml
+// Variant Functions
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
@@ -1303,9 +1312,8 @@ function renderProducts(){
   if(!filtered.length){ container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products found</p></div>'; return; }
   container.innerHTML = filtered.map(p => {
     const variants = p.variants || [];
-    const bestPrice = variants.length ? Math.min(...variants.map(v => v.price || 0)) : 0;
     return `<div class="product-row">
-      <div><img class="product-img" src="${p.image || 'https://placehold.co/40x40/F2EDE7/800000?text=🍾'}" onerror="this.src='https://placehold.co/40x40/F2EDE7/800000?text=🍾'"></div>
+      <div><img class="product-img" src="${p.image || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'"></div>
       <div><div class="product-name">${escapeHtml(p.name)}</div><div class="product-cat">${p.category || ''}</div></div>
       <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()}${v.discount ? `<span class="discount-badge"> ${v.discount}% OFF → KES ${Math.round(v.price * (100 - v.discount) / 100).toLocaleString()}</span>` : ''}</span>`).join('')}</div>
       <div>${p.isTrending ? '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span>' : ''} ${p.isNew ? '<span class="new-badge"><i class="ph ph-star"></i> New</span>' : ''}</div>
@@ -1315,7 +1323,7 @@ function renderProducts(){
   }).join('');
 }
 
-// Order Functions
+// Order Functions - WITH REAL PRODUCT IMAGES
 async function loadOrders(){
   try{
     const res = await fetch(`${API_BASE}/api/db/orders`, { headers: getAuthHeaders() });
@@ -1326,6 +1334,20 @@ async function loadOrders(){
   if(currentTab === 'analytics') renderAnalytics();
   updateOrderStats();
 }
+
+// Helper function to get product image by product ID or name
+function getProductImage(productId, productName) {
+  if(productId) {
+    const product = products.find(p => p._id === productId);
+    if(product && product.image) return product.image;
+  }
+  if(productName) {
+    const product = products.find(p => p.name && p.name.toLowerCase() === productName.toLowerCase());
+    if(product && product.image) return product.image;
+  }
+  return FALLBACK_IMG;
+}
+
 async function markOrderPaid(id){
   const idx = orders.findIndex(o => o._id === id);
   if(idx === -1) return;
@@ -1371,6 +1393,7 @@ function renderOrders(){
   if(orderSearch) filtered = orders.filter(o => o.customer_name?.toLowerCase().includes(orderSearch) || o.customer_email?.toLowerCase().includes(orderSearch));
   const container = document.getElementById('ordersList');
   if(!filtered.length){ container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>'; return; }
+  
   container.innerHTML = filtered.map(o => {
     let items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); } catch(e){ items = []; } }
@@ -1378,17 +1401,80 @@ function renderOrders(){
     const cleanPhone = phoneRaw.replace(/\D/g, '');
     const waLink = `https://wa.me/${cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone}`;
     const callLink = `tel:${cleanPhone}`;
-    const itemsHtml = (items || []).map(i => `<div class="order-item"><img class="order-item-img" src="https://placehold.co/46x46/F2EDE7/800000?text=🍾" onerror="this.src='https://placehold.co/46x46/F2EDE7/800000?text=🍾'"><div class="order-item-details"><div class="order-item-name">${escapeHtml(i.product_name || i.name)} ${i.size ? `(${i.size})` : ''}</div><div class="order-item-qty">Qty: ${i.quantity || i.qty || 1}</div></div><div class="order-item-price">KES ${((i.price||0) * (i.quantity||i.qty||1)).toLocaleString()}</div></div>`).join('');
-    const deliveryFee = o.delivery || 0;
+    
+    const itemsHtml = (items || []).map(i => {
+      // Get product image from products database using product_id or product name
+      let productImg = FALLBACK_IMG;
+      if(i.product_id) {
+        const foundProduct = products.find(p => p._id === i.product_id);
+        if(foundProduct && foundProduct.image) productImg = foundProduct.image;
+      }
+      if(productImg === FALLBACK_IMG && i.name) {
+        const foundProduct = products.find(p => p.name && p.name.toLowerCase() === i.name.toLowerCase());
+        if(foundProduct && foundProduct.image) productImg = foundProduct.image;
+      }
+      const productSize = i.size || (i.capacity || '');
+      const productQty = i.quantity || i.qty || 1;
+      const productPrice = i.price || 0;
+      return `<div class="order-item">
+        <img class="order-item-img" src="${productImg}" alt="${escapeHtml(i.product_name || i.name)}" onerror="this.src='${FALLBACK_IMG}'">
+        <div class="order-item-details">
+          <div class="order-item-name">${escapeHtml(i.product_name || i.name)}</div>
+          ${productSize ? `<div class="order-item-size">📦 ${escapeHtml(productSize)}</div>` : ''}
+          <div class="order-item-qty">Quantity: ${productQty}</div>
+        </div>
+        <div class="order-item-price">KES ${(productPrice * productQty).toLocaleString()}</div>
+      </div>`;
+    }).join('');
+    
+    const deliveryFee = o.delivery_fee || o.delivery || 0;
     const subtotal = o.subtotal || (o.total - deliveryFee);
-    return `<div class="order-card"><div class="order-header"><div><div class="order-id"><i class="ph ph-package"></i> ${o.order_number || o._id?.slice(0,8)}</div><div class="order-customer">${escapeHtml(o.customer_name)}</div><div class="order-meta-row"><span class="order-meta-chip"><i class="ph ph-envelope"></i> ${escapeHtml(o.customer_email)}</span><span class="order-meta-chip"><i class="ph ph-phone"></i> ${o.phone || 'No phone'}</span><span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleString()}</span></div></div><div class="order-header-right"><span class="order-status status-${o.status}"><i class="ph ${o.status==='pending'?'ph-clock':o.status==='paid'?'ph-check-circle':'ph-truck'}"></i> ${o.status==='pending'?'Pending':o.status==='paid'?'Paid':'Delivered'}</span><div class="contact-buttons"><a href="${waLink}" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a><a href="${callLink}" class="btn btn-sm btn-call"><i class="ph ph-phone-call"></i> Call</a></div></div></div><div class="order-items">${itemsHtml}</div><div class="order-footer"><div><div class="order-total">KES ${(o.total || 0).toLocaleString()}</div><div class="order-total-label">Total</div><div style="font-size:11px;margin-top:4px;"><span>Subtotal: KES ${(subtotal||0).toLocaleString()}</span> | <span>Delivery: ${deliveryFee===0?'FREE':`KES ${deliveryFee.toLocaleString()}`}</span></div></div><div class="order-actions">${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}${o.status === 'paid' ? `<button class="btn btn-sm btn-gold" onclick="markOrderDelivered('${o._id}')"><i class="ph ph-truck"></i> Mark Delivered</button>` : ''}${o.status === 'delivered' ? '<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>' : ''}<button class="btn btn-sm btn-red" onclick="deleteOrder(\''+o._id+'\')"><i class="ph ph-trash"></i></button></div></div></div>`;
+    const statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'paid' ? 'status-paid' : 'status-delivered');
+    const statusIcon = o.status === 'pending' ? 'ph-clock' : (o.status === 'paid' ? 'ph-check-circle' : 'ph-truck');
+    const statusText = o.status === 'pending' ? 'Pending' : (o.status === 'paid' ? 'Paid' : 'Delivered');
+    
+    return `<div class="order-card">
+      <div class="order-header">
+        <div>
+          <div class="order-id"><i class="ph ph-package"></i> ${o.order_number || o._id?.slice(0,8)}</div>
+          <div class="order-customer">${escapeHtml(o.customer_name)}</div>
+          <div class="order-meta-row">
+            <span class="order-meta-chip"><i class="ph ph-envelope"></i> ${escapeHtml(o.customer_email)}</span>
+            <span class="order-meta-chip"><i class="ph ph-phone"></i> ${o.phone || 'No phone'}</span>
+            <span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleString()}</span>
+          </div>
+        </div>
+        <div class="order-header-right">
+          <span class="order-status ${statusClass}"><i class="ph ${statusIcon}"></i> ${statusText}</span>
+          <div class="contact-buttons">
+            <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
+            <a href="${callLink}" class="btn btn-sm btn-call"><i class="ph ph-phone-call"></i> Call</a>
+          </div>
+        </div>
+      </div>
+      <div class="order-items">${itemsHtml}</div>
+      <div class="order-footer">
+        <div>
+          <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
+          <div style="font-size:11px;margin-top:4px;">
+            <span>Subtotal: KES ${(subtotal||0).toLocaleString()}</span> | 
+            <span>Delivery: ${deliveryFee === 0 ? 'FREE' : `KES ${deliveryFee.toLocaleString()}`}</span>
+          </div>
+        </div>
+        <div class="order-actions">
+          ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}
+          ${o.status === 'paid' ? `<button class="btn btn-sm btn-gold" onclick="markOrderDelivered('${o._id}')"><i class="ph ph-truck"></i> Mark Delivered</button>` : ''}
+          ${o.status === 'delivered' ? '<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>' : ''}
+          <button class="btn btn-sm btn-red" onclick="deleteOrder(\''+o._id+'\')"><i class="ph ph-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
   }).join('');
 }
 
 // Stats
 function updateStats(){
   const trendingCount = products.filter(p => p.isTrending === true).length;
-  const newCount = products.filter(p => p.isNew === true).length;
   document.getElementById('productStats').innerHTML = `<div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div><div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div><div class="stat-card"><h4>Variants</h4><div class="value">${products.reduce((s,p)=>s+(p.variants?.length||0),0)}</div></div><div class="stat-card"><h4>Trending</h4><div class="value">${trendingCount}</div></div>`;
   document.getElementById('totalProducts').innerText = products.length;
   document.getElementById('trendingCount').innerText = trendingCount;
@@ -1460,7 +1546,7 @@ function clearOrderSearch(){ orderSearch = ''; document.getElementById('orderSea
 function logout(){ localStorage.removeItem('liquorbelle_admin_token'); adminToken = null; location.reload(); }
 document.getElementById('editModal').addEventListener('click', function(e){ if(e.target === this) closeEditModal(); });
 
-// Initialize with custom login
+// Initialize
 async function initAdmin() {
   adminToken = localStorage.getItem('liquorbelle_admin_token');
   if(adminToken) {

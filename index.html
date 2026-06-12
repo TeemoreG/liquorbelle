@@ -272,6 +272,73 @@ a{color:inherit;text-decoration:none;}
 .section-header h2{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--text);}
 .section-header a{font-size:.8rem;font-weight:600;color:var(--primary);}
 
+/* Variant Info Banner - NEW */
+.variant-info-banner{
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3E0 100%);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  margin: 0 5% 20px 5%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+}
+.variant-info-icon{
+  background: var(--gold);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.variant-info-text{
+  flex: 1;
+}
+.variant-info-text strong{
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 4px;
+}
+.variant-info-text p{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.variant-info-text i{
+  font-style: normal;
+  background: rgba(184,134,11,0.15);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+}
+@media(max-width: 768px){
+  .variant-info-banner{
+    padding: 10px 16px;
+    margin: 0 4% 16px 4%;
+  }
+  .variant-info-icon{
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  .variant-info-text strong{
+    font-size: 12px;
+  }
+  .variant-info-text p{
+    font-size: 11px;
+  }
+}
+
 /* Category Cards Grid */
 .category-grid{
   display:grid;
@@ -487,7 +554,7 @@ a{color:inherit;text-decoration:none;}
   color: var(--muted);
 }
 
-/* Trust Badges Row - at bottom (replaces the red Dagoretti card) */
+/* Trust Badges Row */
 .trust-badges-row{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -933,6 +1000,15 @@ a{color:inherit;text-decoration:none;}
 </div>
 <div class="category-grid" id="categoryGrid"></div>
 
+<!-- VARIANT INFO BANNER - NEW: Explains about different sizes -->
+<div class="variant-info-banner">
+  <div class="variant-info-icon"><i class="ph ph-arrows-down-up"></i></div>
+  <div class="variant-info-text">
+    <strong>💡 Looking for different bottle sizes?</strong>
+    <p><i class="ph ph-finger-tap"></i> <strong>Tap on any product image</strong> to view all available capacities (250ml, 350ml, 500ml, 750ml, 1L, 1.5L and more). Each product may have multiple size options with different prices!</p>
+  </div>
+</div>
+
 <!-- All Products Section -->
 <div class="section-header">
   <h2>All Products</h2>
@@ -971,7 +1047,7 @@ a{color:inherit;text-decoration:none;}
   <div class="rv-scroll" id="rvScroll"></div>
 </div>
 
-<!-- Trust Badges Row - at bottom (replaces red Dagoretti card) -->
+<!-- Trust Badges Row -->
 <div class="trust-badges-row">
   <div class="trust-badge">
     <div class="trust-badge-icon"><i class="ph ph-truck"></i></div>
@@ -1117,7 +1193,7 @@ function renderAllProductSections(){
   const allGrid = document.getElementById('allProductsGrid');
   if(allGrid) allGrid.innerHTML = allHtml || '<div class="empty-state">No products found</div>';
   
-  // Trending - NO FALLBACK
+  // Trending
   let trendingItems = PRODUCTS.filter(p => p.isTrending === true).slice(0, 7);
   const trendingHtml = trendingItems.map(p=>{
     const original = p.originalPrice;
@@ -1128,7 +1204,7 @@ function renderAllProductSections(){
   const trendingGrid = document.getElementById('trendingGrid');
   if(trendingGrid) trendingGrid.innerHTML = trendingHtml || '<div class="empty-state">No trending products</div>';
   
-  // New Arrivals - NO FALLBACK
+  // New Arrivals
   let newItems = PRODUCTS.filter(p => p.isNew === true).slice(0, 3);
   const newHtml = newItems.map(p=>{
     const original = p.originalPrice;
