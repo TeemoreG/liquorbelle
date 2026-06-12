@@ -39,95 +39,18 @@
   --font-display:'Inter',sans-serif;
   --font-body:'Inter',sans-serif;
 }
-
 body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;}
-
-/* LOGIN MODAL */
-.login-modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.85);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:2000;
-}
-.login-modal-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  padding:40px 32px;
-  width:90%;
-  max-width:400px;
-  text-align:center;
-  border-top:4px solid var(--primary);
-}
-.login-logo img{
-  width:70px;
-  height:70px;
-  border-radius:12px;
-  margin-bottom:12px;
-}
-.login-logo h2{
-  font-family:var(--font-display);
-  color:var(--primary);
-  margin-bottom:8px;
-  font-size:1.5rem;
-}
-.login-logo p{
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:24px;
-}
-.login-input{
-  width:100%;
-  padding:14px 16px;
-  border:1.5px solid var(--border);
-  border-radius:10px;
-  font-size:15px;
-  font-family:inherit;
-  margin-bottom:16px;
-}
-.login-input:focus{
-  outline:none;
-  border-color:var(--primary);
-}
-.login-btn{
-  width:100%;
-  padding:14px;
-  background:var(--primary);
-  color:white;
-  border:none;
-  border-radius:10px;
-  font-weight:700;
-  font-size:16px;
-  cursor:pointer;
-}
-.login-btn:hover{
-  background:var(--primary-light);
-}
-.login-error{
-  color:var(--red);
-  font-size:13px;
-  margin-top:12px;
-}
-
-/* BUTTONS */
-.btn{
-  background:var(--primary);
-  color:white;
-  border:none;
-  padding:9px 18px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-  transition:background 0.15s, box-shadow 0.15s, transform 0.1s;
-  font-size:13.5px;
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  letter-spacing:0.01em;
-  line-height:1;
-}
+.login-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:2000;}
+.login-modal-card{background:var(--white);border-radius:var(--radius);padding:40px 32px;width:90%;max-width:400px;text-align:center;border-top:4px solid var(--primary);}
+.login-logo img{width:70px;height:70px;border-radius:12px;margin-bottom:12px;}
+.login-logo h2{font-family:var(--font-display);color:var(--primary);margin-bottom:8px;font-size:1.5rem;}
+.login-logo p{color:var(--muted);font-size:13px;margin-bottom:24px;}
+.login-input{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;margin-bottom:16px;}
+.login-input:focus{outline:none;border-color:var(--primary);}
+.login-btn{width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;}
+.login-btn:hover{background:var(--primary-light);}
+.login-error{color:var(--red);font-size:13px;margin-top:12px;}
+.btn{background:var(--primary);color:white;border:none;padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:600;transition:background 0.15s, box-shadow 0.15s, transform 0.1s;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;letter-spacing:0.01em;line-height:1;}
 .btn:hover{background:var(--primary-light);box-shadow:0 2px 8px rgba(128,0,0,0.25);}
 .btn:active{transform:scale(0.98);}
 .btn-sm{padding:7px 13px;font-size:12.5px;gap:5px;}
@@ -147,631 +70,133 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .btn-call{background:var(--call);color:white;}
 .btn-call:hover{background:#1e40af;box-shadow:0 2px 8px rgba(29,78,216,0.3);}
 .btn:disabled{opacity:0.55;cursor:not-allowed;box-shadow:none;transform:none;}
-
-/* HEADER */
-.admin-header{
-  background:var(--primary);
-  color:white;
-  padding:0 5%;
-  height:60px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  position:sticky;
-  top:0;
-  z-index:100;
-  box-shadow:0 2px 12px rgba(0,0,0,0.2);
-}
+.admin-header{background:var(--primary);color:white;padding:0 5%;height:60px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
 .logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .logo-img{height:36px;width:auto;border-radius:0;}
 .logo-text{font-weight:700;font-size:1rem;letter-spacing:0.02em;white-space:nowrap;}
 .logo-divider{width:1px;height:20px;background:rgba(255,255,255,0.25);display:block;}
-
-/* NAV TABS */
-.tabs{
-  display:flex;
-  gap:2px;
-  background:rgba(0,0,0,0.2);
-  padding:4px;
-  border-radius:10px;
-  flex-wrap:wrap;
-}
-.tab{
-  padding:6px 14px;
-  background:transparent;
-  border:none;
-  border-radius:7px;
-  cursor:pointer;
-  font-weight:600;
-  transition:background 0.15s, color 0.15s;
-  color:rgba(255,255,255,0.7);
-  font-size:13px;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  white-space:nowrap;
-}
+.tabs{display:flex;gap:2px;background:rgba(0,0,0,0.2);padding:4px;border-radius:10px;flex-wrap:wrap;}
+.tab{padding:6px 14px;background:transparent;border:none;border-radius:7px;cursor:pointer;font-weight:600;transition:background 0.15s, color 0.15s;color:rgba(255,255,255,0.7);font-size:13px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
 .tab:hover{background:rgba(255,255,255,0.12);color:white;}
 .tab.active{background:white;color:var(--primary);}
 .tab i{font-size:15px;}
-.header-logout{
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.3);
-  color:rgba(255,255,255,0.85);
-  padding:6px 13px;
-  border-radius:7px;
-  cursor:pointer;
-  font-size:12.5px;
-  font-weight:500;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  transition:all 0.15s;
-  white-space:nowrap;
-  flex-shrink:0;
-}
+.header-logout{background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.85);padding:6px 13px;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:500;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
 .header-logout:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.5);color:white;}
 .container{max-width:1380px;margin:0 auto;padding:24px 5%;}
-
-/* STAT CARDS */
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:14px;
-  margin-bottom:22px;
-}
-.stat-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  padding:18px 20px;
-  border:1px solid var(--border-light);
-  box-shadow:var(--shadow);
-  transition:box-shadow 0.2s, transform 0.2s;
-  position:relative;
-  overflow:hidden;
-}
-.stat-card::before{
-  content:'';
-  position:absolute;
-  top:0;left:0;right:0;
-  height:3px;
-  background:var(--primary);
-  opacity:0.7;
-}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--border-light);box-shadow:var(--shadow);transition:box-shadow 0.2s, transform 0.2s;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--primary);opacity:0.7;}
 .stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
 .stat-card h4{font-size:10.5px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;}
 .stat-card .value{font-size:26px;font-weight:800;color:var(--text);line-height:1;}
 .stat-card .sub{font-size:11px;color:var(--muted);margin-top:5px;}
-
-/* FORM CARD */
-.form-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  padding:22px 24px;
-  margin-bottom:20px;
-  border:1px solid var(--border-light);
-  box-shadow:var(--shadow);
-}
-.form-card-title{
-  font-size:15px;
-  font-weight:700;
-  color:var(--text);
-  margin-bottom:18px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding-bottom:14px;
-  border-bottom:1px solid var(--border-light);
-}
+.form-card{background:var(--white);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px;border:1px solid var(--border-light);box-shadow:var(--shadow);}
+.form-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--border-light);}
 .form-card-title i{color:var(--primary);font-size:18px;}
-.form-row{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:14px;
-  margin-bottom:14px;
-}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px;}
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-label{font-size:12px;font-weight:600;color:var(--text-secondary);letter-spacing:0.01em;}
 .form-hint{font-size:11px;color:var(--muted);margin-top:3px;}
-.form-row input,.form-row select,.form-row textarea,.form-group input,.form-group select,.form-group textarea{
-  padding:10px 13px;
-  background:var(--bg);
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-xs);
-  font-size:13.5px;
-  font-family:inherit;
-  color:var(--text);
-  transition:border-color 0.15s, box-shadow 0.15s;
-  width:100%;
-}
-.form-row input:focus,.form-row select:focus,.form-row textarea:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
-  outline:none;
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(128,0,0,0.08);
-  background:white;
-}
+.form-row input,.form-row select,.form-row textarea,.form-group input,.form-group select,.form-group textarea{padding:10px 13px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;font-family:inherit;color:var(--text);transition:border-color 0.15s, box-shadow 0.15s;width:100%;}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,0.08);background:white;}
 textarea{resize:vertical;}
-
-/* TOGGLES */
-.toggles-row{
-  display:flex;
-  gap:16px;
-  flex-wrap:wrap;
-  margin-bottom:16px;
-}
-.trending-toggle{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:11px 14px;
-  background:var(--bg);
-  border-radius:var(--radius-xs);
-  border:1.5px solid var(--border);
-  cursor:pointer;
-  transition:border-color 0.15s;
-  flex:1;
-  min-width:180px;
-}
+.toggles-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.trending-toggle{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg);border-radius:var(--radius-xs);border:1.5px solid var(--border);cursor:pointer;transition:border-color 0.15s;flex:1;min-width:180px;}
 .trending-toggle:hover{border-color:var(--primary);}
-.trending-toggle label{
-  font-weight:600;
-  color:var(--text);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:13.5px;
-}
-.trending-toggle input{
-  width:16px;height:16px;
-  cursor:pointer;
-  accent-color:var(--primary);
-  flex-shrink:0;
-}
+.trending-toggle label{font-weight:600;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13.5px;}
+.trending-toggle input{width:16px;height:16px;cursor:pointer;accent-color:var(--primary);flex-shrink:0;}
 .trending-hint{font-size:11.5px;color:var(--muted);}
-
-/* Rating Input */
-.rating-input{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:11px 14px;
-  background:var(--bg);
-  border-radius:var(--radius-xs);
-  border:1.5px solid var(--border);
-  margin-bottom:16px;
-}
+.rating-input{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg);border-radius:var(--radius-xs);border:1.5px solid var(--border);margin-bottom:16px;}
 .rating-input label{font-weight:600;font-size:13px;color:var(--text);}
-.rating-input select{
-  padding:6px 12px;
-  background:white;
-  border:1.5px solid var(--border);
-  border-radius:6px;
-  font-size:13px;
-  font-family:inherit;
-  cursor:pointer;
-}
-
-/* VARIANTS TABLE */
+.rating-input select{padding:6px 12px;background:white;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;cursor:pointer;}
 .variants-section{margin:18px 0 10px;}
 .variants-label{font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.variants-table{
-  width:100%;
-  border-collapse:collapse;
-  border:1px solid var(--border);
-  border-radius:var(--radius-xs);
-  overflow:hidden;
-}
-.variants-table th{
-  background:var(--bg2);
-  padding:9px 12px;
-  text-align:left;
-  font-size:11.5px;
-  font-weight:700;
-  color:var(--text-secondary);
-  text-transform:uppercase;
-  letter-spacing:0.04em;
-  border-bottom:1px solid var(--border);
-}
-.variants-table td{
-  border-bottom:1px solid var(--border-light);
-  padding:8px 10px;
-}
+.variants-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:var(--radius-xs);overflow:hidden;}
+.variants-table th{background:var(--bg2);padding:9px 12px;text-align:left;font-size:11.5px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--border);}
+.variants-table td{border-bottom:1px solid var(--border-light);padding:8px 10px;}
 .variants-table tbody tr:last-child td{border-bottom:none;}
-.variants-table input,.variants-table select{
-  width:100%;
-  padding:7px 10px;
-  border:1.5px solid var(--border);
-  border-radius:6px;
-  font-size:13px;
-  font-family:inherit;
-  background:white;
-  transition:border-color 0.15s;
-}
-.variants-table input:focus,.variants-table select:focus{
-  outline:none;
-  border-color:var(--primary);
-  box-shadow:0 0 0 2px rgba(128,0,0,0.07);
-}
+.variants-table input,.variants-table select{width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:white;transition:border-color 0.15s;}
+.variants-table input:focus,.variants-table select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(128,0,0,0.07);}
 .variant-row:hover{background:rgba(128,0,0,0.02);}
-.add-variant-btn{
-  background:transparent;
-  border:1.5px dashed var(--primary);
-  color:var(--primary);
-  padding:7px 15px;
-  border-radius:7px;
-  cursor:pointer;
-  margin-top:10px;
-  font-weight:600;
-  font-size:12.5px;
-  transition:background 0.15s;
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-}
+.add-variant-btn{background:transparent;border:1.5px dashed var(--primary);color:var(--primary);padding:7px 15px;border-radius:7px;cursor:pointer;margin-top:10px;font-weight:600;font-size:12.5px;transition:background 0.15s;display:inline-flex;align-items:center;gap:5px;}
 .add-variant-btn:hover{background:rgba(128,0,0,0.05);}
-.remove-variant{
-  background:var(--red-bg);
-  color:var(--red);
-  border:1px solid #fecaca;
-  width:26px;height:26px;
-  border-radius:5px;
-  cursor:pointer;
-  font-size:12px;
-  transition:all 0.15s;
-  display:flex;align-items:center;justify-content:center;
-}
+.remove-variant{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:12px;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
 .remove-variant:hover{background:var(--red);color:white;border-color:var(--red);}
-
-/* PRODUCT TABLE */
-.table-container{
-  background:var(--white);
-  border-radius:var(--radius);
-  border:1px solid var(--border-light);
-  overflow-x:auto;
-  box-shadow:var(--shadow);
-}
-.table-header{
-  display:grid;
-  grid-template-columns:56px 1.8fr 220px 100px 100px 88px;
-  background:var(--bg2);
-  padding:11px 16px;
-  font-weight:700;
-  font-size:11.5px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:0.04em;
-  border-bottom:1px solid var(--border);
-}
-.product-row{
-  display:grid;
-  grid-template-columns:56px 1.8fr 220px 100px 100px 88px;
-  padding:12px 16px;
-  align-items:center;
-  border-bottom:1px solid var(--border-light);
-  font-size:13px;
-  transition:background 0.1s;
-}
+.table-container{background:var(--white);border-radius:var(--radius);border:1px solid var(--border-light);overflow-x:auto;box-shadow:var(--shadow);}
+.table-header{display:grid;grid-template-columns:56px 1.8fr 220px 100px 100px 88px;background:var(--bg2);padding:11px 16px;font-weight:700;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--border);}
+.product-row{display:grid;grid-template-columns:56px 1.8fr 220px 100px 100px 88px;padding:12px 16px;align-items:center;border-bottom:1px solid var(--border-light);font-size:13px;transition:background 0.1s;}
 .product-row:last-child{border-bottom:none;}
 .product-row:hover{background:var(--bg);}
 .product-img{width:40px;height:40px;object-fit:cover;border-radius:8px;background:var(--bg2);}
 .product-name{font-weight:600;font-size:13.5px;color:var(--text);}
 .product-cat{font-size:11.5px;color:var(--muted);margin-top:2px;text-transform:capitalize;}
-.variant-badge{
-  background:var(--bg2);
-  color:var(--text-secondary);
-  padding:3px 8px;
-  border-radius:5px;
-  font-size:11px;
-  margin:2px;
-  display:inline-block;
-  font-weight:500;
-  border:1px solid var(--border-light);
-}
-.discount-badge{
-  background:#F0FDF4;
-  color:var(--green);
-  padding:3px 8px;
-  border-radius:5px;
-  font-size:11px;
-  font-weight:600;
-  border:1px solid #bbf7d0;
-}
-.trending-badge{
-  background:#FFF7ED;
-  color:#C2410C;
-  padding:3px 9px;
-  border-radius:5px;
-  font-size:11px;
-  font-weight:700;
-  border:1px solid #FED7AA;
-  display:inline-flex;align-items:center;gap:4px;
-}
-.new-badge{
-  background:#EFF6FF;
-  color:#1D4ED8;
-  padding:3px 9px;
-  border-radius:5px;
-  font-size:11px;
-  font-weight:700;
-  border:1px solid #BFDBFE;
-  display:inline-flex;align-items:center;gap:4px;
-}
-.star-badge{
-  background:var(--gold-bg);
-  color:var(--gold);
-  padding:3px 8px;
-  border-radius:5px;
-  font-size:11px;
-  font-weight:600;
-  display:inline-flex;align-items:center;gap:3px;
-}
-.edit-btn,.delete-btn{
-  background:transparent;
-  border:none;
-  cursor:pointer;
-  padding:6px;
-  border-radius:6px;
-  transition:all 0.15s;
-  font-size:16px;
-  color:var(--muted);
-}
+.variant-badge{background:var(--bg2);color:var(--text-secondary);padding:3px 8px;border-radius:5px;font-size:11px;margin:2px;display:inline-block;font-weight:500;border:1px solid var(--border-light);}
+.discount-badge{background:#F0FDF4;color:var(--green);padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600;border:1px solid #bbf7d0;}
+.trending-badge{background:#FFF7ED;color:#C2410C;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;border:1px solid #FED7AA;display:inline-flex;align-items:center;gap:4px;}
+.new-badge{background:#EFF6FF;color:#1D4ED8;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;border:1px solid #BFDBFE;display:inline-flex;align-items:center;gap:4px;}
+.star-badge{background:var(--gold-bg);color:var(--gold);padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:3px;}
+.edit-btn,.delete-btn{background:transparent;border:none;cursor:pointer;padding:6px;border-radius:6px;transition:all 0.15s;font-size:16px;color:var(--muted);}
 .edit-btn:hover{color:var(--primary);background:rgba(128,0,0,0.07);}
 .delete-btn:hover{color:var(--red);background:var(--red-bg);}
-
-/* ORDERS */
 .orders-list{display:flex;flex-direction:column;gap:16px;}
-.order-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  border:1px solid var(--border-light);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  transition:box-shadow 0.2s;
-}
+.order-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border-light);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s;}
 .order-card:hover{box-shadow:var(--shadow-md);}
-.order-header{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:16px;
-  padding:14px 18px;
-  background:var(--primary);
-  align-items:start;
-}
+.order-header{display:grid;grid-template-columns:1fr auto;gap:16px;padding:14px 18px;background:var(--primary);align-items:start;}
 .order-meta-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px;}
-.order-id{
-  font-family:monospace;
-  font-weight:700;
-  font-size:12px;
-  color:rgba(255,255,255,0.9);
-  background:rgba(0,0,0,0.2);
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  padding:3px 10px;
-  border-radius:5px;
-}
+.order-id{font-family:monospace;font-weight:700;font-size:12px;color:rgba(255,255,255,0.9);background:rgba(0,0,0,0.2);display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:5px;}
 .order-customer{font-weight:700;color:white;font-size:15px;margin-top:5px;}
-.order-meta-chip{
-  background:rgba(255,255,255,0.15);
-  padding:3px 10px;
-  border-radius:5px;
-  font-size:11.5px;
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  color:rgba(255,255,255,0.9);
-}
-.order-header-right{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:flex-end;
-  flex-shrink:0;
-}
-.order-status{
-  padding:5px 12px;
-  border-radius:6px;
-  font-size:12px;
-  font-weight:700;
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  white-space:nowrap;
-}
+.order-meta-chip{background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:5px;font-size:11.5px;display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,0.9);}
+.order-header-right{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0;}
+.order-status{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
 .status-pending{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;}
 .status-paid{background:#F0FDF4;color:#15803D;border:1px solid #bbf7d0;}
 .status-delivered{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
 .contact-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
 .contact-buttons a{text-decoration:none;}
-.order-items{
-  padding:12px 18px;
-  background:var(--bg);
-  max-height:320px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.order-item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 12px;
-  background:white;
-  border-radius:var(--radius-xs);
-  border:1px solid var(--border-light);
-  transition:all 0.15s;
-}
-.order-item:hover{
-  background:var(--bg);
-  border-color:var(--border);
-}
-.order-item-img{
-  width:48px;
-  height:48px;
-  object-fit:cover;
-  border-radius:8px;
-  background:var(--bg2);
-  flex-shrink:0;
-  border:1px solid var(--border-light);
-}
+.order-items{padding:12px 18px;background:var(--bg);max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.order-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:white;border-radius:var(--radius-xs);border:1px solid var(--border-light);transition:all 0.15s;}
+.order-item:hover{background:var(--bg);border-color:var(--border);}
+.order-item-img{width:48px;height:48px;object-fit:cover;border-radius:8px;background:var(--bg2);flex-shrink:0;border:1px solid var(--border-light);}
 .order-item-details{flex:1;min-width:0;}
 .order-item-name{font-weight:700;font-size:13.5px;color:var(--text);margin-bottom:2px;}
 .order-item-size{font-size:11px;color:var(--primary);font-weight:600;margin-top:2px;}
 .order-item-qty{font-size:11px;color:var(--muted);margin-top:2px;}
 .order-item-price{font-weight:800;color:var(--sale-red);font-size:14px;flex-shrink:0;background:var(--red-bg);padding:4px 10px;border-radius:20px;}
-.order-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 18px;
-  border-top:1px solid var(--border-light);
-  gap:12px;
-  flex-wrap:wrap;
-  background:white;
-}
+.order-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--border-light);gap:12px;flex-wrap:wrap;background:white;}
 .order-total{font-size:19px;font-weight:800;color:var(--text);}
 .order-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .order-actions .btn{padding:8px 15px;font-size:12.5px;}
-.completed-chip{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:12px;font-weight:600;color:var(--green);
-  background:#F0FDF4;padding:6px 12px;border-radius:6px;
-  border:1px solid #bbf7d0;
-}
-
-/* MODAL */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.5);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-  visibility:hidden;
-  opacity:0;
-  transition:opacity 0.2s, visibility 0.2s;
-  padding:16px;
-}
+.completed-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--green);background:#F0FDF4;padding:6px 12px;border-radius:6px;border:1px solid #bbf7d0;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;visibility:hidden;opacity:0;transition:opacity 0.2s, visibility 0.2s;padding:16px;}
 .modal-overlay.active{visibility:visible;opacity:1;}
-.modal-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  width:100%;
-  max-width:820px;
-  max-height:88vh;
-  overflow-y:auto;
-  padding:26px;
-  box-shadow:0 8px 40px rgba(0,0,0,0.18);
-}
-.modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-  padding-bottom:14px;
-  border-bottom:1px solid var(--border-light);
-}
+.modal-card{background:var(--white);border-radius:var(--radius);width:100%;max-width:820px;max-height:88vh;overflow-y:auto;padding:26px;box-shadow:0 8px 40px rgba(0,0,0,0.18);}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border-light);}
 .modal-header h3{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;}
 .modal-header h3 i{color:var(--primary);font-size:20px;}
-.modal-close{
-  background:var(--bg2);border:none;
-  width:30px;height:30px;border-radius:6px;
-  cursor:pointer;font-size:14px;
-  color:var(--muted);
-  transition:all 0.15s;
-  display:flex;align-items:center;justify-content:center;
-}
+.modal-close{background:var(--bg2);border:none;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:14px;color:var(--muted);transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
 .modal-close:hover{background:var(--red-bg);color:var(--red);}
-.modal-footer{
-  margin-top:22px;padding-top:16px;
-  border-top:1px solid var(--border-light);
-  display:flex;gap:10px;justify-content:flex-end;
-}
-
-/* SEARCH BAR */
+.modal-footer{margin-top:22px;padding-top:16px;border-top:1px solid var(--border-light);display:flex;gap:10px;justify-content:flex-end;}
 .search-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
-.search-input-wrap{
-  flex:1;
-  min-width:200px;
-  position:relative;
-}
-.search-input-wrap i{
-  position:absolute;left:13px;top:50%;transform:translateY(-50%);
-  color:var(--muted);font-size:16px;pointer-events:none;
-}
-.search-input{
-  width:100%;
-  padding:10px 14px 10px 38px;
-  border:1.5px solid var(--border);
-  border-radius:8px;
-  font-size:13.5px;
-  background:white;
-  transition:border-color 0.15s, box-shadow 0.15s;
-  font-family:inherit;
-}
+.search-input-wrap{flex:1;min-width:200px;position:relative;}
+.search-input-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none;}
+.search-input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--border);border-radius:8px;font-size:13.5px;background:white;transition:border-color 0.15s, box-shadow 0.15s;font-family:inherit;}
 .search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,0.08);}
-
-.loading-spinner{
-  display:inline-block;
-  width:14px;height:14px;
-  border:2px solid rgba(255,255,255,0.3);
-  border-radius:50%;
-  border-top-color:white;
-  animation:spin 0.6s linear infinite;
-  vertical-align:middle;
-}
+.loading-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.toast{
-  position:fixed;
-  bottom:28px;
-  left:50%;
-  transform:translateX(-50%) translateY(10px);
-  background:var(--text);
-  color:white;
-  padding:11px 22px;
-  border-radius:8px;
-  font-size:13.5px;
-  font-weight:500;
-  opacity:0;
-  transition:opacity 0.2s, transform 0.2s;
-  z-index:2000;
-  pointer-events:none;
-  box-shadow:0 4px 20px rgba(0,0,0,0.18);
-  white-space:nowrap;
-}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:white;padding:11px 22px;border-radius:8px;font-size:13.5px;font-weight:500;opacity:0;transition:opacity 0.2s, transform 0.2s;z-index:2000;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.18);white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.error{background:var(--red);}
 .empty-state{text-align:center;padding:56px 24px;color:var(--muted);}
 .empty-state i{font-size:40px;display:block;margin-bottom:12px;color:var(--border);}
-.help-text{
-  font-size:12px;
-  color:var(--muted);
-  background:var(--bg);
-  padding:8px 12px;
-  border-radius:6px;
-  border-left:3px solid var(--border);
-  line-height:1.5;
-  margin-bottom:14px;
-}
+.help-text{font-size:12px;color:var(--muted);background:var(--bg);padding:8px 12px;border-radius:6px;border-left:3px solid var(--border);line-height:1.5;margin-bottom:14px;}
 .help-text i{color:var(--primary);margin-right:4px;}
-
-@media(max-width:900px){
-  .table-header,.product-row{grid-template-columns:48px 1fr 150px 80px 80px 60px;}
-}
+@media(max-width:900px){.table-header,.product-row{grid-template-columns:48px 1fr 150px 80px 80px 60px;}}
 @media(max-width:768px){
   .admin-header{padding:0 4%;height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;gap:10px;}
   .tabs{width:100%;justify-content:flex-start;background:rgba(0,0,0,0.2);}
   .tab{flex:1;justify-content:center;font-size:12px;padding:6px 8px;}
   .table-header{display:none;}
-  .product-row{
-    grid-template-columns:1fr;
-    padding:12px 14px;
-    gap:8px;
-    position:relative;
-  }
+  .product-row{grid-template-columns:1fr;padding:12px 14px;gap:8px;position:relative;}
   .product-row > div:first-child{position:absolute;top:12px;left:14px;}
   .product-row > div:nth-child(2){padding-left:52px;}
   .stats-grid{grid-template-columns:repeat(2,1fr);}
@@ -790,7 +215,6 @@ textarea{resize:vertical;}
 </head>
 <body>
 
-<!-- Custom Login Modal -->
 <div id="adminLoginModal" class="login-modal-overlay">
   <div class="login-modal-card">
     <div class="login-logo">
@@ -822,241 +246,53 @@ textarea{resize:vertical;}
 </div>
 
 <div class="container">
-
-  <!-- ===== PRODUCTS TAB ===== -->
   <div id="productsTab">
     <div class="stats-grid" id="productStats"></div>
-
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
       <div class="help-text"><i class="ph ph-info"></i> Fill in the product details. Add multiple bottle sizes. Discount % is applied to the price you enter (e.g., Price 500, Discount 20% = Sale Price 400).</div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Product Name</label>
-          <input type="text" id="prodName" placeholder="e.g. Jameson Irish Whiskey">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <select id="prodCategory">
-            <option value="whisky">Whisky</option><option value="cognac">Cognac</option>
-            <option value="vodka">Vodka</option><option value="gin">Gin</option>
-            <option value="rum">Rum</option><option value="wine">Wine</option>
-            <option value="beer">Beer</option><option value="champagne">Champagne</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Badge</label>
-          <select id="prodBadge">
-            <option value="">No Badge</option>
-            <option value="hot">🔥 Hot</option>
-            <option value="local">🇰🇪 Local</option>
-            <option value="prem">⭐ Premium</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Image URL</label>
-          <input type="text" id="prodImage" placeholder="https://...">
-          <span class="form-hint">Paste the image web address here</span>
-        </div>
-        <div class="form-group" style="grid-column:1/-1">
-          <label class="form-label">Description</label>
-          <textarea id="prodDesc" placeholder="Brief description of the product..." rows="2"></textarea>
-        </div>
+        <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="prodName" placeholder="e.g. Jameson Irish Whiskey"></div>
+        <div class="form-group"><label class="form-label">Category</label><select id="prodCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div>
+        <div class="form-group"><label class="form-label">Badge</label><select id="prodBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
+        <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="prodImage" placeholder="https://..."><span class="form-hint">Paste the image web address here</span></div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="prodDesc" placeholder="Brief description of the product..." rows="2"></textarea></div>
       </div>
-
-      <!-- Toggles Row -->
       <div class="toggles-row">
-        <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()">
-          <input type="checkbox" id="prodTrending" onclick="event.stopPropagation()">
-          <label for="prodTrending" onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Mark as Trending</label>
-          <span class="trending-hint">Shown in "Trending Deals" section</span>
-        </div>
-        <div class="trending-toggle" onclick="document.getElementById('prodNew').click()">
-          <input type="checkbox" id="prodNew" onclick="event.stopPropagation()">
-          <label for="prodNew" onclick="event.preventDefault()"><i class="ph ph-star" style="color:#1D4ED8;"></i> Mark as New Arrival</label>
-          <span class="trending-hint">Shown in "New Arrivals" section</span>
-        </div>
+        <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()"><input type="checkbox" id="prodTrending" onclick="event.stopPropagation()"><label for="prodTrending" onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Mark as Trending</label><span class="trending-hint">Shown in "Trending Deals" section</span></div>
+        <div class="trending-toggle" onclick="document.getElementById('prodNew').click()"><input type="checkbox" id="prodNew" onclick="event.stopPropagation()"><label for="prodNew" onclick="event.preventDefault()"><i class="ph ph-star" style="color:#1D4ED8;"></i> Mark as New Arrival</label><span class="trending-hint">Shown in "New Arrivals" section</span></div>
       </div>
-
-      <!-- Rating Input -->
-      <div class="rating-input">
-        <label><i class="ph ph-star" style="color:var(--gold);"></i> Rating (1-5 stars):</label>
-        <select id="prodRating">
-          <option value="5">★★★★★ (5.0)</option>
-          <option value="4.5">★★★★½ (4.5)</option>
-          <option value="4" selected>★★★★☆ (4.0)</option>
-          <option value="3.5">★★★½☆ (3.5)</option>
-          <option value="3">★★★☆☆ (3.0)</option>
-          <option value="2.5">★★½☆☆ (2.5)</option>
-          <option value="2">★★☆☆☆ (2.0)</option>
-        </select>
-      </div>
-
-      <!-- Variants Section -->
+      <div class="rating-input"><label><i class="ph ph-star" style="color:var(--gold);"></i> Rating (1-5 stars):</label><select id="prodRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4" selected>★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
       <div class="variants-section">
         <div class="variants-label"><i class="ph ph-ruler"></i> Bottle Sizes & Prices</div>
         <div class="help-text" style="margin-bottom:10px;"><i class="ph ph-info"></i> Enter the ORIGINAL price for each size. Discount % is applied automatically.</div>
-        <table class="variants-table" id="variantsTable">
-          <thead>
-            <tr><th>Size</th><th>Original Price (KES)</th><th>Discount %</th><th style="width:40px;"></th></tr>
-          </thead>
-          <tbody id="variantsBody">
-            <tr class="variant-row">
-              <td><select class="variant-size">
-                <option value="200ml">200ml</option>
-                <option value="250ml">250ml</option>
-                <option value="300ml">300ml</option>
-                <option value="330ml">330ml</option>
-                <option value="350ml">350ml</option>
-                <option value="500ml">500ml</option>
-                <option value="700ml">700ml</option>
-                <option value="750ml" selected>750ml</option>
-                <option value="1L">1L</option>
-                <option value="1.5L">1.5L</option>
-                <option value="2L">2L</option>
-                <option value="5L">5L</option>
-              </select></td>
-              <td><input type="number" class="variant-price" placeholder="e.g. 1500" step="1"></td>
-              <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
-              <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove row">✕</button></td>
-            </tr>
-          </tbody>
-        </table>
+        <table class="variants-table" id="variantsTable"><thead><tr><th>Size</th><th>Original Price (KES)</th><th>Discount %</th><th style="width:40px;"></th></tr></thead><tbody id="variantsBody"><tr class="variant-row"><td><select class="variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="variant-price" placeholder="e.g. 1500" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove row">✕</button></td></tr></tbody></table>
         <button type="button" class="add-variant-btn" onclick="addVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button>
       </div>
-
-      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;gap:10px;">
-        <button class="btn" id="addProductBtn" onclick="addProduct()"><i class="ph ph-floppy-disk"></i> Save Product</button>
-      </div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;gap:10px;"><button class="btn" id="addProductBtn" onclick="addProduct()"><i class="ph ph-floppy-disk"></i> Save Product</button></div>
     </div>
-
-    <div class="search-bar">
-      <div class="search-input-wrap">
-        <i class="ph ph-magnifying-glass"></i>
-        <input type="text" id="productSearch" class="search-input" placeholder="Search products by name or category...">
-      </div>
-      <button class="btn btn-outline" onclick="clearProductSearch()"><i class="ph ph-x"></i> Clear</button>
-    </div>
-
-    <div class="table-container">
-      <div class="table-header">
-        <div>Image</div><div>Product</div><div>Sizes & Prices</div><div>Badges</div><div>Rating</div><div>Actions</div>
-      </div>
-      <div id="productsList"></div>
-    </div>
+    <div class="search-bar"><div class="search-input-wrap"><i class="ph ph-magnifying-glass"></i><input type="text" id="productSearch" class="search-input" placeholder="Search products by name or category..."></div><button class="btn btn-outline" onclick="clearProductSearch()"><i class="ph ph-x"></i> Clear</button></div>
+    <div class="table-container"><div class="table-header"><div>Image</div><div>Product</div><div>Sizes & Prices</div><div>Badges</div><div>Rating</div><div>Actions</div></div><div id="productsList"></div></div>
   </div>
 
-  <!-- ===== ORDERS TAB ===== -->
   <div id="ordersTab" style="display:none;">
     <div class="stats-grid" id="orderStats"></div>
-    <div class="search-bar">
-      <div class="search-input-wrap" style="flex:1;">
-        <i class="ph ph-magnifying-glass"></i>
-        <input type="text" id="orderSearch" class="search-input" placeholder="Search by customer name or email...">
-      </div>
-      <button class="btn btn-outline" onclick="clearOrderSearch()"><i class="ph ph-x"></i> Clear</button>
-    </div>
+    <div class="search-bar"><div class="search-input-wrap" style="flex:1;"><i class="ph ph-magnifying-glass"></i><input type="text" id="orderSearch" class="search-input" placeholder="Search by customer name or email..."></div><button class="btn btn-outline" onclick="clearOrderSearch()"><i class="ph ph-x"></i> Clear</button></div>
     <div class="help-text"><i class="ph ph-info"></i> Manage customer orders. Use <strong>Mark Paid</strong> after payment confirmation, then <strong>Mark Delivered</strong> when handed over.</div>
     <div id="ordersList" class="orders-list"></div>
   </div>
 
-  <!-- ===== ANALYTICS TAB ===== -->
   <div id="analyticsTab" style="display:none;">
-    <div class="stats-grid">
-      <div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div>
-      <div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div><div class="sub">All time</div></div>
-      <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In catalogue</div></div>
-      <div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per delivered order</div></div>
-    </div>
-    <div class="form-card">
-      <div class="form-card-title"><i class="ph ph-chart-bar"></i> Order Breakdown</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;">
-        <div class="stat-card" style="padding:14px;"><h4>Pending</h4><div class="value" id="pendingCount">0</div><div class="sub">Awaiting payment</div></div>
-        <div class="stat-card" style="padding:14px;"><h4>Paid</h4><div class="value" id="paidCount">0</div><div class="sub">Ready to deliver</div></div>
-        <div class="stat-card" style="padding:14px;"><h4>Delivered</h4><div class="value" id="deliveredCount">0</div><div class="sub">Completed orders</div></div>
-        <div class="stat-card" style="padding:14px;"><h4>Trending</h4><div class="value" id="trendingCount">0</div><div class="sub">On homepage</div></div>
-      </div>
-    </div>
+    <div class="stats-grid"><div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div><div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div><div class="sub">All time</div></div><div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In catalogue</div></div><div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per delivered order</div></div></div>
+    <div class="form-card"><div class="form-card-title"><i class="ph ph-chart-bar"></i> Order Breakdown</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;"><div class="stat-card" style="padding:14px;"><h4>Pending</h4><div class="value" id="pendingCount">0</div><div class="sub">Awaiting payment</div></div><div class="stat-card" style="padding:14px;"><h4>Paid</h4><div class="value" id="paidCount">0</div><div class="sub">Ready to deliver</div></div><div class="stat-card" style="padding:14px;"><h4>Delivered</h4><div class="value" id="deliveredCount">0</div><div class="sub">Completed orders</div></div><div class="stat-card" style="padding:14px;"><h4>Trending</h4><div class="value" id="trendingCount">0</div><div class="sub">On homepage</div></div></div></div>
   </div>
 
-  <!-- ===== SETTINGS TAB ===== -->
   <div id="settingsTab" style="display:none;">
-    <div class="form-card">
-      <div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div>
-      <div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout.</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Delivery Fee (KES)</label>
-          <input type="number" id="deliveryFee" value="150">
-          <span class="form-hint">Standard delivery charge</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Free Delivery Threshold (KES)</label>
-          <input type="number" id="freeThreshold" value="3000">
-          <span class="form-hint">Orders above this amount get free delivery</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Delivery Fee Active</label>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;">
-            <input type="checkbox" id="deliveryEnabled" checked style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;">
-            <span style="font-size:13.5px;color:var(--text-secondary);">Charge delivery fee at checkout</span>
-          </div>
-        </div>
-      </div>
-      <div style="padding-top:14px;border-top:1px solid var(--border-light);margin-top:4px;">
-        <button class="btn" onclick="saveDeliverySettings()"><i class="ph ph-floppy-disk"></i> Save Settings</button>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ===== EDIT PRODUCT MODAL ===== -->
-<div class="modal-overlay" id="editModal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3><i class="ph ph-pencil-simple"></i> Edit Product</h3>
-      <button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button>
-    </div>
-    <input type="hidden" id="editProductId">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div>
-      <div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div>
-      <div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
-      <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div>
-      <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div>
-    </div>
-    
-    <div class="toggles-row">
-      <div class="trending-toggle" onclick="document.getElementById('editTrending').click()">
-        <input type="checkbox" id="editTrending" onclick="event.stopPropagation()">
-        <label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label>
-      </div>
-      <div class="trending-toggle" onclick="document.getElementById('editNew').click()">
-        <input type="checkbox" id="editNew" onclick="event.stopPropagation()">
-        <label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label>
-      </div>
-    </div>
-    
-    <div class="rating-input" style="margin-bottom:16px;">
-      <label>Rating:</label>
-      <select id="editRating">
-        <option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option>
-        <option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option>
-        <option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option>
-      </select>
-    </div>
-    
-    <div class="variants-label">Bottle Sizes & Prices</div>
-    <table class="variants-table"><tbody id="editVariantsBody"></tbody></table>
-    <button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
-      <button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button>
-    </div>
+    <div class="form-card"><div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div><div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout.</div><div class="form-row"><div class="form-group"><label class="form-label">Delivery Fee (KES)</label><input type="number" id="deliveryFee" value="150"><span class="form-hint">Standard delivery charge</span></div><div class="form-group"><label class="form-label">Free Delivery Threshold (KES)</label><input type="number" id="freeThreshold" value="3000"><span class="form-hint">Orders above this amount get free delivery</span></div><div class="form-group"><label class="form-label">Delivery Fee Active</label><div style="display:flex;align-items:center;gap:10px;padding:10px 0;"><input type="checkbox" id="deliveryEnabled" checked style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;"><span style="font-size:13.5px;color:var(--text-secondary);">Charge delivery fee at checkout</span></div></div></div><div style="padding-top:14px;border-top:1px solid var(--border-light);margin-top:4px;"><button class="btn" onclick="saveDeliverySettings()"><i class="ph ph-floppy-disk"></i> Save Settings</button></div></div>
   </div>
 </div>
+
+<div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody></table><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
 
 <div id="toast" class="toast"></div>
 
@@ -1106,7 +342,6 @@ function submitAdminLogin() {
   const password = document.getElementById('adminPassword').value;
   const errorDiv = document.getElementById('loginError');
   errorDiv.innerText = '';
-  
   adminLogin(password).then(success => {
     if(success) {
       document.getElementById('adminLoginModal').style.display = 'none';
@@ -1118,28 +353,11 @@ function submitAdminLogin() {
   });
 }
 
-// Variant Functions
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="variant-size">
-      <option value="200ml">200ml</option>
-      <option value="250ml">250ml</option>
-      <option value="300ml">300ml</option>
-      <option value="330ml">330ml</option>
-      <option value="350ml">350ml</option>
-      <option value="500ml">500ml</option>
-      <option value="700ml">700ml</option>
-      <option value="750ml">750ml</option>
-      <option value="1L">1L</option>
-      <option value="1.5L">1.5L</option>
-      <option value="2L">2L</option>
-      <option value="5L">5L</option>
-    </select></td>
-    <td><input type="number" class="variant-price" placeholder="Price" step="1"></td>
-    <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
-    <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
 function removeVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
@@ -1147,28 +365,11 @@ function addEditVariantRow(){
   const tbody = document.getElementById('editVariantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="edit-variant-size">
-      <option value="200ml">200ml</option>
-      <option value="250ml">250ml</option>
-      <option value="300ml">300ml</option>
-      <option value="330ml">330ml</option>
-      <option value="350ml">350ml</option>
-      <option value="500ml">500ml</option>
-      <option value="700ml">700ml</option>
-      <option value="750ml">750ml</option>
-      <option value="1L">1L</option>
-      <option value="1.5L">1.5L</option>
-      <option value="2L">2L</option>
-      <option value="5L">5L</option>
-    </select></td>
-    <td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td>
-    <td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td>
-    <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
 function removeEditVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
 
-// Product Functions
 async function addProduct(){
   const btn = document.getElementById('addProductBtn');
   btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
@@ -1230,23 +431,7 @@ function openEditModal(productId){
   variants.forEach(v => {
     const row = document.createElement('tr');
     row.className = 'variant-row';
-    row.innerHTML = `<td><select class="edit-variant-size">
-        <option value="200ml" ${v.size==='200ml'?'selected':''}>200ml</option>
-        <option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option>
-        <option value="300ml" ${v.size==='300ml'?'selected':''}>300ml</option>
-        <option value="330ml" ${v.size==='330ml'?'selected':''}>330ml</option>
-        <option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option>
-        <option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option>
-        <option value="700ml" ${v.size==='700ml'?'selected':''}>700ml</option>
-        <option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option>
-        <option value="1L" ${v.size==='1L'?'selected':''}>1L</option>
-        <option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option>
-        <option value="2L" ${v.size==='2L'?'selected':''}>2L</option>
-        <option value="5L" ${v.size==='5L'?'selected':''}>5L</option>
-      </select></td>
-      <td><input type="number" class="edit-variant-price" value="${v.price}"></td>
-      <td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td>
-      <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+    row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml" ${v.size==='200ml'?'selected':''}>200ml</option><option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option><option value="300ml" ${v.size==='300ml'?'selected':''}>300ml</option><option value="330ml" ${v.size==='330ml'?'selected':''}>330ml</option><option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option><option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option><option value="700ml" ${v.size==='700ml'?'selected':''}>700ml</option><option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option><option value="1L" ${v.size==='1L'?'selected':''}>1L</option><option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option><option value="2L" ${v.size==='2L'?'selected':''}>2L</option><option value="5L" ${v.size==='5L'?'selected':''}>5L</option></select></td><td><input type="number" class="edit-variant-price" value="${v.price}"></td><td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
     tbody.appendChild(row);
   });
   document.getElementById('editModal').classList.add('active');
@@ -1312,18 +497,10 @@ function renderProducts(){
   if(!filtered.length){ container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products found</p></div>'; return; }
   container.innerHTML = filtered.map(p => {
     const variants = p.variants || [];
-    return `<div class="product-row">
-      <div><img class="product-img" src="${p.image || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'"></div>
-      <div><div class="product-name">${escapeHtml(p.name)}</div><div class="product-cat">${p.category || ''}</div></div>
-      <div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()}${v.discount ? `<span class="discount-badge"> ${v.discount}% OFF → KES ${Math.round(v.price * (100 - v.discount) / 100).toLocaleString()}</span>` : ''}</span>`).join('')}</div>
-      <div>${p.isTrending ? '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span>' : ''} ${p.isNew ? '<span class="new-badge"><i class="ph ph-star"></i> New</span>' : ''}</div>
-      <div><span class="star-badge"><i class="ph ph-star-fill"></i> ${(p.rating || 4).toFixed(1)}</span></div>
-      <div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal('${p._id}')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')"><i class="ph ph-trash"></i></button></div>
-    </div>`;
+    return `<div class="product-row"><div><img class="product-img" src="${p.image || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'"></div><div><div class="product-name">${escapeHtml(p.name)}</div><div class="product-cat">${p.category || ''}</div></div><div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()}${v.discount ? `<span class="discount-badge"> ${v.discount}% OFF → KES ${Math.round(v.price * (100 - v.discount) / 100).toLocaleString()}</span>` : ''}</span>`).join('')}</div><div>${p.isTrending ? '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span>' : ''} ${p.isNew ? '<span class="new-badge"><i class="ph ph-star"></i> New</span>' : ''}</div><div><span class="star-badge"><i class="ph ph-star-fill"></i> ${(p.rating || 4).toFixed(1)}</span></div><div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal('${p._id}')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')"><i class="ph ph-trash"></i></button></div></div>`;
   }).join('');
 }
 
-// Order Functions - WITH REAL PRODUCT IMAGES
 async function loadOrders(){
   try{
     const res = await fetch(`${API_BASE}/api/db/orders`, { headers: getAuthHeaders() });
@@ -1335,16 +512,15 @@ async function loadOrders(){
   updateOrderStats();
 }
 
-// Helper function to get product image by product ID or name
-function getProductImage(productId, productName) {
-  if(productId) {
-    const product = products.find(p => p._id === productId);
-    if(product && product.image) return product.image;
-  }
-  if(productName) {
-    const product = products.find(p => p.name && p.name.toLowerCase() === productName.toLowerCase());
-    if(product && product.image) return product.image;
-  }
+// Helper function to find product image by name (case-insensitive, partial match)
+function findProductImage(productName) {
+  if(!productName) return FALLBACK_IMG;
+  // Try exact match first
+  let product = products.find(p => p.name && p.name.toLowerCase() === productName.toLowerCase());
+  if(product && product.image) return product.image;
+  // Try partial match (e.g., "Tusker" matches "Tusker Lager")
+  product = products.find(p => p.name && productName.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(productName.toLowerCase()));
+  if(product && product.image) return product.image;
   return FALLBACK_IMG;
 }
 
@@ -1403,23 +579,16 @@ function renderOrders(){
     const callLink = `tel:${cleanPhone}`;
     
     const itemsHtml = (items || []).map(i => {
-      // Get product image from products database using product_id or product name
-      let productImg = FALLBACK_IMG;
-      if(i.product_id) {
-        const foundProduct = products.find(p => p._id === i.product_id);
-        if(foundProduct && foundProduct.image) productImg = foundProduct.image;
-      }
-      if(productImg === FALLBACK_IMG && i.name) {
-        const foundProduct = products.find(p => p.name && p.name.toLowerCase() === i.name.toLowerCase());
-        if(foundProduct && foundProduct.image) productImg = foundProduct.image;
-      }
+      const productName = i.product_name || i.name;
+      // Get product image from database using name matching
+      const productImg = findProductImage(productName);
       const productSize = i.size || (i.capacity || '');
       const productQty = i.quantity || i.qty || 1;
       const productPrice = i.price || 0;
       return `<div class="order-item">
-        <img class="order-item-img" src="${productImg}" alt="${escapeHtml(i.product_name || i.name)}" onerror="this.src='${FALLBACK_IMG}'">
+        <img class="order-item-img" src="${productImg}" alt="${escapeHtml(productName)}" onerror="this.src='${FALLBACK_IMG}'">
         <div class="order-item-details">
-          <div class="order-item-name">${escapeHtml(i.product_name || i.name)}</div>
+          <div class="order-item-name">${escapeHtml(productName)}</div>
           ${productSize ? `<div class="order-item-size">📦 ${escapeHtml(productSize)}</div>` : ''}
           <div class="order-item-qty">Quantity: ${productQty}</div>
         </div>
@@ -1472,7 +641,6 @@ function renderOrders(){
   }).join('');
 }
 
-// Stats
 function updateStats(){
   const trendingCount = products.filter(p => p.isTrending === true).length;
   document.getElementById('productStats').innerHTML = `<div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div><div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div><div class="stat-card"><h4>Variants</h4><div class="value">${products.reduce((s,p)=>s+(p.variants?.length||0),0)}</div></div><div class="stat-card"><h4>Trending</h4><div class="value">${trendingCount}</div></div>`;
@@ -1497,7 +665,6 @@ function renderAnalytics(){
   document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
 }
 
-// Settings
 async function loadDeliverySettings(){
   if(!adminToken) return;
   try{
@@ -1525,7 +692,6 @@ async function saveDeliverySettings(){
   } catch(e){ showToast('Error', true); }
 }
 
-// UI Events
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1546,7 +712,6 @@ function clearOrderSearch(){ orderSearch = ''; document.getElementById('orderSea
 function logout(){ localStorage.removeItem('liquorbelle_admin_token'); adminToken = null; location.reload(); }
 document.getElementById('editModal').addEventListener('click', function(e){ if(e.target === this) closeEditModal(); });
 
-// Initialize
 async function initAdmin() {
   adminToken = localStorage.getItem('liquorbelle_admin_token');
   if(adminToken) {
