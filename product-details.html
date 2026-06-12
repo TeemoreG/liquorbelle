@@ -274,150 +274,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   margin-bottom: 24px;
 }
 
-/* Product Highlights */
-.product-highlights{
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-.highlight-item{
-  background: var(--bg2);
-  padding: 6px 12px;
-  border-radius: 50px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.highlight-item i{
-  font-size: 14px;
-}
-
-/* Stock Status */
-.stock-status{
-  margin-bottom: 20px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.in-stock{
-  color: var(--success);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Tab Section */
-.product-tabs{
-  margin: 24px 0;
-  border-top: 1px solid var(--border);
-}
-.tab-headers{
-  display: flex;
-  gap: 24px;
-  border-bottom: 2px solid var(--border);
-  padding-bottom: 8px;
-  flex-wrap: wrap;
-}
-.tab-btn{
-  background: none;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 8px 0;
-  transition: all 0.2s;
-}
-.tab-btn.active{
-  color: var(--primary);
-  border-bottom: 2px solid var(--primary);
-  margin-bottom: -2px;
-}
-.tab-content{
-  padding: 16px 0;
-}
-.tab-pane{
-  display: none;
-  line-height: 1.6;
-  color: var(--muted);
-  font-size: 14px;
-}
-.tab-pane.active{
-  display: block;
-}
-.specs-list{
-  list-style: none;
-}
-.specs-list li{
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  gap: 16px;
-}
-.spec-label{
-  font-weight: 700;
-  width: 100px;
-  color: var(--text);
-}
-.spec-value{
-  color: var(--muted);
-}
-
-/* Related Products */
-.related-products-section{
-  max-width: 1200px;
-  margin: 48px auto 0;
-  padding: 0 5%;
-}
-.related-header{
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.related-grid{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-}
-.related-card{
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.related-card:hover{
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary);
-}
-.related-img{
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-.related-info{
-  padding: 10px;
-}
-.related-name{
-  font-weight: 700;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-.related-price{
-  color: var(--sale-red);
-  font-weight: 700;
-  font-size: 12px;
-}
-
+/* Variant Selector - Keep this */
 .variant-selector{
   margin-bottom: 24px;
 }
@@ -449,6 +306,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   color: white;
   border-color: var(--primary);
 }
+
 .price-display{
   margin-bottom: 24px;
 }
@@ -472,6 +330,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-size: 0.8rem;
   margin-left: 12px;
 }
+
 .quantity-selector{
   margin-bottom: 24px;
 }
@@ -500,6 +359,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   min-width: 40px;
   text-align: center;
 }
+
 .action-buttons{
   display: flex;
   gap: 16px;
@@ -600,6 +460,76 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-size: 12px;
   font-weight: 700;
   color: #2ecc71;
+}
+
+/* Delivery Info Card */
+.delivery-info-card{
+  background: linear-gradient(135deg, rgba(34,197,94,0.06), rgba(34,197,94,0.02));
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin: 16px 0;
+  border-left: 3px solid #22C55E;
+}
+.delivery-info-card p{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.delivery-info-card i{
+  color: #22C55E;
+  margin-right: 8px;
+}
+
+/* Related Products */
+.related-products-section{
+  max-width: 1200px;
+  margin: 48px auto 0;
+  padding: 0 5%;
+}
+.related-header{
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.related-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+.related-card{
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.related-card:hover{
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+.related-img{
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.related-info{
+  padding: 10px;
+}
+.related-name{
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.related-price{
+  color: var(--sale-red);
+  font-weight: 700;
+  font-size: 12px;
 }
 
 .footer{
@@ -822,9 +752,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <div id="productBadge"></div>
     <p class="product-description" id="productDescription"></p>
     
-    <div class="product-highlights" id="productHighlights"></div>
-    <div class="stock-status" id="stockStatus"></div>
-    
+    <!-- Select Size section - KEPT -->
     <div class="variant-selector">
       <label>Select Size:</label>
       <div class="variant-buttons" id="variantButtons"></div>
@@ -862,32 +790,12 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       </button>
     </div>
     
-    <div class="product-tabs">
-      <div class="tab-headers">
-        <button class="tab-btn active" data-tab="details">Product Details</button>
-        <button class="tab-btn" data-tab="specs">Specifications</button>
-        <button class="tab-btn" data-tab="delivery">Delivery Info</button>
-      </div>
-      <div class="tab-content">
-        <div class="tab-pane active" id="tab-details">
-          <p id="tabDescription"></p>
-        </div>
-        <div class="tab-pane" id="tab-specs">
-          <ul class="specs-list">
-            <li><span class="spec-label">Brand:</span><span class="spec-value" id="specBrand">Premium Selection</span></li>
-            <li><span class="spec-label">Category:</span><span class="spec-value" id="specCategory">-</span></li>
-            <li><span class="spec-label">Alcohol Content:</span><span class="spec-value">40% ABV</span></li>
-            <li><span class="spec-label">Origin:</span><span class="spec-value">Imported</span></li>
-          </ul>
-        </div>
-        <div class="tab-pane" id="tab-delivery">
-          <p>🚚 <strong>Fast Delivery:</strong> 10-45 minutes within Nairobi<br>
-          📞 Rider will call before arrival<br>
-          💳 Pay via M-PESA or Cash on Delivery<br>
-          ✅ 100% Authentic Products Guaranteed<br>
-          🍾 Free delivery on orders over KES 3,000 or 750ml+ bottles</p>
-        </div>
-      </div>
+    <!-- Delivery Info Card -->
+    <div class="delivery-info-card">
+      <p><i class="ph ph-truck"></i> <strong>Fast Delivery:</strong> 10-45 minutes within Nairobi<br>
+      📞 Rider will call before arrival<br>
+      💳 Pay via M-PESA or Cash on Delivery<br>
+      🍾 Free delivery on orders over KES 3,000 or 750ml+ bottles</p>
     </div>
     
     <div class="share-section">
@@ -983,15 +891,6 @@ function copyProductLink() {
   navigator.clipboard.writeText(window.location.href).then(() => showShareToast('✅ Link copied!'));
 }
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
-  });
-});
-
 async function loadProduct() {
   if(!productId) { toast('Product not found'); return; }
   try{
@@ -1015,10 +914,8 @@ function renderProductDetails() {
   document.getElementById('productName').innerText = name;
   document.getElementById('productCategory').innerText = category;
   document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
-  document.getElementById('tabDescription').innerHTML = currentProduct.description || 'Premium quality spirit from selected distilleries.';
   document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
   document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
-  document.getElementById('specCategory').innerText = category || 'Premium Spirit';
   
   updateBreadcrumb(category, name);
   
@@ -1031,17 +928,6 @@ function renderProductDetails() {
     let badgeText = currentProduct.badge === 'hot' ? '🔥 Hot Deal' : currentProduct.badge === 'local' ? '🇰🇪 Local Favorite' : '⭐ Premium';
     badgeContainer.innerHTML = `<div class="product-badge badge-${currentProduct.badge}">${badgeText}</div>`;
   } else badgeContainer.innerHTML = '';
-  
-  const highlights = document.getElementById('productHighlights');
-  highlights.innerHTML = `
-    <div class="highlight-item"><i class="ph ph-check-circle"></i> 100% Authentic</div>
-    <div class="highlight-item"><i class="ph ph-truck"></i> Fast Delivery</div>
-    <div class="highlight-item"><i class="ph ph-thermometer"></i> Temperature Controlled</div>
-    <div class="highlight-item"><i class="ph ph-seal-check"></i> Quality Guaranteed</div>
-  `;
-  
-  const stockDiv = document.getElementById('stockStatus');
-  stockDiv.innerHTML = '<div class="in-stock"><i class="ph ph-check-circle"></i> In Stock • Ready for Delivery</div>';
   
   const variants = currentProduct.variants || [];
   const sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
