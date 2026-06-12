@@ -74,26 +74,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   opacity: 1;
 }
 
-.top-bar{
-  background:var(--primary);
-  color:rgba(255,255,255,.92);
-  padding:8px 5%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:12px;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.top-bar-left{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
-.top-bar-left span{display:inline-flex;align-items:center;gap:5px;opacity:.9;}
-.badge-24h{
-  background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.25);
-  padding:3px 12px;border-radius:50px;
-  font-size:11px;font-weight:600;color:#fff;
-}
-
 .main-header{
   background:var(--primary);
   padding:14px 5%;
@@ -171,19 +151,17 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-weight: 600;
 }
 
-/* ========== FIXED PRODUCT DETAILS LAYOUT ========== */
-/* Desktop side-by-side with proper constraints */
+/* PRODUCT DETAILS LAYOUT - FIXED FOR MOBILE */
 .product-detail-container{
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 30px auto;
   padding: 0 5%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
-  align-items: start;       /* KEY FIX: prevents vertical stretching, aligns both columns to top */
+  align-items: start;
 }
 
-/* Image section: no extra flex interference, maintains aspect ratio */
 .product-image-section{
   position: relative;
   width: 100%;
@@ -193,7 +171,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   justify-content: flex-start;
 }
 
-/* Image styling: responsive, not oversized, centered */
 .product-image-section img{
   width: 100%;
   max-width: 100%;
@@ -206,76 +183,132 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   display: block;
 }
 
-/* Info section aligns naturally to top (due to align-items: start on grid) */
 .product-info-section{
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-width: 0; /* prevents overflow from long content */
+  min-width: 0;
 }
 
-/* Tablet/medium phones (≤ 768px): keep image and info side by side, narrower columns */
+/* Mobile: image on top, then info below with two-column layout for meta */
 @media(max-width: 768px){
   .product-detail-container{
-    grid-template-columns: 40% 1fr;   /* keep side-by-side, image takes less width */
-    gap: 16px;
-    align-items: start;
-    padding: 0 4%;
-  }
-  .product-image-section{
-    max-width: 100%;
-    margin: 0;
-    position: static;
-  }
-  .product-image-section img{
-    max-width: 100%;
-    padding: 8px;
-  }
-  .search-wrap{display:none;}
-  .action-buttons{flex-direction:column;}
-  .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
-  .whatsapp-float i{font-size:28px;}
-  .stars .star-filled, .stars .star-empty{font-size:14px;}
-  .rating-text{font-size:11px;}
-  .share-section{flex-wrap:wrap;}
-  .breadcrumb{font-size:11px;}
-
-  /* Shrink info-section content so it fits beside the image */
-  .product-info-section h1{font-size:1.1rem; line-height:1.3;}
-  .product-category{font-size:0.75rem;}
-  .product-description{font-size:0.8rem;}
-  .price-new{font-size:1.2rem;}
-  .price-old{font-size:0.85rem;}
-  .variant-btn{padding:6px 10px; font-size:0.75rem;}
-  .breadcrumb{display:none;}
-}
-@media(max-width: 480px){
-  .product-detail-container{
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
+    padding: 0 4%;
+    margin: 20px auto;
   }
   .product-image-section{
-    max-width: 80%;
+    max-width: 70%;
     margin: 0 auto;
   }
-}
-
-/* For extra-large screens, keep image nicely contained */
-@media(min-width: 1200px){
   .product-image-section img{
-    max-width: 100%;
-    transition: transform 0.2s ease;
+    padding: 12px;
+  }
+  .search-wrap{display:none;}
+  .whatsapp-float{width:50px;height:50px;bottom:20px;right:20px;}
+  .whatsapp-float i{font-size:28px;}
+  
+  /* Two-column layout for product meta (left/right) */
+  .product-meta-two-col{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .product-meta-left{
+    display: flex;
+    flex-direction: column;
+  }
+  .product-meta-right{
+    display: flex;
+    flex-direction: column;
+  }
+  .product-info-section h1{
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+  .product-category{
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+  .product-description{
+    font-size: 0.8rem;
+    margin-bottom: 16px;
+    grid-column: span 2;
+  }
+  .variant-selector label{
+    font-size: 0.75rem;
+  }
+  .variant-btn{
+    padding: 6px 12px;
+    font-size: 0.7rem;
+  }
+  .price-new{
+    font-size: 1.3rem;
+  }
+  .price-old{
+    font-size: 0.85rem;
+  }
+  .quantity-selector label{
+    font-size: 0.75rem;
+  }
+  .qty-btn{
+    width: 32px;
+    height: 32px;
+  }
+  .qty-value{
+    font-size: 1rem;
+  }
+  .action-buttons{
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .add-to-cart-btn, .buy-now-btn{
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  .payment-icons{
+    margin: 12px 0;
+    padding: 8px 0;
+  }
+  .share-section{
+    margin: 12px 0;
+    padding-top: 12px;
+  }
+  .share-btn{
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  .breadcrumb{
+    font-size: 10px;
+    margin-bottom: 12px;
+  }
+  .rating-container{
+    margin-bottom: 10px;
+  }
+  .stars .star-filled, .stars .star-empty{
+    font-size: 12px;
+  }
+  .rating-text{
+    font-size: 10px;
+  }
+  .product-badge{
+    font-size: 0.6rem;
+    margin-bottom: 10px;
   }
 }
 
-/* preserve all existing styles for other components (rating, variants, cart, etc.) */
-.product-image-section img{
-  width: 100%;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  background: white;
-  padding: 20px;
+@media(min-width: 769px){
+  .product-meta-two-col{
+    display: contents;
+  }
+  .product-meta-left, .product-meta-right{
+    display: contents;
+  }
 }
+
 .product-info-section h1{
   font-family: var(--font-display);
   font-size: 2rem;
@@ -290,7 +323,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   letter-spacing: 1px;
 }
 
-/* Star Rating */
 .rating-container{
   display: flex;
   align-items: center;
@@ -452,7 +484,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   transform: translateY(-2px);
 }
 
-/* Share Button */
 .share-section{
   display: flex;
   gap: 12px;
@@ -483,7 +514,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   font-size: 18px;
 }
 
-/* Payment Icons - M-PESA Only */
 .payment-icons{
   display: flex;
   align-items: center;
@@ -517,41 +547,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   color: #2ecc71;
 }
 
-/* Delivery Guarantee Badge */
-.delivery-guarantee{
-  background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
-  border-radius: 14px;
-  padding: 12px 16px;
-  margin: 16px 0;
-  border-left: 3px solid #22C55E;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.delivery-guarantee i{
-  font-size: 24px;
-  color: #22C55E;
-}
-.delivery-guarantee-content strong{
-  font-size: 13px;
-  display: block;
-  color: #22C55E;
-}
-.delivery-guarantee-content p{
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.back-link{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--primary);
-  text-decoration: none;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
 .footer{
   background:var(--primary);
   color:rgba(255,255,255,.85);
@@ -592,8 +587,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   pointer-events:none;
   white-space:nowrap;
 }
-
-/* Share Toast */
 .share-toast{
   position:fixed;
   bottom:100px;
@@ -610,21 +603,117 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
   pointer-events:none;
 }
 
-/* extra spacing for product info section components */
-.product-info-section .action-buttons {
-  margin-top: 8px;
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:400;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s;
+}
+.overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+.cart-drawer{
+  position:fixed;
+  bottom:-100%;
+  left:0;
+  right:0;
+  background:white;
+  border-radius:24px 24px 0 0;
+  z-index:500;
+  transition:bottom .35s;
+  max-height:82vh;
+  overflow-y:auto;
+  box-shadow:0 -4px 30px rgba(0,0,0,.12);
+}
+.cart-drawer.open{
+  bottom:0;
+}
+.cart-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 22px;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  background:white;
+}
+.cart-head span{
+  font-weight:800;
+  font-size:1.05rem;
+  font-family:var(--font-display);
+}
+.cart-close{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:var(--bg);
+  border:none;
+  cursor:pointer;
+}
+.cart-items{
+  padding:14px 18px;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+  gap:8px;
+}
+.cart-item-name{
+  font-weight:700;
+  font-size:.875rem;
+}
+.cart-item-price{
+  color:var(--sale-red);
+  font-weight:700;
+}
+.cart-qty{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+}
+.cart-qty button{
+  width:28px;
+  height:28px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:50%;
+  cursor:pointer;
+}
+.cart-footer{
+  padding:14px 18px 22px;
+  border-top:1px solid var(--border);
+}
+.cart-total{
+  display:flex;
+  justify-content:space-between;
+  font-weight:800;
+  font-size:1rem;
+  margin-bottom:14px;
+}
+.btn-checkout{
+  width:100%;
+  padding:14px;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:50px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-checkout:hover{
+  background:var(--primary-bright);
 }
 </style>
 </head>
 <body>
-
-<div class="top-bar">
-  <div class="top-bar-left">
-    <span><i class="ph ph-map-pin"></i>Dagoretti Road, Nairobi</span>
-    <span><i class="ph ph-phone-call"></i>+254 748 894 443</span>
-  </div>
-  <div class="badge-24h"><i class="ph ph-clock"></i>&nbsp;Open 24/7</div>
-</div>
 
 <header class="main-header">
   <a class="logo" href="index.html" style="text-decoration:none;">
@@ -659,7 +748,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
     <img id="productImage" src="" alt="Product Image">
   </div>
   <div class="product-info-section">
-    <!-- Breadcrumb Navigation -->
     <div class="breadcrumb" id="breadcrumb">
       <a href="index.html">Home</a>
       <span class="separator">/</span>
@@ -670,47 +758,50 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       <span class="current" id="breadcrumbProduct">Loading...</span>
     </div>
     
-    <h1 id="productName">Loading...</h1>
-    <div class="product-category" id="productCategory"></div>
-    
-    <!-- Star Rating -->
-    <div class="rating-container" id="ratingContainer">
-      <div class="stars" id="starsContainer"></div>
-      <span class="rating-text" id="ratingText"></span>
-    </div>
-    
-    <div id="productBadge"></div>
-    <p class="product-description" id="productDescription"></p>
-    
-    <div class="variant-selector">
-      <label>Select Size:</label>
-      <div class="variant-buttons" id="variantButtons"></div>
-    </div>
-    
-    <div class="price-display">
-      <span class="price-old" id="priceOld" style="display:none;"></span>
-      <span class="price-new" id="priceNew">KES 0</span>
-      <span class="discount-badge" id="discountBadge" style="display:none;"></span>
-    </div>
-    
-    <!-- Payment Icons - M-PESA Only -->
-    <div class="payment-icons">
-      <span class="payment-label">Secure Payment:</span>
-      <div class="mpesa-badge">
-        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780934550/mpesa_w3qmr0.png" alt="M-PESA" onerror="this.style.display='none'">
-        <span>M-PESA</span>
+    <!-- Two-column layout for mobile: left column (name, category, rating, badge, desc) and right column (variant, price, payment, quantity) -->
+    <div class="product-meta-two-col">
+      <div class="product-meta-left">
+        <h1 id="productName">Loading...</h1>
+        <div class="product-category" id="productCategory"></div>
+        <div class="rating-container" id="ratingContainer">
+          <div class="stars" id="starsContainer"></div>
+          <span class="rating-text" id="ratingText"></span>
+        </div>
+        <div id="productBadge"></div>
+        <p class="product-description" id="productDescription"></p>
+      </div>
+      <div class="product-meta-right">
+        <div class="variant-selector">
+          <label>Select Size:</label>
+          <div class="variant-buttons" id="variantButtons"></div>
+        </div>
+        
+        <div class="price-display">
+          <span class="price-old" id="priceOld" style="display:none;"></span>
+          <span class="price-new" id="priceNew">KES 0</span>
+          <span class="discount-badge" id="discountBadge" style="display:none;"></span>
+        </div>
+        
+        <div class="payment-icons">
+          <span class="payment-label">Secure Payment:</span>
+          <div class="mpesa-badge">
+            <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780934550/mpesa_w3qmr0.png" alt="M-PESA" onerror="this.style.display='none'">
+            <span>M-PESA</span>
+          </div>
+        </div>
+        
+        <div class="quantity-selector">
+          <label>Quantity:</label>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="decreaseQty()">−</button>
+            <span class="qty-value" id="qtyValue">1</span>
+            <button class="qty-btn" onclick="increaseQty()">+</button>
+          </div>
+        </div>
       </div>
     </div>
     
-    <div class="quantity-selector">
-      <label>Quantity:</label>
-      <div class="qty-control">
-        <button class="qty-btn" onclick="decreaseQty()">−</button>
-        <span class="qty-value" id="qtyValue">1</span>
-        <button class="qty-btn" onclick="increaseQty()">+</button>
-      </div>
-    </div>
-    
+    <!-- Action buttons span full width below both columns -->
     <div class="action-buttons">
       <button class="add-to-cart-btn" onclick="addToCartFromDetail()">
         <i class="ph ph-shopping-bag"></i> Add to Cart
@@ -720,7 +811,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
       </button>
     </div>
     
-    <!-- Share Section -->
     <div class="share-section">
       <button class="share-btn" onclick="shareProductWhatsApp()">
         <i class="ph ph-whatsapp-logo"></i> Share on WhatsApp
@@ -729,20 +819,9 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);}
         <i class="ph ph-link"></i> Copy Link
       </button>
     </div>
-    
-    <!-- Delivery Guarantee Badge -->
-    <div class="delivery-guarantee">
-      <i class="ph ph-seal-check"></i>
-      <div class="delivery-guarantee-content">
-        <strong>Delivery Guarantee</strong>
-        <p>Fast delivery within 10-45 minutes • Rider will call before arrival</p>
-      </div>
-    </div>
-    
   </div>
 </div>
 
-<!-- Floating WhatsApp Button -->
 <a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
   <i class="ph ph-whatsapp-logo"></i>
   <span class="tooltip">Chat with us</span>
@@ -1028,28 +1107,6 @@ function updateQty(id,delta){
 }
 function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
 function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
-
-const style = document.createElement('style');
-style.textContent = `
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;}
-  .overlay.open{opacity:1;pointer-events:auto;}
-  .cart-drawer{position:fixed;bottom:-100%;left:0;right:0;background:white;border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s;max-height:82vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.12);}
-  .cart-drawer.open{bottom:0;}
-  .cart-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:white;}
-  .cart-head span{font-weight:800;font-size:1.05rem;font-family:var(--font-display);}
-  .cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;}
-  .cart-items{padding:14px 18px;}
-  .cart-item{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:8px;}
-  .cart-item-name{font-weight:700;font-size:.875rem;}
-  .cart-item-price{color:var(--sale-red);font-weight:700;}
-  .cart-qty{display:flex;align-items:center;gap:10px;margin-top:8px;}
-  .cart-qty button{width:28px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;}
-  .cart-footer{padding:14px 18px 22px;border-top:1px solid var(--border);}
-  .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:14px;}
-  .btn-checkout{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;}
-  .btn-checkout:hover{background:var(--primary-bright);}
-`;
-document.head.appendChild(style);
 
 const searchInput = document.getElementById('searchInput');
 if(searchInput){
