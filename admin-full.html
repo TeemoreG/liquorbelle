@@ -293,7 +293,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 }
 textarea{resize:vertical;}
 
-/* TOGGLES - Two column layout */
+/* TOGGLES */
 .toggles-row{
   display:flex;
   gap:16px;
@@ -353,7 +353,7 @@ textarea{resize:vertical;}
   cursor:pointer;
 }
 
-/* VARIANTS TABLE - Updated with all Kenyan sizes */
+/* VARIANTS TABLE - ALL KENYAN SIZES INCLUDING 330ml */
 .variants-section{margin:18px 0 10px;}
 .variants-label{font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .variants-table{
@@ -885,7 +885,7 @@ textarea{resize:vertical;}
         </select>
       </div>
 
-      <!-- Variants Section - UPDATED WITH ALL KENYAN SIZES -->
+      <!-- Variants Section - ALL KENYAN SIZES INCLUDING 330ml -->
       <div class="variants-section">
         <div class="variants-label"><i class="ph ph-ruler"></i> Bottle Sizes & Prices</div>
         <div class="help-text" style="margin-bottom:10px;"><i class="ph ph-info"></i> Enter the ORIGINAL price for each size. Discount % is applied automatically. Example: Price=500, Discount=20 → Customer pays 400</div>
@@ -1109,7 +1109,7 @@ function submitAdminLogin() {
   });
 }
 
-// Variant Functions - UPDATED WITH ALL KENYAN SIZES
+// Variant Functions - ALL SIZES INCLUDING 330ml
 function addVariantRow(){
   const tbody = document.getElementById('variantsBody');
   const row = document.createElement('tr');
