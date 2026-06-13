@@ -182,7 +182,7 @@ textarea{resize:vertical;}
 .search-input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--border);border-radius:8px;font-size:13.5px;background:white;transition:border-color 0.15s, box-shadow 0.15s;font-family:inherit;}
 .search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,0.08);}
 .filter-bar{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
-.date-filter-select{padding:10px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);cursor:pointer;}
+.date-filter-select,.status-filter-select{padding:10px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);cursor:pointer;}
 .filter-stats{font-size:12px;color:var(--muted);background:var(--bg2);padding:8px 14px;border-radius:8px;}
 .loading-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -214,7 +214,7 @@ textarea{resize:vertical;}
   .order-item-img{width:40px;height:40px;}
   .toggles-row{flex-direction:column;}
   .filter-bar{flex-direction:column;align-items:stretch;}
-  .date-filter-select{width:100%;}
+  .date-filter-select,.status-filter-select{width:100%;}
 }
 </style>
 </head>
@@ -283,8 +283,9 @@ textarea{resize:vertical;}
   <div id="ordersTab" style="display:none;">
     <div class="stats-grid" id="orderStats"></div>
     
+    <!-- Filter Bar with both Date and Status filters -->
     <div class="filter-bar">
-      <select id="dateFilter" class="date-filter-select" onchange="applyDateFilter()">
+      <select id="dateFilter" class="date-filter-select" onchange="applyFilters()">
         <option value="24h">📅 Last 24 Hours</option>
         <option value="7d">📆 Last 7 Days</option>
         <option value="30d">📆 Last 30 Days</option>
@@ -292,6 +293,14 @@ textarea{resize:vertical;}
         <option value="1y">📅 Last 1 Year</option>
         <option value="all">📊 All Time</option>
       </select>
+      
+      <select id="statusFilter" class="status-filter-select" onchange="applyFilters()">
+        <option value="all">📋 All Orders</option>
+        <option value="pending">⏳ Pending (Need Payment)</option>
+        <option value="paid">✅ Paid (Ready to Deliver)</option>
+        <option value="delivered">🚚 Delivered (Completed)</option>
+      </select>
+      
       <span class="filter-stats" id="orderCountDisplay"></span>
     </div>
     
@@ -309,11 +318,58 @@ textarea{resize:vertical;}
   </div>
 
   <div id="settingsTab" style="display:none;">
-    <div class="form-card"><div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div><div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout.</div><div class="form-row"><div class="form-group"><label class="form-label">Delivery Fee (KES)</label><input type="number" id="deliveryFee" value="150"><span class="form-hint">Standard delivery charge</span></div><div class="form-group"><label class="form-label">Free Delivery Threshold (KES)</label><input type="number" id="freeThreshold" value="3000"><span class="form-hint">Orders above this amount get free delivery</span></div><div class="form-group"><label class="form-label">Delivery Fee Active</label><div style="display:flex;align-items:center;gap:10px;padding:10px 0;"><input type="checkbox" id="deliveryEnabled" checked style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;"><span style="font-size:13.5px;color:var(--text-secondary);">Charge delivery fee at checkout</span></div></div></div><div style="padding-top:14px;border-top:1px solid var(--border-light);margin-top:4px;"><button class="btn" onclick="saveDeliverySettings()"><i class="ph ph-floppy-disk"></i> Save Settings</button></div></div>
+    <!-- Password Management Section -->
+    <div class="form-card">
+      <div class="form-card-title"><i class="ph ph-lock-key"></i> Password Management</div>
+      <div class="help-text"><i class="ph ph-info"></i> Change admin and cashier passwords. Changes are saved to database and take effect immediately.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Admin Password</label>
+          <input type="password" id="newAdminPassword" placeholder="Enter new admin password">
+          <span class="form-hint">Password for full admin panel access</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cashier Password</label>
+          <input type="password" id="newCashierPassword" placeholder="Enter new cashier password">
+          <span class="form-hint">Password for order manager (cashier) access (default: admin123)</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn" onclick="updatePasswords()"><i class="ph ph-floppy-disk"></i> Save Passwords</button>
+      </div>
+    </div>
+    
+    <!-- Delivery Settings Section -->
+    <div class="form-card">
+      <div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div>
+      <div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Delivery Fee (KES)</label>
+          <input type="number" id="deliveryFee" value="150">
+          <span class="form-hint">Standard delivery charge</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Free Delivery Threshold (KES)</label>
+          <input type="number" id="freeThreshold" value="3000">
+          <span class="form-hint">Orders above this amount get free delivery</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Delivery Fee Active</label>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;">
+            <input type="checkbox" id="deliveryEnabled" checked style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;">
+            <span style="font-size:13.5px;color:var(--text-secondary);">Charge delivery fee at checkout</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding-top:14px;border-top:1px solid var(--border-light);margin-top:4px;">
+        <button class="btn" onclick="saveDeliverySettings()"><i class="ph ph-floppy-disk"></i> Save Settings</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody><tr><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
+<div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody></table><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
 
 <div id="toast" class="toast"></div>
 
@@ -328,6 +384,7 @@ let productSearch = '';
 let orderSearch = '';
 let adminToken = localStorage.getItem('liquorbelle_admin_token');
 let currentDateFilter = '24h';
+let currentStatusFilter = 'all';
 
 function showToast(msg, isError = false){
   const t = document.getElementById('toast');
@@ -357,18 +414,25 @@ function formatDateFilter(dateFilter) {
   }
 }
 
-function applyDateFilter() {
+function applyFilters() {
   currentDateFilter = document.getElementById('dateFilter').value;
-  const cutoffDate = formatDateFilter(currentDateFilter);
+  currentStatusFilter = document.getElementById('statusFilter').value;
   
+  let result = [...allOrders];
+  
+  const cutoffDate = formatDateFilter(currentDateFilter);
   if(cutoffDate) {
-    filteredOrders = allOrders.filter(o => new Date(o.created_at) >= cutoffDate);
-  } else {
-    filteredOrders = [...allOrders];
+    result = result.filter(o => new Date(o.created_at) >= cutoffDate);
   }
   
+  if(currentStatusFilter !== 'all') {
+    result = result.filter(o => o.status === currentStatusFilter);
+  }
+  
+  filteredOrders = result;
+  
   renderOrders();
-  updateOrderStats();
+  updateOrderStatsDisplay();
 }
 
 function updateOrderStatsDisplay(){
@@ -377,11 +441,29 @@ function updateOrderStatsDisplay(){
   const paid = filteredOrders.filter(o => o.status === 'paid').length;
   const delivered = filteredOrders.filter(o => o.status === 'delivered').length;
   
+  let dateLabel = '';
+  switch(currentDateFilter) {
+    case '24h': dateLabel = 'Last 24h'; break;
+    case '7d': dateLabel = 'Last 7d'; break;
+    case '30d': dateLabel = 'Last 30d'; break;
+    case '90d': dateLabel = 'Last 90d'; break;
+    case '1y': dateLabel = 'Last Year'; break;
+    default: dateLabel = 'All Time';
+  }
+  
+  let statusLabel = '';
+  switch(currentStatusFilter) {
+    case 'pending': statusLabel = 'Pending'; break;
+    case 'paid': statusLabel = 'Paid'; break;
+    case 'delivered': statusLabel = 'Delivered'; break;
+    default: statusLabel = 'All Orders';
+  }
+  
   document.getElementById('orderStats').innerHTML = `
-    <div class="stat-card"><h4>Orders (Filtered)</h4><div class="value">${total}</div><div class="sub">In selected period</div></div>
-    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
-    <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
-    <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
+    <div class="stat-card"><h4>📊 ${statusLabel}</h4><div class="value">${total}</div><div class="sub">${dateLabel}</div></div>
+    <div class="stat-card"><h4>⏳ Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
+    <div class="stat-card"><h4>✅ Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
+    <div class="stat-card"><h4>🚚 Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
   `;
   document.getElementById('orderCountDisplay').innerHTML = `📊 ${total} order${total !== 1 ? 's' : ''} found`;
 }
@@ -583,7 +665,7 @@ async function loadOrders(){
     const data = await res.json();
     if(data.success) {
       allOrders = data.orders.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-      applyDateFilter();
+      applyFilters();
     }
   } catch(e){ 
     console.error('Error loading orders:', e);
@@ -813,6 +895,54 @@ async function saveDeliverySettings(){
     if(res.ok) showToast('Delivery settings saved');
     else showToast('Error', true);
   } catch(e){ showToast('Error', true); }
+}
+
+// ==================== UPDATE PASSWORDS ====================
+async function updatePasswords() {
+  const adminPassword = document.getElementById('newAdminPassword').value.trim();
+  const cashierPassword = document.getElementById('newCashierPassword').value.trim();
+  
+  if (!adminPassword && !cashierPassword) {
+    showToast('Enter at least one password to change', true);
+    return;
+  }
+  
+  const btn = event.target;
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+  btn.disabled = true;
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/update-passwords`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ 
+        adminPassword: adminPassword || undefined,
+        cashierPassword: cashierPassword || undefined
+      })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      showToast('✓ Passwords updated successfully');
+      document.getElementById('newAdminPassword').value = '';
+      document.getElementById('newCashierPassword').value = '';
+      // Force re-login on next page load
+      localStorage.removeItem('liquorbelle_admin_token');
+      setTimeout(() => {
+        if (confirm('Passwords changed. You will need to login again with new password. Click OK to reload.')) {
+          location.reload();
+        }
+      }, 1000);
+    } else {
+      showToast(data.message || 'Error updating passwords', true);
+    }
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  } finally {
+    btn.innerHTML = originalHTML;
+    btn.disabled = false;
+  }
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
