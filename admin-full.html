@@ -327,7 +327,7 @@ textarea{resize:vertical;}
   <div id="settingsTab" style="display:none;">
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-lock-key"></i> Password Management</div>
-      <div class="help-text"><i class="ph ph-info"></i> Change admin and cashier passwords. Changes are saved to database and take effect immediately.</div>
+      <div class="help-text"><i class="ph ph-info"></i> Change admin and cashier passwords. Changes are saved to database and take effect immediately. <strong style="color:var(--red);">⚠️ After changing a password, that old password will NO LONGER work.</strong></div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Admin Password</label>
@@ -351,7 +351,7 @@ textarea{resize:vertical;}
         </div>
       </div>
       <div style="display:flex; gap:10px; margin-top:10px;">
-        <button class="btn" onclick="updatePasswords()"><i class="ph ph-floppy-disk"></i> Save Passwords</button>
+        <button class="btn" id="updatePasswordsBtn" onclick="updatePasswords(event)"><i class="ph ph-floppy-disk"></i> Save Passwords</button>
       </div>
     </div>
     
@@ -948,7 +948,8 @@ async function saveDeliverySettings(){
   } catch(e){ showToast('Error', true); }
 }
 
-async function updatePasswords() {
+// FIXED: Password update function - properly handles the update and forces re-login
+async function updatePasswords(event) {
   const adminPassword = document.getElementById('newAdminPassword').value.trim();
   const cashierPassword = document.getElementById('newCashierPassword').value.trim();
   
@@ -974,15 +975,28 @@ async function updatePasswords() {
     
     const data = await res.json();
     if (data.success) {
-      showToast('✓ Passwords updated successfully');
+      let message = '✓ Passwords updated successfully!\n\n';
+      if (adminPassword) message += `✓ Admin password changed\n`;
+      if (cashierPassword) message += `✓ Cashier password changed\n\n`;
+      message += `⚠️ You will be logged out and must log in with the new password(s).`;
+      
+      showToast('Passwords updated! Logging out...');
+      
+      // Clear all local storage
+      localStorage.removeItem('liquorbelle_admin_token');
+      localStorage.removeItem('liquorbelle_cashier_token');
+      localStorage.removeItem('liquorbelle_admin_role');
+      adminToken = null;
+      
+      // Clear password fields
       document.getElementById('newAdminPassword').value = '';
       document.getElementById('newCashierPassword').value = '';
-      localStorage.removeItem('liquorbelle_admin_token');
+      
+      // Show success message then reload
       setTimeout(() => {
-        if (confirm('Passwords changed. You will need to login again with new password. Click OK to reload.')) {
-          location.reload();
-        }
-      }, 1000);
+        alert(message);
+        location.reload();
+      }, 1500);
     } else {
       showToast(data.message || 'Error updating passwords', true);
     }
