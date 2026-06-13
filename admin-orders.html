@@ -250,6 +250,30 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   font-family:inherit;
 }
 .search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,0.08);}
+.filter-bar{
+  display:flex;
+  gap:12px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.date-filter-select{
+  padding:10px 16px;
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  font-size:13px;
+  font-family:inherit;
+  color:var(--text);
+  cursor:pointer;
+}
+.filter-stats{
+  font-size:12px;
+  color:var(--muted);
+  background:var(--bg2);
+  padding:8px 14px;
+  border-radius:8px;
+}
 .clear-btn{
   background:var(--bg2);
   border:1.5px solid var(--border);
@@ -498,8 +522,10 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   .order-item{flex-wrap:wrap;}
   .order-item-img{width:40px;height:40px;}
   .search-bar{flex-direction:column;}
+  .filter-bar{flex-direction:column;align-items:stretch;}
   .clear-btn,.refresh-btn{justify-content:center;width:100%;}
   .order-meta-small{font-size:9px;}
+  .date-filter-select{width:100%;}
 }
 
 @media(max-width:480px){
@@ -539,7 +565,20 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 <div class="container">
   <div class="stats-grid" id="statsGrid"></div>
   
-  <div class="help-text"><i class="ph ph-info"></i> Showing orders from the last <strong>24 hours</strong>. Use <strong>Mark as Paid</strong> once payment is confirmed, then <strong>Mark Delivered</strong> when order is handed to customer. WhatsApp/Call buttons open directly with customer's number.</div>
+  <div class="help-text"><i class="ph ph-info"></i> Managing orders. Use date filter to view orders from different time periods. <strong>Mark as Paid</strong> once payment is confirmed, then <strong>Mark Delivered</strong> when order is handed to customer.</div>
+  
+  <!-- Date Filter Bar -->
+  <div class="filter-bar">
+    <select id="dateFilter" class="date-filter-select" onchange="applyDateFilter()">
+      <option value="24h">📅 Last 24 Hours</option>
+      <option value="7d">📆 Last 7 Days</option>
+      <option value="30d">📆 Last 30 Days</option>
+      <option value="90d">📆 Last 90 Days</option>
+      <option value="1y">📅 Last 1 Year</option>
+      <option value="all">📊 All Time</option>
+    </select>
+    <span class="filter-stats" id="orderCountDisplay"></span>
+  </div>
   
   <div class="search-bar">
     <div class="search-input-wrap">
@@ -559,11 +598,40 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 
 <script>
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-let orders = [];
+let allOrders = [];
+let filteredOrders = [];
 let products = [];
 let searchTerm = '';
 let adminToken = localStorage.getItem('liquorbelle_cashier_token');
 let pendingActions = new Map();
+let currentDateFilter = '24h';
+
+function formatDateFilter(dateFilter) {
+  const now = new Date();
+  switch(dateFilter) {
+    case '24h': return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    case '7d': return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    case '30d': return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    case '90d': return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+    case '1y': return new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+    case 'all': return null;
+    default: return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  }
+}
+
+function applyDateFilter() {
+  currentDateFilter = document.getElementById('dateFilter').value;
+  const cutoffDate = formatDateFilter(currentDateFilter);
+  
+  if(cutoffDate) {
+    filteredOrders = allOrders.filter(o => new Date(o.created_at) >= cutoffDate);
+  } else {
+    filteredOrders = [...allOrders];
+  }
+  
+  renderStats();
+  renderOrders();
+}
 
 function showToast(msg, isError = false){
   const t = document.getElementById('toast');
@@ -646,7 +714,7 @@ async function loadProducts(){
 async function loadOrders(){
   if(!adminToken) return;
   try{
-    const res = await fetch(`${API_BASE}/api/admin/recent-orders`, {
+    const res = await fetch(`${API_BASE}/api/db/orders`, {
       headers: getAuthHeaders()
     });
     if(res.status === 401){
@@ -659,14 +727,16 @@ async function loadOrders(){
       return;
     }
     const data = await res.json();
-    if(data.success) orders = data.orders;
-    else orders = [];
+    if(data.success) {
+      allOrders = data.orders.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+      applyDateFilter();
+    }
+    else allOrders = [];
   } catch(e){ 
     console.error('Error loading orders:', e);
-    orders = []; 
+    allOrders = []; 
+    filteredOrders = [];
   }
-  renderStats();
-  renderOrders();
 }
 
 function manualRefresh(){
@@ -675,17 +745,18 @@ function manualRefresh(){
 }
 
 function renderStats(){
-  const total = orders.length;
-  const pending = orders.filter(o => o.status === 'pending').length;
-  const paid = orders.filter(o => o.status === 'paid').length;
-  const delivered = orders.filter(o => o.status === 'delivered').length;
+  const total = filteredOrders.length;
+  const pending = filteredOrders.filter(o => o.status === 'pending').length;
+  const paid = filteredOrders.filter(o => o.status === 'paid').length;
+  const delivered = filteredOrders.filter(o => o.status === 'delivered').length;
   
   document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><h4>Last 24h Orders</h4><div class="value">${total}</div><div class="sub">Last 24 hours</div></div>
+    <div class="stat-card"><h4>Orders (Filtered)</h4><div class="value">${total}</div><div class="sub">In selected period</div></div>
     <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
     <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
     <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
   `;
+  document.getElementById('orderCountDisplay').innerHTML = `📊 ${total} order${total !== 1 ? 's' : ''} found`;
 }
 
 function getOrderDisplayId(order){
@@ -698,9 +769,9 @@ function getOrderDisplayId(order){
 }
 
 function renderOrders(){
-  let filtered = [...orders];
+  let filtered = [...filteredOrders];
   if(searchTerm){
-    filtered = orders.filter(o => 
+    filtered = filteredOrders.filter(o => 
       o.customer_name?.toLowerCase().includes(searchTerm) ||
       o.customer_email?.toLowerCase().includes(searchTerm) ||
       o.phone?.includes(searchTerm)
@@ -709,7 +780,7 @@ function renderOrders(){
   
   const container = document.getElementById('ordersContainer');
   if(!filtered.length){
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders in the last 24 hours</p></div>';
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found for this period</p></div>';
     return;
   }
   
@@ -797,12 +868,15 @@ async function markPaid(id){
   if(!adminToken) { showToast('Please login again', true); logout(); return; }
   if(pendingActions.has(id)) return;
   
-  const orderIndex = orders.findIndex(o => o._id === id);
+  const orderIndex = filteredOrders.findIndex(o => o._id === id);
   if(orderIndex === -1) return;
-  const originalOrder = { ...orders[orderIndex] };
+  const originalOrder = { ...filteredOrders[orderIndex] };
   
   pendingActions.set(id, 'paid');
-  orders[orderIndex].status = 'paid';
+  filteredOrders[orderIndex].status = 'paid';
+  // Also update in allOrders
+  const allIdx = allOrders.findIndex(o => o._id === id);
+  if(allIdx !== -1) allOrders[allIdx].status = 'paid';
   renderOrders();
   renderStats();
   
@@ -829,13 +903,15 @@ async function markPaid(id){
       showToast('✅ Order marked as PAID');
       await loadOrders();
     } else {
-      orders[orderIndex] = originalOrder;
+      filteredOrders[orderIndex] = originalOrder;
+      if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       renderOrders();
       renderStats();
       showToast('Error updating order', true);
     }
   } catch(e){
-    orders[orderIndex] = originalOrder;
+    filteredOrders[orderIndex] = originalOrder;
+    if(allIdx !== -1) allOrders[allIdx] = originalOrder;
     renderOrders();
     renderStats();
     showToast('Network error', true);
@@ -848,12 +924,14 @@ async function markDelivered(id){
   if(!adminToken) { showToast('Please login again', true); logout(); return; }
   if(pendingActions.has(id)) return;
   
-  const orderIndex = orders.findIndex(o => o._id === id);
+  const orderIndex = filteredOrders.findIndex(o => o._id === id);
   if(orderIndex === -1) return;
-  const originalOrder = { ...orders[orderIndex] };
+  const originalOrder = { ...filteredOrders[orderIndex] };
   
   pendingActions.set(id, 'delivered');
-  orders[orderIndex].status = 'delivered';
+  filteredOrders[orderIndex].status = 'delivered';
+  const allIdx = allOrders.findIndex(o => o._id === id);
+  if(allIdx !== -1) allOrders[allIdx].status = 'delivered';
   renderOrders();
   renderStats();
   
@@ -880,13 +958,15 @@ async function markDelivered(id){
       showToast('🚚 Order marked as DELIVERED');
       await loadOrders();
     } else {
-      orders[orderIndex] = originalOrder;
+      filteredOrders[orderIndex] = originalOrder;
+      if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       renderOrders();
       renderStats();
       showToast('Error updating order', true);
     }
   } catch(e){
-    orders[orderIndex] = originalOrder;
+    filteredOrders[orderIndex] = originalOrder;
+    if(allIdx !== -1) allOrders[allIdx] = originalOrder;
     renderOrders();
     renderStats();
     showToast('Network error', true);
