@@ -315,9 +315,10 @@ function getAuthHeaders() {
   };
 }
 
-async function adminLogin(password) {
+// UPDATED: Uses cashier-only login endpoint
+async function cashierLogin(password) {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/login`, {
+    const res = await fetch(`${API_BASE}/api/cashier/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password })
@@ -340,12 +341,12 @@ function submitCashierLogin() {
   const errorDiv = document.getElementById('loginError');
   errorDiv.innerText = '';
   
-  adminLogin(password).then(success => {
+  cashierLogin(password).then(success => {
     if(success) {
       document.getElementById('cashierLoginModal').style.display = 'none';
       initAfterLogin();
     } else {
-      errorDiv.innerText = 'Invalid password. Try again.';
+      errorDiv.innerText = 'Invalid cashier password. Try again.';
       document.getElementById('cashierPassword').value = '';
     }
   });

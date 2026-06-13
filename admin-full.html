@@ -519,6 +519,7 @@ function updateOrderStatsDisplay(){
   document.getElementById('orderCountDisplay').innerHTML = `📊 ${total} order${total !== 1 ? 's' : ''} found`;
 }
 
+// ADMIN-ONLY login - uses /api/admin/login endpoint
 async function adminLogin(password) {
   try {
     const res = await fetch(`${API_BASE}/api/admin/login`, {
@@ -545,7 +546,7 @@ function submitAdminLogin() {
       document.getElementById('adminLoginModal').style.display = 'none';
       initAdminAfterLogin();
     } else {
-      errorDiv.innerText = 'Invalid password. Try again.';
+      errorDiv.innerText = 'Invalid admin password. Try again.';
       document.getElementById('adminPassword').value = '';
     }
   });
@@ -563,7 +564,7 @@ function addEditVariantRow(){
   const tbody = document.getElementById('editVariantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"><tr><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
 function removeEditVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
