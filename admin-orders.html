@@ -45,8 +45,11 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .login-logo img{width:70px;height:70px;border-radius:12px;margin-bottom:12px;}
 .login-logo h2{font-family:var(--font-display);color:var(--primary);margin-bottom:8px;font-size:1.5rem;}
 .login-logo p{color:var(--muted);font-size:13px;margin-bottom:24px;}
-.login-input{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;margin-bottom:16px;}
+.password-input-wrapper{position:relative;width:100%;margin-bottom:16px;}
+.login-input{width:100%;padding:14px 50px 14px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;background:white;box-sizing:border-box;}
 .login-input:focus{outline:none;border-color:var(--primary);}
+.password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:18px;background:none;border:none;padding:0;display:flex;align-items:center;justify-content:center;}
+.password-toggle:hover{color:var(--primary);}
 .login-btn{width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;}
 .login-btn:hover{background:var(--primary-light);}
 .login-error{color:var(--red);font-size:13px;margin-top:12px;}
@@ -170,10 +173,14 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
       <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
       <h2>Cashier Login</h2>
       <p>Enter password to access order manager</p>
-      <p style="font-size:11px; margin-top:5px;">Default: admin123</p>
     </div>
     <form id="cashierLoginForm" onsubmit="event.preventDefault(); submitCashierLogin();">
-      <input type="password" id="cashierPassword" class="login-input" placeholder="Enter cashier password" autocomplete="off">
+      <div class="password-input-wrapper">
+        <input type="password" id="cashierPassword" class="login-input" placeholder="Enter cashier password" autocomplete="off">
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+          <i class="ph ph-eye" id="togglePasswordIcon"></i>
+        </button>
+      </div>
       <button type="submit" class="login-btn">Login</button>
       <div id="loginError" class="login-error"></div>
     </form>
@@ -240,6 +247,19 @@ let adminToken = localStorage.getItem('liquorbelle_cashier_token');
 let pendingActions = new Map();
 let currentDateFilter = 'all';
 let currentStatusFilter = 'all';
+
+// Toggle password visibility
+function togglePasswordVisibility() {
+  const passwordInput = document.getElementById('cashierPassword');
+  const toggleIcon = document.getElementById('togglePasswordIcon');
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    toggleIcon.setAttribute('class', 'ph ph-eye-slash');
+  } else {
+    passwordInput.type = 'password';
+    toggleIcon.setAttribute('class', 'ph ph-eye');
+  }
+}
 
 function applyFilters() {
   currentDateFilter = document.getElementById('dateFilter').value;
