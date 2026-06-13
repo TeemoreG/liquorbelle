@@ -39,7 +39,6 @@
   --font-display:'Inter',sans-serif;
   --font-body:'Inter',sans-serif;
 }
-
 body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;}
 .login-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:2000;}
 .login-modal-card{background:var(--white);border-radius:var(--radius);padding:40px 32px;width:90%;max-width:400px;text-align:center;border-top:4px solid var(--primary);}
@@ -184,7 +183,6 @@ textarea{resize:vertical;}
 .search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(128,0,0,0.08);}
 .filter-bar{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
 .date-filter-select{padding:10px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);cursor:pointer;}
-.date-filter-select:focus{outline:none;border-color:var(--primary);}
 .filter-stats{font-size:12px;color:var(--muted);background:var(--bg2);padding:8px 14px;border-radius:8px;}
 .loading-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -285,7 +283,6 @@ textarea{resize:vertical;}
   <div id="ordersTab" style="display:none;">
     <div class="stats-grid" id="orderStats"></div>
     
-    <!-- Date Filter Bar -->
     <div class="filter-bar">
       <select id="dateFilter" class="date-filter-select" onchange="applyDateFilter()">
         <option value="24h">📅 Last 24 Hours</option>
@@ -316,7 +313,7 @@ textarea{resize:vertical;}
   </div>
 </div>
 
-<div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody></table><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
+<div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody><tr><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
 
 <div id="toast" class="toast"></div>
 
@@ -372,6 +369,21 @@ function applyDateFilter() {
   
   renderOrders();
   updateOrderStats();
+}
+
+function updateOrderStatsDisplay(){
+  const total = filteredOrders.length;
+  const pending = filteredOrders.filter(o => o.status === 'pending').length;
+  const paid = filteredOrders.filter(o => o.status === 'paid').length;
+  const delivered = filteredOrders.filter(o => o.status === 'delivered').length;
+  
+  document.getElementById('orderStats').innerHTML = `
+    <div class="stat-card"><h4>Orders (Filtered)</h4><div class="value">${total}</div><div class="sub">In selected period</div></div>
+    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
+    <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
+    <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
+  `;
+  document.getElementById('orderCountDisplay').innerHTML = `📊 ${total} order${total !== 1 ? 's' : ''} found`;
 }
 
 async function adminLogin(password) {
@@ -555,32 +567,50 @@ function renderProducts(){
 }
 
 async function loadOrders(){
-  if(!adminToken) return;
+  if(!adminToken) {
+    showToast('Please login first', true);
+    return;
+  }
   try{
     const res = await fetch(`${API_BASE}/api/db/orders`, { headers: getAuthHeaders() });
+    
+    if(res.status === 401 || res.status === 403){
+      showToast('Session expired. Please login again.', true);
+      logout();
+      return;
+    }
+    
     const data = await res.json();
     if(data.success) {
       allOrders = data.orders.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
       applyDateFilter();
     }
-  } catch(e){ allOrders = []; filteredOrders = []; }
+  } catch(e){ 
+    console.error('Error loading orders:', e);
+    showToast('Failed to load orders. Check network.', true);
+    allOrders = []; 
+    filteredOrders = [];
+  }
   if(currentTab === 'analytics') renderAnalytics();
-  updateOrderStatsDisplay();
 }
 
-function updateOrderStatsDisplay(){
-  const total = filteredOrders.length;
-  const pending = filteredOrders.filter(o => o.status === 'pending').length;
-  const paid = filteredOrders.filter(o => o.status === 'paid').length;
-  const delivered = filteredOrders.filter(o => o.status === 'delivered').length;
-  
-  document.getElementById('orderStats').innerHTML = `
-    <div class="stat-card"><h4>Orders (Filtered)</h4><div class="value">${total}</div><div class="sub">In selected period</div></div>
-    <div class="stat-card"><h4>Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
-    <div class="stat-card"><h4>Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
-    <div class="stat-card"><h4>Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
-  `;
-  document.getElementById('orderCountDisplay').innerHTML = `📊 ${total} order${total !== 1 ? 's' : ''} found`;
+function updateOrderStats(){
+  const pending = filteredOrders.filter(o=>o.status==='pending').length;
+  const paid = filteredOrders.filter(o=>o.status==='paid').length;
+  const delivered = filteredOrders.filter(o=>o.status==='delivered').length;
+  document.getElementById('pendingCount').innerText = pending;
+  document.getElementById('paidCount').innerText = paid;
+  document.getElementById('deliveredCount').innerText = delivered;
+}
+
+function renderAnalytics(){
+  const delivered = filteredOrders.filter(o => o.status === 'delivered');
+  const revenue = delivered.reduce((s,o) => s + (o.total||0), 0);
+  const avg = delivered.length ? Math.round(revenue / delivered.length) : 0;
+  document.getElementById('totalRevenue').innerHTML = `KES ${revenue.toLocaleString()}`;
+  document.getElementById('totalOrders').innerHTML = filteredOrders.length;
+  document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
+  updateOrderStats();
 }
 
 function findProductImage(productName) {
@@ -597,7 +627,6 @@ async function markOrderPaid(id){
   if(idx === -1) return;
   const original = { ...filteredOrders[idx] };
   filteredOrders[idx].status = 'paid';
-  // Also update in allOrders
   const allIdx = allOrders.findIndex(o => o._id === id);
   if(allIdx !== -1) allOrders[allIdx].status = 'paid';
   renderOrders();
@@ -757,25 +786,6 @@ function updateStats(){
   document.getElementById('productStats').innerHTML = `<div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div><div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div><div class="stat-card"><h4>Variants</h4><div class="value">${products.reduce((s,p)=>s+(p.variants?.length||0),0)}</div></div><div class="stat-card"><h4>Trending</h4><div class="value">${trendingCount}</div></div>`;
   document.getElementById('totalProducts').innerText = products.length;
   document.getElementById('trendingCount').innerText = trendingCount;
-}
-
-function updateOrderStats(){
-  const pending = filteredOrders.filter(o=>o.status==='pending').length;
-  const paid = filteredOrders.filter(o=>o.status==='paid').length;
-  const delivered = filteredOrders.filter(o=>o.status==='delivered').length;
-  document.getElementById('pendingCount').innerText = pending;
-  document.getElementById('paidCount').innerText = paid;
-  document.getElementById('deliveredCount').innerText = delivered;
-}
-
-function renderAnalytics(){
-  const delivered = filteredOrders.filter(o => o.status === 'delivered');
-  const revenue = delivered.reduce((s,o) => s + (o.total||0), 0);
-  const avg = delivered.length ? Math.round(revenue / delivered.length) : 0;
-  document.getElementById('totalRevenue').innerHTML = `KES ${revenue.toLocaleString()}`;
-  document.getElementById('totalOrders').innerHTML = filteredOrders.length;
-  document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
-  updateOrderStats();
 }
 
 async function loadDeliverySettings(){
