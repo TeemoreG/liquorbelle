@@ -28,8 +28,8 @@
   --muted-light:#A8A29E;
   --red:#B91C1C;
   --red-bg:#FEF2F2;
-  --wa:#128C7E;
-  --wa-light:#25D366;
+  --wa:#25D366;
+  --wa-dark:#128C7E;
   --call:#1D4ED8;
   --radius:14px;
   --radius-sm:10px;
@@ -45,8 +45,11 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .login-logo img{width:70px;height:70px;border-radius:12px;margin-bottom:12px;}
 .login-logo h2{font-family:var(--font-display);color:var(--primary);margin-bottom:8px;font-size:1.5rem;}
 .login-logo p{color:var(--muted);font-size:13px;margin-bottom:24px;}
-.login-input{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;margin-bottom:16px;}
+.password-input-wrapper{position:relative;width:100%;margin-bottom:16px;}
+.login-input{width:100%;padding:14px 50px 14px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;background:white;box-sizing:border-box;}
 .login-input:focus{outline:none;border-color:var(--primary);}
+.password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:18px;background:none;border:none;padding:0;display:flex;align-items:center;justify-content:center;}
+.password-toggle:hover{color:var(--primary);}
 .login-btn{width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;}
 .login-btn:hover{background:var(--primary-light);}
 .login-error{color:var(--red);font-size:13px;margin-top:12px;}
@@ -66,7 +69,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .btn-gold{background:var(--gold);color:white;}
 .btn-gold:hover{background:#7a5800;box-shadow:0 2px 8px rgba(138,101,0,0.3);}
 .btn-wa{background:var(--wa);color:white;gap:6px;}
-.btn-wa:hover{background:#0f7566;box-shadow:0 2px 8px rgba(18,140,126,0.35);}
+.btn-wa:hover{background:var(--wa-dark);box-shadow:0 2px 8px rgba(37,211,102,0.3);}
 .btn-call{background:var(--call);color:white;}
 .btn-call:hover{background:#1e40af;box-shadow:0 2px 8px rgba(29,78,216,0.3);}
 .btn:disabled{opacity:0.55;cursor:not-allowed;box-shadow:none;transform:none;}
@@ -228,7 +231,12 @@ textarea{resize:vertical;}
       <p>Enter password to access admin panel</p>
     </div>
     <form id="adminLoginForm" onsubmit="event.preventDefault(); submitAdminLogin();">
-      <input type="password" id="adminPassword" class="login-input" placeholder="Enter admin password" autocomplete="off">
+      <div class="password-input-wrapper">
+        <input type="password" id="adminPassword" class="login-input" placeholder="Enter admin password" autocomplete="off">
+        <button type="button" class="password-toggle" onclick="toggleAdminPasswordVisibility()">
+          <i class="ph ph-eye" id="toggleAdminPasswordIcon"></i>
+        </button>
+      </div>
       <button type="submit" class="login-btn">Login</button>
       <div id="loginError" class="login-error"></div>
     </form>
@@ -283,7 +291,6 @@ textarea{resize:vertical;}
   <div id="ordersTab" style="display:none;">
     <div class="stats-grid" id="orderStats"></div>
     
-    <!-- Filter Bar with both Date and Status filters -->
     <div class="filter-bar">
       <select id="dateFilter" class="date-filter-select" onchange="applyFilters()">
         <option value="24h">📅 Last 24 Hours</option>
@@ -318,20 +325,29 @@ textarea{resize:vertical;}
   </div>
 
   <div id="settingsTab" style="display:none;">
-    <!-- Password Management Section -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-lock-key"></i> Password Management</div>
       <div class="help-text"><i class="ph ph-info"></i> Change admin and cashier passwords. Changes are saved to database and take effect immediately.</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Admin Password</label>
-          <input type="password" id="newAdminPassword" placeholder="Enter new admin password">
+          <div class="password-input-wrapper" style="margin-bottom:0;">
+            <input type="password" id="newAdminPassword" class="login-input" placeholder="Enter new admin password" style="margin-bottom:0;">
+            <button type="button" class="password-toggle" onclick="toggleNewAdminPasswordVisibility()">
+              <i class="ph ph-eye" id="toggleNewAdminIcon"></i>
+            </button>
+          </div>
           <span class="form-hint">Password for full admin panel access</span>
         </div>
         <div class="form-group">
           <label class="form-label">Cashier Password</label>
-          <input type="password" id="newCashierPassword" placeholder="Enter new cashier password">
-          <span class="form-hint">Password for order manager (cashier) access (default: admin123)</span>
+          <div class="password-input-wrapper" style="margin-bottom:0;">
+            <input type="password" id="newCashierPassword" class="login-input" placeholder="Enter new cashier password" style="margin-bottom:0;">
+            <button type="button" class="password-toggle" onclick="toggleNewCashierPasswordVisibility()">
+              <i class="ph ph-eye" id="toggleNewCashierIcon"></i>
+            </button>
+          </div>
+          <span class="form-hint">Password for order manager (cashier) access</span>
         </div>
       </div>
       <div style="display:flex; gap:10px; margin-top:10px;">
@@ -339,7 +355,6 @@ textarea{resize:vertical;}
       </div>
     </div>
     
-    <!-- Delivery Settings Section -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div>
       <div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout.</div>
@@ -399,6 +414,42 @@ function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':
 
 function getAuthHeaders() {
   return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` };
+}
+
+function toggleAdminPasswordVisibility() {
+  const input = document.getElementById('adminPassword');
+  const icon = document.getElementById('toggleAdminPasswordIcon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.setAttribute('class', 'ph ph-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.setAttribute('class', 'ph ph-eye');
+  }
+}
+
+function toggleNewAdminPasswordVisibility() {
+  const input = document.getElementById('newAdminPassword');
+  const icon = document.getElementById('toggleNewAdminIcon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.setAttribute('class', 'ph ph-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.setAttribute('class', 'ph ph-eye');
+  }
+}
+
+function toggleNewCashierPasswordVisibility() {
+  const input = document.getElementById('newCashierPassword');
+  const icon = document.getElementById('toggleNewCashierIcon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.setAttribute('class', 'ph ph-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.setAttribute('class', 'ph ph-eye');
+  }
 }
 
 function formatDateFilter(dateFilter) {
@@ -897,7 +948,6 @@ async function saveDeliverySettings(){
   } catch(e){ showToast('Error', true); }
 }
 
-// ==================== UPDATE PASSWORDS ====================
 async function updatePasswords() {
   const adminPassword = document.getElementById('newAdminPassword').value.trim();
   const cashierPassword = document.getElementById('newCashierPassword').value.trim();
@@ -927,7 +977,6 @@ async function updatePasswords() {
       showToast('✓ Passwords updated successfully');
       document.getElementById('newAdminPassword').value = '';
       document.getElementById('newCashierPassword').value = '';
-      // Force re-login on next page load
       localStorage.removeItem('liquorbelle_admin_token');
       setTimeout(() => {
         if (confirm('Passwords changed. You will need to login again with new password. Click OK to reload.')) {
