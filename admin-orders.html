@@ -557,7 +557,7 @@ function renderOrders(){
   }).join('');
 }
 
-// FIXED: Mark Paid - same as admin-full.html
+// FIXED: Mark Paid - uses cashier-specific endpoint
 async function markPaid(id){
   if(pendingActions.has(id)) return;
   
@@ -573,7 +573,7 @@ async function markPaid(id){
   renderStats();
   
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
+    const res = await fetch(`${API_BASE}/api/cashier/orders/${id}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'paid' })
@@ -621,7 +621,7 @@ async function markPaid(id){
   }
 }
 
-// FIXED: Mark Delivered - same as admin-full.html
+// FIXED: Mark Delivered - uses cashier-specific endpoint
 async function markDelivered(id){
   if(pendingActions.has(id)) return;
   
@@ -637,7 +637,7 @@ async function markDelivered(id){
   renderStats();
   
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
+    const res = await fetch(`${API_BASE}/api/cashier/orders/${id}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'delivered' })
