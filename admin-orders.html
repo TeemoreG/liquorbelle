@@ -199,7 +199,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 <div class="container">
   <div class="stats-grid" id="statsGrid"></div>
   
-  <div class="help-text"><i class="ph ph-info"></i> Manage all orders. Use filters to view by date range or order status. <strong>Mark as Paid</strong> once payment is confirmed, then <strong>Mark Delivered</strong> when order is handed to customer.</div>
+  <div class="help-text"><i class="ph ph-info"></i> Manage all orders. Orders auto-refresh every 10 seconds. <strong>Mark as Paid</strong> once payment is confirmed, then <strong>Mark Delivered</strong> when order is handed to customer.</div>
   
   <div class="filter-bar">
     <select id="dateFilter" class="date-filter-select" onchange="applyFilters()">
@@ -247,6 +247,7 @@ let adminToken = localStorage.getItem('liquorbelle_cashier_token');
 let pendingActions = new Map();
 let currentDateFilter = 'all';
 let currentStatusFilter = 'all';
+let autoRefreshInterval = null;
 
 function togglePasswordVisibility() {
   const passwordInput = document.getElementById('cashierPassword');
@@ -374,6 +375,7 @@ async function loadOrders(){
       localStorage.removeItem('liquorbelle_cashier_token');
       localStorage.removeItem('liquorbelle_admin_role');
       adminToken = null;
+      if(autoRefreshInterval) clearInterval(autoRefreshInterval);
       document.getElementById('cashierLoginModal').style.display = 'flex';
       return;
     }
@@ -557,7 +559,7 @@ function renderOrders(){
   }).join('');
 }
 
-// FIXED: Mark Paid - uses cashier-specific endpoint
+// FIXED: Mark Paid - uses cashier-specific endpoint, properly clears loading state
 async function markPaid(id){
   if(pendingActions.has(id)) return;
   
@@ -566,9 +568,6 @@ async function markPaid(id){
   const originalOrder = { ...filteredOrders[orderIndex] };
   
   pendingActions.set(id, 'paid');
-  filteredOrders[orderIndex].status = 'paid';
-  const allIdx = allOrders.findIndex(o => o._id === id);
-  if(allIdx !== -1) allOrders[allIdx].status = 'paid';
   renderOrders();
   renderStats();
   
@@ -582,46 +581,66 @@ async function markPaid(id){
     if(res.status === 429){
       showToast('⚠️ Server busy, retrying...', true);
       setTimeout(() => markPaid(id), 3000);
+      pendingActions.delete(id);
+      renderOrders();
       return;
     }
     
     if(res.status === 401 || res.status === 403){
-      // Token expired - show login modal without reloading page
       localStorage.removeItem('liquorbelle_cashier_token');
       localStorage.removeItem('liquorbelle_admin_role');
       adminToken = null;
+      if(autoRefreshInterval) clearInterval(autoRefreshInterval);
+      document.getElementById('cashierLoginModal').style.display = 'flex';
+      showToast('Session expired. Please login again.', true);
+      pendingActions.delete(id);
       // Revert the optimistic update
-      filteredOrders[orderIndex] = originalOrder;
+      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
+      const allIdx = allOrders.findIndex(o => o._id === id);
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       renderOrders();
       renderStats();
-      document.getElementById('cashierLoginModal').style.display = 'flex';
-      showToast('Session expired. Please login again.', true);
       return;
     }
     
     if(res.ok){
       showToast('✅ Order marked as PAID');
-      await loadOrders();
+      // Update the local order status
+      const updateIndex = filteredOrders.findIndex(o => o._id === id);
+      if(updateIndex !== -1) filteredOrders[updateIndex].status = 'paid';
+      const allUpdateIdx = allOrders.findIndex(o => o._id === id);
+      if(allUpdateIdx !== -1) allOrders[allUpdateIdx].status = 'paid';
+      pendingActions.delete(id);
+      renderOrders();
+      renderStats();
+      // Refresh in background to sync with server
+      setTimeout(() => loadOrders(), 500);
     } else {
-      filteredOrders[orderIndex] = originalOrder;
+      // Revert on error
+      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
+      const allIdx = allOrders.findIndex(o => o._id === id);
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
+      pendingActions.delete(id);
       renderOrders();
       renderStats();
       showToast('Error updating order', true);
     }
   } catch(e){
-    filteredOrders[orderIndex] = originalOrder;
+    // Revert on error
+    const revertIndex = filteredOrders.findIndex(o => o._id === id);
+    if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
+    const allIdx = allOrders.findIndex(o => o._id === id);
     if(allIdx !== -1) allOrders[allIdx] = originalOrder;
+    pendingActions.delete(id);
     renderOrders();
     renderStats();
     showToast('Network error', true);
-  } finally {
-    pendingActions.delete(id);
   }
 }
 
-// FIXED: Mark Delivered - uses cashier-specific endpoint
+// FIXED: Mark Delivered - uses cashier-specific endpoint, properly clears loading state
 async function markDelivered(id){
   if(pendingActions.has(id)) return;
   
@@ -630,9 +649,6 @@ async function markDelivered(id){
   const originalOrder = { ...filteredOrders[orderIndex] };
   
   pendingActions.set(id, 'delivered');
-  filteredOrders[orderIndex].status = 'delivered';
-  const allIdx = allOrders.findIndex(o => o._id === id);
-  if(allIdx !== -1) allOrders[allIdx].status = 'delivered';
   renderOrders();
   renderStats();
   
@@ -646,42 +662,62 @@ async function markDelivered(id){
     if(res.status === 429){
       showToast('⚠️ Server busy, retrying...', true);
       setTimeout(() => markDelivered(id), 3000);
+      pendingActions.delete(id);
+      renderOrders();
       return;
     }
     
     if(res.status === 401 || res.status === 403){
-      // Token expired - show login modal without reloading page
       localStorage.removeItem('liquorbelle_cashier_token');
       localStorage.removeItem('liquorbelle_admin_role');
       adminToken = null;
+      if(autoRefreshInterval) clearInterval(autoRefreshInterval);
+      document.getElementById('cashierLoginModal').style.display = 'flex';
+      showToast('Session expired. Please login again.', true);
+      pendingActions.delete(id);
       // Revert the optimistic update
-      filteredOrders[orderIndex] = originalOrder;
+      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
+      const allIdx = allOrders.findIndex(o => o._id === id);
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       renderOrders();
       renderStats();
-      document.getElementById('cashierLoginModal').style.display = 'flex';
-      showToast('Session expired. Please login again.', true);
       return;
     }
     
     if(res.ok){
       showToast('🚚 Order marked as DELIVERED');
-      await loadOrders();
+      // Update the local order status
+      const updateIndex = filteredOrders.findIndex(o => o._id === id);
+      if(updateIndex !== -1) filteredOrders[updateIndex].status = 'delivered';
+      const allUpdateIdx = allOrders.findIndex(o => o._id === id);
+      if(allUpdateIdx !== -1) allOrders[allUpdateIdx].status = 'delivered';
+      pendingActions.delete(id);
+      renderOrders();
+      renderStats();
+      // Refresh in background to sync with server
+      setTimeout(() => loadOrders(), 500);
     } else {
-      filteredOrders[orderIndex] = originalOrder;
+      // Revert on error
+      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
+      const allIdx = allOrders.findIndex(o => o._id === id);
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
+      pendingActions.delete(id);
       renderOrders();
       renderStats();
       showToast('Error updating order', true);
     }
   } catch(e){
-    filteredOrders[orderIndex] = originalOrder;
+    // Revert on error
+    const revertIndex = filteredOrders.findIndex(o => o._id === id);
+    if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
+    const allIdx = allOrders.findIndex(o => o._id === id);
     if(allIdx !== -1) allOrders[allIdx] = originalOrder;
+    pendingActions.delete(id);
     renderOrders();
     renderStats();
     showToast('Network error', true);
-  } finally {
-    pendingActions.delete(id);
   }
 }
 
@@ -700,13 +736,18 @@ function logout(){
   localStorage.removeItem('liquorbelle_cashier_token');
   localStorage.removeItem('liquorbelle_admin_role');
   adminToken = null;
+  if(autoRefreshInterval) clearInterval(autoRefreshInterval);
   location.reload();
 }
 
 async function initAfterLogin() {
   await loadProducts();
   await loadOrders();
-  setInterval(loadOrders, 120000);
+  // Auto-refresh orders every 10 seconds
+  if(autoRefreshInterval) clearInterval(autoRefreshInterval);
+  autoRefreshInterval = setInterval(() => {
+    if(adminToken) loadOrders();
+  }, 10000);
 }
 
 async function init() {
