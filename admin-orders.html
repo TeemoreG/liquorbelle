@@ -315,7 +315,7 @@ function getAuthHeaders() {
   };
 }
 
-// UPDATED: Uses cashier-only login endpoint
+// Cashier-only login endpoint
 async function cashierLogin(password) {
   try {
     const res = await fetch(`${API_BASE}/api/cashier/login`, {
@@ -362,7 +362,6 @@ async function loadProducts(){
 
 async function loadOrders(){
   if(!adminToken) {
-    showToast('Please login first', true);
     return;
   }
   try{
@@ -371,8 +370,11 @@ async function loadOrders(){
     });
     
     if(res.status === 401 || res.status === 403){
-      showToast('Session expired. Please login again.', true);
-      logout();
+      // Token expired - clear and show login modal
+      localStorage.removeItem('liquorbelle_cashier_token');
+      localStorage.removeItem('liquorbelle_admin_role');
+      adminToken = null;
+      document.getElementById('cashierLoginModal').style.display = 'flex';
       return;
     }
     if(res.status === 429){
@@ -555,8 +557,8 @@ function renderOrders(){
   }).join('');
 }
 
+// FIXED: Mark Paid - same as admin-full.html
 async function markPaid(id){
-  if(!adminToken) { showToast('Please login again', true); logout(); return; }
   if(pendingActions.has(id)) return;
   
   const orderIndex = filteredOrders.findIndex(o => o._id === id);
@@ -584,8 +586,17 @@ async function markPaid(id){
     }
     
     if(res.status === 401 || res.status === 403){
+      // Token expired - show login modal without reloading page
+      localStorage.removeItem('liquorbelle_cashier_token');
+      localStorage.removeItem('liquorbelle_admin_role');
+      adminToken = null;
+      // Revert the optimistic update
+      filteredOrders[orderIndex] = originalOrder;
+      if(allIdx !== -1) allOrders[allIdx] = originalOrder;
+      renderOrders();
+      renderStats();
+      document.getElementById('cashierLoginModal').style.display = 'flex';
       showToast('Session expired. Please login again.', true);
-      logout();
       return;
     }
     
@@ -610,8 +621,8 @@ async function markPaid(id){
   }
 }
 
+// FIXED: Mark Delivered - same as admin-full.html
 async function markDelivered(id){
-  if(!adminToken) { showToast('Please login again', true); logout(); return; }
   if(pendingActions.has(id)) return;
   
   const orderIndex = filteredOrders.findIndex(o => o._id === id);
@@ -639,8 +650,17 @@ async function markDelivered(id){
     }
     
     if(res.status === 401 || res.status === 403){
+      // Token expired - show login modal without reloading page
+      localStorage.removeItem('liquorbelle_cashier_token');
+      localStorage.removeItem('liquorbelle_admin_role');
+      adminToken = null;
+      // Revert the optimistic update
+      filteredOrders[orderIndex] = originalOrder;
+      if(allIdx !== -1) allOrders[allIdx] = originalOrder;
+      renderOrders();
+      renderStats();
+      document.getElementById('cashierLoginModal').style.display = 'flex';
       showToast('Session expired. Please login again.', true);
-      logout();
       return;
     }
     
