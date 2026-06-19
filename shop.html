@@ -171,7 +171,7 @@ a{color:inherit;text-decoration:none;}
 .shop-title{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:2px;}
 .shop-subtitle{font-size:.78rem;color:var(--muted);}
 
-/* Info Banner - tells users to click product for details */
+/* Info Banner */
 .info-banner{
   margin:8px 4% 4px;
   padding:10px 16px;
@@ -195,6 +195,69 @@ a{color:inherit;text-decoration:none;}
 .cat-chip:hover{border-color:var(--primary);transform:translateY(-2px);}
 .cat-chip:active{transform:scale(0.95);}
 .cat-chip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* Featured Sections: Trending & New Arrivals */
+.featured-sections{
+  padding:0 4% 24px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.featured-block{
+  background:var(--white);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  overflow:hidden;
+  padding:16px;
+}
+.featured-block h3{
+  font-size:.85rem;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.featured-block h3 i{
+  font-size:18px;
+}
+.featured-block h3 .trend-icon{color:#FF6B35;}
+.featured-block h3 .new-icon{color:#22C55E;}
+.featured-scroll{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding-bottom:8px;
+  scrollbar-width:thin;
+}
+.featured-scroll::-webkit-scrollbar{height:3px;}
+.featured-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+.featured-item{
+  flex:0 0 140px;
+  background:var(--bg);
+  border-radius:var(--radius-xs);
+  overflow:hidden;
+  cursor:pointer;
+  transition:all .2s;
+  border:1px solid var(--border);
+}
+.featured-item:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--primary);}
+.featured-img{width:100%;height:100px;object-fit:cover;background:var(--bg);}
+.featured-info{padding:8px 10px;}
+.featured-name{font-weight:700;font-size:.7rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;}
+.featured-price{font-weight:800;font-size:.75rem;color:var(--sale-red);margin-top:2px;}
+@media(max-width:600px){
+  .featured-sections{grid-template-columns:1fr;gap:16px;}
+  .featured-item{flex:0 0 120px;}
+  .featured-img{height:80px;}
+}
+@media(min-width:1024px){
+  .featured-sections{padding:0 5% 28px;}
+}
+@media(min-width:1400px){
+  .featured-sections{padding:0 8% 32px;}
+}
 
 /* Shop Toolbar */
 .shop-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 4% 12px;flex-wrap:wrap;}
@@ -243,7 +306,6 @@ a{color:inherit;text-decoration:none;}
 .atc-btn:active{transform:scale(0.95);}
 .atc-btn:hover{background:var(--btn-green-hover);}
 
-/* Click for details hint on product card */
 .click-hint{font-size:.55rem;color:var(--muted);text-align:center;margin-top:4px;opacity:0.7;}
 
 /* Pagination - Numbered */
@@ -348,8 +410,6 @@ a{color:inherit;text-decoration:none;}
 .modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
 .modal-btn:active{transform:scale(0.95);}
 
-/* Quick View REMOVED - no overlay, products go to product-details.html */
-
 @keyframes popIn{0%{transform:scale(0.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
 .pop-in{animation:popIn .3s ease;}
 
@@ -375,6 +435,8 @@ a{color:inherit;text-decoration:none;}
   .cart-message{font-size:20px;}
   .shop-button{font-size:16px;padding:8px 32px;}
   .cat-chip{font-size:.75rem;padding:8px 14px;}
+  .featured-item{flex:0 0 100px;}
+  .featured-img{height:70px;}
 }
 @media(min-width:1024px){
   .shop-titlebar{padding:28px 5% 4px;}
@@ -473,7 +535,7 @@ a{color:inherit;text-decoration:none;}
   <p class="shop-subtitle" id="shopResultsCount">Loading products…</p>
 </div>
 
-<!-- Info Banner - tells users to click product for details -->
+<!-- Info Banner -->
 <div class="info-banner">
   <i class="ph ph-info"></i>
   <span><strong>Click any product</strong> to see full details, available sizes, and pricing variations.</span>
@@ -482,6 +544,18 @@ a{color:inherit;text-decoration:none;}
 <!-- Category Chips - NO IMAGES -->
 <div class="cat-chips-wrap">
   <div class="cat-chips" id="catChips"></div>
+</div>
+
+<!-- Featured Sections: Trending & New Arrivals -->
+<div class="featured-sections" id="featuredSections">
+  <div class="featured-block">
+    <h3><i class="ph ph-fire trend-icon"></i> Trending Deals</h3>
+    <div class="featured-scroll" id="trendingScroll"></div>
+  </div>
+  <div class="featured-block">
+    <h3><i class="ph ph-sparkle new-icon"></i> New Arrivals</h3>
+    <div class="featured-scroll" id="newArrivalsScroll"></div>
+  </div>
 </div>
 
 <!-- Toolbar -->
@@ -959,6 +1033,47 @@ function clearSalePill(){
   applyFilters();
 }
 
+// ==================== FEATURED SECTIONS (Trending & New Arrivals) ====================
+function renderFeaturedSections(){
+  var trendingItems = ALL_PRODUCTS.filter(function(p){ return p.isTrending === true; }).slice(0, 8);
+  var newItems = ALL_PRODUCTS.filter(function(p){ return p.isNew === true; }).slice(0, 8);
+  
+  var trendingScroll = document.getElementById('trendingScroll');
+  var newScroll = document.getElementById('newArrivalsScroll');
+  
+  if(trendingItems.length){
+    trendingScroll.innerHTML = trendingItems.map(function(p){
+      var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
+      var savePercent = p.discountPercent || 0;
+      return '<div class="featured-item" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
+        '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
+        '<div class="featured-info">'+
+          '<div class="featured-name">'+escapeHtml(p.name)+'</div>'+
+          '<div class="featured-price">'+(savePercent>0?'<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES '+p.originalPrice.toLocaleString()+'</span>':'')+'KES '+price.toLocaleString()+'</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  } else {
+    trendingScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No trending products</div>';
+  }
+  
+  if(newItems.length){
+    newScroll.innerHTML = newItems.map(function(p){
+      var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
+      var savePercent = p.discountPercent || 0;
+      return '<div class="featured-item" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
+        '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
+        '<div class="featured-info">'+
+          '<div class="featured-name">'+escapeHtml(p.name)+'</div>'+
+          '<div class="featured-price">'+(savePercent>0?'<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES '+p.originalPrice.toLocaleString()+'</span>':'')+'KES '+price.toLocaleString()+'</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  } else {
+    newScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No new arrivals</div>';
+  }
+}
+
 // ==================== PRODUCT LOADING ====================
 function renderSkeletons(count, containerId){
   var container=document.getElementById(containerId);
@@ -986,16 +1101,21 @@ async function loadProducts(){
         var sizeOrderMap={'250ml':1,'350ml':2,'500ml':3,'750ml':4,'1L':5,'1.5L':6};
         var sortedVariants=[...variants].sort(function(a,b){return (sizeOrderMap[a.size]||99)-(sizeOrderMap[b.size]||99);});
         var cheapestVariant=sortedVariants[0]||null;
-        var price=cheapestVariant?cheapestVariant.price:0;
-        var originalPrice=cheapestVariant?.discount?Math.round(price*100/(100-cheapestVariant.discount)):price;
-        var discountPercent=cheapestVariant?.discount||0;
+        
+        // ==================== FIXED: CORRECT DISCOUNT CALCULATION ====================
+        // originalPrice is the price admin sets
+        var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
+        var discountPercent = cheapestVariant?.discount || 0;
+        // discountedPrice = Original × (100 - Discount%) / 100
+        var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
+        
         return{
           _id:p._id,
           id:p._id,
           name:p.name,
           capacity:cheapestVariant?.size||'750ml',
-          price:price,
-          originalPrice:originalPrice,
+          price:discountedPrice,        // Display price (discounted if applicable)
+          originalPrice:originalPrice,   // Original price (what admin set)
           discountPercent:discountPercent,
           category:p.category||'',
           badge:p.badge||(discountPercent>10?'hot':''),
@@ -1007,14 +1127,20 @@ async function loadProducts(){
           variants:variants
         };
       });
+      
+      // Render featured sections after products loaded
+      renderFeaturedSections();
+      
     }else{
       ALL_PRODUCTS=getSampleProducts();
       toast('Showing backup products');
+      renderFeaturedSections();
     }
   }catch(e){
     console.error('Error loading products:',e);
     ALL_PRODUCTS=getSampleProducts();
     toast('Could not connect. Showing backup products.');
+    renderFeaturedSections();
   }
   isLoading=false;
   applyFilters();
@@ -1132,7 +1258,6 @@ function renderProductCard(p){
   var discountBadge=savePercent>0 ? '<div class="discount-circle">-'+savePercent+'%</div>' : '';
   var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button>';
   
-  // Variant selector if product has variants
   var variantHtml='';
   if(p.variants && p.variants.length>1){
     variantHtml='<select class="variant-selector" onchange="updateVariantPrice(this, \''+p._id+'\')">'+
@@ -1151,12 +1276,10 @@ function updateVariantPrice(select, productId){
   var product=ALL_PRODUCTS.find(function(p){return p._id===productId;});
   if(product){
     product.price=price;
-    // Update the price display in the card
     var card=select.closest('.prod-card');
     var priceWrap=card.querySelector('.pc-price-wrap');
     var priceNew=priceWrap.querySelector('.pc-price-new');
     if(priceNew) priceNew.textContent='KES '+price.toLocaleString();
-    // Update the add to cart button data
     var atcBtn=card.querySelector('.atc-btn');
     if(atcBtn){
       var onclickStr=atcBtn.getAttribute('onclick');
