@@ -39,7 +39,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
 
-/* Shop SVG Icon */
 .shop-svg{width:22px;height:22px;color:currentColor;display:block;}
 
 /* Loading Skeleton */
@@ -567,30 +566,6 @@ a{color:inherit;text-decoration:none;}
 .empty-state i{font-size:40px;display:block;margin-bottom:12px;color:var(--border);}
 .empty-state p{margin-bottom:12px;}
 
-/* Quick View Modal */
-.quick-view-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:800;
-  display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);
-  padding:20px;
-}
-.quick-view-overlay.open{display:flex;}
-.quick-view-card{
-  background:var(--white);border-radius:var(--radius);padding:32px;
-  max-width:500px;width:100%;max-height:90vh;overflow-y:auto;
-  animation:slideUp .3s ease;position:relative;
-}
-.quick-view-close{
-  position:absolute;top:16px;right:16px;width:36px;height:36px;
-  border-radius:50%;background:var(--bg);border:none;font-size:18px;cursor:pointer;
-}
-.quick-view-close:active{transform:scale(0.9);}
-.quick-view-img{width:100%;height:200px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:16px;}
-.quick-view-name{font-size:1.3rem;font-weight:800;margin-bottom:4px;}
-.quick-view-price{font-size:1.2rem;font-weight:900;color:var(--sale-red);margin-bottom:12px;}
-.quick-view-desc{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:16px;}
-.quick-view-actions{display:flex;gap:12px;}
-.quick-view-actions .atc-btn{flex:1;}
-
 /* Quick Add Animation */
 @keyframes popIn{0%{transform:scale(0.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
 .pop-in{animation:popIn .3s ease;}
@@ -702,20 +677,6 @@ a{color:inherit;text-decoration:none;}
     <p>Save your favourites and add them to basket anytime.</p>
     <div id="wishlistItems"></div>
     <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:12px;padding:10px 20px;border-radius:50px;border:none;font-weight:600;cursor:pointer;" onclick="closeWishlistModal()">Close</button>
-  </div>
-</div>
-
-<!-- Quick View Modal -->
-<div class="quick-view-overlay" id="quickViewOverlay">
-  <div class="quick-view-card">
-    <button class="quick-view-close" onclick="closeQuickView()"><i class="ph ph-x"></i></button>
-    <img class="quick-view-img" id="qvImage" src="" alt="">
-    <div class="quick-view-name" id="qvName"></div>
-    <div class="quick-view-price" id="qvPrice"></div>
-    <div class="quick-view-desc" id="qvDesc">Premium quality spirit from our curated collection.</div>
-    <div class="quick-view-actions">
-      <button class="atc-btn" id="qvAddBtn" onclick="addFromQuickView()"><i class="ph ph-plus"></i> Add to Cart</button>
-    </div>
   </div>
 </div>
 
@@ -980,24 +941,9 @@ var cart=JSON.parse(localStorage.getItem('liquorbelle_cart')||'{}');
 var wishlist=JSON.parse(localStorage.getItem('liquorbelle_wishlist')||'[]');
 var PRODUCTS=[];
 var isLoading=true;
-var qvProduct=null;
 
-// ==================== BACKUP PRODUCTS (NO KENYA KANE) ====================
-function getSampleProducts(){
-  return[
-    {_id:"h1",name:"Jameson Irish Whisky",capacity:"750ml",price:3200,originalPrice:3200,discountPercent:0,category:"whisky",badge:"",image:"https://i.postimg.cc/qRxcssz3/jameson.jpg",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h2",name:"Johnnie Walker Black Label",capacity:"750ml",price:3500,originalPrice:3500,discountPercent:0,category:"whisky",badge:"",image:"https://i.postimg.cc/0yzhN3FK/Johnie-walker-black-label.jpg",isTrending:false,isNew:false,rating:4.5},
-    {_id:"h3",name:"Hennessy XO",capacity:"750ml",price:5500,originalPrice:5500,discountPercent:0,category:"cognac",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273428/2205500339_1_b_rawi81.jpg",isTrending:true,isNew:true,rating:4.5},
-    {_id:"h4",name:"Remy Martin VSOP",capacity:"750ml",price:7800,originalPrice:7800,discountPercent:0,category:"cognac",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781272437/remy-martin-vsop-300-year-anniversary-cognac_RoyalBatch_Fo5YMCyCqg6F_zmgdrq.jpg",isTrending:true,isNew:true,rating:5.0},
-    {_id:"h5",name:"Smirnoff Red Vodka",capacity:"750ml",price:1100,originalPrice:1100,discountPercent:0,category:"vodka",badge:"",image:"https://i.postimg.cc/VLrnYR6K/Greenspoon-Kenya-Smirnoff-Vodka-2-1400x933.webp",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h6",name:"Absolut Vodka",capacity:"750ml",price:2200,originalPrice:2200,discountPercent:0,category:"vodka",badge:"",image:"https://i.postimg.cc/1twFB9db/absolut-vodka.jpg",isTrending:true,isNew:true,rating:5.0},
-    {_id:"h7",name:"Chrome Gin",capacity:"750ml",price:750,originalPrice:750,discountPercent:0,category:"gin",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273803/chrome-gin-750ml_pjpgi8.jpg",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h8",name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1400,discountPercent:0,category:"gin",badge:"",image:"https://i.postimg.cc/4nkJX9Qn/Greenspoon-Kenya-Gilbeys-Gin-750ml-4.jpg",isTrending:false,isNew:false,rating:4.5},
-    {_id:"h9",name:"Kenya Cane Ginger",capacity:"750ml",price:700,originalPrice:700,discountPercent:0,category:"rum",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780401818/cane-1_izoutd.jpg",isTrending:true,isNew:false,rating:4.0},
-    {_id:"h10",name:"Tusker Lager",capacity:"500ml",price:350,originalPrice:350,discountPercent:0,category:"beer",badge:"",image:"https://i.postimg.cc/9XNRvg3g/TUSKERLAGERBOTTLE500ML.webp",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h11",name:"Heineken Lager",capacity:"500ml",price:320,originalPrice:320,discountPercent:0,category:"beer",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781259773/000974__56124.1651683990.1280.1280_pu6xow.jpg",isTrending:true,isNew:false,rating:5.0}
-  ];
-}
+// ==================== NO HARDCODED PRODUCTS ====================
+// All products come from database only. Empty state if none.
 
 // ==================== UTILITY FUNCTIONS ====================
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
@@ -1072,7 +1018,6 @@ function updateCartUI(){
   var items=Object.values(cart);
   var count=items.reduce(function(s,i){return s+i.qty;},0);
   
-  // Update all cart badges safely
   var navCount=document.getElementById('navCartCount');
   if(navCount) navCount.innerText=count;
   
@@ -1157,43 +1102,6 @@ function addToCart(id,name,price,capacity){
   localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
   updateCartUI();
   toast(name+' added');
-}
-
-// ==================== QUICK VIEW ====================
-function openQuickView(product){
-  qvProduct=product;
-  var img=document.getElementById('qvImage');
-  var name=document.getElementById('qvName');
-  var price=document.getElementById('qvPrice');
-  var desc=document.getElementById('qvDesc');
-  var overlay=document.getElementById('quickViewOverlay');
-  if(img) img.src=product.image||FALLBACK_IMG;
-  if(name) name.textContent=product.name;
-  if(price) price.textContent='KES '+product.price.toLocaleString();
-  if(desc) desc.textContent=product.description||'Premium quality spirit from our curated collection.';
-  if(overlay) overlay.classList.add('open');
-  document.body.style.overflow='hidden';
-}
-
-function closeQuickView(){
-  var overlay=document.getElementById('quickViewOverlay');
-  if(overlay) overlay.classList.remove('open');
-  document.body.style.overflow='auto';
-  qvProduct=null;
-}
-
-function addFromQuickView(){
-  if(qvProduct){
-    addToCart(qvProduct._id,qvProduct.name,qvProduct.price,qvProduct.capacity);
-    closeQuickView();
-  }
-}
-
-var qvOverlay=document.getElementById('quickViewOverlay');
-if(qvOverlay){
-  qvOverlay.addEventListener('click', function(e){
-    if(e.target===this) closeQuickView();
-  });
 }
 
 // ==================== WISHLIST FUNCTIONS ====================
@@ -1298,13 +1206,13 @@ async function loadProducts(){
         };
       });
     }else{
-      PRODUCTS=getSampleProducts();
-      toast('Showing backup products');
+      PRODUCTS=[];
+      toast('No products in database');
     }
   }catch(e){
     console.error('Error loading products:',e);
-    PRODUCTS=getSampleProducts();
-    toast('Could not connect. Showing backup products.');
+    PRODUCTS=[];
+    toast('Could not connect to database. Please try again later.');
   }
   isLoading=false;
   renderAllProductSections();
@@ -1312,7 +1220,7 @@ async function loadProducts(){
 
 function renderAllProductSections(){
   if(!PRODUCTS.length){
-    var emptyMsg='<div class="empty-state"><i class="ph ph-wine"></i><p>No products available yet.<br>Check back soon!</p></div>';
+    var emptyMsg='<div class="empty-state"><i class="ph ph-wine"></i><p>No products available right now.<br>Please check back later.</p></div>';
     var grids=['allProductsGrid','trendingGrid','newArrivalsGrid'];
     grids.forEach(function(id){
       var el=document.getElementById(id);
@@ -1344,7 +1252,8 @@ function renderProductCard(p, isNew){
   var discountBadge=savePercent>0 ? '<div class="discount-circle">-'+savePercent+'%</div>' : '';
   var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button>';
   
-  return '<div class="prod-card pop-in"><div class="pc-img-wrap" onclick="openQuickView({_id:\''+p._id+'\',name:\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\',price:'+p.price+',image:\''+(p.image||'')+'\',capacity:\''+(p.capacity||'')+'\',description:\''+escapeHtml(p.description||'').replace(/'/g,"\\'")+'\'})"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button></div></div>';
+  // Product card now directs to product-details.html - NO QUICK VIEW
+  return '<div class="prod-card pop-in"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button></div></div>';
 }
 
 // ==================== DELIVERY ZONES ====================
