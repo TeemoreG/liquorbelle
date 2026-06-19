@@ -357,7 +357,7 @@ a{color:inherit;text-decoration:none;}
 .location-helper{display:block;margin-top:4px;font-size:10px;color:var(--muted);}
 .location-helper i{margin-right:4px;}
 
-/* Payment Options - M-PESA ONLY - FIXED STYLING */
+/* Payment Options - M-PESA ONLY */
 .payment-section-title{
   font-size:1.1rem;
   font-weight:800;
@@ -505,7 +505,8 @@ a{color:inherit;text-decoration:none;}
 }
 .success-icon i{font-size:40px;color:#2ecc71;}
 .success-content h3{font-size:24px;margin-bottom:8px;color:var(--primary);}
-.success-content p{color:var(--muted);margin-bottom:20px;font-size:.9rem;line-height:1.5;}
+.success-content p{color:var(--muted);margin-bottom:6px;font-size:.9rem;line-height:1.5;}
+.success-content .order-id-display{font-size:14px;font-weight:700;color:var(--primary);background:var(--bg2);padding:8px 16px;border-radius:8px;display:inline-block;margin-bottom:16px;font-family:monospace;}
 .success-btn{
   background:var(--primary);
   color:white;
@@ -515,6 +516,7 @@ a{color:inherit;text-decoration:none;}
   font-weight:700;
   cursor:pointer;
   transition:all .2s;
+  margin-top:8px;
 }
 .success-btn:hover{background:var(--primary-bright);transform:translateY(-2px);}
 
@@ -540,6 +542,7 @@ a{color:inherit;text-decoration:none;}
   box-shadow:0 4px 20px rgba(0,0,0,0.2);
 }
 .snack.show{opacity:1;}
+.snack.error{background:#D50000;}
 
 .spinner{
   display:inline-block;
@@ -562,7 +565,7 @@ a{color:inherit;text-decoration:none;}
 .footer-col a:hover{opacity:1;}
 .footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
 
-/* ====== CART DRAWER FIXED ====== */
+/* ====== CART DRAWER ====== */
 .cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background-color:#ffffff;font-family:var(--font-body);text-align:center;}
 .cart-icon-wrapper{position:relative;margin-bottom:25px;width:70px;height:60px;}
 .cart-svg{width:100%;height:100%;}
@@ -596,6 +599,31 @@ a{color:inherit;text-decoration:none;}
 .btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
 .btn-checkout:active{transform:scale(0.97);}
 .btn-checkout:hover{background:var(--primary-bright);}
+
+/* Wishlist Modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;
+  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);
+}
+.modal-card{
+  background:var(--white);border-radius:var(--radius);padding:24px;
+  max-width:420px;width:90%;max-height:80vh;overflow-y:auto;
+  animation:slideUp .3s ease;
+}
+.modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+.modal-card p{color:var(--muted);font-size:.8rem;margin-bottom:16px;}
+.wishlist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.wishlist-item img{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-xs);}
+.wishlist-item-info{flex:1;}
+.wishlist-item-name{font-weight:700;font-size:.8rem;}
+.wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.75rem;}
+.wishlist-atc{padding:4px 12px;background:var(--btn-green);color:#fff;border:none;border-radius:30px;font-size:.65rem;font-weight:600;cursor:pointer;}
+.wishlist-atc:active{transform:scale(0.9);}
+.wishlist-remove{background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:4px;}
+.wishlist-remove:active{transform:scale(0.9);}
+.wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
+.modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
+.modal-btn:active{transform:scale(0.95);}
 
 @media(max-width:400px){
   .checkout-container{padding:12px 3% 20px;}
@@ -672,7 +700,7 @@ a{color:inherit;text-decoration:none;}
 <!-- CHECKOUT HERO -->
 <div class="checkout-hero">
   <h1><i class="ph ph-wallet"></i> Secure Checkout</h1>
-  <p>Complete your order with confidence. Fast delivery 10-45 minutes.</p>
+  <p>Complete your order with confidence. Fast delivery 10-45 minutes. <strong>M-PESA Only</strong></p>
 </div>
 
 <!-- CHECKOUT CONTENT -->
@@ -791,7 +819,7 @@ a{color:inherit;text-decoration:none;}
   <button class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clipboard-text"></i><span>Orders</span></button>
 </nav>
 
-<!-- Cart Drawer - FIXED -->
+<!-- Cart Drawer -->
 <div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
   <div class="cart-head">
@@ -823,6 +851,7 @@ a{color:inherit;text-decoration:none;}
   <div class="success-content">
     <div class="success-icon"><i class="ph ph-check-circle"></i></div>
     <h3>Order Placed Successfully!</h3>
+    <div class="order-id-display" id="successOrderId">LB-XXXXXX</div>
     <p id="successMessage">Check your email for order confirmation details</p>
     <button class="success-btn" onclick="closeSuccessModal()">Track My Orders →</button>
   </div>
@@ -858,9 +887,9 @@ function toast(msg, isError) {
   isError = isError || false;
   var t = document.getElementById('snack');
   t.innerText = msg;
-  t.className = 'snack show';
-  t.style.background = isError ? '#D50000' : 'var(--text)';
-  setTimeout(function() {
+  t.className = 'snack show' + (isError ? ' error' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() {
     t.className = 'snack';
   }, 5000);
 }
@@ -908,14 +937,18 @@ function loadDeliverySettings() {
 }
 
 function getAddressFromCoords(lat, lng) {
-  return fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=18&addressdetails=1')
+  // Using a more reliable geocoding approach
+  return fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=18&addressdetails=1&accept-language=en')
     .then(function(res){ return res.json(); })
     .then(function(data){
       if (data && data.address) {
-        if (data.address.road) return data.address.road;
-        if (data.address.suburb) return data.address.suburb;
-        if (data.address.village) return data.address.village;
-        if (data.address.town) return data.address.town;
+        var parts = [];
+        if (data.address.road) parts.push(data.address.road);
+        if (data.address.suburb) parts.push(data.address.suburb);
+        if (data.address.village) parts.push(data.address.village);
+        if (data.address.town) parts.push(data.address.town);
+        if (data.address.city) parts.push(data.address.city);
+        if (parts.length > 0) return parts.join(', ');
       }
       return null;
     })
@@ -965,6 +998,17 @@ function validatePhone(phone) {
   if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
   if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
   return false;
+}
+
+function formatPhoneForAPI(phone) {
+  var cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) {
+    return '254' + cleaned.slice(1);
+  }
+  if (cleaned.length === 12 && cleaned.startsWith('254')) {
+    return cleaned;
+  }
+  return cleaned;
 }
 
 function formatPhoneForDisplay(phone) {
@@ -1040,7 +1084,7 @@ function saveOrderToDatabase(orderId, email, fullName, phone, address, items, su
     var orderData = {
       orderNumber: orderId, userId: null, customerName: fullName, customerEmail: email,
       phone: phone, address: address, notes: '', subtotal: subtotal, delivery: delivery, total: total, paymentMethod: paymentMethod, status: status,
-      items: items.map(function(i){ return { productId: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size }; })
+      items: items.map(function(i){ return { productId: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size || '' }; })
     };
     return fetch(API_BASE_URL + '/api/db/orders', { 
       method: 'POST', 
@@ -1057,15 +1101,16 @@ function sendOrderConfirmationEmail(orderId, email, fullName, phone, address, it
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         email: email, orderId: orderId, customerName: fullName, phone: phone, 
-        items: items.map(function(i){ return { name: i.name, qty: i.qty, price: i.price, size: i.size }; }), 
+        items: items.map(function(i){ return { name: i.name, qty: i.qty, price: i.price, size: i.size || '' }; }), 
         subtotal: subtotal, delivery: delivery, total: total, address: address, timestamp: timestamp, paymentMethod: paymentMethod 
       })
     });
   } catch (err) { console.error('Email error:', err); }
 }
 
-function showSuccessModal(message) {
+function showSuccessModal(orderId, message) {
   var modal = document.getElementById('successModal');
+  document.getElementById('successOrderId').textContent = orderId;
   document.getElementById('successMessage').textContent = message;
   modal.classList.add('active');
 }
@@ -1077,10 +1122,13 @@ function closeSuccessModal() {
 
 var paymentInterval = null;
 var paymentTimeout = null;
+var statusCheckCount = 0;
+var MAX_STATUS_CHECKS = 12; // 12 checks * 3 seconds = 36 seconds
 
 function resetPlaceOrderButton(btn, originalHTML) {
   if (paymentInterval) { clearInterval(paymentInterval); paymentInterval = null; }
   if (paymentTimeout) { clearTimeout(paymentTimeout); paymentTimeout = null; }
+  statusCheckCount = 0;
   btn.innerHTML = originalHTML;
   btn.disabled = false;
 }
@@ -1102,6 +1150,7 @@ function placeOrder() {
   if (!street && !building) { toast('Please enter at least Street OR Building name'); return; }
   
   var displayPhone = formatPhoneForDisplay(phone);
+  var apiPhone = formatPhoneForAPI(phone);
   var address = getFullAddress();
   var totals = calculateTotals();
   var subtotal = totals.subtotal;
@@ -1118,8 +1167,17 @@ function placeOrder() {
   // M-PESA only
   try {
     var requestData = { 
-      phone: phone, amount: total, orderId: orderId, customerName: fullName, address: address, 
-      items: items, subtotal: subtotal, delivery: delivery, total: total, paymentMethod: 'mpesa', customerEmail: email 
+      phone: apiPhone, 
+      amount: total, 
+      orderId: orderId, 
+      customerName: fullName, 
+      address: address, 
+      items: items, 
+      subtotal: subtotal, 
+      delivery: delivery, 
+      total: total, 
+      paymentMethod: 'mpesa', 
+      customerEmail: email 
     };
     
     fetch(API_BASE_URL + '/api/stkpush', { 
@@ -1134,17 +1192,34 @@ function placeOrder() {
       toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay. You have 35 seconds to complete payment.');
       
       var paymentCompleted = false;
+      statusCheckCount = 0;
       
       paymentTimeout = setTimeout(function() {
         if (!paymentCompleted) {
           if (paymentInterval) clearInterval(paymentInterval);
+          paymentInterval = null;
           resetPlaceOrderButton(btn, originalHTML);
           toast('❌ Payment timeout. You did not complete the payment in time. Please try again.', true);
         }
       }, 35000);
       
       paymentInterval = setInterval(function() {
-        if (paymentCompleted) return;
+        if (paymentCompleted) {
+          clearInterval(paymentInterval);
+          paymentInterval = null;
+          return;
+        }
+        statusCheckCount++;
+        if (statusCheckCount > MAX_STATUS_CHECKS) {
+          clearInterval(paymentInterval);
+          paymentInterval = null;
+          if (!paymentCompleted) {
+            resetPlaceOrderButton(btn, originalHTML);
+            toast('❌ Payment confirmation timeout. Please check your M-PESA and contact support.', true);
+          }
+          return;
+        }
+        
         fetch(API_BASE_URL + '/api/status/' + orderId)
           .then(function(res){ return res.json(); })
           .then(function(statusData) {
@@ -1162,11 +1237,25 @@ function placeOrder() {
                   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
                   renderCartSummary();
                   updateCartUI();
-                  showSuccessModal('✅ Payment confirmed! Check your email for order details.');
+                  resetPlaceOrderButton(btn, originalHTML);
+                  showSuccessModal(orderId, '✅ Payment confirmed! Check your email for order details.');
+                })
+                .catch(function() {
+                  resetPlaceOrderButton(btn, originalHTML);
+                  toast('❌ Order saved but email failed. Please contact support.', true);
                 });
+            } else if (statusData.status === 'failed') {
+              clearInterval(paymentInterval);
+              clearTimeout(paymentTimeout);
+              paymentInterval = null;
+              paymentTimeout = null;
+              resetPlaceOrderButton(btn, originalHTML);
+              toast('❌ Payment failed. Please try again.', true);
             }
           })
-          .catch(function(e){ console.error('Status check error:', e); });
+          .catch(function(e){ 
+            console.error('Status check error:', e);
+          });
       }, 3000);
     })
     .catch(function(err) {

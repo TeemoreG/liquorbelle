@@ -303,7 +303,6 @@ textarea{resize:vertical;}
       
       <select id="statusFilter" class="status-filter-select" onchange="applyFilters()">
         <option value="all">📋 All Orders</option>
-        <option value="pending">⏳ Pending (Need Payment)</option>
         <option value="paid">✅ Paid (Ready to Deliver)</option>
         <option value="delivered">🚚 Delivered (Completed)</option>
       </select>
@@ -315,13 +314,13 @@ textarea{resize:vertical;}
       <div class="search-input-wrap" style="flex:1;"><i class="ph ph-magnifying-glass"></i><input type="text" id="orderSearch" class="search-input" placeholder="Search by customer name or email..."></div>
       <button class="btn btn-outline" onclick="clearOrderSearch()"><i class="ph ph-x"></i> Clear</button>
     </div>
-    <div class="help-text"><i class="ph ph-info"></i> Manage customer orders. Use <strong>Mark Paid</strong> after payment confirmation, then <strong>Mark Delivered</strong> when handed over.</div>
+    <div class="help-text"><i class="ph ph-info"></i> Manage customer orders. M-PESA payments are confirmed automatically via STK Push. Use <strong>Mark Delivered</strong> when the order is handed over to the customer.</div>
     <div id="ordersList" class="orders-list"></div>
   </div>
 
   <div id="analyticsTab" style="display:none;">
     <div class="stats-grid"><div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div><div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div><div class="sub">All time</div></div><div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In catalogue</div></div><div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per delivered order</div></div></div>
-    <div class="form-card"><div class="form-card-title"><i class="ph ph-chart-bar"></i> Order Breakdown</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;"><div class="stat-card" style="padding:14px;"><h4>Pending</h4><div class="value" id="pendingCount">0</div><div class="sub">Awaiting payment</div></div><div class="stat-card" style="padding:14px;"><h4>Paid</h4><div class="value" id="paidCount">0</div><div class="sub">Ready to deliver</div></div><div class="stat-card" style="padding:14px;"><h4>Delivered</h4><div class="value" id="deliveredCount">0</div><div class="sub">Completed orders</div></div><div class="stat-card" style="padding:14px;"><h4>Trending</h4><div class="value" id="trendingCount">0</div><div class="sub">On homepage</div></div></div></div>
+    <div class="form-card"><div class="form-card-title"><i class="ph ph-chart-bar"></i> Order Breakdown</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;"><div class="stat-card" style="padding:14px;"><h4>Paid</h4><div class="value" id="paidCount">0</div><div class="sub">Ready to deliver</div></div><div class="stat-card" style="padding:14px;"><h4>Delivered</h4><div class="value" id="deliveredCount">0</div><div class="sub">Completed orders</div></div><div class="stat-card" style="padding:14px;"><h4>Trending</h4><div class="value" id="trendingCount">0</div><div class="sub">On homepage</div></div></div></div>
   </div>
 
   <div id="settingsTab" style="display:none;">
@@ -488,7 +487,6 @@ function applyFilters() {
 
 function updateOrderStatsDisplay(){
   const total = filteredOrders.length;
-  const pending = filteredOrders.filter(o => o.status === 'pending').length;
   const paid = filteredOrders.filter(o => o.status === 'paid').length;
   const delivered = filteredOrders.filter(o => o.status === 'delivered').length;
   
@@ -504,7 +502,6 @@ function updateOrderStatsDisplay(){
   
   let statusLabel = '';
   switch(currentStatusFilter) {
-    case 'pending': statusLabel = 'Pending'; break;
     case 'paid': statusLabel = 'Paid'; break;
     case 'delivered': statusLabel = 'Delivered'; break;
     default: statusLabel = 'All Orders';
@@ -512,14 +509,12 @@ function updateOrderStatsDisplay(){
   
   document.getElementById('orderStats').innerHTML = `
     <div class="stat-card"><h4>📊 ${statusLabel}</h4><div class="value">${total}</div><div class="sub">${dateLabel}</div></div>
-    <div class="stat-card"><h4>⏳ Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
     <div class="stat-card"><h4>✅ Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
     <div class="stat-card"><h4>🚚 Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
   `;
   document.getElementById('orderCountDisplay').innerHTML = `📊 ${total} order${total !== 1 ? 's' : ''} found`;
 }
 
-// ADMIN-ONLY login - uses /api/admin/login endpoint
 async function adminLogin(password) {
   try {
     const res = await fetch(`${API_BASE}/api/admin/login`, {
@@ -564,7 +559,7 @@ function addEditVariantRow(){
   const tbody = document.getElementById('editVariantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"><tr><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
   tbody.appendChild(row);
 }
 function removeEditVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
@@ -729,10 +724,8 @@ async function loadOrders(){
 }
 
 function updateOrderStats(){
-  const pending = filteredOrders.filter(o=>o.status==='pending').length;
   const paid = filteredOrders.filter(o=>o.status==='paid').length;
   const delivered = filteredOrders.filter(o=>o.status==='delivered').length;
-  document.getElementById('pendingCount').innerText = pending;
   document.getElementById('paidCount').innerText = paid;
   document.getElementById('deliveredCount').innerText = delivered;
 }
@@ -756,35 +749,7 @@ function findProductImage(productName) {
   return FALLBACK_IMG;
 }
 
-async function markOrderPaid(id){
-  const idx = filteredOrders.findIndex(o => o._id === id);
-  if(idx === -1) return;
-  const original = { ...filteredOrders[idx] };
-  filteredOrders[idx].status = 'paid';
-  const allIdx = allOrders.findIndex(o => o._id === id);
-  if(allIdx !== -1) allOrders[allIdx].status = 'paid';
-  renderOrders();
-  updateOrderStatsDisplay();
-  try{
-    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
-      method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ status: 'paid' })
-    });
-    if(!res.ok){ 
-      filteredOrders[idx] = original; 
-      if(allIdx !== -1) allOrders[allIdx] = original;
-      renderOrders(); 
-      updateOrderStatsDisplay(); 
-      showToast('Error', true); 
-    } else showToast('Marked as Paid');
-  } catch(e){ 
-    filteredOrders[idx] = original; 
-    if(allIdx !== -1) allOrders[allIdx] = original;
-    renderOrders(); 
-    updateOrderStatsDisplay(); 
-    showToast('Error', true); 
-  }
-}
-
+// M-PESA only - No COD, so no "Mark Paid" button needed
 async function markOrderDelivered(id){
   const idx = filteredOrders.findIndex(o => o._id === id);
   if(idx === -1) return;
@@ -804,7 +769,7 @@ async function markOrderDelivered(id){
       renderOrders(); 
       updateOrderStatsDisplay(); 
       showToast('Error', true); 
-    } else showToast('Marked as Delivered');
+    } else showToast('✓ Marked as Delivered');
   } catch(e){ 
     filteredOrders[idx] = original;
     if(allIdx !== -1) allOrders[allIdx] = original;
@@ -872,9 +837,11 @@ function renderOrders(){
     
     const deliveryFee = o.delivery_fee || o.delivery || 0;
     const subtotal = o.subtotal || (o.total - deliveryFee);
-    const statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'paid' ? 'status-paid' : 'status-delivered');
-    const statusIcon = o.status === 'pending' ? 'ph-clock' : (o.status === 'paid' ? 'ph-check-circle' : 'ph-truck');
-    const statusText = o.status === 'pending' ? 'Pending' : (o.status === 'paid' ? 'Paid' : 'Delivered');
+    
+    // Status: Only paid and delivered (no pending since COD removed)
+    const statusClass = o.status === 'paid' ? 'status-paid' : 'status-delivered';
+    const statusIcon = o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
+    const statusText = o.status === 'paid' ? 'Paid ✅' : 'Delivered 🚚';
     
     return `<div class="order-card">
       <div class="order-header">
@@ -885,6 +852,7 @@ function renderOrders(){
             <span class="order-meta-chip"><i class="ph ph-envelope"></i> ${escapeHtml(o.customer_email)}</span>
             <span class="order-meta-chip"><i class="ph ph-phone"></i> ${o.phone || 'No phone'}</span>
             <span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleString()}</span>
+            <span class="order-meta-chip"><i class="ph ph-credit-card"></i> M-PESA</span>
           </div>
         </div>
         <div class="order-header-right">
@@ -905,7 +873,6 @@ function renderOrders(){
           </div>
         </div>
         <div class="order-actions">
-          ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markOrderPaid('${o._id}')"><i class="ph ph-check-circle"></i> Mark Paid</button>` : ''}
           ${o.status === 'paid' ? `<button class="btn btn-sm btn-gold" onclick="markOrderDelivered('${o._id}')"><i class="ph ph-truck"></i> Mark Delivered</button>` : ''}
           ${o.status === 'delivered' ? '<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>' : ''}
           <button class="btn btn-sm btn-red" onclick="deleteOrder(\''+o._id+'\')"><i class="ph ph-trash"></i></button>
@@ -949,7 +916,6 @@ async function saveDeliverySettings(){
   } catch(e){ showToast('Error', true); }
 }
 
-// FIXED: Password update function - properly handles the update and forces re-login
 async function updatePasswords(event) {
   const adminPassword = document.getElementById('newAdminPassword').value.trim();
   const cashierPassword = document.getElementById('newCashierPassword').value.trim();
@@ -983,17 +949,14 @@ async function updatePasswords(event) {
       
       showToast('Passwords updated! Logging out...');
       
-      // Clear all local storage
       localStorage.removeItem('liquorbelle_admin_token');
       localStorage.removeItem('liquorbelle_cashier_token');
       localStorage.removeItem('liquorbelle_admin_role');
       adminToken = null;
       
-      // Clear password fields
       document.getElementById('newAdminPassword').value = '';
       document.getElementById('newCashierPassword').value = '';
       
-      // Show success message then reload
       setTimeout(() => {
         alert(message);
         location.reload();

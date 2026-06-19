@@ -725,14 +725,15 @@ a{color:inherit;text-decoration:none;}
 <!-- Pull to Refresh Indicator -->
 <div class="pull-indicator" id="pullIndicator"><i class="ph ph-arrow-clockwise"></i> Pull to refresh</div>
 
-<!-- Marquee -->
+<!-- Marquee - UPDATED: Removed COD, now shows M-PESA only -->
 <div class="marquee-strip">
   <div class="marquee-content">
     <span><i class="ph ph-truck"></i> Fast Delivery • 10-45 minutes across Nairobi</span>
     <span><i class="ph ph-seal-check"></i> 100% Authentic Products</span>
-    <span><i class="ph ph-credit-card"></i> M-PESA, Card, Cash on Delivery</span>
+    <span><i class="ph ph-credit-card"></i> M-PESA Only • Instant Payment</span>
     <span><i class="ph ph-clock"></i> Open 24/7 • We Never Close</span>
     <span><i class="ph ph-whatsapp-logo"></i> Order via WhatsApp • +254 748 894 443</span>
+    <span><i class="ph ph-shield-check"></i> Secure M-PESA Payments</span>
   </div>
 </div>
 
@@ -743,7 +744,7 @@ a{color:inherit;text-decoration:none;}
   </div>
   <div class="hero-content">
     <h2>Welcome to <span>LiquorBelle</span></h2>
-    <p>Your trusted partner for premium spirits, wines, and beers. Authentic products, delivered fast to your door.</p>
+    <p>Your trusted partner for premium spirits, wines, and beers. Authentic products, delivered fast to your door. <strong>Pay securely with M-PESA.</strong></p>
     <button class="shop-btn" onclick="window.location.href='shop.html'">
       <i class="ph ph-wine"></i> Go to Shop
     </button>
@@ -770,7 +771,7 @@ a{color:inherit;text-decoration:none;}
 <div class="trust-badges-row">
   <div class="trust-badge"><div class="trust-badge-icon"><i class="ph ph-truck"></i></div><div class="trust-badge-content"><strong>Delivery Guarantee</strong><p>Fast delivery, rider calls before arrival</p></div></div>
   <div class="trust-badge"><div class="trust-badge-icon"><i class="ph ph-seal-check"></i></div><div class="trust-badge-content"><strong>100% Authentic</strong><p>Official distributors, genuine products</p></div></div>
-  <div class="trust-badge"><div class="trust-badge-icon"><i class="ph ph-headset"></i></div><div class="trust-badge-content"><strong>24/7 Support</strong><p>Call or WhatsApp anytime</p></div></div>
+  <div class="trust-badge"><div class="trust-badge-icon"><i class="ph ph-credit-card"></i></div><div class="trust-badge-content"><strong>M-PESA Only</strong><p>Fast, secure payments via STK Push</p></div></div>
 </div>
 
 <!-- Store Promo -->
@@ -814,6 +815,7 @@ a{color:inherit;text-decoration:none;}
       <p>Nairobi's Finest Alcohol Delivery</p>
       <p>Premium spirits, wines & beers</p>
       <p>100% Authentic Products</p>
+      <p>M-PESA Payments Only</p>
     </div>
     <div class="footer-col">
       <h4>Quick Links</h4>
@@ -834,7 +836,7 @@ a{color:inherit;text-decoration:none;}
   </div>
   <div class="footer-bottom">
     <p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p>
-    <p>Over 18 only. Drink responsibly.</p>
+    <p>Over 18 only. Drink responsibly. M-PESA payments only.</p>
   </div>
 </footer>
 
@@ -1188,12 +1190,9 @@ async function loadProducts(){
         });
         var cheapestVariant=sortedVariants[0]||null;
         
-        // ==================== FIXED: CORRECT DISCOUNT CALCULATION ====================
-        // price is the ORIGINAL price from the variant (admin sets this)
+        // CORRECT DISCOUNT CALCULATION
         var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
         var discountPercent = cheapestVariant?.discount || 0;
-        // Discounted price = Original Price × (100 - Discount%) / 100
-        // Example: 1600 × (100 - 5) / 100 = 1520
         var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
         
         return{
@@ -1201,8 +1200,8 @@ async function loadProducts(){
           id:p._id,
           name:p.name,
           capacity:cheapestVariant?.size||'750ml',
-          price:discountedPrice,        // Display price (discounted if applicable)
-          originalPrice:originalPrice,   // Original price (what admin set)
+          price:discountedPrice,
+          originalPrice:originalPrice,
           discountPercent:discountPercent,
           category:p.category||'',
           badge:p.badge||(discountPercent>10?'hot':''),
@@ -1260,7 +1259,6 @@ function renderProductCard(p, isNew){
   var discountBadge=savePercent>0 ? '<div class="discount-circle">-'+savePercent+'%</div>' : '';
   var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button>';
   
-  // Product card directs to product-details.html - NO QUICK VIEW
   return '<div class="prod-card pop-in"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button></div></div>';
 }
 

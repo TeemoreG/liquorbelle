@@ -243,14 +243,29 @@ a{color:inherit;text-decoration:none;}
   border:1px solid var(--border);
 }
 .featured-item:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--primary);}
-.featured-img{width:100%;height:100px;object-fit:cover;background:var(--bg);}
+.featured-img-wrap{
+  width:100%;
+  height:100px;
+  overflow:hidden;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.featured-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
 .featured-info{padding:8px 10px;}
 .featured-name{font-weight:700;font-size:.7rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;}
 .featured-price{font-weight:800;font-size:.75rem;color:var(--sale-red);margin-top:2px;}
 @media(max-width:600px){
   .featured-sections{grid-template-columns:1fr;gap:16px;}
   .featured-item{flex:0 0 120px;}
-  .featured-img{height:80px;}
+  .featured-img-wrap{height:80px;}
+  .featured-img{object-fit:cover;}
 }
 @media(min-width:1024px){
   .featured-sections{padding:0 5% 28px;}
@@ -283,7 +298,7 @@ a{color:inherit;text-decoration:none;}
 .prod-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;transition:all .3s cubic-bezier(0.4,0,0.2,1);border:1px solid var(--border);display:flex;flex-direction:column;box-shadow:var(--shadow);cursor:pointer;}
 .prod-card:active{transform:scale(0.97);}
 .prod-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(128,0,0,0.15);}
-.pc-img-wrap{position:relative;overflow:hidden;background:var(--bg);padding-top:100%;}
+.pc-img-wrap{position:relative;overflow:hidden;background:var(--bg);padding-top:100%;display:flex;align-items:center;justify-content:center;}
 .pc-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:transform .4s cubic-bezier(0.4,0,0.2,1);}
 .prod-card:hover .pc-img{transform:scale(1.05);}
 .discount-circle{position:absolute;top:8px;left:8px;width:38px;height:38px;background:var(--sale-red);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;z-index:10;box-shadow:0 2px 10px rgba(213,0,0,0.3);}
@@ -436,7 +451,8 @@ a{color:inherit;text-decoration:none;}
   .shop-button{font-size:16px;padding:8px 32px;}
   .cat-chip{font-size:.75rem;padding:8px 14px;}
   .featured-item{flex:0 0 100px;}
-  .featured-img{height:70px;}
+  .featured-img-wrap{height:70px;}
+  .featured-img{object-fit:cover;}
 }
 @media(min-width:1024px){
   .shop-titlebar{padding:28px 5% 4px;}
@@ -535,10 +551,10 @@ a{color:inherit;text-decoration:none;}
   <p class="shop-subtitle" id="shopResultsCount">Loading products…</p>
 </div>
 
-<!-- Info Banner -->
+<!-- Info Banner - UPDATED: M-PESA only -->
 <div class="info-banner">
   <i class="ph ph-info"></i>
-  <span><strong>Click any product</strong> to see full details, available sizes, and pricing variations.</span>
+  <span><strong>Click any product</strong> to see full details, available sizes, and pricing variations. <strong>Pay with M-PESA</strong> only.</span>
 </div>
 
 <!-- Category Chips - NO IMAGES -->
@@ -582,7 +598,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Pagination (Numbered) -->
 <div class="pagination-wrap" id="paginationWrap"></div>
 
-<!-- Trust & Payment Card -->
+<!-- Trust & Payment Card - UPDATED: M-PESA only -->
 <div class="trust-card">
   <div class="trust-item">
     <i class="ph ph-lock-simple"></i>
@@ -591,8 +607,8 @@ a{color:inherit;text-decoration:none;}
   </div>
   <div class="trust-item">
     <i class="ph ph-wallet"></i>
-    <strong>M-PESA & Card</strong>
-    <small>Pay with M-PESA, Visa, Mastercard</small>
+    <strong>M-PESA Only</strong>
+    <small>Fast, secure STK Push payments</small>
   </div>
   <div class="trust-item">
     <i class="ph ph-truck"></i>
@@ -606,7 +622,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Footer -->
+<!-- Footer - UPDATED: M-PESA only -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col">
@@ -614,6 +630,7 @@ a{color:inherit;text-decoration:none;}
       <p>Nairobi's Finest Alcohol Delivery</p>
       <p>Premium spirits, wines & beers</p>
       <p>100% Authentic Products</p>
+      <p>M-PESA Payments Only</p>
     </div>
     <div class="footer-col">
       <h4>Quick Links</h4>
@@ -634,7 +651,7 @@ a{color:inherit;text-decoration:none;}
   </div>
   <div class="footer-bottom">
     <p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p>
-    <p>Over 18 only. Drink responsibly.</p>
+    <p>Over 18 only. Drink responsibly. M-PESA payments only.</p>
   </div>
 </footer>
 
@@ -946,6 +963,8 @@ function selectCategory(cat){
   window.history.replaceState({},'',url);
   renderCatChips();
   applyFilters();
+  // Scroll to top of products
+  document.querySelector('.shop-grid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 // ==================== FILTER DRAWER ====================
@@ -1033,10 +1052,19 @@ function clearSalePill(){
   applyFilters();
 }
 
-// ==================== FEATURED SECTIONS (Trending & New Arrivals) ====================
+// ==================== FEATURED SECTIONS (Trending & New Arrivals) - FILTERED BY CATEGORY ====================
 function renderFeaturedSections(){
-  var trendingItems = ALL_PRODUCTS.filter(function(p){ return p.isTrending === true; }).slice(0, 8);
-  var newItems = ALL_PRODUCTS.filter(function(p){ return p.isNew === true; }).slice(0, 8);
+  var selectedCategory = currentFilters.category;
+  var isAll = selectedCategory === 'all';
+  
+  // Filter products by selected category
+  var trendingItems = ALL_PRODUCTS.filter(function(p){ 
+    return p.isTrending === true && (isAll || p.category === selectedCategory); 
+  }).slice(0, 8);
+  
+  var newItems = ALL_PRODUCTS.filter(function(p){ 
+    return p.isNew === true && (isAll || p.category === selectedCategory); 
+  }).slice(0, 8);
   
   var trendingScroll = document.getElementById('trendingScroll');
   var newScroll = document.getElementById('newArrivalsScroll');
@@ -1046,7 +1074,9 @@ function renderFeaturedSections(){
       var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
       var savePercent = p.discountPercent || 0;
       return '<div class="featured-item" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
-        '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
+        '<div class="featured-img-wrap">'+
+          '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy">'+
+        '</div>'+
         '<div class="featured-info">'+
           '<div class="featured-name">'+escapeHtml(p.name)+'</div>'+
           '<div class="featured-price">'+(savePercent>0?'<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES '+p.originalPrice.toLocaleString()+'</span>':'')+'KES '+price.toLocaleString()+'</div>'+
@@ -1054,7 +1084,7 @@ function renderFeaturedSections(){
       '</div>';
     }).join('');
   } else {
-    trendingScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No trending products</div>';
+    trendingScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No trending products'+(isAll?'':' in '+selectedCategory)+'</div>';
   }
   
   if(newItems.length){
@@ -1062,7 +1092,9 @@ function renderFeaturedSections(){
       var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
       var savePercent = p.discountPercent || 0;
       return '<div class="featured-item" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
-        '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
+        '<div class="featured-img-wrap">'+
+          '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy">'+
+        '</div>'+
         '<div class="featured-info">'+
           '<div class="featured-name">'+escapeHtml(p.name)+'</div>'+
           '<div class="featured-price">'+(savePercent>0?'<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES '+p.originalPrice.toLocaleString()+'</span>':'')+'KES '+price.toLocaleString()+'</div>'+
@@ -1070,7 +1102,7 @@ function renderFeaturedSections(){
       '</div>';
     }).join('');
   } else {
-    newScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No new arrivals</div>';
+    newScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No new arrivals'+(isAll?'':' in '+selectedCategory)+'</div>';
   }
 }
 
@@ -1102,11 +1134,9 @@ async function loadProducts(){
         var sortedVariants=[...variants].sort(function(a,b){return (sizeOrderMap[a.size]||99)-(sizeOrderMap[b.size]||99);});
         var cheapestVariant=sortedVariants[0]||null;
         
-        // ==================== FIXED: CORRECT DISCOUNT CALCULATION ====================
-        // originalPrice is the price admin sets
+        // CORRECT DISCOUNT CALCULATION
         var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
         var discountPercent = cheapestVariant?.discount || 0;
-        // discountedPrice = Original × (100 - Discount%) / 100
         var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
         
         return{
@@ -1114,8 +1144,8 @@ async function loadProducts(){
           id:p._id,
           name:p.name,
           capacity:cheapestVariant?.size||'750ml',
-          price:discountedPrice,        // Display price (discounted if applicable)
-          originalPrice:originalPrice,   // Original price (what admin set)
+          price:discountedPrice,
+          originalPrice:originalPrice,
           discountPercent:discountPercent,
           category:p.category||'',
           badge:p.badge||(discountPercent>10?'hot':''),
@@ -1128,7 +1158,6 @@ async function loadProducts(){
         };
       });
       
-      // Render featured sections after products loaded
       renderFeaturedSections();
       
     }else{
@@ -1173,6 +1202,10 @@ function applyFilters(){
   if(currentPage<1) currentPage=1;
   var totalPages=Math.ceil(filteredProducts.length/PAGE_SIZE);
   if(currentPage>totalPages && totalPages>0) currentPage=totalPages;
+  
+  // Re-render featured sections when category changes
+  renderFeaturedSections();
+  
   updateTitleBar();
   updateFilterCount();
   renderActiveFilterPills();
@@ -1268,7 +1301,7 @@ function renderProductCard(p){
     '</select>';
   }
 
-  return '<div class="prod-card" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><div class="pc-img-wrap"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div>'+variantHtml+'<button class="atc-btn" onclick="event.stopPropagation();addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button><div class="click-hint">Click for details →</div></div></div>';
+  return '<div class="prod-card" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><div class="pc-img-wrap"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div>'+variantHtml+'<button class="atc-btn" onclick="event.stopPropagation();addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button><div class="click-hint">Click for details →</div></div></div>';
 }
 
 function updateVariantPrice(select, productId){

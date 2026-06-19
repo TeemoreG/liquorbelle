@@ -557,13 +557,13 @@ a{color:inherit;text-decoration:none;}
       <span class="discount-badge" id="discountBadge" style="display:none;"></span>
     </div>
     
-   <div class="payment-icons">
-  <span class="payment-label">Secure Payment:</span>
-  <div class="mpesa-badge">
-    <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781875182/Mpesa_bvcz8v.png" alt="M-PESA" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/M-PESA_Logo.svg/1200px-M-PESA_Logo.svg.png'">
-    <span>M-PESA</span>
-  </div>
-</div>
+    <div class="payment-icons">
+      <span class="payment-label">Secure Payment:</span>
+      <div class="mpesa-badge">
+        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781875182/Mpesa_bvcz8v.png" alt="M-PESA" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/M-PESA_Logo.svg/1200px-M-PESA_Logo.svg.png'">
+        <span>M-PESA Only</span>
+      </div>
+    </div>
     
     <div class="quantity-selector">
       <label>Quantity:</label>
@@ -583,11 +583,12 @@ a{color:inherit;text-decoration:none;}
       </button>
     </div>
     
+    <!-- UPDATED: Removed COD, M-PESA only -->
     <div class="delivery-info-card">
       <p><i class="ph ph-truck"></i> <strong>Fast Delivery:</strong> 10-45 minutes within Nairobi<br>
       <i class="ph ph-phone-call"></i> Rider will call before arrival<br>
-      <i class="ph ph-wallet"></i> Pay via M-PESA or Cash on Delivery<br>
-      <i class="ph ph-gift"></i> Free delivery on orders over KES 3,000 or 750ml+ bottles</p>
+      <i class="ph ph-wallet"></i> <strong>Pay with M-PESA</strong> • STK Push sent to your phone<br>
+      <i class="ph ph-gift"></i> Free delivery on orders over KES 3,000 or any 750ml+ bottle</p>
     </div>
     
     <div class="share-section">
@@ -607,7 +608,7 @@ a{color:inherit;text-decoration:none;}
   <div class="related-grid" id="relatedGrid"></div>
 </div>
 
-<!-- Footer -->
+<!-- Footer - UPDATED: Added M-PESA only mention -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col">
@@ -615,6 +616,7 @@ a{color:inherit;text-decoration:none;}
       <p>Nairobi's Finest Alcohol Delivery</p>
       <p>Premium spirits, wines & beers</p>
       <p>100% Authentic Products</p>
+      <p>M-PESA Payments Only</p>
     </div>
     <div class="footer-col">
       <h4>Quick Links</h4>
@@ -635,7 +637,7 @@ a{color:inherit;text-decoration:none;}
   </div>
   <div class="footer-bottom">
     <p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p>
-    <p>Over 18 only. Drink responsibly.</p>
+    <p>Over 18 only. Drink responsibly. M-PESA payments only.</p>
   </div>
 </footer>
 
@@ -790,7 +792,7 @@ function copyProductLink() {
   navigator.clipboard.writeText(window.location.href).then(function(){ showShareToast('✅ Link copied!'); });
 }
 
-// ==================== LOAD PRODUCT (Optimized for speed) ====================
+// ==================== LOAD PRODUCT ====================
 async function loadProduct() {
   if(!productId) { toast('Product not found'); return; }
   try{
