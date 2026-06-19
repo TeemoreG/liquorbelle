@@ -1183,18 +1183,26 @@ async function loadProducts(){
       PRODUCTS=data.products.map(function(p){
         var variants=p.variants||[];
         var sizeOrderMap={'250ml':1,'350ml':2,'500ml':3,'750ml':4,'1L':5,'1.5L':6};
-        var sortedVariants=[...variants].sort(function(a,b){return (sizeOrderMap[a.size]||99)-(sizeOrderMap[b.size]||99);});
+        var sortedVariants=[...variants].sort(function(a,b){
+          return (sizeOrderMap[a.size]||99)-(sizeOrderMap[b.size]||99);
+        });
         var cheapestVariant=sortedVariants[0]||null;
-        var price=cheapestVariant?cheapestVariant.price:0;
-        var originalPrice=cheapestVariant?.discount?Math.round(price*100/(100-cheapestVariant.discount)):price;
-        var discountPercent=cheapestVariant?.discount||0;
+        
+        // ==================== FIXED: CORRECT DISCOUNT CALCULATION ====================
+        // price is the ORIGINAL price from the variant (admin sets this)
+        var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
+        var discountPercent = cheapestVariant?.discount || 0;
+        // Discounted price = Original Price × (100 - Discount%) / 100
+        // Example: 1600 × (100 - 5) / 100 = 1520
+        var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
+        
         return{
           _id:p._id,
           id:p._id,
           name:p.name,
           capacity:cheapestVariant?.size||'750ml',
-          price:price,
-          originalPrice:originalPrice,
+          price:discountedPrice,        // Display price (discounted if applicable)
+          originalPrice:originalPrice,   // Original price (what admin set)
           discountPercent:discountPercent,
           category:p.category||'',
           badge:p.badge||(discountPercent>10?'hot':''),
@@ -1252,7 +1260,7 @@ function renderProductCard(p, isNew){
   var discountBadge=savePercent>0 ? '<div class="discount-circle">-'+savePercent+'%</div>' : '';
   var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button>';
   
-  // Product card now directs to product-details.html - NO QUICK VIEW
+  // Product card directs to product-details.html - NO QUICK VIEW
   return '<div class="prod-card pop-in"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button></div></div>';
 }
 
