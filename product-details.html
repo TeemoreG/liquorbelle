@@ -794,14 +794,12 @@ function copyProductLink() {
 async function loadProduct() {
   if(!productId) { toast('Product not found'); return; }
   try{
-    // Fetch all products - we need the full list for related products
     var res = await fetch(API_BASE+'/api/db/products');
     var data = await res.json();
     if(data.success && data.products) {
       allProducts = data.products;
       currentProduct = allProducts.find(function(p){ return p._id === productId; });
       if(currentProduct) {
-        // Render immediately for speed
         renderProductDetails();
         renderRelatedProducts();
       } else { toast('Product not found'); }
@@ -813,7 +811,6 @@ function renderProductDetails() {
   var name = currentProduct.name;
   var category = currentProduct.category || '';
   
-  // Set basic info immediately
   document.getElementById('productName').innerText = name;
   document.getElementById('productCategory').innerText = category;
   document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
@@ -848,6 +845,7 @@ function renderProductDetails() {
   selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
 }
 
+// ==================== FIXED: CORRECT DISCOUNT CALCULATION ====================
 function selectVariant(size, price, discount) {
   selectedVariant = { size: size, price: price, discount: discount };
   var btns = document.querySelectorAll('.variant-btn');
@@ -856,7 +854,12 @@ function selectVariant(size, price, discount) {
   }
   
   var hasDiscount = discount > 0;
-  var originalPrice = hasDiscount ? Math.round(price * 100 / (100 - discount)) : price;
+  // CORRECT: price is the original price from admin
+  // Discounted price = Original Price × (100 - Discount%) / 100
+  // Example: 1600 × (100 - 5) / 100 = 1520
+  var discountedPrice = hasDiscount ? Math.round(price * (100 - discount) / 100) : price;
+  var originalPrice = price;
+  
   var priceOld = document.getElementById('priceOld');
   var priceNew = document.getElementById('priceNew');
   var discountBadge = document.getElementById('discountBadge');
@@ -864,7 +867,7 @@ function selectVariant(size, price, discount) {
   if(hasDiscount) {
     priceOld.style.display = 'inline';
     priceOld.innerHTML = 'KES '+originalPrice.toLocaleString();
-    priceNew.innerHTML = 'KES '+price.toLocaleString();
+    priceNew.innerHTML = 'KES '+discountedPrice.toLocaleString();
     discountBadge.style.display = 'inline';
     discountBadge.innerHTML = '-'+discount+'%';
   } else {
@@ -932,8 +935,10 @@ function addToCart(id,name,price,capacity){
 function addToCartFromDetail() {
   if(!currentProduct || !selectedVariant) { toast('Select a size'); return; }
   var id = currentProduct._id;
+  // Use the discounted price when adding to cart
+  var priceToAdd = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
   if(cart[id]) { cart[id].qty += quantity; } 
-  else { cart[id] = { id: id, name: currentProduct.name, price: selectedVariant.price, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size }; }
+  else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size }; }
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   updateCartUI();
   toast(quantity+'× '+currentProduct.name+' ('+selectedVariant.size+') added ✓');
@@ -942,8 +947,9 @@ function addToCartFromDetail() {
 function buyNow() {
   if(!currentProduct || !selectedVariant) { toast('Select a size'); return; }
   var id = currentProduct._id;
+  var priceToAdd = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
   if(cart[id]) { cart[id].qty += quantity; } 
-  else { cart[id] = { id: id, name: currentProduct.name, price: selectedVariant.price, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size }; }
+  else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size }; }
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   window.location.href = 'checkout.html';
 }
