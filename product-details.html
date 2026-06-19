@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <meta name="theme-color" content="#800000">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LiquorBelle — Product Details</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
@@ -557,13 +557,13 @@ a{color:inherit;text-decoration:none;}
       <span class="discount-badge" id="discountBadge" style="display:none;"></span>
     </div>
     
-    <div class="payment-icons">
-      <span class="payment-label">Secure Payment:</span>
-      <div class="mpesa-badge">
-        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780934550/mpesa_w3qmr0.png" alt="M-PESA" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/M-PESA_Logo.svg/1200px-M-PESA_Logo.svg.png'">
-        <span>M-PESA</span>
-      </div>
-    </div>
+   <div class="payment-icons">
+  <span class="payment-label">Secure Payment:</span>
+  <div class="mpesa-badge">
+    <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781875182/Mpesa_bvcz8v.png" alt="M-PESA" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/M-PESA_Logo.svg/1200px-M-PESA_Logo.svg.png'">
+    <span>M-PESA</span>
+  </div>
+</div>
     
     <div class="quantity-selector">
       <label>Quantity:</label>
@@ -790,16 +790,18 @@ function copyProductLink() {
   navigator.clipboard.writeText(window.location.href).then(function(){ showShareToast('✅ Link copied!'); });
 }
 
-// ==================== LOAD PRODUCT ====================
+// ==================== LOAD PRODUCT (Optimized for speed) ====================
 async function loadProduct() {
   if(!productId) { toast('Product not found'); return; }
   try{
+    // Fetch all products - we need the full list for related products
     var res = await fetch(API_BASE+'/api/db/products');
     var data = await res.json();
     if(data.success && data.products) {
       allProducts = data.products;
       currentProduct = allProducts.find(function(p){ return p._id === productId; });
       if(currentProduct) {
+        // Render immediately for speed
         renderProductDetails();
         renderRelatedProducts();
       } else { toast('Product not found'); }
@@ -811,6 +813,7 @@ function renderProductDetails() {
   var name = currentProduct.name;
   var category = currentProduct.category || '';
   
+  // Set basic info immediately
   document.getElementById('productName').innerText = name;
   document.getElementById('productCategory').innerText = category;
   document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
