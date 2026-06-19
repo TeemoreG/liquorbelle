@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<meta name="theme-color" content="#800000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LiquorBelle — Nairobi's Finest Alcohol Delivery</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
@@ -29,178 +32,171 @@
   --font-body:'Inter',-apple-system,sans-serif;
   --btn-green:#22C55E;
   --btn-green-hover:#16A34A;
-  --bottom-nav-height:65px;
+  --bottom-nav-height:70px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
 }
-body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:var(--bottom-nav-height);}
+body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
 
-/* Floating WhatsApp */
+/* Loading Skeleton */
+.skeleton{background:linear-gradient(90deg,var(--bg2) 25%,var(--border) 50%,var(--bg2) 75%);background-size:200% 100%;animation:skeleton-loading 1.5s ease-in-out infinite;border-radius:var(--radius-xs);}
+@keyframes skeleton-loading{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.skeleton-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);padding:12px;}
+.skeleton-img{width:100%;padding-top:100%;background:var(--bg2);border-radius:var(--radius-xs);}
+.skeleton-text{height:14px;background:var(--bg2);border-radius:6px;margin-top:10px;width:70%;}
+.skeleton-text.short{width:40%;}
+.skeleton-text.long{width:90%;}
+.skeleton-btn{height:36px;background:var(--bg2);border-radius:60px;margin-top:12px;}
+
+/* Pull to Refresh */
+.pull-indicator{text-align:center;padding:12px 0;color:var(--muted);font-size:12px;display:none;}
+.pull-indicator.show{display:block;}
+.pull-indicator i{display:inline-block;transition:transform .3s;}
+.pull-indicator.spinning i{animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Offline Banner */
+.offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
+.offline-banner.show{display:block;}
+
+/* WhatsApp Float */
 .whatsapp-float{
-  position:fixed;bottom:85px;right:20px;background:#25D366;color:white;
-  width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;z-index:1000;box-shadow:0 4px 15px rgba(37,211,102,0.35);
+  position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;
+  width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:1000;box-shadow:0 4px 20px rgba(37,211,102,0.4);
   transition:all .3s;border:none;text-decoration:none;
 }
-.whatsapp-float:hover{transform:scale(1.08);box-shadow:0 8px 25px rgba(37,211,102,0.45);}
+.whatsapp-float:hover{transform:scale(1.08);box-shadow:0 8px 30px rgba(37,211,102,0.5);}
 .whatsapp-float i{font-size:28px;}
 .whatsapp-float .tooltip{
-  position:absolute;right:70px;background:rgba(0,0,0,0.8);color:white;
+  position:absolute;right:68px;background:rgba(0,0,0,0.85);color:white;
   padding:6px 14px;border-radius:30px;font-size:11px;white-space:nowrap;
   opacity:0;pointer-events:none;transition:all .3s;font-weight:500;
 }
-.whatsapp-float:hover .tooltip{opacity:1;right:65px;}
+.whatsapp-float:hover .tooltip{opacity:1;right:62px;}
+
+@media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:20px;right:24px;}}
 
 /* Bottom Navigation */
 .bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-height);
-  background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);
+  position:fixed;bottom:0;left:0;right:0;height:calc(var(--bottom-nav-height) + var(--safe-bottom));
+  background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
   border-top:1px solid rgba(0,0,0,0.06);
   display:flex;align-items:center;justify-content:space-around;
-  z-index:300;padding:6px 0 env(safe-area-inset-bottom);
+  z-index:300;padding:4px 0 var(--safe-bottom);
 }
 .nav-item{
   display:flex;flex-direction:column;align-items:center;gap:2px;
-  cursor:pointer;padding:4px 16px;transition:.2s;position:relative;
+  cursor:pointer;padding:4px 12px;transition:.2s;position:relative;
   border:none;background:none;color:var(--muted);
-  font-family:var(--font-body);font-size:10px;font-weight:500;
+  font-family:var(--font-body);font-size:9px;font-weight:500;
+  -webkit-tap-highlight-color:transparent;
 }
 .nav-item i{font-size:22px;transition:.2s;}
 .nav-item.active{color:var(--primary);}
 .nav-item.active i{color:var(--primary);}
 .nav-item .nav-badge{
-  position:absolute;top:0;right:4px;background:var(--sale-red);
-  color:white;font-size:9px;font-weight:700;width:18px;height:18px;
+  position:absolute;top:-2px;right:2px;background:var(--sale-red);
+  color:white;font-size:9px;font-weight:700;min-width:18px;height:18px;
   border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;
+  padding:0 5px;
 }
-@media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:25px;}}
+.nav-item:active{transform:scale(0.92);}
 
 /* Age Gate */
 .age-gate{
   position:fixed;inset:0;background:rgba(0,0,0,0.95);
   display:flex;align-items:center;justify-content:center;
   z-index:2000;backdrop-filter:blur(8px);
+  animation:fadeIn .4s ease;
 }
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 .age-gate-card{
   background:var(--white);border-radius:var(--radius);
-  padding:48px 40px;text-align:center;max-width:420px;width:90%;
+  padding:40px 32px;text-align:center;max-width:400px;width:90%;
   border-top:5px solid var(--primary);box-shadow:var(--shadow-xl);
+  animation:slideUp .4s ease;
 }
-.age-gate-card img{width:90px;margin:0 auto 16px;border-radius:50%;}
-.age-gate-card h2{font-family:var(--font-body);font-size:1.8rem;font-weight:800;color:var(--primary);margin-bottom:8px;}
-.age-gate-card p{color:var(--muted);font-size:.9rem;margin-bottom:28px;line-height:1.6;}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.age-gate-card img{width:80px;margin:0 auto 12px;border-radius:50%;}
+.age-gate-card h2{font-size:1.6rem;font-weight:800;color:var(--primary);margin-bottom:6px;}
+.age-gate-card p{color:var(--muted);font-size:.85rem;margin-bottom:24px;line-height:1.6;}
 .age-gate-btns{display:flex;gap:12px;}
-.age-yes{flex:1;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;transition:.2s;}
-.age-yes:hover{background:var(--primary-bright);transform:translateY(-2px);}
-.age-no{flex:1;padding:14px;background:var(--bg2);color:var(--muted);border:1.5px solid var(--border);border-radius:50px;font-weight:700;cursor:pointer;}
+.age-yes{flex:1;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;transition:.2s;font-size:1rem;}
+.age-yes:active{transform:scale(0.96);}
+.age-yes:hover{background:var(--primary-bright);}
+.age-no{flex:1;padding:14px;background:var(--bg2);color:var(--muted);border:1.5px solid var(--border);border-radius:50px;font-weight:700;cursor:pointer;font-size:1rem;}
+.age-no:active{transform:scale(0.96);}
 
-/* Header - RED */
+/* Header */
 .main-header{
   background:var(--primary);
-  padding:14px 4%;
+  padding:12px 4%;
   display:flex;
   align-items:center;
   justify-content:center;
   border-bottom:1px solid rgba(255,255,255,0.15);
   position:sticky;top:0;z-index:200;
-  box-shadow:0 2px 12px rgba(0,0,0,0.15);
+  box-shadow:0 2px 16px rgba(0,0,0,0.15);
 }
-.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
-.logo-img{height:44px;width:44px;object-fit:cover;border-radius:12px;background:white;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-.logo-text{font-family:var(--font-body);font-size:1.3rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;}
-.logo-text small{display:block;font-size:9px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:2px;text-transform:uppercase;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-img{height:40px;width:40px;object-fit:cover;border-radius:12px;background:white;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.logo-text{font-size:1.2rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;}
+.logo-text small{display:block;font-size:8px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:1px;text-transform:uppercase;}
 
-/* Marquee - RED */
-.marquee-strip{background:var(--sale-red);overflow:hidden;white-space:nowrap;padding:12px 0;}
-.marquee-content{display:inline-block;animation:marquee 30s linear infinite;font-family:var(--font-body);font-weight:600;font-size:.85rem;color:white;}
-.marquee-content span{display:inline-block;margin:0 35px;}
-.marquee-content i{margin-right:8px;vertical-align:middle;}
+/* Marquee */
+.marquee-strip{background:var(--sale-red);overflow:hidden;white-space:nowrap;padding:10px 0;}
+.marquee-content{display:inline-block;animation:marquee 30s linear infinite;font-weight:600;font-size:.8rem;color:white;}
+.marquee-content span{display:inline-block;margin:0 25px;}
+.marquee-content i{margin-right:6px;vertical-align:middle;}
 @keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 .marquee-strip:hover .marquee-content{animation-play-state:paused;}
 
-/* Hero Section - Rounded Card */
+/* Hero */
 .hero-section{
-  margin:16px 4% 0;
+  margin:12px 4% 0;
   border-radius:var(--radius);
   overflow:hidden;
   box-shadow:var(--shadow-lg);
   background:var(--white);
 }
-.hero-image-wrap{
-  width:100%;
-  background:var(--white);
-}
-.hero-supporting-image{
-  width:100%;
-  height:auto;
-  display:block;
-  object-fit:cover;
-}
-.hero-content{
-  padding:24px 28px 28px;
-  text-align:center;
-  background:var(--white);
-}
-.hero-content h2{
-  font-family:var(--font-body);
-  font-size:1.4rem;
-  font-weight:800;
-  color:var(--text);
-  margin-bottom:6px;
-}
-.hero-content h2 span{
-  color:var(--primary);
-}
-.hero-content p{
-  font-size:.9rem;
-  color:var(--muted);
-  line-height:1.6;
-  margin-bottom:18px;
-  max-width:500px;
-  margin-left:auto;
-  margin-right:auto;
-}
+.hero-image-wrap{width:100%;background:var(--white);}
+.hero-supporting-image{width:100%;height:auto;display:block;object-fit:cover;}
+.hero-content{padding:20px 24px 24px;text-align:center;background:var(--white);}
+.hero-content h2{font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.hero-content h2 span{color:var(--primary);}
+.hero-content p{font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:16px;max-width:500px;margin-left:auto;margin-right:auto;}
 .hero-content .shop-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  background:var(--primary);
-  color:#fff;
-  padding:14px 40px;
-  border-radius:60px;
-  font-weight:700;
-  font-size:.9rem;
-  transition:all .3s;
-  border:none;
-  cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--primary);color:#fff;padding:12px 36px;border-radius:60px;
+  font-weight:700;font-size:.85rem;transition:all .3s;border:none;cursor:pointer;
   box-shadow:0 4px 16px rgba(128,0,0,0.25);
 }
-.hero-content .shop-btn:hover{
-  background:var(--primary-bright);
-  transform:translateY(-3px);
-  box-shadow:0 8px 25px rgba(128,0,0,0.35);
-}
+.hero-content .shop-btn:active{transform:scale(0.96);}
+.hero-content .shop-btn:hover{background:var(--primary-bright);transform:translateY(-2px);box-shadow:0 8px 25px rgba(128,0,0,0.35);}
 
 /* Section Headers */
 .section-header{
   display:flex;justify-content:space-between;align-items:center;
-  margin:40px 5% 24px;
+  margin:32px 4% 16px;
 }
-.section-header h2{font-family:var(--font-body);font-size:1.6rem;font-weight:800;color:var(--text);position:relative;}
+.section-header h2{font-size:1.3rem;font-weight:800;color:var(--text);position:relative;}
 .section-header h2::after{
-  content:'';position:absolute;bottom:-8px;left:0;
-  width:40px;height:3px;background:var(--primary);border-radius:3px;
+  content:'';position:absolute;bottom:-6px;left:0;
+  width:32px;height:3px;background:var(--primary);border-radius:3px;
 }
-.section-header a{font-size:.8rem;font-weight:600;color:var(--primary);padding:8px 20px;border:1.5px solid var(--primary);border-radius:50px;transition:all .2s;}
+.section-header a{font-size:.75rem;font-weight:600;color:var(--primary);padding:6px 16px;border:1.5px solid var(--primary);border-radius:50px;transition:all .2s;}
+.section-header a:active{transform:scale(0.95);}
 .section-header a:hover{background:var(--primary);color:white;}
 
 /* Category Grid */
 .category-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:20px;
-  padding:0 5%;
-  margin-bottom:40px;
+  gap:12px;
+  padding:0 4%;
+  margin-bottom:32px;
 }
 .cat-card{
   background:var(--white);
@@ -210,206 +206,247 @@ a{color:inherit;text-decoration:none;}
   border:1px solid var(--border);
   transition:all .3s cubic-bezier(0.4,0,0.2,1);
   cursor:pointer;
-  padding:24px 16px;
+  padding:16px 12px;
   box-shadow:var(--shadow);
 }
-.cat-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
-.cat-img{width:70px;height:70px;object-fit:cover;border-radius:50%;background:var(--bg2);margin:0 auto 12px;border:3px solid var(--bg2);transition:all .3s;}
+.cat-card:active{transform:scale(0.95);}
+.cat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
+.cat-img{width:56px;height:56px;object-fit:cover;border-radius:50%;background:var(--bg2);margin:0 auto 8px;border:3px solid var(--bg2);transition:all .3s;}
 .cat-card:hover .cat-img{border-color:var(--primary);}
-.cat-card span{display:block;font-weight:700;font-size:.85rem;color:var(--text);}
+.cat-card span{display:block;font-weight:700;font-size:.75rem;color:var(--text);}
 
 /* Products Grid */
-.products-grid,.all-products-grid,.new-arrivals-grid,.trending-grid{
+.products-grid,.new-arrivals-grid,.trending-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:24px;
-  padding:0 5%;
-  margin-bottom:32px;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  padding:0 4%;
+  margin-bottom:24px;
 }
 .prod-card{
   background:var(--white);
   border-radius:var(--radius-sm);
   overflow:hidden;
-  transition:all .4s cubic-bezier(0.4,0,0.2,1);
+  transition:all .3s cubic-bezier(0.4,0,0.2,1);
   border:1px solid var(--border);
   display:flex;
   flex-direction:column;
   box-shadow:var(--shadow);
 }
-.prod-card:hover{transform:translateY(-10px);box-shadow:var(--shadow-xl);border-color:rgba(128,0,0,0.15);}
+.prod-card:active{transform:scale(0.97);}
+.prod-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(128,0,0,0.15);}
 .pc-img-wrap{position:relative;overflow:hidden;background:var(--bg);cursor:pointer;padding-top:100%;}
-.pc-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(0.4,0,0.2,1);}
-.prod-card:hover .pc-img{transform:scale(1.08);}
+.pc-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:transform .4s cubic-bezier(0.4,0,0.2,1);}
+.prod-card:hover .pc-img{transform:scale(1.05);}
 .discount-circle{
-  position:absolute;top:10px;left:10px;width:44px;height:44px;
+  position:absolute;top:8px;left:8px;width:38px;height:38px;
   background:var(--sale-red);color:#fff;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;z-index:10;box-shadow:0 3px 12px rgba(213,0,0,0.3);
+  font-size:11px;font-weight:800;z-index:10;box-shadow:0 2px 10px rgba(213,0,0,0.3);
 }
 .badge-new{
-  position:absolute;top:10px;left:10px;background:var(--sale-red);
-  color:#fff;font-size:9px;font-weight:700;padding:3px 12px;border-radius:30px;z-index:10;
+  position:absolute;top:8px;left:8px;background:var(--sale-red);
+  color:#fff;font-size:8px;font-weight:700;padding:2px 10px;border-radius:30px;z-index:10;
 }
 .pc-wishlist{
-  position:absolute;top:10px;right:10px;width:34px;height:34px;
+  position:absolute;top:8px;right:8px;width:30px;height:30px;
   border-radius:50%;background:white;border:1px solid #e5e7eb;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;z-index:20;transition:all .2s;color:#9ca3af;font-size:16px;
+  cursor:pointer;z-index:20;transition:all .2s;font-size:14px;
   box-shadow:0 2px 8px rgba(0,0,0,0.06);
 }
-.pc-wishlist:hover{background:var(--primary);color:white;border-color:var(--primary);transform:scale(1.1);}
-.pc-wishlist.wishlisted{color:#DC2626;border-color:#DC2626;background:#fff5f5;}
+.pc-wishlist i{color:#9ca3af;transition:all .2s;}
+.pc-wishlist.wishlisted{background:#fff5f5;border-color:#DC2626;}
 .pc-wishlist.wishlisted i{color:#DC2626;}
-.pc-body{padding:16px;flex:1;display:flex;flex-direction:column;}
-.pc-name{font-weight:700;font-size:.9rem;margin-bottom:4px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.pc-vol{display:inline-block;background:var(--bg2);padding:3px 10px;border-radius:30px;font-size:.6rem;font-weight:600;color:var(--gold);margin-bottom:8px;align-self:flex-start;}
-.pc-price-wrap{display:flex;align-items:center;gap:8px;margin:8px 0;}
-.pc-price-old{font-size:.75rem;color:var(--muted);text-decoration:line-through;}
-.pc-price-new{font-weight:900;font-size:1.3rem;color:var(--sale-red);font-family:var(--font-body);}
+.pc-wishlist:active{transform:scale(0.9);}
+.pc-wishlist:hover{background:var(--primary);border-color:var(--primary);}
+.pc-wishlist:hover i{color:white;}
+.pc-body{padding:12px;flex:1;display:flex;flex-direction:column;}
+.pc-name{font-weight:700;font-size:.8rem;margin-bottom:2px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.pc-vol{display:inline-block;background:var(--bg2);padding:2px 8px;border-radius:30px;font-size:.55rem;font-weight:600;color:var(--gold);margin-bottom:6px;align-self:flex-start;}
+.pc-price-wrap{display:flex;align-items:center;gap:6px;margin:4px 0 8px;flex-wrap:wrap;}
+.pc-price-old{font-size:.65rem;color:var(--muted);text-decoration:line-through;}
+.pc-price-new{font-weight:900;font-size:1.1rem;color:var(--sale-red);}
 .atc-btn{
-  width:100%;padding:10px;background:var(--btn-green);color:#fff;border:none;
-  border-radius:60px;font-weight:700;font-size:.75rem;cursor:pointer;
-  transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:8px;background:var(--btn-green);color:#fff;border:none;
+  border-radius:60px;font-weight:700;font-size:.7rem;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;
   margin-top:auto;
 }
-.atc-btn:hover{background:var(--btn-green-hover);transform:scale(1.02);}
-
-/* Feature Grid */
-.feature-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:24px;
-  margin:48px 5%;
-}
-.feature-card{
-  background:var(--white);
-  border-radius:var(--radius-sm);
-  padding:32px 20px;
-  text-align:center;
-  border:1px solid var(--border);
-  transition:all .3s;
-  box-shadow:var(--shadow);
-}
-.feature-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(128,0,0,0.15);}
-.feature-icon{width:64px;height:64px;background:var(--bg2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
-.feature-icon i{font-size:28px;color:var(--primary);}
-.feature-title{font-weight:700;font-size:.95rem;margin-bottom:6px;}
-.feature-desc{font-size:.75rem;color:var(--muted);line-height:1.5;}
+.atc-btn:active{transform:scale(0.95);}
+.atc-btn:hover{background:var(--btn-green-hover);}
 
 /* Trust Badges */
 .trust-badges-row{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
-  margin:40px 5%;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin:32px 4%;
 }
 .trust-badge{
   background:linear-gradient(135deg, #F0F7F0, #E8F0E8);
   border-radius:var(--radius-sm);
-  padding:20px 24px;
+  padding:14px 18px;
   display:flex;
   align-items:center;
-  gap:16px;
+  gap:12px;
   border-left:4px solid #22C55E;
 }
-.trust-badge-icon i{font-size:28px;color:#22C55E;}
-.trust-badge-content strong{font-size:14px;display:block;color:#1A6B35;margin-bottom:2px;}
-.trust-badge-content p{font-size:11px;color:var(--muted);line-height:1.4;}
+.trust-badge-icon i{font-size:22px;color:#22C55E;}
+.trust-badge-content strong{font-size:13px;display:block;color:#1A6B35;margin-bottom:1px;}
+.trust-badge-content p{font-size:10px;color:var(--muted);line-height:1.3;}
 
 /* Store Promo */
 .store-promo{
   background:var(--white);
-  margin:48px 5%;
+  margin:32px 4%;
   border-radius:var(--radius);
   overflow:hidden;
   box-shadow:var(--shadow-lg);
-  display:grid;
-  grid-template-columns:1fr 1fr;
   border:1px solid var(--border);
 }
-.store-promo-left{padding:40px 36px;background:linear-gradient(135deg, #FAF8F5, #F5F0EA);}
-.store-promo-left h3{font-family:var(--font-body);font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:16px;}
-.store-promo-left .subtitle{color:var(--muted);font-size:.95rem;line-height:1.6;margin-bottom:20px;}
-.store-address{background:rgba(128,0,0,0.05);padding:14px 18px;border-radius:var(--radius-xs);margin:16px 0;border-left:3px solid var(--primary);}
-.store-address p{color:var(--text);font-size:.85rem;line-height:1.5;}
+.store-promo-left{padding:24px 20px;background:linear-gradient(135deg, #FAF8F5, #F5F0EA);}
+.store-promo-left h3{font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:10px;}
+.store-promo-left .subtitle{color:var(--muted);font-size:.85rem;line-height:1.6;margin-bottom:14px;}
+.store-address{background:rgba(128,0,0,0.05);padding:12px 16px;border-radius:var(--radius-xs);margin:12px 0;border-left:3px solid var(--primary);}
+.store-address p{color:var(--text);font-size:.8rem;line-height:1.5;}
 .store-address strong{color:var(--primary);}
-.store-promo-right{padding:40px 36px;display:flex;flex-direction:column;justify-content:center;background:var(--white);}
-.promo-features{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
-.promo-feature{display:flex;align-items:center;gap:12px;background:var(--bg2);padding:12px 16px;border-radius:var(--radius-xs);transition:all .2s;}
-.promo-feature:hover{background:rgba(128,0,0,0.06);transform:translateX(4px);}
-.promo-feature i{font-size:20px;color:var(--primary);}
-.promo-feature span{font-size:.8rem;font-weight:500;}
+.store-promo-right{padding:20px 20px 24px;background:var(--white);}
+.promo-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.promo-feature{display:flex;align-items:center;gap:10px;background:var(--bg2);padding:10px 14px;border-radius:var(--radius-xs);transition:all .2s;font-size:.8rem;font-weight:500;}
+.promo-feature:active{transform:scale(0.97);}
+.promo-feature i{font-size:18px;color:var(--primary);}
 .directions-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  background:var(--primary);color:white;padding:14px 24px;border-radius:60px;
-  font-weight:700;font-size:.85rem;transition:all .2s;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--primary);color:white;padding:12px 20px;border-radius:60px;
+  font-weight:700;font-size:.8rem;transition:all .2s;border:none;cursor:pointer;
   width:100%;text-align:center;
 }
-.directions-btn:hover{background:var(--primary-bright);transform:translateY(-2px);box-shadow:0 8px 25px rgba(128,0,0,0.3);}
+.directions-btn:active{transform:scale(0.97);}
+.directions-btn:hover{background:var(--primary-bright);box-shadow:0 4px 16px rgba(128,0,0,0.3);}
 
 /* Review Section */
 .review-section{
-  margin:40px 5%;
+  margin:32px 4%;
   background:linear-gradient(135deg, var(--primary), var(--primary-dark));
   border-radius:var(--radius);
-  padding:36px 40px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  flex-wrap:wrap;
+  padding:28px 24px;
+  text-align:center;
   color:white;
 }
-.review-section-text h3{font-family:var(--font-body);font-size:1.3rem;font-weight:800;margin-bottom:4px;}
-.review-section-text p{opacity:.8;font-size:.9rem;}
+.review-section-text h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+.review-section-text p{opacity:.85;font-size:.85rem;margin-bottom:14px;}
 .review-btn{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:12px 28px;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 24px;
   background:white;color:var(--primary);border-radius:60px;
-  font-weight:700;font-size:.85rem;
+  font-weight:700;font-size:.8rem;
   transition:all .2s;border:none;cursor:pointer;
 }
-.review-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,0.2);}
+.review-btn:active{transform:scale(0.95);}
+.review-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.2);}
 
 /* Zones */
 .zones-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
-  gap:12px;
-  padding:0 5%;
-  margin-bottom:32px;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:0 4%;
+  margin-bottom:24px;
 }
 .zone-tag{
   background:var(--white);
   border:1px solid var(--border);
   border-radius:60px;
-  padding:8px 16px;
+  padding:6px 12px;
   display:flex;
   align-items:center;
-  gap:8px;
-  font-size:.75rem;
+  gap:6px;
+  font-size:.65rem;
   transition:all .2s;
+  justify-content:center;
 }
+.zone-tag:active{transform:scale(0.95);}
 .zone-tag:hover{border-color:var(--primary);background:var(--bg2);}
-.zone-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);}
+.zone-dot{width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;}
 
 /* Footer */
 .footer{
   background:var(--primary-dark);
   color:rgba(255,255,255,.85);
-  padding:48px 5% 32px;
-  margin-top:40px;
+  padding:32px 4% 24px;
+  margin-top:32px;
 }
 .footer-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:32px;
-  margin-bottom:32px;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:24px;
+  margin-bottom:24px;
 }
-.footer-col h4{font-size:.9rem;font-weight:700;margin-bottom:16px;color:#fff;opacity:.9;}
-.footer-col p,.footer-col a{display:block;font-size:.75rem;margin-bottom:8px;opacity:.7;color:#fff;text-decoration:none;}
-.footer-col a:hover{opacity:1;transform:translateX(4px);}
-.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:.7rem;opacity:.6;}
+.footer-col h4{font-size:.8rem;font-weight:700;margin-bottom:12px;color:#fff;opacity:.9;}
+.footer-col p,.footer-col a{display:block;font-size:.7rem;margin-bottom:6px;opacity:.7;color:#fff;text-decoration:none;}
+.footer-col a:hover{opacity:1;}
+.footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
+
+/* Cart Styles */
+.cart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background-color: #ffffff;
+    font-family: var(--font-body);
+    text-align: center;
+}
+.cart-icon-wrapper {
+    position: relative;
+    margin-bottom: 25px;
+    width: 90px;
+    height: 80px;
+}
+.cart-svg {
+    width: 100%;
+    height: 100%;
+}
+.cart-badge {
+    position: absolute;
+    top: -2px;
+    right: 2px;
+    background-color: var(--primary);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cart-message {
+    color: #111111;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.5px;
+}
+.shop-button {
+    display: inline-block;
+    background-color: var(--primary);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 42px;
+    border-radius: 25px;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+}
+.shop-button:hover {
+    background-color: var(--primary-bright);
+}
 
 /* Cart Drawer */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
@@ -417,76 +454,179 @@ a{color:inherit;text-decoration:none;}
 .cart-drawer{
   position:fixed;bottom:-100%;left:0;right:0;background:var(--white);
   border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s cubic-bezier(0.4,0,0.2,1);
-  max-height:82vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,0.12);
+  max-height:80vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,0.12);
 }
 .cart-drawer.open{bottom:0;}
-.cart-head{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);}
-.cart-head span{font-weight:800;font-size:1.1rem;}
-.cart-close{width:36px;height:36px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:18px;}
-.cart-items{padding:16px 20px;}
-.cart-item{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);}
-.cart-item-name{font-weight:700;font-size:.85rem;}
-.cart-item-price{color:var(--sale-red);font-weight:700;}
-.cart-qty{display:flex;align-items:center;gap:8px;margin-top:6px;}
-.cart-qty button{width:28px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:14px;transition:.2s;}
+.cart-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1;}
+.cart-head span{font-weight:800;font-size:1rem;}
+.cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px;}
+.cart-close:active{transform:scale(0.9);}
+.cart-items{padding:12px 16px;}
+.cart-item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.cart-item-name{font-weight:700;font-size:.8rem;}
+.cart-item-price{color:var(--sale-red);font-weight:700;font-size:.85rem;}
+.cart-qty{display:flex;align-items:center;gap:6px;margin-top:4px;}
+.cart-qty button{width:24px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:12px;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.cart-qty button:active{transform:scale(0.9);}
 .cart-qty button:hover{background:var(--primary);color:white;border-color:var(--primary);}
-.cart-footer{padding:16px 20px 24px;border-top:1px solid var(--border);}
-.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1.1rem;margin-bottom:16px;}
-.btn-checkout{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;}
-.btn-checkout:hover{background:var(--primary-bright);transform:translateY(-2px);}
+.cart-footer{padding:12px 16px 20px;border-top:1px solid var(--border);}
+.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:12px;}
+.btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
+.btn-checkout:active{transform:scale(0.97);}
+.btn-checkout:hover{background:var(--primary-bright);}
 #toast{
-  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-  background:var(--text);color:#fff;padding:10px 24px;border-radius:60px;
-  font-size:.8rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;
-  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;
+  font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;
 }
-.cart-remove-btn{background:#dc3545!important;color:white!important;border:none!important;border-radius:4px!important;padding:4px 12px!important;font-size:.65rem!important;cursor:pointer!important;margin-left:8px!important;font-weight:600!important;width:auto!important;height:auto!important;}
-.cart-remove-btn:hover{background:#c82333!important;}
+.cart-remove-btn{background:#dc3545!important;color:white!important;border:none!important;border-radius:4px!important;padding:2px 10px!important;font-size:.6rem!important;cursor:pointer!important;margin-left:6px!important;font-weight:600!important;width:auto!important;height:auto!important;}
+.cart-remove-btn:active{transform:scale(0.9);}
 
-/* Responsive */
-@media(max-width:768px){
-  .category-grid{grid-template-columns:repeat(3,1fr);gap:12px;padding:0 4%;}
-  .products-grid,.all-products-grid,.new-arrivals-grid,.trending-grid{
-    grid-template-columns:repeat(2,1fr)!important;gap:12px;padding:0 4%;
-  }
-  .hero-section{margin:12px 3% 0;}
-  .hero-content{padding:18px 16px 20px;}
-  .hero-content h2{font-size:1.2rem;}
-  .hero-content p{font-size:.8rem;margin-bottom:14px;}
-  .hero-content .shop-btn{padding:12px 28px;font-size:.8rem;}
-  .section-header{margin:28px 4% 16px;}
-  .section-header h2{font-size:1.3rem;}
-  .section-header h2::after{width:30px;}
-  .feature-grid{grid-template-columns:repeat(2,1fr);gap:12px;margin:32px 4%;}
-  .trust-badges-row{grid-template-columns:1fr;margin:32px 4%;}
-  .store-promo{grid-template-columns:1fr;margin:32px 4%;}
-  .store-promo-left{padding:28px 20px;}
-  .store-promo-right{padding:28px 20px;}
-  .promo-features{grid-template-columns:1fr;}
-  .review-section{margin:32px 4%;padding:28px 24px;flex-direction:column;text-align:center;}
-  .zones-grid{padding:0 4%;grid-template-columns:repeat(3,1fr);}
-  .whatsapp-float{width:48px;height:48px;bottom:75px;right:16px;}
-  .whatsapp-float i{font-size:24px;}
+/* Wishlist Modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;
+  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);
 }
+.modal-card{
+  background:var(--white);border-radius:var(--radius);padding:24px;
+  max-width:420px;width:90%;max-height:80vh;overflow-y:auto;
+  animation:slideUp .3s ease;
+}
+.modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+.modal-card p{color:var(--muted);font-size:.8rem;margin-bottom:16px;}
+.wishlist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.wishlist-item img{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-xs);}
+.wishlist-item-info{flex:1;}
+.wishlist-item-name{font-weight:700;font-size:.8rem;}
+.wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.75rem;}
+.wishlist-atc{padding:4px 12px;background:var(--btn-green);color:#fff;border:none;border-radius:30px;font-size:.65rem;font-weight:600;cursor:pointer;}
+.wishlist-atc:active{transform:scale(0.9);}
+.wishlist-remove{background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:4px;}
+.wishlist-remove:active{transform:scale(0.9);}
+.wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
+.modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
+.modal-btn:active{transform:scale(0.95);}
+
+/* Empty State */
+.empty-state{text-align:center;padding:40px 16px;color:var(--muted);}
+.empty-state i{font-size:40px;display:block;margin-bottom:12px;color:var(--border);}
+.empty-state p{margin-bottom:12px;}
+
+/* Quick View Modal */
+.quick-view-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:800;
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);
+  padding:20px;
+}
+.quick-view-overlay.open{display:flex;}
+.quick-view-card{
+  background:var(--white);border-radius:var(--radius);padding:32px;
+  max-width:500px;width:100%;max-height:90vh;overflow-y:auto;
+  animation:slideUp .3s ease;position:relative;
+}
+.quick-view-close{
+  position:absolute;top:16px;right:16px;width:36px;height:36px;
+  border-radius:50%;background:var(--bg);border:none;font-size:18px;cursor:pointer;
+}
+.quick-view-close:active{transform:scale(0.9);}
+.quick-view-img{width:100%;height:200px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:16px;}
+.quick-view-name{font-size:1.3rem;font-weight:800;margin-bottom:4px;}
+.quick-view-price{font-size:1.2rem;font-weight:900;color:var(--sale-red);margin-bottom:12px;}
+.quick-view-desc{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:16px;}
+.quick-view-actions{display:flex;gap:12px;}
+.quick-view-actions .atc-btn{flex:1;}
+
+/* Quick Add Animation */
+@keyframes popIn{0%{transform:scale(0.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.pop-in{animation:popIn .3s ease;}
+
+/* Scroll to Top */
+.scroll-top{
+  position:fixed;bottom:calc(var(--bottom-nav-height) + 80px);right:16px;
+  width:44px;height:44px;border-radius:50%;background:var(--primary);
+  color:white;border:none;cursor:pointer;z-index:100;
+  box-shadow:0 4px 16px rgba(128,0,0,0.3);
+  display:none;align-items:center;justify-content:center;font-size:20px;
+  transition:all .3s;
+}
+.scroll-top:hover{transform:scale(1.1);}
+.scroll-top.show{display:flex;}
+
+/* ==================== RESPONSIVE ==================== */
 @media(max-width:400px){
-  .hero-section{margin:8px 2% 0;}
   .hero-content{padding:14px 12px 16px;}
   .hero-content h2{font-size:1rem;}
   .hero-content p{font-size:.7rem;}
   .hero-content .shop-btn{padding:10px 20px;font-size:.7rem;}
-  .products-grid,.all-products-grid,.new-arrivals-grid,.trending-grid{gap:8px;}
-  .pc-body{padding:10px;}
-  .pc-name{font-size:.75rem;}
-  .pc-price-new{font-size:1rem;}
-  .atc-btn{font-size:.65rem;padding:8px;}
-  .pc-vol{font-size:.5rem;padding:2px 8px;}
-  .category-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
-  .cat-img{width:50px;height:50px;}
-  .section-header h2{font-size:1.1rem;}
+  .pc-body{padding:8px;}
+  .pc-name{font-size:.7rem;}
+  .pc-price-new{font-size:.9rem;}
+  .atc-btn{font-size:.6rem;padding:6px;}
+  .pc-vol{font-size:.5rem;padding:2px 6px;}
+  .cat-img{width:44px;height:44px;}
+  .section-header h2{font-size:1rem;}
+  .category-grid{gap:8px;padding:0 3%;}
+  .products-grid,.new-arrivals-grid,.trending-grid{gap:8px;padding:0 3%;}
+  .zones-grid{grid-template-columns:repeat(2,1fr);gap:6px;padding:0 3%;}
+  .store-promo-left h3{font-size:1rem;}
+  .review-section{padding:20px 16px;}
+  .review-section-text h3{font-size:1rem;}
+  .cart-message{font-size:20px;}
+  .shop-button{font-size:16px;padding:8px 32px;}
+}
+
+@media(min-width:600px){
+  .category-grid{grid-template-columns:repeat(4,1fr);gap:16px;}
+  .products-grid,.new-arrivals-grid,.trending-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  .trust-badges-row{grid-template-columns:repeat(3,1fr);gap:12px;}
+  .zones-grid{grid-template-columns:repeat(4,1fr);gap:10px;}
+}
+
+@media(min-width:1024px){
+  .category-grid{grid-template-columns:repeat(8,1fr);gap:20px;padding:0 5%;}
+  .products-grid,.new-arrivals-grid,.trending-grid{
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+    padding:0 5%;
+  }
+  .trust-badges-row{gap:20px;margin:48px 5%;}
+  .store-promo{grid-template-columns:1fr 1fr;margin:48px 5%;}
+  .store-promo-left{padding:40px 48px;}
+  .store-promo-right{padding:40px 48px;}
+  .review-section{flex-direction:row;justify-content:space-between;text-align:left;padding:40px 56px;margin:48px 5%;}
+  .review-section-text p{margin-bottom:0;}
+  .zones-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;padding:0 5%;}
+  .hero-section{margin:24px 5% 0;border-radius:32px;}
+  .hero-content{padding:32px 48px 40px;}
+  .hero-content h2{font-size:1.8rem;}
+  .hero-content p{font-size:1rem;}
+  .hero-content .shop-btn{padding:16px 48px;font-size:1rem;}
+  .section-header{margin:48px 5% 28px;}
+  .section-header h2{font-size:1.6rem;}
+  .section-header h2::after{width:48px;}
+  .section-header a{font-size:.85rem;padding:8px 24px;}
+}
+
+@media(min-width:1400px){
+  .hero-section{margin:32px 8% 0;}
+  .section-header{margin:56px 8% 32px;}
+  .category-grid,.products-grid,.new-arrivals-grid,.trending-grid,
+  .trust-badges-row,.store-promo,.review-section,.zones-grid{
+    padding-left:8%;
+    padding-right:8%;
+  }
+  .hero-content{padding:40px 64px 48px;}
 }
 </style>
 </head>
 <body>
+
+<!-- Offline Banner -->
+<div class="offline-banner" id="offlineBanner">You're offline. Please check your connection.</div>
 
 <!-- Age Gate -->
 <div class="age-gate" id="ageGate">
@@ -504,10 +644,24 @@ a{color:inherit;text-decoration:none;}
 <!-- Wishlist Modal -->
 <div class="modal-overlay wishlist-modal" id="wishlistModal" style="display:none;">
   <div class="modal-card">
-    <h3>My Wishlist <i class="ph ph-heart" style="color:var(--sale-red);"></i></h3>
+    <h3>My Wishlist</h3>
     <p>Save your favourites and add them to basket anytime.</p>
     <div id="wishlistItems"></div>
     <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:12px;padding:10px 20px;border-radius:50px;border:none;font-weight:600;cursor:pointer;" onclick="closeWishlistModal()">Close</button>
+  </div>
+</div>
+
+<!-- Quick View Modal -->
+<div class="quick-view-overlay" id="quickViewOverlay">
+  <div class="quick-view-card">
+    <button class="quick-view-close" onclick="closeQuickView()"><i class="ph ph-x"></i></button>
+    <img class="quick-view-img" id="qvImage" src="" alt="">
+    <div class="quick-view-name" id="qvName"></div>
+    <div class="quick-view-price" id="qvPrice"></div>
+    <div class="quick-view-desc" id="qvDesc">Premium quality spirit from our curated collection.</div>
+    <div class="quick-view-actions">
+      <button class="atc-btn" id="qvAddBtn" onclick="addFromQuickView()"><i class="ph ph-plus"></i> Add to Cart</button>
+    </div>
   </div>
 </div>
 
@@ -518,6 +672,9 @@ a{color:inherit;text-decoration:none;}
     <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
   </a>
 </header>
+
+<!-- Pull to Refresh Indicator -->
+<div class="pull-indicator" id="pullIndicator"><i class="ph ph-arrow-clockwise"></i> Pull to refresh</div>
 
 <!-- Marquee -->
 <div class="marquee-strip">
@@ -530,7 +687,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Hero Section - Rounded Card with Image + Intro + Shop Button -->
+<!-- Hero -->
 <div class="hero-section">
   <div class="hero-image-wrap">
     <img class="hero-supporting-image" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png" alt="LiquorBelle">
@@ -545,28 +702,20 @@ a{color:inherit;text-decoration:none;}
 </div>
 
 <!-- Categories -->
-<div class="section-header"><h2>Shop by Category</h2><a href="shop.html">View All →</a></div>
+<div class="section-header"><h2>Shop by Category</h2><a href="shop.html">View All</a></div>
 <div class="category-grid" id="categoryGrid"></div>
 
-<!-- All Products -->
-<div class="section-header"><h2>All Products</h2><a href="shop.html">View All →</a></div>
-<div class="all-products-grid" id="allProductsGrid"></div>
+<!-- All Products Preview -->
+<div class="section-header"><h2>All Products</h2><a href="shop.html">View All</a></div>
+<div class="products-grid" id="allProductsGrid"></div>
 
-<!-- Trending -->
-<div class="section-header"><h2>Trending Deals</h2><a href="shop.html">View All →</a></div>
-<div class="products-grid" id="trendingGrid"></div>
+<!-- Trending Deals -->
+<div class="section-header"><h2>Trending Deals</h2><a href="shop.html">View All</a></div>
+<div class="trending-grid" id="trendingGrid"></div>
 
 <!-- New Arrivals -->
-<div class="section-header"><h2>New Arrivals</h2><a href="shop.html">View All →</a></div>
+<div class="section-header"><h2>New Arrivals</h2><a href="shop.html">View All</a></div>
 <div class="new-arrivals-grid" id="newArrivalsGrid"></div>
-
-<!-- Features -->
-<div class="feature-grid">
-  <div class="feature-card"><div class="feature-icon"><i class="ph ph-check-circle"></i></div><div class="feature-title">Authentic Brands</div><div class="feature-desc">100% genuine products from official distributors.</div></div>
-  <div class="feature-card"><div class="feature-icon"><i class="ph ph-lock-simple"></i></div><div class="feature-title">Secure Shopping</div><div class="feature-desc">Safe payments with M-PESA and card.</div></div>
-  <div class="feature-card"><div class="feature-icon"><i class="ph ph-truck"></i></div><div class="feature-title">Fast Delivery</div><div class="feature-desc">10-45 minutes across Nairobi.</div></div>
-  <div class="feature-card"><div class="feature-icon"><i class="ph ph-storefront"></i></div><div class="feature-title">24/7 Operations</div><div class="feature-desc">We never close. Order anytime.</div></div>
-</div>
 
 <!-- Trust Badges -->
 <div class="trust-badges-row">
@@ -581,8 +730,8 @@ a{color:inherit;text-decoration:none;}
     <h3>Wholesale & Bulk Orders</h3>
     <p class="subtitle">Competitive bulk pricing for bars, restaurants, events, and corporate gifting. 100% authentic products from official distributors.</p>
     <div class="store-address">
-      <p><strong>📍 Dagoretti Road, Nairobi</strong></p>
-      <p><strong>📞 +254 748 894 443</strong> — Call or WhatsApp</p>
+      <p><strong>Dagoretti Road, Nairobi</strong></p>
+      <p><strong>+254 748 894 443</strong> — Call or WhatsApp</p>
     </div>
   </div>
   <div class="store-promo-right">
@@ -592,14 +741,14 @@ a{color:inherit;text-decoration:none;}
       <div class="promo-feature"><i class="ph ph-seal-check"></i><span>100% Authentic</span></div>
       <div class="promo-feature"><i class="ph ph-whatsapp-logo"></i><span>WhatsApp Orders</span></div>
     </div>
-    <a href="https://wa.me/254748894443?text=I'm%20interested%20in%20wholesale%20pricing" target="_blank" class="directions-btn"><i class="ph ph-whatsapp-logo"></i> Request Quote →</a>
+    <a href="https://wa.me/254748894443?text=I'm%20interested%20in%20wholesale%20pricing" target="_blank" class="directions-btn"><i class="ph ph-whatsapp-logo"></i> Request Quote</a>
   </div>
 </div>
 
 <!-- Review Section -->
 <div class="review-section">
   <div class="review-section-text">
-    <h3>⭐ Enjoyed shopping with us?</h3>
+    <h3>Enjoyed shopping with us?</h3>
     <p>Share your experience on Google and help others find us.</p>
   </div>
   <a href="https://www.google.com/maps/place/Dagoretti+Road,+Nairobi" target="_blank" class="review-btn"><i class="ph ph-google-logo"></i> Write a Review</a>
@@ -625,12 +774,12 @@ a{color:inherit;text-decoration:none;}
     </div>
     <div class="footer-col">
       <h4>Support</h4>
-      <p>📞 +254 748 894 443</p>
-      <p><i class="ph ph-whatsapp-logo"></i> WhatsApp 24/7</p>
+      <p>+254 748 894 443</p>
+      <p>WhatsApp 24/7</p>
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
-      <p>📍 Dagoretti Road</p>
+      <p>Dagoretti Road</p>
       <p>Nairobi, Kenya</p>
     </div>
   </div>
@@ -639,6 +788,9 @@ a{color:inherit;text-decoration:none;}
     <p>Over 18 only. Drink responsibly.</p>
   </div>
 </footer>
+
+<!-- Scroll to Top -->
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="ph ph-arrow-up"></i></button>
 
 <!-- WhatsApp Float -->
 <a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank">
@@ -654,77 +806,65 @@ a{color:inherit;text-decoration:none;}
   <button class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clipboard-text"></i><span>Orders</span></button>
 </nav>
 
-<!-- Cart -->
+<!-- Cart Drawer -->
 <div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
   <div class="cart-head"><span>Your Basket</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
-  <div class="cart-items" id="cartItemsList"><div style="text-align:center;padding:40px 16px;color:var(--muted);">Your basket is empty</div></div>
+  <div class="cart-items" id="cartItemsList">
+    <div class="cart-container">
+      <div class="cart-icon-wrapper">
+        <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+          <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="9" cy="20" r="1.5" fill="#111111"/>
+          <circle cx="17" cy="20" r="1.5" fill="#111111"/>
+        </svg>
+        <span class="cart-badge" id="cartBadgeCount">0</span>
+      </div>
+      <h2 class="cart-message">Your cart is empty!</h2>
+      <a href="shop.html" class="shop-button">Start Shopping</a>
+    </div>
+  </div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
     <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
-    <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout →</button>
+    <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
   </div>
 </div>
 <div id="toast"></div>
 
 <script>
-// AGE GATE
+// ==================== AGE GATE ====================
 function initAgeGate(){
   var ageGate=document.getElementById('ageGate');
   var ageYesBtn=document.getElementById('ageYesBtn');
   var ageNoBtn=document.getElementById('ageNoBtn');
-  if(localStorage.getItem('lb_age_confirmed_index')==='1'){if(ageGate)ageGate.style.display='none';}else{if(ageGate)ageGate.style.display='flex';}
-  if(ageYesBtn){ageYesBtn.onclick=function(){localStorage.setItem('lb_age_confirmed_index','1');document.getElementById('ageGate').style.display='none';};}
-  if(ageNoBtn){ageNoBtn.onclick=function(){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;">Sorry, you must be 18 or older to visit this site.</div>';};}
+  if(localStorage.getItem('lb_age_confirmed_index')==='1'){
+    if(ageGate)ageGate.style.display='none';
+  }else{
+    if(ageGate)ageGate.style.display='flex';
+  }
+  if(ageYesBtn){
+    ageYesBtn.onclick=function(){
+      localStorage.setItem('lb_age_confirmed_index','1');
+      document.getElementById('ageGate').style.display='none';
+    };
+  }
+  if(ageNoBtn){
+    ageNoBtn.onclick=function(){
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;">Sorry, you must be 18 or older to visit this site.</div>';
+    };
+  }
 }
 
+// ==================== CONFIG ====================
 var API_BASE='https://liquorbelle-mpesa-backend.onrender.com';
 var FALLBACK_IMG='https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png';
 var cart=JSON.parse(localStorage.getItem('liquorbelle_cart')||'{}');
 var wishlist=JSON.parse(localStorage.getItem('liquorbelle_wishlist')||'[]');
-var recentlyViewed=JSON.parse(localStorage.getItem('liquorbelle_rv')||'[]');
 var PRODUCTS=[];
+var isLoading=true;
+var qvProduct=null;
 
-function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
-function toast(msg){var t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(function(){t.style.opacity='0';},2200);}
-
-function updateCartUI(){
-  var items=Object.values(cart);
-  var count=items.reduce(function(s,i){return s+i.qty;},0);
-  document.getElementById('navCartCount').innerText=count;
-  var container=document.getElementById('cartItemsList');
-  var footer=document.getElementById('cartFooter');
-  if(!items.length){container.innerHTML='<div style="text-align:center;padding:40px 16px;color:var(--muted);">Your basket is empty</div>';footer.style.display='none';return;}
-  footer.style.display='block';
-  var subtotal=items.reduce(function(s,i){return s+i.price*i.qty;},0);
-  var hasBig=items.some(function(i){return ['750ml','1L','1.5L'].includes(i.capacity);});
-  var delivery=hasBig?0:150;
-  document.getElementById('cartTotalAmount').innerHTML='KES '+(subtotal+delivery).toLocaleString();
-  container.innerHTML=items.map(function(item){return '<div class="cart-item"><div><div class="cart-item-name">'+escapeHtml(item.name)+' <span style="color:var(--primary);">x'+item.qty+'</span></div><div class="cart-item-price">KES '+(item.price*item.qty).toLocaleString()+'</div><div class="cart-qty"><button onclick="updateQty(\''+item.id+'\',-1)">−</button><span>'+item.qty+'</span><button onclick="updateQty(\''+item.id+'\',1)">+</button><button onclick="removeCartItem(\''+item.id+'\')" class="cart-remove-btn">Remove</button></div></div></div>';}).join('');
-}
-function removeCartItem(id){if(cart[id]){delete cart[id];localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));updateCartUI();toast('Item removed');}}
-function updateQty(id,delta){if(cart[id]){cart[id].qty+=delta;if(cart[id].qty<=0)delete cart[id];localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));updateCartUI();}}
-function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
-function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
-function addToCart(id,name,price,capacity){if(cart[id]){cart[id].qty+=1;}else{cart[id]={id:id,name:name,price:price,qty:1,capacity:capacity};}localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));updateCartUI();toast(name+' added ✓');}
-function toggleWishlist(id,name,price,image,capacity){var idx=wishlist.findIndex(function(w){return w.id==id;});if(idx>-1){wishlist.splice(idx,1);toast('Removed from wishlist');}else{wishlist.push({id:id,name:name,price:price,image:image,capacity:capacity});toast(name+' added to wishlist ♥');}localStorage.setItem('liquorbelle_wishlist',JSON.stringify(wishlist));renderAllProductSections();}
-function openWishlistModal(){var container=document.getElementById('wishlistItems');if(!wishlist.length){container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';}else{container.innerHTML=wishlist.map(function(w){return '<div class="wishlist-item"><img src="'+(w.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button><button class="wishlist-remove" onclick="toggleWishlist(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.image||'')+'\',\''+(w.capacity||'')+'\');openWishlistModal();"><i class="ph ph-trash"></i></button></div>';}).join('');}document.getElementById('wishlistModal').style.display='flex';}
-function closeWishlistModal(){document.getElementById('wishlistModal').style.display='none';}
-function addToRecentlyViewed(product){recentlyViewed=recentlyViewed.filter(function(r){return r.id!=product.id;});recentlyViewed.unshift(product);if(recentlyViewed.length>8)recentlyViewed=recentlyViewed.slice(0,8);localStorage.setItem('liquorbelle_rv',JSON.stringify(recentlyViewed));renderRecentlyViewed();}
-function clearRecentlyViewed(){recentlyViewed=[];localStorage.removeItem('liquorbelle_rv');document.getElementById('recentlyViewedSection').style.display='none';}
-function renderRecentlyViewed(){if(!recentlyViewed.length){document.getElementById('recentlyViewedSection').style.display='none';return;}document.getElementById('recentlyViewedSection').style.display='block';document.getElementById('rvScroll').innerHTML=recentlyViewed.map(function(p){return '<div class="rv-item" onclick="addToCart(\''+p.id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><img src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'"><div class="rv-item-name">'+escapeHtml(p.name)+'</div><div class="rv-item-price">KES '+p.price.toLocaleString()+'</div></div>';}).join('');}
-
-var categories=[
-  {name:"All",cat:"all",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780993625/657accd01c84e92bc33b13a7_o0ywrd.jpg"},
-  {name:"Whisky",cat:"whisky",image:"https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp"},
-  {name:"Cognac",cat:"cognac",image:"https://i.postimg.cc/W1qvx9dw/cognacs.webp"},
-  {name:"Vodka",cat:"vodka",image:"https://i.postimg.cc/xTQFy62P/vodk-AS.jpg"},
-  {name:"Gin",cat:"gin",image:"https://i.postimg.cc/ZqmMjjpn/champagne.jpg"},
-  {name:"Rum",cat:"rum",image:"https://i.postimg.cc/jS0qX0j9/rums.jpg"},
-  {name:"Wine",cat:"wine",image:"https://i.postimg.cc/W3R7p4pG/wines.jpg"},
-  {name:"Beer",cat:"beer",image:"https://i.postimg.cc/FRkMf1Qy/beer-cans.webp"}
-];
-function renderCategories(){var container=document.getElementById('categoryGrid');if(container){container.innerHTML=categories.map(function(cat){return '<a href="shop.html?cat='+cat.cat+'" class="cat-card"><img class="cat-img" src="'+cat.image+'" alt="'+cat.name+'"><span>'+cat.name+'</span></a>';}).join('');}}
-
+// ==================== BACKUP PRODUCTS (NO KENYA KANE) ====================
 function getSampleProducts(){
   return[
     {_id:"h1",name:"Jameson Irish Whisky",capacity:"750ml",price:3200,originalPrice:3200,discountPercent:0,category:"whisky",badge:"",image:"https://i.postimg.cc/qRxcssz3/jameson.jpg",isTrending:false,isNew:false,rating:4.0},
@@ -736,15 +876,248 @@ function getSampleProducts(){
     {_id:"h7",name:"Chrome Gin",capacity:"750ml",price:750,originalPrice:750,discountPercent:0,category:"gin",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273803/chrome-gin-750ml_pjpgi8.jpg",isTrending:false,isNew:false,rating:4.0},
     {_id:"h8",name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1400,discountPercent:0,category:"gin",badge:"",image:"https://i.postimg.cc/4nkJX9Qn/Greenspoon-Kenya-Gilbeys-Gin-750ml-4.jpg",isTrending:false,isNew:false,rating:4.5},
     {_id:"h9",name:"Kenya Cane Ginger",capacity:"750ml",price:700,originalPrice:700,discountPercent:0,category:"rum",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780401818/cane-1_izoutd.jpg",isTrending:true,isNew:false,rating:4.0},
-    {_id:"h10",name:"Kenya Kane",capacity:"750ml",price:640,originalPrice:640,discountPercent:0,category:"rum",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781274073/1722809444_download20-202024-08-05T011032.870_l5idg1.jpg",isTrending:true,isNew:true,rating:5.0},
-    {_id:"h11",name:"Tusker Lager",capacity:"500ml",price:350,originalPrice:350,discountPercent:0,category:"beer",badge:"",image:"https://i.postimg.cc/9XNRvg3g/TUSKERLAGERBOTTLE500ML.webp",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h12",name:"Heineken Lager",capacity:"500ml",price:320,originalPrice:320,discountPercent:0,category:"beer",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781259773/000974__56124.1651683990.1280.1280_pu6xow.jpg",isTrending:true,isNew:false,rating:5.0}
+    {_id:"h10",name:"Tusker Lager",capacity:"500ml",price:350,originalPrice:350,discountPercent:0,category:"beer",badge:"",image:"https://i.postimg.cc/9XNRvg3g/TUSKERLAGERBOTTLE500ML.webp",isTrending:false,isNew:false,rating:4.0},
+    {_id:"h11",name:"Heineken Lager",capacity:"500ml",price:320,originalPrice:320,discountPercent:0,category:"beer",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781259773/000974__56124.1651683990.1280.1280_pu6xow.jpg",isTrending:true,isNew:false,rating:5.0}
   ];
 }
 
+// ==================== UTILITY FUNCTIONS ====================
+function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.innerText=msg;
+  t.style.opacity='1';
+  setTimeout(function(){t.style.opacity='0';},2200);
+}
+
+// ==================== OFFLINE DETECTION ====================
+window.addEventListener('online', function(){
+  document.getElementById('offlineBanner').classList.remove('show');
+  if(isLoading) loadProducts();
+});
+window.addEventListener('offline', function(){
+  document.getElementById('offlineBanner').classList.add('show');
+});
+
+// ==================== PULL TO REFRESH ====================
+var touchStartY=0;
+var pullIndicator=document.getElementById('pullIndicator');
+document.addEventListener('touchstart', function(e){
+  if(window.scrollY===0){
+    touchStartY=e.touches[0].clientY;
+  }
+}, {passive:true});
+
+document.addEventListener('touchmove', function(e){
+  if(window.scrollY===0 && touchStartY>0){
+    var diff=e.touches[0].clientY - touchStartY;
+    if(diff>50){
+      pullIndicator.classList.add('show');
+      pullIndicator.classList.add('spinning');
+      pullIndicator.innerHTML='<i class="ph ph-arrow-clockwise"></i> Refreshing...';
+    }
+  }
+}, {passive:true});
+
+document.addEventListener('touchend', function(){
+  if(pullIndicator.classList.contains('show')){
+    pullIndicator.classList.remove('spinning');
+    pullIndicator.innerHTML='<i class="ph ph-check"></i> Refreshed!';
+    setTimeout(function(){
+      pullIndicator.classList.remove('show');
+      pullIndicator.innerHTML='<i class="ph ph-arrow-clockwise"></i> Pull to refresh';
+      loadProducts();
+    }, 800);
+  }
+  touchStartY=0;
+}, {passive:true});
+
+// ==================== SCROLL TO TOP ====================
+window.addEventListener('scroll', function(){
+  var btn=document.getElementById('scrollTopBtn');
+  if(window.scrollY>300){
+    btn.classList.add('show');
+  }else{
+    btn.classList.remove('show');
+  }
+});
+
+// ==================== CART FUNCTIONS ====================
+function updateCartUI(){
+  var items=Object.values(cart);
+  var count=items.reduce(function(s,i){return s+i.qty;},0);
+  document.getElementById('navCartCount').innerText=count;
+  document.getElementById('cartBadgeCount').innerText=count;
+  
+  var container=document.getElementById('cartItemsList');
+  var footer=document.getElementById('cartFooter');
+  if(!items.length){
+    container.innerHTML=`
+      <div class="cart-container">
+        <div class="cart-icon-wrapper">
+          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
+            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
+          </svg>
+          <span class="cart-badge">0</span>
+        </div>
+        <h2 class="cart-message">Your cart is empty!</h2>
+        <a href="shop.html" class="shop-button">Start Shopping</a>
+      </div>
+    `;
+    footer.style.display='none';
+    return;
+  }
+  footer.style.display='block';
+  var subtotal=items.reduce(function(s,i){return s+i.price*i.qty;},0);
+  var hasBig=items.some(function(i){return ['750ml','1L','1.5L'].includes(i.capacity);});
+  var delivery=hasBig?0:150;
+  document.getElementById('cartTotalAmount').innerHTML='KES '+(subtotal+delivery).toLocaleString();
+  container.innerHTML=items.map(function(item){
+    return '<div class="cart-item"><div><div class="cart-item-name">'+escapeHtml(item.name)+' <span style="color:var(--primary);">x'+item.qty+'</span></div><div class="cart-item-price">KES '+(item.price*item.qty).toLocaleString()+'</div><div class="cart-qty"><button onclick="updateQty(\''+item.id+'\',-1)">−</button><span>'+item.qty+'</span><button onclick="updateQty(\''+item.id+'\',1)">+</button><button onclick="removeCartItem(\''+item.id+'\')" class="cart-remove-btn">Remove</button></div></div></div>';
+  }).join('');
+}
+
+function removeCartItem(id){
+  if(cart[id]){
+    delete cart[id];
+    localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
+    updateCartUI();
+    toast('Item removed');
+  }
+}
+
+function updateQty(id,delta){
+  if(cart[id]){
+    cart[id].qty+=delta;
+    if(cart[id].qty<=0) delete cart[id];
+    localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
+    updateCartUI();
+  }
+}
+
+function openCartDrawer(){
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+}
+
+function closeCartDrawer(){
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+}
+
+function addToCart(id,name,price,capacity){
+  if(cart[id]){
+    cart[id].qty+=1;
+  }else{
+    cart[id]={id:id,name:name,price:price,qty:1,capacity:capacity};
+  }
+  localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
+  updateCartUI();
+  toast(name+' added');
+}
+
+// ==================== QUICK VIEW ====================
+function openQuickView(product){
+  qvProduct=product;
+  document.getElementById('qvImage').src=product.image||FALLBACK_IMG;
+  document.getElementById('qvName').textContent=product.name;
+  document.getElementById('qvPrice').textContent='KES '+product.price.toLocaleString();
+  document.getElementById('qvDesc').textContent=product.description||'Premium quality spirit from our curated collection.';
+  document.getElementById('quickViewOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeQuickView(){
+  document.getElementById('quickViewOverlay').classList.remove('open');
+  document.body.style.overflow='auto';
+  qvProduct=null;
+}
+
+function addFromQuickView(){
+  if(qvProduct){
+    addToCart(qvProduct._id,qvProduct.name,qvProduct.price,qvProduct.capacity);
+    closeQuickView();
+  }
+}
+
+document.getElementById('quickViewOverlay').addEventListener('click', function(e){
+  if(e.target===this) closeQuickView();
+});
+
+// ==================== WISHLIST FUNCTIONS ====================
+function toggleWishlist(id,name,price,image,capacity){
+  var idx=wishlist.findIndex(function(w){return w.id==id;});
+  if(idx>-1){
+    wishlist.splice(idx,1);
+    toast('Removed from wishlist');
+  }else{
+    wishlist.push({id:id,name:name,price:price,image:image,capacity:capacity});
+    toast(name+' added to wishlist');
+  }
+  localStorage.setItem('liquorbelle_wishlist',JSON.stringify(wishlist));
+  renderAllProductSections();
+}
+
+function openWishlistModal(){
+  var container=document.getElementById('wishlistItems');
+  if(!wishlist.length){
+    container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
+  }else{
+    container.innerHTML=wishlist.map(function(w){
+      return '<div class="wishlist-item"><img src="'+(w.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button><button class="wishlist-remove" onclick="toggleWishlist(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.image||'')+'\',\''+(w.capacity||'')+'\');openWishlistModal();"><i class="ph ph-trash"></i></button></div>';
+    }).join('');
+  }
+  document.getElementById('wishlistModal').style.display='flex';
+}
+
+function closeWishlistModal(){
+  document.getElementById('wishlistModal').style.display='none';
+}
+
+// ==================== CATEGORIES ====================
+var categories=[
+  {name:"All",cat:"all",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg"},
+  {name:"Whisky",cat:"whisky",image:"https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp"},
+  {name:"Cognac",cat:"cognac",image:"https://i.postimg.cc/W1qvx9dw/cognacs.webp"},
+  {name:"Vodka",cat:"vodka",image:"https://i.postimg.cc/xTQFy62P/vodk-AS.jpg"},
+  {name:"Gin",cat:"gin",image:"https://i.postimg.cc/ZqmMjjpn/champagne.jpg"},
+  {name:"Rum",cat:"rum",image:"https://i.postimg.cc/jS0qX0j9/rums.jpg"},
+  {name:"Wine",cat:"wine",image:"https://i.postimg.cc/W3R7p4pG/wines.jpg"},
+  {name:"Beer",cat:"beer",image:"https://i.postimg.cc/FRkMf1Qy/beer-cans.webp"}
+];
+
+function renderCategories(){
+  var container=document.getElementById('categoryGrid');
+  if(container){
+    container.innerHTML=categories.map(function(cat){
+      return '<a href="shop.html?cat='+cat.cat+'" class="cat-card"><img class="cat-img" src="'+cat.image+'" alt="'+cat.name+'"><span>'+cat.name+'</span></a>';
+    }).join('');
+  }
+}
+
+// ==================== PRODUCT LOADING ====================
+function renderSkeletons(count, containerId){
+  var container=document.getElementById(containerId);
+  if(!container) return;
+  var skeletons='';
+  for(var i=0;i<count;i++){
+    skeletons+='<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
+  }
+  container.innerHTML=skeletons;
+}
+
 async function loadProducts(){
+  isLoading=true;
+  renderSkeletons(4, 'allProductsGrid');
+  renderSkeletons(4, 'trendingGrid');
+  renderSkeletons(3, 'newArrivalsGrid');
+  
   try{
     var res=await fetch(API_BASE+'/api/db/products');
+    if(!res.ok) throw new Error('Network response was not ok');
     var data=await res.json();
     if(data.success&&data.products&&data.products.length>0){
       PRODUCTS=data.products.map(function(p){
@@ -755,55 +1128,94 @@ async function loadProducts(){
         var price=cheapestVariant?cheapestVariant.price:0;
         var originalPrice=cheapestVariant?.discount?Math.round(price*100/(100-cheapestVariant.discount)):price;
         var discountPercent=cheapestVariant?.discount||0;
-        return{_id:p._id,id:p._id,name:p.name,capacity:cheapestVariant?.size||'750ml',price:price,originalPrice:originalPrice,discountPercent:discountPercent,category:p.category||'',badge:p.badge||(discountPercent>10?'hot':''),image:p.image||'',isTrending:p.isTrending||false,isNew:p.isNew||false,rating:p.rating||4};
+        return{
+          _id:p._id,
+          id:p._id,
+          name:p.name,
+          capacity:cheapestVariant?.size||'750ml',
+          price:price,
+          originalPrice:originalPrice,
+          discountPercent:discountPercent,
+          category:p.category||'',
+          badge:p.badge||(discountPercent>10?'hot':''),
+          image:p.image||'',
+          description:p.description||'',
+          isTrending:p.isTrending||false,
+          isNew:p.isNew||false,
+          rating:p.rating||4
+        };
       });
-    }else{PRODUCTS=getSampleProducts();}
-  }catch(e){console.error('Error loading products:',e);PRODUCTS=getSampleProducts();}
+    }else{
+      PRODUCTS=getSampleProducts();
+      toast('Showing backup products');
+    }
+  }catch(e){
+    console.error('Error loading products:',e);
+    PRODUCTS=getSampleProducts();
+    toast('Could not connect. Showing backup products.');
+  }
+  isLoading=false;
   renderAllProductSections();
-  renderRecentlyViewed();
 }
 
 function renderAllProductSections(){
-  var allItems=PRODUCTS.slice(0,8);
-  var allHtml=allItems.map(function(p){
-    var original=p.originalPrice||p.price;
-    var savePercent=p.discountPercent||0;
-    var isWishlisted=wishlist.some(function(w){return w.id==p._id;});
-    return '<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+(savePercent>0?'<div class="discount-circle">-'+savePercent+'%</div>':'')+'<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button></div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\');addToRecentlyViewed({id:\''+p._id+'\',name:\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\',price:'+p.price+',image:\''+(p.image||'')+'\',capacity:\''+(p.capacity||'')+'\'})"><i class="ph ph-plus"></i> Add</button></div></div>';
-  }).join('');
-  document.getElementById('allProductsGrid').innerHTML=allHtml||'<div style="text-align:center;padding:40px;color:var(--muted);">No products available.</div>';
+  if(!PRODUCTS.length){
+    var emptyMsg='<div class="empty-state"><i class="ph ph-wine"></i><p>No products available yet.<br>Check back soon!</p></div>';
+    document.getElementById('allProductsGrid').innerHTML=emptyMsg;
+    document.getElementById('trendingGrid').innerHTML=emptyMsg;
+    document.getElementById('newArrivalsGrid').innerHTML=emptyMsg;
+    return;
+  }
   
-  var trendingItems=PRODUCTS.filter(function(p){return p.isTrending===true;}).slice(0,7);
-  if(trendingItems.length===0)trendingItems=PRODUCTS.slice(0,4);
-  var trendingHtml=trendingItems.map(function(p){
-    var original=p.originalPrice||p.price;
-    var savePercent=p.discountPercent||0;
-    var isWishlisted=wishlist.some(function(w){return w.id==p._id;});
-    return '<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+(savePercent>0?'<div class="discount-circle">-'+savePercent+'%</div>':'')+'<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button></div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\');addToRecentlyViewed({id:\''+p._id+'\',name:\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\',price:'+p.price+',image:\''+(p.image||'')+'\',capacity:\''+(p.capacity||'')+'\'})"><i class="ph ph-plus"></i> Add</button></div></div>';
+  var allItems=PRODUCTS.slice(0,4);
+  document.getElementById('allProductsGrid').innerHTML=allItems.map(function(p){
+    return renderProductCard(p);
   }).join('');
-  document.getElementById('trendingGrid').innerHTML=trendingHtml||'<div style="text-align:center;padding:40px;color:var(--muted);">No trending products</div>';
+  
+  var trendingItems=PRODUCTS.filter(function(p){return p.isTrending===true;}).slice(0,4);
+  if(trendingItems.length===0) trendingItems=PRODUCTS.slice(0,4);
+  document.getElementById('trendingGrid').innerHTML=trendingItems.map(function(p){
+    return renderProductCard(p);
+  }).join('');
   
   var newItems=PRODUCTS.filter(function(p){return p.isNew===true;}).slice(0,3);
-  if(newItems.length===0)newItems=PRODUCTS.slice(0,3);
-  var newHtml=newItems.map(function(p){
-    var original=p.originalPrice||p.price;
-    var savePercent=p.discountPercent||0;
-    var isWishlisted=wishlist.some(function(w){return w.id==p._id;});
-    return '<div class="prod-card"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'"><div class="badge-new">NEW</div>'+(savePercent>0?'<div class="discount-circle" style="top:46px;left:8px;">-'+savePercent+'%</div>':'')+'<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button></div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\');addToRecentlyViewed({id:\''+p._id+'\',name:\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\',price:'+p.price+',image:\''+(p.image||'')+'\',capacity:\''+(p.capacity||'')+'\'})"><i class="ph ph-plus"></i> Add</button></div></div>';
+  if(newItems.length===0) newItems=PRODUCTS.slice(0,3);
+  document.getElementById('newArrivalsGrid').innerHTML=newItems.map(function(p){
+    return renderProductCard(p, true);
   }).join('');
-  document.getElementById('newArrivalsGrid').innerHTML=newHtml||'<div style="text-align:center;padding:40px;color:var(--muted);">No new arrivals</div>';
 }
 
-var zones=['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata','Waithaka','Kikuyu','Runda'];
-document.getElementById('zonesGrid').innerHTML=zones.map(function(z){return '<div class="zone-tag"><div class="zone-dot"></div><span>'+z+'</span></div>';}).join('');
+function renderProductCard(p, isNew){
+  var original=p.originalPrice||p.price;
+  var savePercent=p.discountPercent||0;
+  var isWishlisted=wishlist.some(function(w){return w.id==p._id;});
+  var newBadge=isNew ? '<div class="badge-new">NEW</div>' : '';
+  var discountBadge=savePercent>0 ? '<div class="discount-circle">-'+savePercent+'%</div>' : '';
+  var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button>';
+  
+  return '<div class="prod-card pop-in"><div class="pc-img-wrap" onclick="openQuickView({_id:\''+p._id+'\',name:\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\',price:'+p.price+',image:\''+(p.image||'')+'\',capacity:\''+(p.capacity||'')+'\',description:\''+escapeHtml(p.description||'').replace(/'/g,"\\'")+'\'})"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button></div></div>';
+}
 
-document.getElementById('wishlistModal')?.addEventListener('click',function(e){if(e.target===this)closeWishlistModal();});
+// ==================== DELIVERY ZONES ====================
+var zones=['Dagoretti','Karen','Kilimani','Westlands','CBD','Upperhill','Lavington','Kileleshwa','Rongai','Ngong','South B','Langata','Waithaka','Kikuyu','Runda'];
+document.getElementById('zonesGrid').innerHTML=zones.map(function(z){
+  return '<div class="zone-tag"><div class="zone-dot"></div><span>'+z+'</span></div>';
+}).join('');
+
+// ==================== INIT ====================
+document.getElementById('wishlistModal')?.addEventListener('click',function(e){
+  if(e.target===this) closeWishlistModal();
+});
 
 renderCategories();
 loadProducts();
 updateCartUI();
 initAgeGate();
 setInterval(updateCartUI,3000);
+
+if(!navigator.onLine){
+  document.getElementById('offlineBanner').classList.add('show');
+}
 </script>
 </body>
 </html>
