@@ -4,8 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <title>LiquorBelle — Order Manager</title>
+
+<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -167,10 +176,11 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 </head>
 <body>
 
+<!-- ===== LOGIN MODAL ===== -->
 <div id="cashierLoginModal" class="login-modal-overlay">
   <div class="login-modal-card">
     <div class="login-logo">
-      <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+      <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
       <h2>Cashier Login</h2>
       <p>Enter password to access order manager</p>
     </div>
@@ -187,15 +197,17 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   </div>
 </div>
 
+<!-- ===== HEADER ===== -->
 <div class="admin-header">
   <div class="logo">
-    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <span class="logo-divider"></span>
     <span class="logo-text">Order Manager</span>
   </div>
   <button class="header-logout" onclick="logout()"><i class="ph ph-sign-out"></i> Logout</button>
 </div>
 
+<!-- ===== MAIN CONTENT ===== -->
 <div class="container">
   <div class="stats-grid" id="statsGrid"></div>
   
@@ -235,23 +247,36 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
   </div>
 </div>
 
+<!-- ===== TOAST ===== -->
 <div id="toast" class="toast"></div>
 
 <script>
-const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-let allOrders = [];
-let filteredOrders = [];
-let products = [];
-let searchTerm = '';
-let adminToken = localStorage.getItem('liquorbelle_cashier_token');
-let pendingActions = new Map();
-let currentDateFilter = 'all';
-let currentStatusFilter = 'all';
-let autoRefreshInterval = null;
+// ==================== IMAGE OPTIMIZATION ====================
+function optimizeImage(url, width) {
+    if (!url) return '';
+    if (!url.includes('cloudinary.com')) return url;
+    var parts = url.split('/upload/');
+    if (parts.length !== 2) return url;
+    var w = width || 300;
+    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
+}
 
+// ==================== CONFIG ====================
+var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+var allOrders = [];
+var filteredOrders = [];
+var products = [];
+var searchTerm = '';
+var adminToken = localStorage.getItem('liquorbelle_cashier_token');
+var pendingActions = new Map();
+var currentDateFilter = 'all';
+var currentStatusFilter = 'all';
+var autoRefreshInterval = null;
+
+// ==================== PASSWORD TOGGLE ====================
 function togglePasswordVisibility() {
-  const passwordInput = document.getElementById('cashierPassword');
-  const toggleIcon = document.getElementById('togglePasswordIcon');
+  var passwordInput = document.getElementById('cashierPassword');
+  var toggleIcon = document.getElementById('togglePasswordIcon');
   if (passwordInput.type === 'password') {
     passwordInput.type = 'text';
     toggleIcon.setAttribute('class', 'ph ph-eye-slash');
@@ -261,19 +286,20 @@ function togglePasswordVisibility() {
   }
 }
 
+// ==================== FILTERS ====================
 function applyFilters() {
   currentDateFilter = document.getElementById('dateFilter').value;
   currentStatusFilter = document.getElementById('statusFilter').value;
   
-  let result = [...allOrders];
+  var result = allOrders.slice();
   
   if (currentDateFilter !== 'all') {
-    const daysAgo = new Date(Date.now() - parseInt(currentDateFilter) * 24 * 60 * 60 * 1000);
-    result = result.filter(o => new Date(o.created_at) >= daysAgo);
+    var daysAgo = new Date(Date.now() - parseInt(currentDateFilter) * 24 * 60 * 60 * 1000);
+    result = result.filter(function(o) { return new Date(o.created_at) >= daysAgo; });
   }
   
   if (currentStatusFilter !== 'all') {
-    result = result.filter(o => o.status === currentStatusFilter);
+    result = result.filter(function(o) { return o.status === currentStatusFilter; });
   }
   
   filteredOrders = result;
@@ -282,20 +308,22 @@ function applyFilters() {
   renderOrders();
 }
 
-function showToast(msg, isError = false){
-  const t = document.getElementById('toast');
+// ==================== TOAST ====================
+function showToast(msg, isError){
+  var t = document.getElementById('toast');
   t.innerText = msg;
   t.classList.toggle('error', isError);
   t.classList.add('show');
   clearTimeout(t._timeout);
-  t._timeout = setTimeout(() => {
+  t._timeout = setTimeout(function() {
     t.classList.remove('show','error');
   }, 3200);
 }
 
+// ==================== PHONE HELPERS ====================
 function formatPhone(phone){
   if(!phone) return '';
-  let clean = phone.replace(/\D/g, '');
+  var clean = phone.replace(/\D/g, '');
   if(clean.startsWith('0')) clean = '254' + clean.slice(1);
   if(!clean.startsWith('254')) clean = '254' + clean;
   return clean;
@@ -303,28 +331,28 @@ function formatPhone(phone){
 
 function formatDisplayPhone(phone){
   if(!phone) return 'No phone';
-  const display = phone.toString();
+  var display = phone.toString();
   if(display.length === 12 && display.startsWith('254')) return '0' + display.slice(3);
   if(display.length === 10 && (display.startsWith('07') || display.startsWith('01'))) return display;
   return display;
 }
 
+// ==================== AUTH ====================
 function getAuthHeaders() {
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${adminToken}`
+    'Authorization': 'Bearer ' + adminToken
   };
 }
 
-// Cashier-only login endpoint
 async function cashierLogin(password) {
   try {
-    const res = await fetch(`${API_BASE}/api/cashier/login`, {
+    var res = await fetch(API_BASE + '/api/cashier/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
+      body: JSON.stringify({ password: password })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (data.success && data.token) {
       adminToken = data.token;
       localStorage.setItem('liquorbelle_cashier_token', adminToken);
@@ -338,11 +366,11 @@ async function cashierLogin(password) {
 }
 
 function submitCashierLogin() {
-  const password = document.getElementById('cashierPassword').value;
-  const errorDiv = document.getElementById('loginError');
+  var password = document.getElementById('cashierPassword').value;
+  var errorDiv = document.getElementById('loginError');
   errorDiv.innerText = '';
   
-  cashierLogin(password).then(success => {
+  cashierLogin(password).then(function(success) {
     if(success) {
       document.getElementById('cashierLoginModal').style.display = 'none';
       initAfterLogin();
@@ -353,25 +381,26 @@ function submitCashierLogin() {
   });
 }
 
+// ==================== LOAD PRODUCTS ====================
 async function loadProducts(){
   try{
-    const res = await fetch(`${API_BASE}/api/db/products`);
-    const data = await res.json();
+    var res = await fetch(API_BASE + '/api/db/products');
+    var data = await res.json();
     if(data.success) products = data.products;
   } catch(e){ products = []; }
 }
 
+// ==================== LOAD ORDERS ====================
 async function loadOrders(){
   if(!adminToken) {
     return;
   }
   try{
-    const res = await fetch(`${API_BASE}/api/admin/all-orders?limit=1000`, {
+    var res = await fetch(API_BASE + '/api/admin/all-orders?limit=1000', {
       headers: getAuthHeaders()
     });
     
     if(res.status === 401 || res.status === 403){
-      // Token expired - clear and show login modal
       localStorage.removeItem('liquorbelle_cashier_token');
       localStorage.removeItem('liquorbelle_admin_role');
       adminToken = null;
@@ -383,9 +412,9 @@ async function loadOrders(){
       showToast('⚠️ Too many requests. Please wait...', true);
       return;
     }
-    const data = await res.json();
+    var data = await res.json();
     if(data.success) {
-      allOrders = data.orders.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+      allOrders = data.orders.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
       applyFilters();
     } else {
       allOrders = [];
@@ -402,18 +431,20 @@ async function loadOrders(){
   }
 }
 
+// ==================== REFRESH ====================
 function manualRefresh(){
   showToast('Refreshing orders...');
   loadOrders();
 }
 
+// ==================== RENDER STATS ====================
 function renderStats(){
-  const total = filteredOrders.length;
-  const pending = filteredOrders.filter(o => o.status === 'pending').length;
-  const paid = filteredOrders.filter(o => o.status === 'paid').length;
-  const delivered = filteredOrders.filter(o => o.status === 'delivered').length;
+  var total = filteredOrders.length;
+  var pending = filteredOrders.filter(function(o){ return o.status === 'pending'; }).length;
+  var paid = filteredOrders.filter(function(o){ return o.status === 'paid'; }).length;
+  var delivered = filteredOrders.filter(function(o){ return o.status === 'delivered'; }).length;
   
-  let periodText = '';
+  var periodText = '';
   if (currentDateFilter === 'all') periodText = 'All Time';
   else if (currentDateFilter === '1') periodText = 'Last 24 Hours';
   else if (currentDateFilter === '7') periodText = 'Last 7 Days';
@@ -421,25 +452,25 @@ function renderStats(){
   else if (currentDateFilter === '90') periodText = 'Last 90 Days';
   else if (currentDateFilter === '365') periodText = 'Last Year';
   
-  let statusText = '';
+  var statusText = '';
   if (currentStatusFilter === 'all') statusText = 'All Orders';
   else if (currentStatusFilter === 'pending') statusText = 'Pending Orders';
   else if (currentStatusFilter === 'paid') statusText = 'Paid Orders';
   else if (currentStatusFilter === 'delivered') statusText = 'Delivered Orders';
   
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><h4>📊 ${statusText}</h4><div class="value">${total}</div><div class="sub">${periodText}</div></div>
-    <div class="stat-card"><h4>⏳ Pending</h4><div class="value">${pending}</div><div class="sub">Need payment</div></div>
-    <div class="stat-card"><h4>✅ Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
-    <div class="stat-card"><h4>🚚 Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
-  `;
-  document.getElementById('orderCountDisplay').innerHTML = `📋 ${total} order${total !== 1 ? 's' : ''} found`;
+  document.getElementById('statsGrid').innerHTML = 
+    '<div class="stat-card"><h4>📊 ' + statusText + '</h4><div class="value">' + total + '</div><div class="sub">' + periodText + '</div></div>' +
+    '<div class="stat-card"><h4>⏳ Pending</h4><div class="value">' + pending + '</div><div class="sub">Need payment</div></div>' +
+    '<div class="stat-card"><h4>✅ Paid</h4><div class="value">' + paid + '</div><div class="sub">Ready to deliver</div></div>' +
+    '<div class="stat-card"><h4>🚚 Delivered</h4><div class="value">' + delivered + '</div><div class="sub">Completed</div></div>';
+  document.getElementById('orderCountDisplay').innerHTML = '📋 ' + total + ' order' + (total !== 1 ? 's' : '') + ' found';
 }
 
+// ==================== HELPERS ====================
 function getOrderDisplayId(order){
   if(order.order_number) return order.order_number;
   if(order._id){
-    const idStr = order._id.toString();
+    var idStr = order._id.toString();
     return idStr.slice(-8).toUpperCase();
   }
   return 'N/A';
@@ -449,130 +480,161 @@ function findProductImage(productName, productId){
   if(!productName && !productId) return 'https://placehold.co/46x46/F2EDE7/800000?text=🍾';
   
   if(productId) {
-    const product = products.find(p => p._id === productId);
-    if(product && product.image) return product.image;
+    for(var i = 0; i < products.length; i++) {
+      if(products[i]._id === productId) {
+        if(products[i].image) return products[i].image;
+        break;
+      }
+    }
   }
   
   if(productName) {
-    let product = products.find(p => p.name && p.name.toLowerCase() === productName.toLowerCase());
-    if(product && product.image) return product.image;
+    for(var i = 0; i < products.length; i++) {
+      if(products[i].name && products[i].name.toLowerCase() === productName.toLowerCase()) {
+        if(products[i].image) return products[i].image;
+        break;
+      }
+    }
     
-    product = products.find(p => p.name && productName.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(productName.toLowerCase()));
-    if(product && product.image) return product.image;
+    for(var i = 0; i < products.length; i++) {
+      if(products[i].name && (productName.toLowerCase().includes(products[i].name.toLowerCase()) || products[i].name.toLowerCase().includes(productName.toLowerCase()))) {
+        if(products[i].image) return products[i].image;
+        break;
+      }
+    }
   }
   
   return 'https://placehold.co/46x46/F2EDE7/800000?text=🍾';
 }
 
+function escapeHtml(str){ 
+  if(!str) return '';
+  return String(str).replace(/[&<>]/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]; }); 
+}
+
+// ==================== RENDER ORDERS ====================
 function renderOrders(){
-  let filtered = [...filteredOrders];
+  var filtered = filteredOrders.slice();
   if(searchTerm){
-    filtered = filteredOrders.filter(o => 
-      o.customer_name?.toLowerCase().includes(searchTerm) ||
-      o.customer_email?.toLowerCase().includes(searchTerm) ||
-      o.phone?.includes(searchTerm)
-    );
+    filtered = filteredOrders.filter(function(o) {
+      return (o.customer_name && o.customer_name.toLowerCase().includes(searchTerm)) ||
+             (o.customer_email && o.customer_email.toLowerCase().includes(searchTerm)) ||
+             (o.phone && o.phone.includes(searchTerm));
+    });
   }
   
-  const container = document.getElementById('ordersContainer');
+  var container = document.getElementById('ordersContainer');
   if(!filtered.length){
     container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>';
     return;
   }
   
-  container.innerHTML = filtered.map(o => {
-    let items = o.items;
+  var html = '';
+  for(var i = 0; i < filtered.length; i++) {
+    var o = filtered[i];
+    var items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); }catch(e){ items = []; } }
     if(!items || !items.length) items = [];
     
-    const phoneRaw = o.phone || '';
-    const cleanPhone = formatPhone(phoneRaw);
-    const displayPhone = formatDisplayPhone(phoneRaw);
-    const waLink = cleanPhone ? `https://wa.me/${cleanPhone}` : '#';
-    const callLink = cleanPhone ? `tel:${cleanPhone}` : '#';
+    var phoneRaw = o.phone || '';
+    var cleanPhone = formatPhone(phoneRaw);
+    var displayPhone = formatDisplayPhone(phoneRaw);
+    var waLink = cleanPhone ? 'https://wa.me/' + cleanPhone : '#';
+    var callLink = cleanPhone ? 'tel:' + cleanPhone : '#';
     
-    const itemsHtml = items.map(i => {
-      const productImg = findProductImage(i.product_name || i.name, i.product_id);
-      return `
-        <div class="order-item">
-          <img class="order-item-img" src="${productImg}" onerror="this.src='https://placehold.co/46x46/F2EDE7/800000?text=🍾'" loading="lazy">
-          <div class="order-item-details">
-            <div class="order-item-name">${escapeHtml(i.product_name || i.name)} ${i.size ? `<span style="font-weight:400;color:var(--muted)">(${i.size})</span>` : ''}</div>
-            <div class="order-item-qty">Qty: ${i.quantity || i.qty || 1}</div>
-          </div>
-          <div class="order-item-price">KES ${((i.price||0) * (i.quantity||i.qty||1)).toLocaleString()}</div>
-        </div>
-      `;
-    }).join('');
+    var itemsHtml = '';
+    for(var j = 0; j < items.length; j++) {
+      var item = items[j];
+      var productImg = findProductImage(item.product_name || item.name, item.product_id);
+      var imgSrc = productImg && productImg.includes('cloudinary.com') ? optimizeImage(productImg, 100) : productImg;
+      var itemName = item.product_name || item.name || 'Product';
+      var itemQty = item.quantity || item.qty || 1;
+      var itemPrice = item.price || 0;
+      itemsHtml += '<div class="order-item">' +
+        '<img class="order-item-img" src="' + imgSrc + '" onerror="this.src=\'https://placehold.co/46x46/F2EDE7/800000?text=🍾\'" loading="lazy">' +
+        '<div class="order-item-details">' +
+          '<div class="order-item-name">' + escapeHtml(itemName) + (item.size ? '<span style="font-weight:400;color:var(--muted)">(' + item.size + ')</span>' : '') + '</div>' +
+          '<div class="order-item-qty">Qty: ' + itemQty + '</div>' +
+        '</div>' +
+        '<div class="order-item-price">KES ' + (itemPrice * itemQty).toLocaleString() + '</div>' +
+      '</div>';
+    }
     
-    const orderId = getOrderDisplayId(o);
-    const isProcessing = pendingActions.has(o._id);
-    const statusLabel = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : 'Delivered';
-    const statusIcon = o.status === 'pending' ? 'ph-clock' : o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
+    var orderId = getOrderDisplayId(o);
+    var isProcessing = pendingActions.has(o._id);
+    var statusLabel = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : 'Delivered';
+    var statusIcon = o.status === 'pending' ? 'ph-clock' : o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
     
-    const deliveryFee = o.delivery || 0;
-    const subtotal = o.subtotal || (o.total - deliveryFee);
-    const deliveryDisplay = deliveryFee === 0 ? '<span style="color:var(--green);">FREE</span>' : `KES ${deliveryFee.toLocaleString()}`;
+    var deliveryFee = o.delivery || 0;
+    var subtotal = o.subtotal || (o.total - deliveryFee);
+    var deliveryDisplay = deliveryFee === 0 ? '<span style="color:var(--green);">FREE</span>' : 'KES ' + deliveryFee.toLocaleString();
     
-    return `
-      <div class="order-card" data-order-id="${o._id}">
-        <div class="order-header">
-          <div>
-            <div class="order-id"><i class="ph ph-package"></i> ${orderId}</div>
-            <div class="order-customer">${escapeHtml(o.customer_name || 'Customer')}</div>
-            <div class="order-meta-row">
-              <span class="order-meta-chip"><i class="ph ph-envelope"></i> ${escapeHtml(o.customer_email || 'No email')}</span>
-              <span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleString()}</span>
-            </div>
-            <div class="order-meta-row">
-              <span class="order-phone-chip"><i class="ph ph-phone"></i> ${escapeHtml(displayPhone)}</span>
-            </div>
-          </div>
-          <div class="order-header-right">
-            <span class="order-status status-${o.status}"><i class="ph ${statusIcon}"></i> ${statusLabel}</span>
-            <div class="contact-buttons">
-              <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa" ${!cleanPhone ? 'style="opacity:0.5;pointer-events:none;"' : ''}><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
-              <a href="${callLink}" class="btn btn-sm btn-call" ${!cleanPhone ? 'style="opacity:0.5;pointer-events:none;"' : ''}><i class="ph ph-phone-call"></i> Call</a>
-            </div>
-          </div>
-        </div>
-        <div class="order-items">${itemsHtml || '<div style="color:var(--muted);font-size:13px;padding:8px 0;">No items found</div>'}</div>
-        <div class="order-footer">
-          <div>
-            <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
-            <div class="order-total-label">Order Total</div>
-            <div class="order-meta-small">
-              <span><i class="ph ph-package"></i> Subtotal: KES ${(subtotal || 0).toLocaleString()}</span>
-              <span><i class="ph ph-truck"></i> Delivery: ${deliveryDisplay}</span>
-              <span><i class="ph ph-credit-card"></i> ${o.payment_method || 'Unknown'}</span>
-              <span><i class="ph ph-map-pin"></i> ${escapeHtml((o.address || '').substring(0, 45))}</span>
-            </div>
-          </div>
-          <div class="order-actions">
-            ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="markPaid('${o._id}')" ${isProcessing ? 'disabled' : ''}><i class="ph ph-check-circle"></i> ${isProcessing ? '<span class="loading-spinner"></span>' : 'Mark Paid'}</button>` : ''}
-            ${o.status === 'paid' ? `<button class="btn btn-sm btn-gold" onclick="markDelivered('${o._id}')" ${isProcessing ? 'disabled' : ''}><i class="ph ph-truck"></i> ${isProcessing ? '<span class="loading-spinner"></span>' : 'Mark Delivered'}</button>` : ''}
-            ${o.status === 'delivered' ? `<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
+    var actionsHtml = '';
+    if (o.status === 'pending') {
+      actionsHtml = '<button class="btn btn-sm btn-green" onclick="markPaid(\'' + o._id + '\')" ' + (isProcessing ? 'disabled' : '') + '><i class="ph ph-check-circle"></i> ' + (isProcessing ? '<span class="loading-spinner"></span>' : 'Mark Paid') + '</button>';
+    } else if (o.status === 'paid') {
+      actionsHtml = '<button class="btn btn-sm btn-gold" onclick="markDelivered(\'' + o._id + '\')" ' + (isProcessing ? 'disabled' : '') + '><i class="ph ph-truck"></i> ' + (isProcessing ? '<span class="loading-spinner"></span>' : 'Mark Delivered') + '</button>';
+    } else if (o.status === 'delivered') {
+      actionsHtml = '<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>';
+    }
+    
+    html += '<div class="order-card" data-order-id="' + o._id + '">' +
+      '<div class="order-header">' +
+        '<div>' +
+          '<div class="order-id"><i class="ph ph-package"></i> ' + orderId + '</div>' +
+          '<div class="order-customer">' + escapeHtml(o.customer_name || 'Customer') + '</div>' +
+          '<div class="order-meta-row">' +
+            '<span class="order-meta-chip"><i class="ph ph-envelope"></i> ' + escapeHtml(o.customer_email || 'No email') + '</span>' +
+            '<span class="order-meta-chip"><i class="ph ph-calendar"></i> ' + new Date(o.created_at).toLocaleString() + '</span>' +
+          '</div>' +
+          '<div class="order-meta-row">' +
+            '<span class="order-phone-chip"><i class="ph ph-phone"></i> ' + escapeHtml(displayPhone) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="order-header-right">' +
+          '<span class="order-status status-' + o.status + '"><i class="ph ' + statusIcon + '"></i> ' + statusLabel + '</span>' +
+          '<div class="contact-buttons">' +
+            '<a href="' + waLink + '" target="_blank" class="btn btn-sm btn-wa" ' + (!cleanPhone ? 'style="opacity:0.5;pointer-events:none;"' : '') + '><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>' +
+            '<a href="' + callLink + '" class="btn btn-sm btn-call" ' + (!cleanPhone ? 'style="opacity:0.5;pointer-events:none;"' : '') + '><i class="ph ph-phone-call"></i> Call</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="order-items">' + (itemsHtml || '<div style="color:var(--muted);font-size:13px;padding:8px 0;">No items found</div>') + '</div>' +
+      '<div class="order-footer">' +
+        '<div>' +
+          '<div class="order-total">KES ' + (o.total || 0).toLocaleString() + '</div>' +
+          '<div class="order-total-label">Order Total</div>' +
+          '<div class="order-meta-small">' +
+            '<span><i class="ph ph-package"></i> Subtotal: KES ' + (subtotal || 0).toLocaleString() + '</span>' +
+            '<span><i class="ph ph-truck"></i> Delivery: ' + deliveryDisplay + '</span>' +
+            '<span><i class="ph ph-credit-card"></i> ' + (o.payment_method || 'Unknown') + '</span>' +
+            '<span><i class="ph ph-map-pin"></i> ' + escapeHtml((o.address || '').substring(0, 45)) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="order-actions">' + actionsHtml + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  container.innerHTML = html;
 }
 
-// FIXED: Mark Paid - uses cashier-specific endpoint, properly clears loading state
+// ==================== MARK PAID ====================
 async function markPaid(id){
   if(pendingActions.has(id)) return;
   
-  const orderIndex = filteredOrders.findIndex(o => o._id === id);
+  var orderIndex = -1;
+  for(var i = 0; i < filteredOrders.length; i++) {
+    if(filteredOrders[i]._id === id) { orderIndex = i; break; }
+  }
   if(orderIndex === -1) return;
-  const originalOrder = { ...filteredOrders[orderIndex] };
+  var originalOrder = JSON.parse(JSON.stringify(filteredOrders[orderIndex]));
   
   pendingActions.set(id, 'paid');
   renderOrders();
   renderStats();
   
   try{
-    const res = await fetch(`${API_BASE}/api/cashier/orders/${id}/status`, {
+    var res = await fetch(API_BASE + '/api/cashier/orders/' + id + '/status', {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'paid' })
@@ -580,7 +642,7 @@ async function markPaid(id){
     
     if(res.status === 429){
       showToast('⚠️ Server busy, retrying...', true);
-      setTimeout(() => markPaid(id), 3000);
+      setTimeout(function(){ markPaid(id); }, 3000);
       pendingActions.delete(id);
       renderOrders();
       return;
@@ -594,10 +656,15 @@ async function markPaid(id){
       document.getElementById('cashierLoginModal').style.display = 'flex';
       showToast('Session expired. Please login again.', true);
       pendingActions.delete(id);
-      // Revert the optimistic update
-      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      var revertIndex = -1;
+      for(var i = 0; i < filteredOrders.length; i++) {
+        if(filteredOrders[i]._id === id) { revertIndex = i; break; }
+      }
       if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
-      const allIdx = allOrders.findIndex(o => o._id === id);
+      var allIdx = -1;
+      for(var i = 0; i < allOrders.length; i++) {
+        if(allOrders[i]._id === id) { allIdx = i; break; }
+      }
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       renderOrders();
       renderStats();
@@ -606,21 +673,30 @@ async function markPaid(id){
     
     if(res.ok){
       showToast('✅ Order marked as PAID');
-      // Update the local order status
-      const updateIndex = filteredOrders.findIndex(o => o._id === id);
+      var updateIndex = -1;
+      for(var i = 0; i < filteredOrders.length; i++) {
+        if(filteredOrders[i]._id === id) { updateIndex = i; break; }
+      }
       if(updateIndex !== -1) filteredOrders[updateIndex].status = 'paid';
-      const allUpdateIdx = allOrders.findIndex(o => o._id === id);
+      var allUpdateIdx = -1;
+      for(var i = 0; i < allOrders.length; i++) {
+        if(allOrders[i]._id === id) { allUpdateIdx = i; break; }
+      }
       if(allUpdateIdx !== -1) allOrders[allUpdateIdx].status = 'paid';
       pendingActions.delete(id);
       renderOrders();
       renderStats();
-      // Refresh in background to sync with server
-      setTimeout(() => loadOrders(), 500);
+      setTimeout(function(){ loadOrders(); }, 500);
     } else {
-      // Revert on error
-      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      var revertIndex = -1;
+      for(var i = 0; i < filteredOrders.length; i++) {
+        if(filteredOrders[i]._id === id) { revertIndex = i; break; }
+      }
       if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
-      const allIdx = allOrders.findIndex(o => o._id === id);
+      var allIdx = -1;
+      for(var i = 0; i < allOrders.length; i++) {
+        if(allOrders[i]._id === id) { allIdx = i; break; }
+      }
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       pendingActions.delete(id);
       renderOrders();
@@ -628,10 +704,15 @@ async function markPaid(id){
       showToast('Error updating order', true);
     }
   } catch(e){
-    // Revert on error
-    const revertIndex = filteredOrders.findIndex(o => o._id === id);
+    var revertIndex = -1;
+    for(var i = 0; i < filteredOrders.length; i++) {
+      if(filteredOrders[i]._id === id) { revertIndex = i; break; }
+    }
     if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
-    const allIdx = allOrders.findIndex(o => o._id === id);
+    var allIdx = -1;
+    for(var i = 0; i < allOrders.length; i++) {
+      if(allOrders[i]._id === id) { allIdx = i; break; }
+    }
     if(allIdx !== -1) allOrders[allIdx] = originalOrder;
     pendingActions.delete(id);
     renderOrders();
@@ -640,20 +721,23 @@ async function markPaid(id){
   }
 }
 
-// FIXED: Mark Delivered - uses cashier-specific endpoint, properly clears loading state
+// ==================== MARK DELIVERED ====================
 async function markDelivered(id){
   if(pendingActions.has(id)) return;
   
-  const orderIndex = filteredOrders.findIndex(o => o._id === id);
+  var orderIndex = -1;
+  for(var i = 0; i < filteredOrders.length; i++) {
+    if(filteredOrders[i]._id === id) { orderIndex = i; break; }
+  }
   if(orderIndex === -1) return;
-  const originalOrder = { ...filteredOrders[orderIndex] };
+  var originalOrder = JSON.parse(JSON.stringify(filteredOrders[orderIndex]));
   
   pendingActions.set(id, 'delivered');
   renderOrders();
   renderStats();
   
   try{
-    const res = await fetch(`${API_BASE}/api/cashier/orders/${id}/status`, {
+    var res = await fetch(API_BASE + '/api/cashier/orders/' + id + '/status', {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status: 'delivered' })
@@ -661,7 +745,7 @@ async function markDelivered(id){
     
     if(res.status === 429){
       showToast('⚠️ Server busy, retrying...', true);
-      setTimeout(() => markDelivered(id), 3000);
+      setTimeout(function(){ markDelivered(id); }, 3000);
       pendingActions.delete(id);
       renderOrders();
       return;
@@ -675,10 +759,15 @@ async function markDelivered(id){
       document.getElementById('cashierLoginModal').style.display = 'flex';
       showToast('Session expired. Please login again.', true);
       pendingActions.delete(id);
-      // Revert the optimistic update
-      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      var revertIndex = -1;
+      for(var i = 0; i < filteredOrders.length; i++) {
+        if(filteredOrders[i]._id === id) { revertIndex = i; break; }
+      }
       if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
-      const allIdx = allOrders.findIndex(o => o._id === id);
+      var allIdx = -1;
+      for(var i = 0; i < allOrders.length; i++) {
+        if(allOrders[i]._id === id) { allIdx = i; break; }
+      }
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       renderOrders();
       renderStats();
@@ -687,21 +776,30 @@ async function markDelivered(id){
     
     if(res.ok){
       showToast('🚚 Order marked as DELIVERED');
-      // Update the local order status
-      const updateIndex = filteredOrders.findIndex(o => o._id === id);
+      var updateIndex = -1;
+      for(var i = 0; i < filteredOrders.length; i++) {
+        if(filteredOrders[i]._id === id) { updateIndex = i; break; }
+      }
       if(updateIndex !== -1) filteredOrders[updateIndex].status = 'delivered';
-      const allUpdateIdx = allOrders.findIndex(o => o._id === id);
+      var allUpdateIdx = -1;
+      for(var i = 0; i < allOrders.length; i++) {
+        if(allOrders[i]._id === id) { allUpdateIdx = i; break; }
+      }
       if(allUpdateIdx !== -1) allOrders[allUpdateIdx].status = 'delivered';
       pendingActions.delete(id);
       renderOrders();
       renderStats();
-      // Refresh in background to sync with server
-      setTimeout(() => loadOrders(), 500);
+      setTimeout(function(){ loadOrders(); }, 500);
     } else {
-      // Revert on error
-      const revertIndex = filteredOrders.findIndex(o => o._id === id);
+      var revertIndex = -1;
+      for(var i = 0; i < filteredOrders.length; i++) {
+        if(filteredOrders[i]._id === id) { revertIndex = i; break; }
+      }
       if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
-      const allIdx = allOrders.findIndex(o => o._id === id);
+      var allIdx = -1;
+      for(var i = 0; i < allOrders.length; i++) {
+        if(allOrders[i]._id === id) { allIdx = i; break; }
+      }
       if(allIdx !== -1) allOrders[allIdx] = originalOrder;
       pendingActions.delete(id);
       renderOrders();
@@ -709,10 +807,15 @@ async function markDelivered(id){
       showToast('Error updating order', true);
     }
   } catch(e){
-    // Revert on error
-    const revertIndex = filteredOrders.findIndex(o => o._id === id);
+    var revertIndex = -1;
+    for(var i = 0; i < filteredOrders.length; i++) {
+      if(filteredOrders[i]._id === id) { revertIndex = i; break; }
+    }
     if(revertIndex !== -1) filteredOrders[revertIndex] = originalOrder;
-    const allIdx = allOrders.findIndex(o => o._id === id);
+    var allIdx = -1;
+    for(var i = 0; i < allOrders.length; i++) {
+      if(allOrders[i]._id === id) { allIdx = i; break; }
+    }
     if(allIdx !== -1) allOrders[allIdx] = originalOrder;
     pendingActions.delete(id);
     renderOrders();
@@ -721,17 +824,14 @@ async function markDelivered(id){
   }
 }
 
+// ==================== SEARCH ====================
 function clearSearch(){
   searchTerm = '';
   document.getElementById('orderSearch').value = '';
   renderOrders();
 }
 
-function escapeHtml(str){ 
-  if(!str) return '';
-  return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); 
-}
-
+// ==================== LOGOUT ====================
 function logout(){
   localStorage.removeItem('liquorbelle_cashier_token');
   localStorage.removeItem('liquorbelle_admin_role');
@@ -740,12 +840,12 @@ function logout(){
   location.reload();
 }
 
+// ==================== INIT ====================
 async function initAfterLogin() {
   await loadProducts();
   await loadOrders();
-  // Auto-refresh orders every 10 seconds
   if(autoRefreshInterval) clearInterval(autoRefreshInterval);
-  autoRefreshInterval = setInterval(() => {
+  autoRefreshInterval = setInterval(function() {
     if(adminToken) loadOrders();
   }, 10000);
 }
@@ -760,7 +860,7 @@ async function init() {
   }
 }
 
-document.getElementById('orderSearch').addEventListener('input', (e) => {
+document.getElementById('orderSearch').addEventListener('input', function(e) {
   searchTerm = e.target.value.toLowerCase();
   renderOrders();
 });

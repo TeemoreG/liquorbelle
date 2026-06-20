@@ -7,8 +7,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LiquorBelle — Track Your Orders</title>
+
+<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -182,45 +191,129 @@ a{color:inherit;text-decoration:none;}
   margin-bottom: 24px;
   font-size: .9rem;
 }
-.track-input{
-  width: 100%;
-  padding: 14px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: 50px;
-  font-size: 1rem;
-  font-family: var(--font-body);
-  margin-bottom: 16px;
-  background:var(--bg);
+
+/* Dual track options */
+.track-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:8px;
+}
+@media(max-width:600px){
+  .track-options{grid-template-columns:1fr;gap:12px;}
+}
+.track-option{
+  background:var(--bg2);
+  border-radius:var(--radius-sm);
+  padding:16px;
+  border:2px solid var(--border);
   transition:all .2s;
 }
-.track-input:focus{
-  outline: none;
-  border-color: var(--primary);
+.track-option:hover{border-color:var(--primary);}
+.track-option h4{
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.track-option h4 i{color:var(--primary);}
+.track-option .track-input{
+  width:100%;
+  padding:10px 14px;
+  border:1.5px solid var(--border);
+  border-radius:50px;
+  font-size:.9rem;
+  font-family:var(--font-body);
   background:var(--white);
+  transition:all .2s;
+  margin-bottom:8px;
+}
+.track-option .track-input:focus{
+  outline:none;
+  border-color:var(--primary);
   box-shadow:0 0 0 3px rgba(128,0,0,0.06);
 }
-.track-btn{
-  width: 100%;
-  padding: 14px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
+.track-option .track-btn-sm{
+  width:100%;
+  padding:10px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:50px;
+  font-weight:700;
+  font-size:.85rem;
+  cursor:pointer;
+  transition:all .2s;
   display:flex;
   align-items:center;
   justify-content:center;
+  gap:6px;
+}
+.track-option .track-btn-sm:hover{
+  background:var(--primary-bright);
+  transform:translateY(-2px);
+}
+.track-option .track-btn-sm:active{transform:scale(0.97);}
+
+.guest-hint{
+  font-size:.65rem;
+  color:var(--muted);
+  margin-top:6px;
+  display:block;
+}
+
+/* Quick guest order card */
+.guest-order-card{
+  margin-top:16px;
+  background:var(--white);
+  border-radius:var(--radius-sm);
+  border:2px solid var(--btn-green);
+  padding:16px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  box-shadow:0 0 0 4px rgba(34,197,94,0.08);
+}
+.guest-order-card .guest-label{
+  display:flex;
+  align-items:center;
   gap:8px;
+  font-weight:700;
+  font-size:.85rem;
+  color:var(--btn-green);
 }
-.track-btn:hover{
-  background: var(--primary-bright);
-  transform: translateY(-2px);
-  box-shadow:0 4px 16px rgba(128,0,0,0.25);
+.guest-order-card .guest-label i{font-size:20px;}
+.guest-order-card .guest-id{
+  font-family:monospace;
+  font-weight:700;
+  font-size:.9rem;
+  color:var(--text);
+  background:var(--bg);
+  padding:4px 12px;
+  border-radius:20px;
 }
-.track-btn:active{transform:scale(0.97);}
+.guest-order-card .guest-total{
+  font-weight:800;
+  color:var(--primary);
+  font-size:1rem;
+}
+.guest-order-card .guest-btn{
+  padding:6px 18px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:30px;
+  font-weight:600;
+  font-size:.75rem;
+  cursor:pointer;
+  transition:all .2s;
+}
+.guest-order-card .guest-btn:hover{background:var(--primary-bright);transform:scale(1.02);}
 
 /* My Account Section */
 .my-account-section{
@@ -311,6 +404,7 @@ a{color:inherit;text-decoration:none;}
 .status-pending{background:#FFF3E0;color:#E67E22;}
 .status-paid{background:#E8F5E9;color:#1A8A3E;}
 .status-delivered{background:#E3F2FD;color:#2196F3;}
+.status-cancelled{background:#FFEBEE;color:#D32F2F;}
 .order-items{
   padding: 14px 18px;
   max-height:240px;
@@ -481,7 +575,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Header -->
 <header class="main-header">
   <a class="logo" href="index.html">
-    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
   </a>
   <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
@@ -526,9 +620,28 @@ a{color:inherit;text-decoration:none;}
   
   <div class="track-card">
     <h1><i class="ph ph-magnifying-glass"></i> Track Your Order</h1>
-    <p>Enter your email address to see all your orders</p>
-    <input type="email" id="trackEmail" class="track-input" placeholder="Email address" autocomplete="email">
-    <button class="track-btn" onclick="trackOrders()"><i class="ph ph-magnifying-glass"></i> Track Orders</button>
+    <p>Find your order — choose how you want to track</p>
+    
+    <div class="track-options">
+      <!-- Option 1: Track by Email -->
+      <div class="track-option">
+        <h4><i class="ph ph-envelope"></i> By Email</h4>
+        <input type="email" id="trackEmail" class="track-input" placeholder="Your email address" autocomplete="email">
+        <button class="track-btn-sm" onclick="trackByEmail()"><i class="ph ph-magnifying-glass"></i> Search</button>
+        <span class="guest-hint">All orders placed with this email</span>
+      </div>
+      
+      <!-- Option 2: Track by Order ID -->
+      <div class="track-option">
+        <h4><i class="ph ph-hash"></i> By Order ID</h4>
+        <input type="text" id="trackOrderId" class="track-input" placeholder="e.g. LB-12345678" autocomplete="off">
+        <button class="track-btn-sm" onclick="trackByOrderId()"><i class="ph ph-magnifying-glass"></i> Search</button>
+        <span class="guest-hint">Found in your order confirmation email</span>
+      </div>
+    </div>
+    
+    <!-- Quick Guest Order (from localStorage) -->
+    <div id="guestOrderCard"></div>
   </div>
 
   <!-- My Account Section - Fetched from Database -->
@@ -609,6 +722,16 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <script>
+// ==================== IMAGE OPTIMIZATION ====================
+function optimizeImage(url, width) {
+    if (!url) return '';
+    if (!url.includes('cloudinary.com')) return url;
+    var parts = url.split('/upload/');
+    if (parts.length !== 2) return url;
+    var w = width || 300;
+    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
+}
+
 // ==================== HEADER MENU & SEARCH ====================
 function openMobileMenu(){
   document.getElementById('mobileMenu').classList.add('open');
@@ -626,10 +749,10 @@ function handleHeaderSearch(e){
 }
 
 // ==================== CONFIG ====================
-const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-const FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png';
-let cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
-let wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
+var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png';
+var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+var wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
 
@@ -641,6 +764,16 @@ function toast(msg){
   setTimeout(function(){t.style.opacity='0';},2500);
 }
 
+// ==================== OFFLINE DETECTION ====================
+window.addEventListener('online', function(){
+  var banner=document.getElementById('offlineBanner');
+  if(banner) banner.classList.remove('show');
+});
+window.addEventListener('offline', function(){
+  var banner=document.getElementById('offlineBanner');
+  if(banner) banner.classList.add('show');
+});
+
 // ==================== WISHLIST MODAL ====================
 function openWishlistModal(){
   var container=document.getElementById('wishlistItems');
@@ -649,7 +782,8 @@ function openWishlistModal(){
     container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
   }else{
     container.innerHTML=wishlist.map(function(w){
-      return '<div class="wishlist-item"><img src="'+(w.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button></div>';
+      var imgSrc = w.image ? optimizeImage(w.image, 100) : FALLBACK_IMG;
+      return '<div class="wishlist-item"><img src="'+imgSrc+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button></div>';
     }).join('');
   }
   var modal=document.getElementById('wishlistModal');
@@ -673,17 +807,55 @@ function addToCart(id,name,price,capacity){
   toast(name+' added');
 }
 
-// ==================== GET EMAIL FROM URL ====================
-const urlParams = new URLSearchParams(window.location.search);
-let emailParam = urlParams.get('email') || '';
-if(emailParam){
-  document.getElementById('trackEmail').value = emailParam;
-  setTimeout(function(){ trackOrders(); }, 500);
+// ==================== GUEST ORDER CARD (from localStorage) ====================
+function showGuestOrderCard() {
+  var container = document.getElementById('guestOrderCard');
+  var lastOrder = localStorage.getItem('liquorbelle_last_order');
+  if (lastOrder) {
+    try {
+      var order = JSON.parse(lastOrder);
+      // Only show if it's recent (within 7 days)
+      var orderDate = new Date(order.timestamp || Date.now());
+      var daysAgo = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysAgo > 7) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = `
+        <div class="guest-order-card">
+          <div class="guest-label">
+            <i class="ph ph-clock-counter-clockwise"></i>
+            <span>Recent Order</span>
+          </div>
+          <span class="guest-id">${escapeHtml(order.orderId || 'LB-??????')}</span>
+          <span class="guest-total">KES ${(order.total || 0).toLocaleString()}</span>
+          <button class="guest-btn" onclick="quickTrackOrder('${escapeHtml(order.orderId || '')}')">
+            <i class="ph ph-magnifying-glass"></i> View
+          </button>
+        </div>
+      `;
+    } catch(e) {
+      container.innerHTML = '';
+    }
+  } else {
+    container.innerHTML = '';
+  }
 }
 
-// ==================== TRACK ORDERS ====================
-async function trackOrders(){
-  const email = document.getElementById('trackEmail').value.trim();
+function quickTrackOrder(orderId) {
+  if (!orderId) return;
+  document.getElementById('trackOrderId').value = orderId;
+  trackByOrderId();
+}
+
+// ==================== GET URL PARAMS ====================
+var urlParams = new URLSearchParams(window.location.search);
+var emailParam = urlParams.get('email') || '';
+var orderIdParam = urlParams.get('orderId') || '';
+
+// ==================== TRACK BY EMAIL ====================
+async function trackByEmail(){
+  var email = document.getElementById('trackEmail').value.trim();
   if(!email){
     toast('Please enter your email address');
     return;
@@ -692,40 +864,71 @@ async function trackOrders(){
     toast('Please enter a valid email');
     return;
   }
-  
-  const container = document.getElementById('ordersContainer');
+  await fetchOrders('email', email);
+}
+
+// ==================== TRACK BY ORDER ID ====================
+async function trackByOrderId(){
+  var orderId = document.getElementById('trackOrderId').value.trim();
+  if(!orderId){
+    toast('Please enter your Order ID (e.g. LB-12345678)');
+    return;
+  }
+  await fetchOrders('orderId', orderId);
+}
+
+// ==================== FETCH ORDERS FROM DATABASE ====================
+async function fetchOrders(method, value){
+  var container = document.getElementById('ordersContainer');
   container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
   
+  // Hide account section initially
+  document.getElementById('myAccountSection').style.display = 'none';
+  
   try{
-    const res = await fetch(`${API_BASE}/api/orders/track?email=${encodeURIComponent(email)}`);
-    const data = await res.json();
+    var url;
+    if (method === 'email') {
+      url = API_BASE + '/api/orders/track?email=' + encodeURIComponent(value);
+    } else {
+      // Track by order ID - we need to get all orders and filter
+      url = API_BASE + '/api/admin/all-orders?limit=100';
+    }
+    
+    var res = await fetch(url);
+    var data = await res.json();
     
     if(data.success && data.orders){
-      const userOrders = data.orders;
+      var userOrders = [];
       
-      // Show My Account section
-      const accountSection = document.getElementById('myAccountSection');
-      accountSection.style.display = 'block';
+      if (method === 'email') {
+        userOrders = data.orders;
+      } else {
+        // Filter by order ID (case insensitive, partial match)
+        var searchId = value.toUpperCase().trim();
+        userOrders = data.orders.filter(function(o) {
+          var orderNumber = (o.order_number || '').toUpperCase();
+          var id = (o._id || '').toUpperCase();
+          return orderNumber.includes(searchId) || id.includes(searchId);
+        });
+      }
       
-      // Populate account info from first order
-      if(userOrders.length > 0){
-        const firstOrder = userOrders[0];
+      // Show My Account section only for email search with results
+      if (method === 'email' && userOrders.length > 0) {
+        var accountSection = document.getElementById('myAccountSection');
+        accountSection.style.display = 'block';
+        
+        var firstOrder = userOrders[0];
         document.getElementById('accountName').textContent = firstOrder.customer_name || '—';
-        document.getElementById('accountEmail').textContent = firstOrder.customer_email || email;
+        document.getElementById('accountEmail').textContent = firstOrder.customer_email || value;
         document.getElementById('accountPhone').textContent = firstOrder.phone || '—';
         document.getElementById('accountOrderCount').textContent = userOrders.length;
-      } else {
-        document.getElementById('accountName').textContent = '—';
-        document.getElementById('accountEmail').textContent = email;
-        document.getElementById('accountPhone').textContent = '—';
-        document.getElementById('accountOrderCount').textContent = '0';
       }
       
       if(userOrders.length > 0){
-        userOrders.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-        renderOrders(userOrders);
+        userOrders.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
+        renderOrders(userOrders, method);
       } else {
-        container.innerHTML = `<div class="empty-state"><i class="ph ph-package"></i><p>No orders found for ${escapeHtml(email)}</p><small>Make sure you used this email when checking out</small></div>`;
+        container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Try checking your email or Order ID again</small></div>';
       }
     } else {
       container.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>Unable to fetch orders. Please try again.</p></div>';
@@ -736,55 +939,58 @@ async function trackOrders(){
   }
 }
 
-function renderOrders(orders){
-  const container = document.getElementById('ordersContainer');
-  container.innerHTML = `<div class="orders-list">${orders.map(function(o){
-    let items = o.items;
+function renderOrders(orders, method){
+  var container = document.getElementById('ordersContainer');
+  var html = '<div class="orders-list">';
+  for(var i = 0; i < orders.length; i++){
+    var o = orders[i];
+    var items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); }catch(e){ items = []; } }
     if(!items || !items.length) items = [];
     
-    const statusText = o.status === 'pending' ? '⏳ Pending' : (o.status === 'paid' ? '✅ Paid' : '🚚 Delivered');
-    const statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'paid' ? 'status-paid' : 'status-delivered');
+    var statusText = o.status === 'pending' ? '⏳ Pending' : (o.status === 'paid' ? '✅ Paid' : (o.status === 'delivered' ? '🚚 Delivered' : '❌ Cancelled'));
+    var statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'paid' ? 'status-paid' : (o.status === 'delivered' ? 'status-delivered' : 'status-cancelled'));
     
-    const deliveryFee = o.delivery || 0;
-    const subtotal = o.subtotal || (o.total - deliveryFee);
-    const deliveryDisplay = deliveryFee === 0 ? '<span style="color:#1A8A3E;">FREE</span>' : `KES ${deliveryFee.toLocaleString()}`;
+    var deliveryFee = o.delivery || 0;
+    var subtotal = o.subtotal || (o.total - deliveryFee);
+    var deliveryDisplay = deliveryFee === 0 ? '<span style="color:#1A8A3E;">FREE</span>' : 'KES ' + deliveryFee.toLocaleString();
     
-    const orderNumber = o.order_number || (o._id ? o._id.slice(-8).toUpperCase() : 'N/A');
+    var orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
     
-    return `
-      <div class="order-card">
-        <div class="order-header">
-          <div>
-            <div class="order-number">📦 Order #${orderNumber}</div>
-            <div class="order-date">📅 ${new Date(o.created_at).toLocaleDateString()} at ${new Date(o.created_at).toLocaleTimeString()}</div>
-            <div class="order-breakdown">
-              <i class="ph ph-credit-card"></i> ${o.payment_method || 'M-PESA'}
-            </div>
-          </div>
-          <span class="order-status ${statusClass}">${statusText}</span>
-        </div>
-        <div class="order-items">
-          ${items.map(function(i){
-            return `
-              <div class="order-item">
-                <div>
-                  <div class="order-item-name">${escapeHtml(i.product_name || i.name)} ${i.size ? `(${i.size})` : ''}</div>
-                  <div class="order-item-qty">Quantity: ${i.quantity || i.qty || 1}</div>
-                </div>
-                <div class="order-item-price">KES ${((i.price||0) * (i.quantity||i.qty||1)).toLocaleString()}</div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-        <div class="order-footer">
-          <div class="order-total-row"><span>Subtotal</span><span>KES ${(subtotal || 0).toLocaleString()}</span></div>
-          <div class="order-total-row"><span>Delivery Fee</span><span>${deliveryDisplay}</span></div>
-          <div class="order-total-row"><span>Total</span><span>KES ${(o.total || 0).toLocaleString()}</span></div>
-        </div>
-      </div>
-    `;
-  }).join('')}</div>`;
+    html += '<div class="order-card">';
+    html += '<div class="order-header">';
+    html += '<div><div class="order-number">📦 Order #' + orderNumber + '</div>';
+    html += '<div class="order-date">📅 ' + new Date(o.created_at).toLocaleDateString() + ' at ' + new Date(o.created_at).toLocaleTimeString() + '</div>';
+    html += '<div class="order-breakdown"><i class="ph ph-credit-card"></i> ' + (o.payment_method || 'M-PESA') + '</div></div>';
+    html += '<span class="order-status ' + statusClass + '">' + statusText + '</span>';
+    html += '</div>';
+    html += '<div class="order-items">';
+    for(var j = 0; j < items.length; j++){
+      var item = items[j];
+      var itemName = item.product_name || item.name || 'Product';
+      var itemQty = item.quantity || item.qty || 1;
+      var itemPrice = item.price || 0;
+      html += '<div class="order-item"><div><div class="order-item-name">' + escapeHtml(itemName) + (item.size ? ' (' + item.size + ')' : '') + '</div><div class="order-item-qty">Quantity: ' + itemQty + '</div></div><div class="order-item-price">KES ' + (itemPrice * itemQty).toLocaleString() + '</div></div>';
+    }
+    html += '</div>';
+    html += '<div class="order-footer">';
+    html += '<div class="order-total-row"><span>Subtotal</span><span>KES ' + (subtotal || 0).toLocaleString() + '</span></div>';
+    html += '<div class="order-total-row"><span>Delivery Fee</span><span>' + deliveryDisplay + '</span></div>';
+    html += '<div class="order-total-row"><span>Total</span><span>KES ' + (o.total || 0).toLocaleString() + '</span></div>';
+    html += '</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ==================== AUTO-TRACK FROM URL PARAMS ====================
+if(emailParam){
+  document.getElementById('trackEmail').value = emailParam;
+  setTimeout(function(){ trackByEmail(); }, 500);
+} else if(orderIdParam){
+  document.getElementById('trackOrderId').value = orderIdParam;
+  setTimeout(function(){ trackByOrderId(); }, 500);
 }
 
 // ==================== CART FUNCTIONS ====================
@@ -862,14 +1068,23 @@ function closeCartDrawer(){
   if(overlay) overlay.classList.remove('open');
 }
 
+// ==================== ENTER KEY HANDLERS ====================
+document.getElementById('trackEmail').addEventListener('keypress', function(e){
+  if(e.key === 'Enter') trackByEmail();
+});
+document.getElementById('trackOrderId').addEventListener('keypress', function(e){
+  if(e.key === 'Enter') trackByOrderId();
+});
+
 // ==================== INIT ====================
 updateCartUI();
 setInterval(updateCartUI, 3000);
+showGuestOrderCard();
 
-// Handle Enter key on email input
-document.getElementById('trackEmail').addEventListener('keypress', function(e){
-  if(e.key === 'Enter') trackOrders();
-});
+if(!navigator.onLine){
+  var banner = document.getElementById('offlineBanner');
+  if(banner) banner.classList.add('show');
+}
 </script>
 </body>
 </html>

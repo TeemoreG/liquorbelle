@@ -4,8 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <title>LiquorBelle — Full Admin Control</title>
+
+<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -31,6 +40,7 @@
   --wa:#25D366;
   --wa-dark:#128C7E;
   --call:#1D4ED8;
+  --sale-red:#D50000;
   --radius:14px;
   --radius-sm:10px;
   --radius-xs:7px;
@@ -223,10 +233,11 @@ textarea{resize:vertical;}
 </head>
 <body>
 
+<!-- ===== LOGIN MODAL ===== -->
 <div id="adminLoginModal" class="login-modal-overlay">
   <div class="login-modal-card">
     <div class="login-logo">
-      <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+      <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
       <h2>Admin Login</h2>
       <p>Enter password to access admin panel</p>
     </div>
@@ -243,9 +254,10 @@ textarea{resize:vertical;}
   </div>
 </div>
 
+<!-- ===== ADMIN HEADER ===== -->
 <div class="admin-header">
   <div class="logo">
-    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <span class="logo-divider"></span>
     <span class="logo-text">Admin Panel</span>
   </div>
@@ -258,7 +270,9 @@ textarea{resize:vertical;}
   <button class="header-logout" onclick="logout()"><i class="ph ph-sign-out"></i> Logout</button>
 </div>
 
+<!-- ===== MAIN CONTENT ===== -->
 <div class="container">
+  <!-- Products Tab -->
   <div id="productsTab">
     <div class="stats-grid" id="productStats"></div>
     <div class="form-card">
@@ -288,6 +302,7 @@ textarea{resize:vertical;}
     <div class="table-container"><div class="table-header"><div>Image</div><div>Product</div><div>Sizes & Prices</div><div>Badges</div><div>Rating</div><div>Actions</div></div><div id="productsList"></div></div>
   </div>
 
+  <!-- Orders Tab -->
   <div id="ordersTab" style="display:none;">
     <div class="stats-grid" id="orderStats"></div>
     
@@ -318,11 +333,13 @@ textarea{resize:vertical;}
     <div id="ordersList" class="orders-list"></div>
   </div>
 
+  <!-- Analytics Tab -->
   <div id="analyticsTab" style="display:none;">
     <div class="stats-grid"><div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div><div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div><div class="sub">All time</div></div><div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In catalogue</div></div><div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per delivered order</div></div></div>
     <div class="form-card"><div class="form-card-title"><i class="ph ph-chart-bar"></i> Order Breakdown</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;"><div class="stat-card" style="padding:14px;"><h4>Paid</h4><div class="value" id="paidCount">0</div><div class="sub">Ready to deliver</div></div><div class="stat-card" style="padding:14px;"><h4>Delivered</h4><div class="value" id="deliveredCount">0</div><div class="sub">Completed orders</div></div><div class="stat-card" style="padding:14px;"><h4>Trending</h4><div class="value" id="trendingCount">0</div><div class="sub">On homepage</div></div></div></div>
   </div>
 
+  <!-- Settings Tab -->
   <div id="settingsTab" style="display:none;">
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-lock-key"></i> Password Management</div>
@@ -383,76 +400,75 @@ textarea{resize:vertical;}
   </div>
 </div>
 
+<!-- ===== EDIT MODAL ===== -->
 <div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody></table><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
 
+<!-- ===== TOAST ===== -->
 <div id="toast" class="toast"></div>
 
 <script>
-const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-const FALLBACK_IMG = 'https://i.postimg.cc/DzB8Bvmx/glass-whiskey-with-ice-bottle-with-label-vector-hand-drawn-color-illustration-168440-913.avif';
-let products = [];
-let allOrders = [];
-let filteredOrders = [];
-let currentTab = 'products';
-let productSearch = '';
-let orderSearch = '';
-let adminToken = localStorage.getItem('liquorbelle_admin_token');
-let currentDateFilter = '24h';
-let currentStatusFilter = 'all';
+// ==================== IMAGE OPTIMIZATION ====================
+function optimizeImage(url, width) {
+    if (!url) return '';
+    if (!url.includes('cloudinary.com')) return url;
+    var parts = url.split('/upload/');
+    if (parts.length !== 2) return url;
+    var w = width || 300;
+    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
+}
 
-function showToast(msg, isError = false){
-  const t = document.getElementById('toast');
+// ==================== CONFIG ====================
+var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_300,c_fit/v1781119164/liqbb_goc41e.png';
+var products = [];
+var allOrders = [];
+var filteredOrders = [];
+var currentTab = 'products';
+var productSearch = '';
+var orderSearch = '';
+var adminToken = localStorage.getItem('liquorbelle_admin_token');
+var currentDateFilter = '24h';
+var currentStatusFilter = 'all';
+
+// ==================== TOAST ====================
+function showToast(msg, isError){
+  var t = document.getElementById('toast');
   t.innerText = msg;
   t.classList.toggle('error', isError);
   t.classList.add('show');
   clearTimeout(t._timeout);
-  t._timeout = setTimeout(() => { t.classList.remove('show','error'); }, 3200);
+  t._timeout = setTimeout(function(){ t.classList.remove('show','error'); }, 3200);
 }
 
-function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]) : ''; }
+function escapeHtml(str){ return str ? String(str).replace(/[&<>]/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]; }) : ''; }
 
 function getAuthHeaders() {
-  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` };
+  return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken };
 }
 
+// ==================== PASSWORD TOGGLES ====================
 function toggleAdminPasswordVisibility() {
-  const input = document.getElementById('adminPassword');
-  const icon = document.getElementById('toggleAdminPasswordIcon');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.setAttribute('class', 'ph ph-eye-slash');
-  } else {
-    input.type = 'password';
-    icon.setAttribute('class', 'ph ph-eye');
-  }
+  var input = document.getElementById('adminPassword');
+  var icon = document.getElementById('toggleAdminPasswordIcon');
+  if (input.type === 'password') { input.type = 'text'; icon.setAttribute('class', 'ph ph-eye-slash'); } 
+  else { input.type = 'password'; icon.setAttribute('class', 'ph ph-eye'); }
 }
-
 function toggleNewAdminPasswordVisibility() {
-  const input = document.getElementById('newAdminPassword');
-  const icon = document.getElementById('toggleNewAdminIcon');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.setAttribute('class', 'ph ph-eye-slash');
-  } else {
-    input.type = 'password';
-    icon.setAttribute('class', 'ph ph-eye');
-  }
+  var input = document.getElementById('newAdminPassword');
+  var icon = document.getElementById('toggleNewAdminIcon');
+  if (input.type === 'password') { input.type = 'text'; icon.setAttribute('class', 'ph ph-eye-slash'); } 
+  else { input.type = 'password'; icon.setAttribute('class', 'ph ph-eye'); }
 }
-
 function toggleNewCashierPasswordVisibility() {
-  const input = document.getElementById('newCashierPassword');
-  const icon = document.getElementById('toggleNewCashierIcon');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.setAttribute('class', 'ph ph-eye-slash');
-  } else {
-    input.type = 'password';
-    icon.setAttribute('class', 'ph ph-eye');
-  }
+  var input = document.getElementById('newCashierPassword');
+  var icon = document.getElementById('toggleNewCashierIcon');
+  if (input.type === 'password') { input.type = 'text'; icon.setAttribute('class', 'ph ph-eye-slash'); } 
+  else { input.type = 'password'; icon.setAttribute('class', 'ph ph-eye'); }
 }
 
+// ==================== FILTERS ====================
 function formatDateFilter(dateFilter) {
-  const now = new Date();
+  var now = new Date();
   switch(dateFilter) {
     case '24h': return new Date(now.getTime() - 24 * 60 * 60 * 1000);
     case '7d': return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -468,29 +484,28 @@ function applyFilters() {
   currentDateFilter = document.getElementById('dateFilter').value;
   currentStatusFilter = document.getElementById('statusFilter').value;
   
-  let result = [...allOrders];
+  var result = allOrders.slice();
   
-  const cutoffDate = formatDateFilter(currentDateFilter);
+  var cutoffDate = formatDateFilter(currentDateFilter);
   if(cutoffDate) {
-    result = result.filter(o => new Date(o.created_at) >= cutoffDate);
+    result = result.filter(function(o){ return new Date(o.created_at) >= cutoffDate; });
   }
   
   if(currentStatusFilter !== 'all') {
-    result = result.filter(o => o.status === currentStatusFilter);
+    result = result.filter(function(o){ return o.status === currentStatusFilter; });
   }
   
   filteredOrders = result;
-  
   renderOrders();
   updateOrderStatsDisplay();
 }
 
 function updateOrderStatsDisplay(){
-  const total = filteredOrders.length;
-  const paid = filteredOrders.filter(o => o.status === 'paid').length;
-  const delivered = filteredOrders.filter(o => o.status === 'delivered').length;
+  var total = filteredOrders.length;
+  var paid = filteredOrders.filter(function(o){ return o.status === 'paid'; }).length;
+  var delivered = filteredOrders.filter(function(o){ return o.status === 'delivered'; }).length;
   
-  let dateLabel = '';
+  var dateLabel = '';
   switch(currentDateFilter) {
     case '24h': dateLabel = 'Last 24h'; break;
     case '7d': dateLabel = 'Last 7d'; break;
@@ -500,29 +515,29 @@ function updateOrderStatsDisplay(){
     default: dateLabel = 'All Time';
   }
   
-  let statusLabel = '';
+  var statusLabel = '';
   switch(currentStatusFilter) {
     case 'paid': statusLabel = 'Paid'; break;
     case 'delivered': statusLabel = 'Delivered'; break;
     default: statusLabel = 'All Orders';
   }
   
-  document.getElementById('orderStats').innerHTML = `
-    <div class="stat-card"><h4>📊 ${statusLabel}</h4><div class="value">${total}</div><div class="sub">${dateLabel}</div></div>
-    <div class="stat-card"><h4>✅ Paid</h4><div class="value">${paid}</div><div class="sub">Ready to deliver</div></div>
-    <div class="stat-card"><h4>🚚 Delivered</h4><div class="value">${delivered}</div><div class="sub">Completed</div></div>
-  `;
-  document.getElementById('orderCountDisplay').innerHTML = `📊 ${total} order${total !== 1 ? 's' : ''} found`;
+  document.getElementById('orderStats').innerHTML = 
+    '<div class="stat-card"><h4>📊 ' + statusLabel + '</h4><div class="value">' + total + '</div><div class="sub">' + dateLabel + '</div></div>' +
+    '<div class="stat-card"><h4>✅ Paid</h4><div class="value">' + paid + '</div><div class="sub">Ready to deliver</div></div>' +
+    '<div class="stat-card"><h4>🚚 Delivered</h4><div class="value">' + delivered + '</div><div class="sub">Completed</div></div>';
+  document.getElementById('orderCountDisplay').innerHTML = '📊 ' + total + ' order' + (total !== 1 ? 's' : '') + ' found';
 }
 
+// ==================== LOGIN ====================
 async function adminLogin(password) {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/login`, {
+    var res = await fetch(API_BASE + '/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
+      body: JSON.stringify({ password: password })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (data.success && data.token) {
       adminToken = data.token;
       localStorage.setItem('liquorbelle_admin_token', adminToken);
@@ -533,10 +548,10 @@ async function adminLogin(password) {
 }
 
 function submitAdminLogin() {
-  const password = document.getElementById('adminPassword').value;
-  const errorDiv = document.getElementById('loginError');
+  var password = document.getElementById('adminPassword').value;
+  var errorDiv = document.getElementById('loginError');
   errorDiv.innerText = '';
-  adminLogin(password).then(success => {
+  adminLogin(password).then(function(success) {
     if(success) {
       document.getElementById('adminLoginModal').style.display = 'none';
       initAdminAfterLogin();
@@ -547,49 +562,53 @@ function submitAdminLogin() {
   });
 }
 
+// ==================== VARIANT ROWS ====================
 function addVariantRow(){
-  const tbody = document.getElementById('variantsBody');
-  const row = document.createElement('tr');
+  var tbody = document.getElementById('variantsBody');
+  var row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = '<td><select class="variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)" title="Remove">✕</button></td>';
   tbody.appendChild(row);
 }
-function removeVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
+function removeVariantRow(btn){ var tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
 function addEditVariantRow(){
-  const tbody = document.getElementById('editVariantsBody');
-  const row = document.createElement('tr');
+  var tbody = document.getElementById('editVariantsBody');
+  var row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+  row.innerHTML = '<td><select class="edit-variant-size"><option value="200ml">200ml</option><option value="250ml">250ml</option><option value="300ml">300ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option><option value="5L">5L</option></select></td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>';
   tbody.appendChild(row);
 }
-function removeEditVariantRow(btn){ const tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
+function removeEditVariantRow(btn){ var tbody = btn.closest('tbody'); if(tbody.children.length > 1) btn.closest('tr').remove(); else showToast('At least one size variant is required'); }
 
+// ==================== PRODUCT CRUD ====================
 async function addProduct(){
-  const btn = document.getElementById('addProductBtn');
+  var btn = document.getElementById('addProductBtn');
   btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
   btn.disabled = true;
   try {
-    const name = document.getElementById('prodName').value.trim();
-    const category = document.getElementById('prodCategory').value;
-    const badge = document.getElementById('prodBadge').value;
-    const image = document.getElementById('prodImage').value.trim();
-    const description = document.getElementById('prodDesc').value.trim();
-    const isTrending = document.getElementById('prodTrending').checked;
-    const isNew = document.getElementById('prodNew').checked;
-    const rating = parseFloat(document.getElementById('prodRating').value);
+    var name = document.getElementById('prodName').value.trim();
+    var category = document.getElementById('prodCategory').value;
+    var badge = document.getElementById('prodBadge').value;
+    var image = document.getElementById('prodImage').value.trim();
+    var description = document.getElementById('prodDesc').value.trim();
+    var isTrending = document.getElementById('prodTrending').checked;
+    var isNew = document.getElementById('prodNew').checked;
+    var rating = parseFloat(document.getElementById('prodRating').value);
     if(!name){ showToast('Product name required', true); return; }
-    const variants = [];
-    document.querySelectorAll('#variantsBody .variant-row').forEach(row => {
-      const size = row.querySelector('.variant-size').value;
-      const price = parseFloat(row.querySelector('.variant-price').value);
-      const discount = parseInt(row.querySelector('.variant-discount').value) || 0;
-      if(price && price > 0) variants.push({ size, price, discount });
-    });
+    var variants = [];
+    var rows = document.querySelectorAll('#variantsBody .variant-row');
+    for(var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var size = row.querySelector('.variant-size').value;
+      var price = parseFloat(row.querySelector('.variant-price').value);
+      var discount = parseInt(row.querySelector('.variant-discount').value) || 0;
+      if(price && price > 0) variants.push({ size: size, price: price, discount: discount });
+    }
     if(variants.length === 0){ showToast('At least one size/price required', true); return; }
-    const res = await fetch(`${API_BASE}/api/db/products`, {
+    var res = await fetch(API_BASE + '/api/db/products', {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ name, category, badge, image, description, variants, isTrending, isNew, rating })
+      body: JSON.stringify({ name: name, category: category, badge: badge, image: image, description: description, variants: variants, isTrending: isTrending, isNew: isNew, rating: rating })
     });
     if(res.ok){
       showToast('✓ Product saved');
@@ -607,7 +626,10 @@ async function addProduct(){
 }
 
 function openEditModal(productId){
-  const p = products.find(p => p._id === productId);
+  var p = null;
+  for(var i = 0; i < products.length; i++) {
+    if(products[i]._id === productId) { p = products[i]; break; }
+  }
   if(!p) return;
   document.getElementById('editProductId').value = p._id;
   document.getElementById('editName').value = p.name || '';
@@ -617,47 +639,51 @@ function openEditModal(productId){
   document.getElementById('editDesc').value = p.description || '';
   document.getElementById('editTrending').checked = p.isTrending || false;
   document.getElementById('editNew').checked = p.isNew || false;
-  const ratingVal = p.rating || 4;
+  var ratingVal = p.rating || 4;
   document.getElementById('editRating').value = ratingVal;
-  const tbody = document.getElementById('editVariantsBody');
+  var tbody = document.getElementById('editVariantsBody');
   tbody.innerHTML = '';
-  const variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
-  variants.forEach(v => {
-    const row = document.createElement('tr');
+  var variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
+  for(var i = 0; i < variants.length; i++) {
+    var v = variants[i];
+    var row = document.createElement('tr');
     row.className = 'variant-row';
-    row.innerHTML = `<td><select class="edit-variant-size"><option value="200ml" ${v.size==='200ml'?'selected':''}>200ml</option><option value="250ml" ${v.size==='250ml'?'selected':''}>250ml</option><option value="300ml" ${v.size==='300ml'?'selected':''}>300ml</option><option value="330ml" ${v.size==='330ml'?'selected':''}>330ml</option><option value="350ml" ${v.size==='350ml'?'selected':''}>350ml</option><option value="500ml" ${v.size==='500ml'?'selected':''}>500ml</option><option value="700ml" ${v.size==='700ml'?'selected':''}>700ml</option><option value="750ml" ${v.size==='750ml'?'selected':''}>750ml</option><option value="1L" ${v.size==='1L'?'selected':''}>1L</option><option value="1.5L" ${v.size==='1.5L'?'selected':''}>1.5L</option><option value="2L" ${v.size==='2L'?'selected':''}>2L</option><option value="5L" ${v.size==='5L'?'selected':''}>5L</option></select></td><td><input type="number" class="edit-variant-price" value="${v.price}"></td><td><input type="number" class="edit-variant-discount" value="${v.discount || 0}"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>`;
+    row.innerHTML = '<td><select class="edit-variant-size"><option value="200ml"' + (v.size==='200ml'?'selected':'') + '>200ml</option><option value="250ml"' + (v.size==='250ml'?'selected':'') + '>250ml</option><option value="300ml"' + (v.size==='300ml'?'selected':'') + '>300ml</option><option value="330ml"' + (v.size==='330ml'?'selected':'') + '>330ml</option><option value="350ml"' + (v.size==='350ml'?'selected':'') + '>350ml</option><option value="500ml"' + (v.size==='500ml'?'selected':'') + '>500ml</option><option value="700ml"' + (v.size==='700ml'?'selected':'') + '>700ml</option><option value="750ml"' + (v.size==='750ml'?'selected':'') + '>750ml</option><option value="1L"' + (v.size==='1L'?'selected':'') + '>1L</option><option value="1.5L"' + (v.size==='1.5L'?'selected':'') + '>1.5L</option><option value="2L"' + (v.size==='2L'?'selected':'') + '>2L</option><option value="5L"' + (v.size==='5L'?'selected':'') + '>5L</option></select></td><td><input type="number" class="edit-variant-price" value="' + v.price + '"></td><td><input type="number" class="edit-variant-discount" value="' + (v.discount || 0) + '"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)" title="Remove">✕</button></td>';
     tbody.appendChild(row);
-  });
+  }
   document.getElementById('editModal').classList.add('active');
 }
 function closeEditModal(){ document.getElementById('editModal').classList.remove('active'); }
+
 async function saveProductEdit(){
-  const saveBtn = document.querySelector('#editModal .modal-footer .btn:last-child');
-  const originalText = saveBtn.innerHTML;
+  var saveBtn = document.querySelector('#editModal .modal-footer .btn:last-child');
+  var originalText = saveBtn.innerHTML;
   saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
   saveBtn.disabled = true;
   try {
-    const id = document.getElementById('editProductId').value;
-    const name = document.getElementById('editName').value.trim();
-    const category = document.getElementById('editCategory').value;
-    const badge = document.getElementById('editBadge').value;
-    const image = document.getElementById('editImage').value.trim();
-    const description = document.getElementById('editDesc').value.trim();
-    const isTrending = document.getElementById('editTrending').checked;
-    const isNew = document.getElementById('editNew').checked;
-    const rating = parseFloat(document.getElementById('editRating').value);
+    var id = document.getElementById('editProductId').value;
+    var name = document.getElementById('editName').value.trim();
+    var category = document.getElementById('editCategory').value;
+    var badge = document.getElementById('editBadge').value;
+    var image = document.getElementById('editImage').value.trim();
+    var description = document.getElementById('editDesc').value.trim();
+    var isTrending = document.getElementById('editTrending').checked;
+    var isNew = document.getElementById('editNew').checked;
+    var rating = parseFloat(document.getElementById('editRating').value);
     if(!name){ showToast('Product name required', true); return; }
-    const variants = [];
-    document.querySelectorAll('#editVariantsBody .variant-row').forEach(row => {
-      const size = row.querySelector('.edit-variant-size').value;
-      const price = parseFloat(row.querySelector('.edit-variant-price').value);
-      const discount = parseInt(row.querySelector('.edit-variant-discount').value) || 0;
-      if(price && price > 0) variants.push({ size, price, discount });
-    });
-    const res = await fetch(`${API_BASE}/api/db/products/${id}`, {
+    var variants = [];
+    var rows = document.querySelectorAll('#editVariantsBody .variant-row');
+    for(var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var size = row.querySelector('.edit-variant-size').value;
+      var price = parseFloat(row.querySelector('.edit-variant-price').value);
+      var discount = parseInt(row.querySelector('.edit-variant-discount').value) || 0;
+      if(price && price > 0) variants.push({ size: size, price: price, discount: discount });
+    }
+    var res = await fetch(API_BASE + '/api/db/products/' + id, {
       method: 'PUT',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ name, category, badge, image, description, variants, isTrending, isNew, rating })
+      body: JSON.stringify({ name: name, category: category, badge: badge, image: image, description: description, variants: variants, isTrending: isTrending, isNew: isNew, rating: rating })
     });
     if(res.ok){
       showToast('✓ Product updated');
@@ -667,41 +693,60 @@ async function saveProductEdit(){
   } catch(e){ showToast('Error: ' + e.message, true); }
   finally { saveBtn.innerHTML = originalText; saveBtn.disabled = false; }
 }
+
 async function deleteProduct(id){
   if(!confirm('Delete permanently?')) return;
   try{
-    await fetch(`${API_BASE}/api/db/products/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    await fetch(API_BASE + '/api/db/products/' + id, { method: 'DELETE', headers: getAuthHeaders() });
     await loadProducts();
     showToast('Product deleted');
   } catch(e){ showToast('Error deleting', true); }
 }
+
+// ==================== LOAD PRODUCTS ====================
 async function loadProducts(){
   try{
-    const res = await fetch(`${API_BASE}/api/db/products`);
-    const data = await res.json();
+    var res = await fetch(API_BASE + '/api/db/products');
+    var data = await res.json();
     if(data.success) products = data.products;
   } catch(e){ products = []; }
   renderProducts();
   updateStats();
 }
+
 function renderProducts(){
-  let filtered = products;
-  if(productSearch) filtered = products.filter(p => p.name?.toLowerCase().includes(productSearch) || p.category?.toLowerCase().includes(productSearch));
-  const container = document.getElementById('productsList');
+  var filtered = products;
+  if(productSearch) filtered = products.filter(function(p){ return p.name && p.name.toLowerCase().includes(productSearch) || p.category && p.category.toLowerCase().includes(productSearch); });
+  var container = document.getElementById('productsList');
   if(!filtered.length){ container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products found</p></div>'; return; }
-  container.innerHTML = filtered.map(p => {
-    const variants = p.variants || [];
-    return `<div class="product-row"><div><img class="product-img" src="${p.image || FALLBACK_IMG}" onerror="this.src='${FALLBACK_IMG}'"></div><div><div class="product-name">${escapeHtml(p.name)}</div><div class="product-cat">${p.category || ''}</div></div><div>${variants.map(v => `<span class="variant-badge">${v.size}: KES ${(v.price||0).toLocaleString()}${v.discount ? `<span class="discount-badge"> ${v.discount}% OFF → KES ${Math.round(v.price * (100 - v.discount) / 100).toLocaleString()}</span>` : ''}</span>`).join('')}</div><div>${p.isTrending ? '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span>' : ''} ${p.isNew ? '<span class="new-badge"><i class="ph ph-star"></i> New</span>' : ''}</div><div><span class="star-badge"><i class="ph ph-star-fill"></i> ${(p.rating || 4).toFixed(1)}</span></div><div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal('${p._id}')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct('${p._id}')"><i class="ph ph-trash"></i></button></div></div>`;
-  }).join('');
+  var html = '';
+  for(var i = 0; i < filtered.length; i++) {
+    var p = filtered[i];
+    var variants = p.variants || [];
+    var variantsHtml = '';
+    for(var j = 0; j < variants.length; j++) {
+      var v = variants[j];
+      var discountedPrice = v.discount ? Math.round(v.price * (100 - v.discount) / 100) : v.price;
+      variantsHtml += '<span class="variant-badge">' + v.size + ': KES ' + (v.price||0).toLocaleString() + (v.discount ? '<span class="discount-badge"> ' + v.discount + '% OFF → KES ' + discountedPrice.toLocaleString() + '</span>' : '') + '</span>';
+    }
+    var imgSrc = p.image ? optimizeImage(p.image, 100) : FALLBACK_IMG;
+    var badgesHtml = '';
+    if(p.isTrending) badgesHtml += '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span> ';
+    if(p.isNew) badgesHtml += '<span class="new-badge"><i class="ph ph-star"></i> New</span>';
+    var ratingHtml = '<span class="star-badge"><i class="ph ph-star-fill"></i> ' + (p.rating || 4).toFixed(1) + '</span>';
+    html += '<div class="product-row"><div><img class="product-img" src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy"></div><div><div class="product-name">' + escapeHtml(p.name) + '</div><div class="product-cat">' + (p.category || '') + '</div></div><div>' + variantsHtml + '</div><div>' + badgesHtml + '</div><div>' + ratingHtml + '</div><div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal(\'' + p._id + '\')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(\'' + p._id + '\')"><i class="ph ph-trash"></i></button></div></div>';
+  }
+  container.innerHTML = html;
 }
 
+// ==================== LOAD ORDERS ====================
 async function loadOrders(){
   if(!adminToken) {
     showToast('Please login first', true);
     return;
   }
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders`, { headers: getAuthHeaders() });
+    var res = await fetch(API_BASE + '/api/db/orders', { headers: getAuthHeaders() });
     
     if(res.status === 401 || res.status === 403){
       showToast('Session expired. Please login again.', true);
@@ -709,9 +754,9 @@ async function loadOrders(){
       return;
     }
     
-    const data = await res.json();
+    var data = await res.json();
     if(data.success) {
-      allOrders = data.orders.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+      allOrders = data.orders.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
       applyFilters();
     }
   } catch(e){ 
@@ -724,43 +769,59 @@ async function loadOrders(){
 }
 
 function updateOrderStats(){
-  const paid = filteredOrders.filter(o=>o.status==='paid').length;
-  const delivered = filteredOrders.filter(o=>o.status==='delivered').length;
+  var paid = filteredOrders.filter(function(o){ return o.status === 'paid'; }).length;
+  var delivered = filteredOrders.filter(function(o){ return o.status === 'delivered'; }).length;
   document.getElementById('paidCount').innerText = paid;
   document.getElementById('deliveredCount').innerText = delivered;
 }
 
 function renderAnalytics(){
-  const delivered = filteredOrders.filter(o => o.status === 'delivered');
-  const revenue = delivered.reduce((s,o) => s + (o.total||0), 0);
-  const avg = delivered.length ? Math.round(revenue / delivered.length) : 0;
-  document.getElementById('totalRevenue').innerHTML = `KES ${revenue.toLocaleString()}`;
+  var delivered = filteredOrders.filter(function(o){ return o.status === 'delivered'; });
+  var revenue = 0;
+  for(var i = 0; i < delivered.length; i++) { revenue = revenue + (delivered[i].total || 0); }
+  var avg = delivered.length ? Math.round(revenue / delivered.length) : 0;
+  document.getElementById('totalRevenue').innerHTML = 'KES ' + revenue.toLocaleString();
   document.getElementById('totalOrders').innerHTML = filteredOrders.length;
-  document.getElementById('avgOrder').innerHTML = `KES ${avg.toLocaleString()}`;
+  document.getElementById('avgOrder').innerHTML = 'KES ' + avg.toLocaleString();
   updateOrderStats();
 }
 
 function findProductImage(productName) {
   if(!productName) return FALLBACK_IMG;
-  let product = products.find(p => p.name && p.name.toLowerCase() === productName.toLowerCase());
+  var product = null;
+  for(var i = 0; i < products.length; i++) {
+    if(products[i].name && products[i].name.toLowerCase() === productName.toLowerCase()) {
+      product = products[i]; break;
+    }
+  }
   if(product && product.image) return product.image;
-  product = products.find(p => p.name && productName.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(productName.toLowerCase()));
+  for(var i = 0; i < products.length; i++) {
+    if(products[i].name && (productName.toLowerCase().includes(products[i].name.toLowerCase()) || products[i].name.toLowerCase().includes(productName.toLowerCase()))) {
+      product = products[i]; break;
+    }
+  }
   if(product && product.image) return product.image;
   return FALLBACK_IMG;
 }
 
-// M-PESA only - No COD, so no "Mark Paid" button needed
+// ==================== ORDER ACTIONS ====================
 async function markOrderDelivered(id){
-  const idx = filteredOrders.findIndex(o => o._id === id);
+  var idx = -1;
+  for(var i = 0; i < filteredOrders.length; i++) {
+    if(filteredOrders[i]._id === id) { idx = i; break; }
+  }
   if(idx === -1) return;
-  const original = { ...filteredOrders[idx] };
+  var original = JSON.parse(JSON.stringify(filteredOrders[idx]));
   filteredOrders[idx].status = 'delivered';
-  const allIdx = allOrders.findIndex(o => o._id === id);
+  var allIdx = -1;
+  for(var i = 0; i < allOrders.length; i++) {
+    if(allOrders[i]._id === id) { allIdx = i; break; }
+  }
   if(allIdx !== -1) allOrders[allIdx].status = 'delivered';
   renderOrders();
   updateOrderStatsDisplay();
   try{
-    const res = await fetch(`${API_BASE}/api/db/orders/${id}/status`, {
+    var res = await fetch(API_BASE + '/api/db/orders/' + id + '/status', {
       method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ status: 'delivered' })
     });
     if(!res.ok){ 
@@ -781,17 +842,23 @@ async function markOrderDelivered(id){
 
 async function deleteOrder(id){
   if(!confirm('Delete order?')) return;
-  const idx = filteredOrders.findIndex(o => o._id === id);
-  const deleted = idx !== -1 ? filteredOrders[idx] : null;
+  var idx = -1;
+  var deleted = null;
+  for(var i = 0; i < filteredOrders.length; i++) {
+    if(filteredOrders[i]._id === id) { idx = i; deleted = filteredOrders[i]; break; }
+  }
   if(idx !== -1){ 
     filteredOrders.splice(idx,1); 
-    const allIdx = allOrders.findIndex(o => o._id === id);
+    var allIdx = -1;
+    for(var i = 0; i < allOrders.length; i++) {
+      if(allOrders[i]._id === id) { allIdx = i; break; }
+    }
     if(allIdx !== -1) allOrders.splice(allIdx,1);
     renderOrders(); 
     updateOrderStatsDisplay(); 
   }
   try{
-    await fetch(`${API_BASE}/api/db/orders/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    await fetch(API_BASE + '/api/db/orders/' + id, { method: 'DELETE', headers: getAuthHeaders() });
     showToast('Order deleted');
   } catch(e){ 
     if(deleted && idx!==-1){ 
@@ -805,95 +872,117 @@ async function deleteOrder(id){
 }
 
 function renderOrders(){
-  let filtered = [...filteredOrders];
-  if(orderSearch) filtered = filteredOrders.filter(o => o.customer_name?.toLowerCase().includes(orderSearch) || o.customer_email?.toLowerCase().includes(orderSearch));
-  const container = document.getElementById('ordersList');
+  var filtered = filteredOrders.slice();
+  if(orderSearch) filtered = filteredOrders.filter(function(o){ return o.customer_name && o.customer_name.toLowerCase().includes(orderSearch) || o.customer_email && o.customer_email.toLowerCase().includes(orderSearch); });
+  var container = document.getElementById('ordersList');
   if(!filtered.length){ container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>'; return; }
   
-  container.innerHTML = filtered.map(o => {
-    let items = o.items;
+  var html = '';
+  for(var i = 0; i < filtered.length; i++) {
+    var o = filtered[i];
+    var items = o.items;
     if(typeof items === 'string'){ try{ items = JSON.parse(items); } catch(e){ items = []; } }
-    const phoneRaw = o.phone || '';
-    const cleanPhone = phoneRaw.replace(/\D/g, '');
-    const waLink = `https://wa.me/${cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone}`;
-    const callLink = `tel:${cleanPhone}`;
+    var phoneRaw = o.phone || '';
+    var cleanPhone = phoneRaw.replace(/\D/g, '');
+    var waLink = 'https://wa.me/' + (cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone);
+    var callLink = 'tel:' + cleanPhone;
     
-    const itemsHtml = (items || []).map(i => {
-      const productName = i.product_name || i.name;
-      const productImg = findProductImage(productName);
-      const productSize = i.size || (i.capacity || '');
-      const productQty = i.quantity || i.qty || 1;
-      const productPrice = i.price || 0;
-      return `<div class="order-item">
-        <img class="order-item-img" src="${productImg}" alt="${escapeHtml(productName)}" onerror="this.src='${FALLBACK_IMG}'">
-        <div class="order-item-details">
-          <div class="order-item-name">${escapeHtml(productName)}</div>
-          ${productSize ? `<div class="order-item-size">📦 ${escapeHtml(productSize)}</div>` : ''}
-          <div class="order-item-qty">Quantity: ${productQty}</div>
-        </div>
-        <div class="order-item-price">KES ${(productPrice * productQty).toLocaleString()}</div>
-      </div>`;
-    }).join('');
+    var itemsHtml = '';
+    for(var j = 0; j < (items || []).length; j++) {
+      var item = items[j];
+      var productName = item.product_name || item.name;
+      var productImg = findProductImage(productName);
+      var productSize = item.size || (item.capacity || '');
+      var productQty = item.quantity || item.qty || 1;
+      var productPrice = item.price || 0;
+      itemsHtml += '<div class="order-item">' +
+        '<img class="order-item-img" src="' + productImg + '" alt="' + escapeHtml(productName) + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy">' +
+        '<div class="order-item-details">' +
+          '<div class="order-item-name">' + escapeHtml(productName) + '</div>' +
+          (productSize ? '<div class="order-item-size">📦 ' + escapeHtml(productSize) + '</div>' : '') +
+          '<div class="order-item-qty">Quantity: ' + productQty + '</div>' +
+        '</div>' +
+        '<div class="order-item-price">KES ' + (productPrice * productQty).toLocaleString() + '</div>' +
+      '</div>';
+    }
     
-    const deliveryFee = o.delivery_fee || o.delivery || 0;
-    const subtotal = o.subtotal || (o.total - deliveryFee);
+    var deliveryFee = o.delivery_fee || o.delivery || 0;
+    var subtotal = o.subtotal || (o.total - deliveryFee);
     
-    // Status: Only paid and delivered (no pending since COD removed)
-    const statusClass = o.status === 'paid' ? 'status-paid' : 'status-delivered';
-    const statusIcon = o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
-    const statusText = o.status === 'paid' ? 'Paid ✅' : 'Delivered 🚚';
+    var statusClass = o.status === 'paid' ? 'status-paid' : 'status-delivered';
+    var statusIcon = o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
+    var statusText = o.status === 'paid' ? 'Paid ✅' : 'Delivered 🚚';
     
-    return `<div class="order-card">
-      <div class="order-header">
-        <div>
-          <div class="order-id"><i class="ph ph-package"></i> ${o.order_number || o._id?.slice(0,8)}</div>
-          <div class="order-customer">${escapeHtml(o.customer_name)}</div>
-          <div class="order-meta-row">
-            <span class="order-meta-chip"><i class="ph ph-envelope"></i> ${escapeHtml(o.customer_email)}</span>
-            <span class="order-meta-chip"><i class="ph ph-phone"></i> ${o.phone || 'No phone'}</span>
-            <span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleString()}</span>
-            <span class="order-meta-chip"><i class="ph ph-credit-card"></i> M-PESA</span>
-          </div>
-        </div>
-        <div class="order-header-right">
-          <span class="order-status ${statusClass}"><i class="ph ${statusIcon}"></i> ${statusText}</span>
-          <div class="contact-buttons">
-            <a href="${waLink}" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
-            <a href="${callLink}" class="btn btn-sm btn-call"><i class="ph ph-phone-call"></i> Call</a>
-          </div>
-        </div>
-      </div>
-      <div class="order-items">${itemsHtml}</div>
-      <div class="order-footer">
-        <div>
-          <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
-          <div style="font-size:11px;margin-top:4px;">
-            <span>Subtotal: KES ${(subtotal||0).toLocaleString()}</span> | 
-            <span>Delivery: ${deliveryFee === 0 ? 'FREE' : `KES ${deliveryFee.toLocaleString()}`}</span>
-          </div>
-        </div>
-        <div class="order-actions">
-          ${o.status === 'paid' ? `<button class="btn btn-sm btn-gold" onclick="markOrderDelivered('${o._id}')"><i class="ph ph-truck"></i> Mark Delivered</button>` : ''}
-          ${o.status === 'delivered' ? '<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>' : ''}
-          <button class="btn btn-sm btn-red" onclick="deleteOrder(\''+o._id+'\')"><i class="ph ph-trash"></i></button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+    html += '<div class="order-card">' +
+      '<div class="order-header">' +
+        '<div>' +
+          '<div class="order-id"><i class="ph ph-package"></i> ' + (o.order_number || (o._id ? o._id.slice(0,8) : 'N/A')) + '</div>' +
+          '<div class="order-customer">' + escapeHtml(o.customer_name) + '</div>' +
+          '<div class="order-meta-row">' +
+            '<span class="order-meta-chip"><i class="ph ph-envelope"></i> ' + escapeHtml(o.customer_email) + '</span>' +
+            '<span class="order-meta-chip"><i class="ph ph-phone"></i> ' + (o.phone || 'No phone') + '</span>' +
+            '<span class="order-meta-chip"><i class="ph ph-calendar"></i> ' + new Date(o.created_at).toLocaleString() + '</span>' +
+            '<span class="order-meta-chip"><i class="ph ph-credit-card"></i> M-PESA</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="order-header-right">' +
+          '<span class="order-status ' + statusClass + '"><i class="ph ' + statusIcon + '"></i> ' + statusText + '</span>' +
+          '<div class="contact-buttons">' +
+            '<a href="' + waLink + '" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>' +
+            '<a href="' + callLink + '" class="btn btn-sm btn-call"><i class="ph ph-phone-call"></i> Call</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="order-items">' + itemsHtml + '</div>' +
+      '<div class="order-footer">' +
+        '<div>' +
+          '<div class="order-total">KES ' + (o.total || 0).toLocaleString() + '</div>' +
+          '<div style="font-size:11px;margin-top:4px;">' +
+            '<span>Subtotal: KES ' + (subtotal||0).toLocaleString() + '</span> | ' + 
+            '<span>Delivery: ' + (deliveryFee === 0 ? 'FREE' : 'KES ' + deliveryFee.toLocaleString()) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="order-actions">' +
+          (o.status === 'paid' ? '<button class="btn btn-sm btn-gold" onclick="markOrderDelivered(\'' + o._id + '\')"><i class="ph ph-truck"></i> Mark Delivered</button>' : '') +
+          (o.status === 'delivered' ? '<span class="completed-chip"><i class="ph ph-seal-check"></i> Completed</span>' : '') +
+          '<button class="btn btn-sm btn-red" onclick="deleteOrder(\'' + o._id + '\')"><i class="ph ph-trash"></i></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  container.innerHTML = html;
 }
 
+// ==================== STATS ====================
 function updateStats(){
-  const trendingCount = products.filter(p => p.isTrending === true).length;
-  document.getElementById('productStats').innerHTML = `<div class="stat-card"><h4>Total Products</h4><div class="value">${products.length}</div></div><div class="stat-card"><h4>Categories</h4><div class="value">${new Set(products.map(p=>p.category)).size}</div></div><div class="stat-card"><h4>Variants</h4><div class="value">${products.reduce((s,p)=>s+(p.variants?.length||0),0)}</div></div><div class="stat-card"><h4>Trending</h4><div class="value">${trendingCount}</div></div>`;
+  var trendingCount = 0;
+  for(var i = 0; i < products.length; i++) {
+    if(products[i].isTrending === true) trendingCount++;
+  }
+  var categories = {};
+  for(var i = 0; i < products.length; i++) {
+    categories[products[i].category] = true;
+  }
+  var categoryCount = Object.keys(categories).length;
+  var variantCount = 0;
+  for(var i = 0; i < products.length; i++) {
+    variantCount = variantCount + (products[i].variants ? products[i].variants.length : 0);
+  }
+  document.getElementById('productStats').innerHTML = 
+    '<div class="stat-card"><h4>Total Products</h4><div class="value">' + products.length + '</div></div>' +
+    '<div class="stat-card"><h4>Categories</h4><div class="value">' + categoryCount + '</div></div>' +
+    '<div class="stat-card"><h4>Variants</h4><div class="value">' + variantCount + '</div></div>' +
+    '<div class="stat-card"><h4>Trending</h4><div class="value">' + trendingCount + '</div></div>';
   document.getElementById('totalProducts').innerText = products.length;
   document.getElementById('trendingCount').innerText = trendingCount;
 }
 
+// ==================== SETTINGS ====================
 async function loadDeliverySettings(){
   if(!adminToken) return;
   try{
-    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, { headers: getAuthHeaders() });
-    const data = await res.json();
+    var res = await fetch(API_BASE + '/api/admin/delivery-settings', { headers: getAuthHeaders() });
+    var data = await res.json();
     if(data.success && data.settings){
       document.getElementById('deliveryFee').value = data.settings.delivery_fee || 150;
       document.getElementById('freeThreshold').value = data.settings.free_delivery_threshold || 3000;
@@ -901,14 +990,15 @@ async function loadDeliverySettings(){
     }
   } catch(e){}
 }
+
 async function saveDeliverySettings(){
-  const settings = {
+  var settings = {
     delivery_fee: parseInt(document.getElementById('deliveryFee').value) || 0,
     free_delivery_threshold: parseInt(document.getElementById('freeThreshold').value) || 0,
     delivery_enabled: document.getElementById('deliveryEnabled').checked
   };
   try{
-    const res = await fetch(`${API_BASE}/api/admin/delivery-settings`, {
+    var res = await fetch(API_BASE + '/api/admin/delivery-settings', {
       method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(settings)
     });
     if(res.ok) showToast('Delivery settings saved');
@@ -917,35 +1007,36 @@ async function saveDeliverySettings(){
 }
 
 async function updatePasswords(event) {
-  const adminPassword = document.getElementById('newAdminPassword').value.trim();
-  const cashierPassword = document.getElementById('newCashierPassword').value.trim();
+  var adminPassword = document.getElementById('newAdminPassword').value.trim();
+  var cashierPassword = document.getElementById('newCashierPassword').value.trim();
   
   if (!adminPassword && !cashierPassword) {
     showToast('Enter at least one password to change', true);
     return;
   }
   
-  const btn = event.target;
-  const originalHTML = btn.innerHTML;
+  var btn = event.target;
+  var originalHTML = btn.innerHTML;
   btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
   btn.disabled = true;
   
   try {
-    const res = await fetch(`${API_BASE}/api/admin/update-passwords`, {
+    var body = {};
+    if (adminPassword) body.adminPassword = adminPassword;
+    if (cashierPassword) body.cashierPassword = cashierPassword;
+    
+    var res = await fetch(API_BASE + '/api/admin/update-passwords', {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ 
-        adminPassword: adminPassword || undefined,
-        cashierPassword: cashierPassword || undefined
-      })
+      body: JSON.stringify(body)
     });
     
-    const data = await res.json();
+    var data = await res.json();
     if (data.success) {
-      let message = '✓ Passwords updated successfully!\n\n';
-      if (adminPassword) message += `✓ Admin password changed\n`;
-      if (cashierPassword) message += `✓ Cashier password changed\n\n`;
-      message += `⚠️ You will be logged out and must log in with the new password(s).`;
+      var msg = '✓ Passwords updated successfully!\n\n';
+      if (adminPassword) msg += '✓ Admin password changed\n';
+      if (cashierPassword) msg += '✓ Cashier password changed\n\n';
+      msg += '⚠️ You will be logged out and must log in with the new password(s).';
       
       showToast('Passwords updated! Logging out...');
       
@@ -957,8 +1048,8 @@ async function updatePasswords(event) {
       document.getElementById('newAdminPassword').value = '';
       document.getElementById('newCashierPassword').value = '';
       
-      setTimeout(() => {
-        alert(message);
+      setTimeout(function() {
+        alert(msg);
         location.reload();
       }, 1500);
     } else {
@@ -972,11 +1063,14 @@ async function updatePasswords(event) {
   }
 }
 
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentTab = tab.dataset.tab;
+// ==================== TAB SWITCHING ====================
+var tabs = document.querySelectorAll('.tab');
+for(var i = 0; i < tabs.length; i++) {
+  tabs[i].addEventListener('click', function() {
+    var allTabs = document.querySelectorAll('.tab');
+    for(var j = 0; j < allTabs.length; j++) allTabs[j].classList.remove('active');
+    this.classList.add('active');
+    currentTab = this.dataset.tab;
     document.getElementById('productsTab').style.display = currentTab === 'products' ? 'block' : 'none';
     document.getElementById('ordersTab').style.display = currentTab === 'orders' ? 'block' : 'none';
     document.getElementById('analyticsTab').style.display = currentTab === 'analytics' ? 'block' : 'none';
@@ -984,15 +1078,33 @@ document.querySelectorAll('.tab').forEach(tab => {
     if(currentTab === 'orders' && allOrders.length) renderOrders();
     if(currentTab === 'analytics' && allOrders.length) renderAnalytics();
   });
-});
+}
 
-document.getElementById('productSearch')?.addEventListener('input', (e) => { productSearch = e.target.value.toLowerCase(); renderProducts(); });
-document.getElementById('orderSearch')?.addEventListener('input', (e) => { orderSearch = e.target.value.toLowerCase(); renderOrders(); });
+// ==================== SEARCH ====================
+var productSearchInput = document.getElementById('productSearch');
+if(productSearchInput) {
+  productSearchInput.addEventListener('input', function(e) {
+    productSearch = e.target.value.toLowerCase();
+    renderProducts();
+  });
+}
+var orderSearchInput = document.getElementById('orderSearch');
+if(orderSearchInput) {
+  orderSearchInput.addEventListener('input', function(e) {
+    orderSearch = e.target.value.toLowerCase();
+    renderOrders();
+  });
+}
+
 function clearProductSearch(){ productSearch = ''; document.getElementById('productSearch').value = ''; renderProducts(); }
 function clearOrderSearch(){ orderSearch = ''; document.getElementById('orderSearch').value = ''; renderOrders(); }
+
 function logout(){ localStorage.removeItem('liquorbelle_admin_token'); adminToken = null; location.reload(); }
+
+// ==================== MODAL CLOSE ON OVERLAY ====================
 document.getElementById('editModal').addEventListener('click', function(e){ if(e.target === this) closeEditModal(); });
 
+// ==================== INIT ====================
 async function initAdmin() {
   adminToken = localStorage.getItem('liquorbelle_admin_token');
   if(adminToken) {
@@ -1010,8 +1122,8 @@ async function initAdminAfterLogin() {
 }
 
 initAdmin();
-setInterval(() => { if(adminToken) loadProducts(); }, 120000);
-setInterval(() => { if(adminToken) loadOrders(); }, 120000);
+setInterval(function(){ if(adminToken) loadProducts(); }, 120000);
+setInterval(function(){ if(adminToken) loadOrders(); }, 120000);
 </script>
 </body>
 </html>

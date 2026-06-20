@@ -7,8 +7,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Shop All Products — LiquorBelle</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -53,6 +61,13 @@ a{color:inherit;text-decoration:none;}
 .offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
 .offline-banner.show{display:block;}
 
+/* Announcement Bar */
+.announce-bar{background:var(--primary-dark);color:#fff;text-align:center;padding:9px 36px;font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;}
+.announce-bar #announceText{display:flex;align-items:center;gap:6px;transition:opacity .25s;}
+.announce-bar #announceText i{font-size:14px;}
+.announce-close{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:14px;padding:4px;}
+.announce-close:hover{color:#fff;}
+
 /* WhatsApp Float */
 .whatsapp-float{
   position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;
@@ -95,21 +110,6 @@ a{color:inherit;text-decoration:none;}
   padding:0 5px;
 }
 .nav-item:active{transform:scale(0.92);}
-
-/* Age Gate */
-.age-gate{position:fixed;inset:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:2000;backdrop-filter:blur(8px);animation:fadeIn .4s ease;}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.age-gate-card{background:var(--white);border-radius:var(--radius);padding:40px 32px;text-align:center;max-width:400px;width:90%;border-top:5px solid var(--primary);box-shadow:var(--shadow-xl);animation:slideUp .4s ease;}
-@keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-.age-gate-card img{width:80px;margin:0 auto 12px;border-radius:50%;}
-.age-gate-card h2{font-size:1.6rem;font-weight:800;color:var(--primary);margin-bottom:6px;}
-.age-gate-card p{color:var(--muted);font-size:.85rem;margin-bottom:24px;line-height:1.6;}
-.age-gate-btns{display:flex;gap:12px;}
-.age-yes{flex:1;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;cursor:pointer;transition:.2s;font-size:1rem;}
-.age-yes:active{transform:scale(0.96);}
-.age-yes:hover{background:var(--primary-bright);}
-.age-no{flex:1;padding:14px;background:var(--bg2);color:var(--muted);border:1.5px solid var(--border);border-radius:50px;font-weight:700;cursor:pointer;font-size:1rem;}
-.age-no:active{transform:scale(0.96);}
 
 /* Header */
 .main-header{
@@ -169,7 +169,82 @@ a{color:inherit;text-decoration:none;}
 .shop-breadcrumb i{font-size:10px;}
 .shop-breadcrumb span{color:var(--primary);font-weight:600;}
 .shop-title{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:2px;}
-.shop-subtitle{font-size:.78rem;color:var(--muted);}
+
+/* ===== BRANDED CARD ===== */
+.brand-card{
+  margin:4px 4% 16px;
+  background:linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius:var(--radius);
+  padding:24px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+  box-shadow:0 4px 20px rgba(128,0,0,0.2);
+  border:1px solid rgba(255,255,255,0.08);
+}
+.brand-card-left{flex:1;min-width:180px;}
+.brand-card-badge{
+  display:inline-block;
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+  font-size:.6rem;
+  font-weight:800;
+  padding:3px 14px;
+  border-radius:30px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  margin-bottom:6px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.brand-card-title{
+  font-size:1.2rem;
+  font-weight:800;
+  color:#fff;
+  margin:0 0 4px;
+  letter-spacing:-.3px;
+}
+.brand-card-desc{
+  font-size:.75rem;
+  color:rgba(255,255,255,0.8);
+  margin:0;
+}
+.brand-card-right{display:flex;gap:10px;flex-wrap:wrap;}
+.brand-card-stat{
+  background:rgba(255,255,255,0.08);
+  border-radius:var(--radius-xs);
+  padding:10px 16px;
+  text-align:center;
+  min-width:70px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.brand-card-stat strong{
+  display:block;
+  font-size:1.2rem;
+  font-weight:800;
+  color:#fff;
+}
+.brand-card-stat small{
+  font-size:.55rem;
+  color:rgba(255,255,255,0.7);
+  font-weight:600;
+  text-transform:uppercase;
+}
+@media(max-width:500px){
+  .brand-card{padding:18px 18px;flex-direction:column;text-align:center;}
+  .brand-card-title{font-size:1rem;}
+  .brand-card-desc{font-size:.65rem;}
+  .brand-card-stat{min-width:60px;padding:8px 12px;}
+  .brand-card-stat strong{font-size:1rem;}
+}
+@media(min-width:1024px){
+  .brand-card{margin:4px 5% 20px;padding:28px 40px;}
+  .brand-card-title{font-size:1.4rem;}
+}
+@media(min-width:1400px){
+  .brand-card{margin:4px 8% 24px;padding:32px 48px;}
+}
 
 /* Info Banner */
 .info-banner{
@@ -187,7 +262,7 @@ a{color:inherit;text-decoration:none;}
 .info-banner i{font-size:18px;color:var(--primary);flex-shrink:0;}
 .info-banner strong{color:var(--text);}
 
-/* Category Chips - NO IMAGES */
+/* Category Chips */
 .cat-chips-wrap{padding:14px 0;margin:8px 0;overflow-x:auto;scrollbar-width:none;}
 .cat-chips-wrap::-webkit-scrollbar{display:none;}
 .cat-chips{display:flex;gap:10px;padding:0 4%;width:max-content;}
@@ -219,60 +294,22 @@ a{color:inherit;text-decoration:none;}
   align-items:center;
   gap:8px;
 }
-.featured-block h3 i{
-  font-size:18px;
-}
+.featured-block h3 i{font-size:18px;}
 .featured-block h3 .trend-icon{color:#FF6B35;}
 .featured-block h3 .new-icon{color:#22C55E;}
-.featured-scroll{
-  display:flex;
-  gap:12px;
-  overflow-x:auto;
-  padding-bottom:8px;
-  scrollbar-width:thin;
-}
+.featured-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;}
 .featured-scroll::-webkit-scrollbar{height:3px;}
 .featured-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-.featured-item{
-  flex:0 0 140px;
-  background:var(--bg);
-  border-radius:var(--radius-xs);
-  overflow:hidden;
-  cursor:pointer;
-  transition:all .2s;
-  border:1px solid var(--border);
-}
+.featured-item{flex:0 0 140px;background:var(--bg);border-radius:var(--radius-xs);overflow:hidden;cursor:pointer;transition:all .2s;border:1px solid var(--border);}
 .featured-item:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--primary);}
-.featured-img-wrap{
-  width:100%;
-  height:100px;
-  overflow:hidden;
-  background:var(--bg);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.featured-img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
+.featured-img-wrap{width:100%;height:100px;overflow:hidden;background:var(--bg);display:flex;align-items:center;justify-content:center;}
+.featured-img{width:100%;height:100%;object-fit:cover;display:block;}
 .featured-info{padding:8px 10px;}
 .featured-name{font-weight:700;font-size:.7rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;}
 .featured-price{font-weight:800;font-size:.75rem;color:var(--sale-red);margin-top:2px;}
-@media(max-width:600px){
-  .featured-sections{grid-template-columns:1fr;gap:16px;}
-  .featured-item{flex:0 0 120px;}
-  .featured-img-wrap{height:80px;}
-  .featured-img{object-fit:cover;}
-}
-@media(min-width:1024px){
-  .featured-sections{padding:0 5% 28px;}
-}
-@media(min-width:1400px){
-  .featured-sections{padding:0 8% 32px;}
-}
+@media(max-width:600px){.featured-sections{grid-template-columns:1fr;gap:16px;}.featured-item{flex:0 0 120px;}.featured-img-wrap{height:80px;}}
+@media(min-width:1024px){.featured-sections{padding:0 5% 28px;}}
+@media(min-width:1400px){.featured-sections{padding:0 8% 32px;}}
 
 /* Shop Toolbar */
 .shop-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 4% 12px;flex-wrap:wrap;}
@@ -292,8 +329,13 @@ a{color:inherit;text-decoration:none;}
 
 .shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 4%;margin-bottom:18px;}
 @media(min-width:600px){.shop-grid{grid-template-columns:repeat(3,1fr);gap:16px;}}
-@media(min-width:1024px){.shop-grid{grid-template-columns:repeat(5,1fr);gap:20px;padding:0 5%;}}
+@media(min-width:1024px){.shop-grid{grid-template-columns:repeat(4,1fr);gap:20px;padding:0 5%;}}
 @media(min-width:1400px){.shop-grid{padding:0 8%;}}
+
+/* Star Rating */
+.pc-rating{display:flex;align-items:center;gap:2px;margin-bottom:5px;}
+.pc-rating i{font-size:10px;color:#FBBF24;}
+.pc-rating span{font-size:.6rem;color:var(--muted);font-weight:600;margin-left:3px;}
 
 .prod-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;transition:all .3s cubic-bezier(0.4,0,0.2,1);border:1px solid var(--border);display:flex;flex-direction:column;box-shadow:var(--shadow);cursor:pointer;}
 .prod-card:active{transform:scale(0.97);}
@@ -303,9 +345,10 @@ a{color:inherit;text-decoration:none;}
 .prod-card:hover .pc-img{transform:scale(1.05);}
 .discount-circle{position:absolute;top:8px;left:8px;width:38px;height:38px;background:var(--sale-red);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;z-index:10;box-shadow:0 2px 10px rgba(213,0,0,0.3);}
 .badge-new{position:absolute;top:8px;left:8px;background:var(--sale-red);color:#fff;font-size:8px;font-weight:700;padding:2px 10px;border-radius:30px;z-index:10;}
+.badge-bestseller{position:absolute;top:8px;left:8px;background:var(--gold);color:#fff;font-size:8px;font-weight:700;padding:2px 10px;border-radius:30px;z-index:10;display:flex;align-items:center;gap:3px;}
 .pc-wishlist{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:white;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;transition:all .2s;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
 .pc-wishlist i{color:#9ca3af;transition:all .2s;}
-.pc-wishlist.wishlisted{background:#DC2626;border-color:#DC2626;}
+.pc-wishlist.wishlisted{background:var(--primary);border-color:var(--primary);}
 .pc-wishlist.wishlisted i{color:#fff;}
 .pc-wishlist:active{transform:scale(0.9);}
 .pc-wishlist:hover{background:var(--primary);border-color:var(--primary);}
@@ -316,7 +359,54 @@ a{color:inherit;text-decoration:none;}
 .pc-price-wrap{display:flex;align-items:center;gap:6px;margin:4px 0 8px;flex-wrap:wrap;}
 .pc-price-old{font-size:.65rem;color:var(--muted);text-decoration:line-through;}
 .pc-price-new{font-weight:900;font-size:1.1rem;color:var(--sale-red);}
-.variant-selector{width:100%;padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:.65rem;font-family:var(--font-body);margin-bottom:8px;cursor:pointer;color:var(--text);}
+
+/* Variant Dropdown (Styled) */
+.variant-select-wrap{
+  position:relative;
+  margin-bottom:8px;
+}
+.variant-select-wrap select{
+  width:100%;
+  padding:8px 32px 8px 14px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  font-size:.7rem;
+  font-weight:600;
+  font-family:var(--font-body);
+  color:var(--text);
+  cursor:pointer;
+  appearance:none;
+  -webkit-appearance:none;
+  transition:all .2s;
+}
+.variant-select-wrap select:focus{
+  border-color:var(--primary);
+  outline:none;
+  box-shadow:0 0 0 3px rgba(128,0,0,0.1);
+}
+.variant-select-wrap select:hover{
+  border-color:var(--primary);
+}
+.variant-select-wrap::after{
+  content:'';
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;
+  height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:5px solid var(--muted);
+  pointer-events:none;
+}
+.variant-select-wrap select option{
+  padding:8px;
+  background:var(--white);
+  color:var(--text);
+}
+
 .atc-btn{width:100%;padding:8px;background:var(--btn-green);color:#fff;border:none;border-radius:60px;font-weight:700;font-size:.7rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:auto;}
 .atc-btn:active{transform:scale(0.95);}
 .atc-btn:hover{background:var(--btn-green-hover);}
@@ -469,25 +559,43 @@ a{color:inherit;text-decoration:none;}
   .active-filters{padding:0 8% 16px;}
   .trust-card{padding:36px 48px;margin:40px 8% 48px;}
 }
+
+/* ===== RECENTLY VIEWED ===== */
+.recently-viewed-section{padding:8px 4% 28px;}
+.recently-viewed-section h3{font-size:.95rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--text);}
+.recently-viewed-section h3 i{color:var(--primary);font-size:18px;}
+.recently-viewed-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;}
+.recently-viewed-scroll::-webkit-scrollbar{height:3px;}
+.recently-viewed-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+.recently-item{
+  flex:0 0 110px;
+  background:var(--white);
+  border-radius:var(--radius-xs);
+  overflow:hidden;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all .2s;
+}
+.recently-item:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--primary);}
+.recently-img-wrap{width:100%;height:80px;overflow:hidden;background:var(--bg);}
+.recently-img{width:100%;height:100%;object-fit:cover;display:block;}
+.recently-info{padding:6px 8px 8px;}
+.recently-name{font-weight:700;font-size:.6rem;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;color:var(--text);}
+.recently-price{font-weight:800;font-size:.65rem;color:var(--sale-red);}
+@media(min-width:1024px){.recently-viewed-section{padding:8px 5% 32px;}}
+@media(min-width:1400px){.recently-viewed-section{padding:8px 8% 32px;}}
 </style>
 </head>
 <body>
 
+<!-- Announcement Bar -->
+<div class="announce-bar" id="announceBar">
+  <span id="announceText"><i class="ph ph-lightning"></i> 10–45 minute delivery across Nairobi</span>
+  <button class="announce-close" onclick="dismissAnnounceBar()" aria-label="Dismiss"><i class="ph ph-x"></i></button>
+</div>
+
 <!-- Offline Banner -->
 <div class="offline-banner" id="offlineBanner">You're offline. Please check your connection.</div>
-
-<!-- Age Gate -->
-<div class="age-gate" id="ageGate">
-  <div class="age-gate-card">
-    <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
-    <h2>Are you 18+?</h2>
-    <p>LiquorBelle sells alcohol. You must be at least 18 years old to enter this site.</p>
-    <div class="age-gate-btns">
-      <button class="age-yes" id="ageYesBtn">Yes, I'm 18+</button>
-      <button class="age-no" id="ageNoBtn">No, I'm under 18</button>
-    </div>
-  </div>
-</div>
 
 <!-- Wishlist Modal -->
 <div class="modal-overlay wishlist-modal" id="wishlistModal" style="display:none;">
@@ -502,7 +610,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Header -->
 <header class="main-header">
   <a class="logo" href="index.html">
-    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
   </a>
   <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
@@ -548,16 +656,38 @@ a{color:inherit;text-decoration:none;}
     <span id="shopBreadcrumbCat">All Products</span>
   </div>
   <h1 class="shop-title" id="shopTitle">All Products</h1>
-  <p class="shop-subtitle" id="shopResultsCount">Loading products…</p>
 </div>
 
-<!-- Info Banner - UPDATED: M-PESA only -->
+<!-- ===== BRANDED CARD ===== -->
+<div class="brand-card">
+  <div class="brand-card-left">
+    <span class="brand-card-badge">✦ Premium Collection</span>
+    <h3 class="brand-card-title">Explore Our Full Range</h3>
+    <p class="brand-card-desc">Whisky • Cognac • Vodka • Gin • Rum • Wine • Beer — all in one place</p>
+  </div>
+  <div class="brand-card-right">
+    <div class="brand-card-stat">
+      <strong>100+</strong>
+      <small>Brands</small>
+    </div>
+    <div class="brand-card-stat">
+      <strong>24/7</strong>
+      <small>Delivery</small>
+    </div>
+    <div class="brand-card-stat">
+      <strong>✅</strong>
+      <small>Authentic</small>
+    </div>
+  </div>
+</div>
+
+<!-- Info Banner -->
 <div class="info-banner">
   <i class="ph ph-info"></i>
   <span><strong>Click any product</strong> to see full details, available sizes, and pricing variations. <strong>Pay with M-PESA</strong> only.</span>
 </div>
 
-<!-- Category Chips - NO IMAGES -->
+<!-- Category Chips -->
 <div class="cat-chips-wrap">
   <div class="cat-chips" id="catChips"></div>
 </div>
@@ -574,31 +704,63 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Toolbar -->
-<div class="shop-toolbar">
-  <button class="filter-btn" onclick="openFilterDrawer()">
-    <i class="ph ph-funnel"></i> Filters
-    <span class="filter-count" id="filterCount" style="display:none;">0</span>
-  </button>
-  <select class="sort-select" id="sortSelect" onchange="currentSort=this.value;applyFilters();">
-    <option value="featured">Featured</option>
-    <option value="newest">Newest</option>
-    <option value="price-asc">Price: Low to High</option>
-    <option value="price-desc">Price: High to Low</option>
-    <option value="name-asc">Name: A–Z</option>
-  </select>
+<!-- Shop Body -->
+<div class="shop-body-grid">
+  <!-- Filters -->
+  <div class="overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
+  <div class="filter-drawer" id="filterDrawer">
+    <div class="cart-head"><span>Filters</span><button class="cart-close" onclick="closeFilterDrawer()"><i class="ph ph-x"></i></button></div>
+    <div class="filter-body">
+      <div class="filter-group">
+        <h4>Price Range (KES)</h4>
+        <div class="price-range-inputs">
+          <input type="number" id="priceMinInput" placeholder="Min" min="0">
+          <span>—</span>
+          <input type="number" id="priceMaxInput" placeholder="Max" min="0">
+        </div>
+      </div>
+      <div class="filter-group">
+        <h4>Availability</h4>
+        <label class="filter-check-row"><input type="checkbox" id="filterOnSale"> On Sale Only</label>
+      </div>
+    </div>
+    <div class="filter-footer">
+      <button class="filter-clear-btn" onclick="clearFilters()">Clear All</button>
+      <button class="filter-apply-btn" onclick="applyFiltersFromDrawer()">Apply Filters</button>
+    </div>
+  </div>
+
+  <!-- Main Column -->
+  <div class="shop-main-col">
+    <div class="shop-toolbar">
+      <button class="filter-btn" onclick="openFilterDrawer()">
+        <i class="ph ph-funnel"></i> Filters
+        <span class="filter-count" id="filterCount" style="display:none;">0</span>
+      </button>
+      <select class="sort-select" id="sortSelect" onchange="currentSort=this.value;applyFilters();">
+        <option value="featured">Featured</option>
+        <option value="newest">Newest</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name-asc">Name: A–Z</option>
+      </select>
+    </div>
+
+    <div class="active-filters" id="activeFilters"></div>
+
+    <div class="shop-grid" id="shopGrid"></div>
+
+    <div class="pagination-wrap" id="paginationWrap"></div>
+  </div>
 </div>
 
-<!-- Active Filter Pills -->
-<div class="active-filters" id="activeFilters"></div>
+<!-- Recently Viewed -->
+<div class="recently-viewed-section" id="recentlyViewedSection" style="display:none;">
+  <h3><i class="ph ph-clock-counter-clockwise"></i> Recently Viewed</h3>
+  <div class="recently-viewed-scroll" id="recentlyViewedScroll"></div>
+</div>
 
-<!-- Product Grid -->
-<div class="shop-grid" id="shopGrid"></div>
-
-<!-- Pagination (Numbered) -->
-<div class="pagination-wrap" id="paginationWrap"></div>
-
-<!-- Trust & Payment Card - UPDATED: M-PESA only -->
+<!-- Trust & Payment Card -->
 <div class="trust-card">
   <div class="trust-item">
     <i class="ph ph-lock-simple"></i>
@@ -622,7 +784,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Footer - UPDATED: M-PESA only -->
+<!-- Footer -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col">
@@ -703,6 +865,7 @@ a{color:inherit;text-decoration:none;}
     </div>
   </div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="delivery-progress" id="deliveryProgress"></div>
     <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
     <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
   </div>
@@ -710,132 +873,185 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <script>
-// ==================== HEADER MENU & SEARCH ====================
-function openMobileMenu(){
-  document.getElementById('mobileMenu').classList.add('open');
-  document.getElementById('mobileMenuOverlay').classList.add('open');
-}
-function closeMobileMenu(){
-  document.getElementById('mobileMenu').classList.remove('open');
-  document.getElementById('mobileMenuOverlay').classList.remove('open');
-}
-function handleHeaderSearch(e){
-  e.preventDefault();
-  var val=(document.getElementById('headerSearchInput')?.value||document.getElementById('mobileSearchInput')?.value||'').trim();
-  currentFilters.search=val;
-  if(document.getElementById('headerSearchInput')) document.getElementById('headerSearchInput').value=val;
-  if(document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value=val;
-  closeMobileMenu();
-  applyFilters();
-  document.querySelector('.shop-titlebar').scrollIntoView({behavior:'smooth',block:'start'});
-  return false;
+// ==================== IMAGE OPTIMIZATION ====================
+function optimizeImage(url, width) {
+    if (!url) return '';
+    if (!url.includes('cloudinary.com')) return url;
+    var parts = url.split('/upload/');
+    if (parts.length !== 2) return url;
+    var w = width || 300;
+    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
 }
 
-// ==================== AGE GATE ====================
-function initAgeGate(){
-  var ageGate=document.getElementById('ageGate');
-  var ageYesBtn=document.getElementById('ageYesBtn');
-  var ageNoBtn=document.getElementById('ageNoBtn');
-  if(localStorage.getItem('lb_age_confirmed_index')==='1'){
-    if(ageGate)ageGate.style.display='none';
-  }else{
-    if(ageGate)ageGate.style.display='flex';
-  }
-  if(ageYesBtn){
-    ageYesBtn.onclick=function(){
-      localStorage.setItem('lb_age_confirmed_index','1');
-      document.getElementById('ageGate').style.display='none';
-    };
-  }
-  if(ageNoBtn){
-    ageNoBtn.onclick=function(){
-      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;">Sorry, you must be 18 or older to visit this site.</div>';
-    };
-  }
+// ==================== CACHING ====================
+var CACHE_KEY = 'liquorbelle_products_cache';
+var CACHE_DURATION = 300000;
+
+function getCachedProducts() {
+    try {
+        var cached = localStorage.getItem(CACHE_KEY);
+        if (!cached) return null;
+        var data = JSON.parse(cached);
+        if (Date.now() - data.timestamp > CACHE_DURATION) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+        }
+        return data.products;
+    } catch (e) { return null; }
+}
+
+function setCachedProducts(products) {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+            products: products,
+            timestamp: Date.now()
+        }));
+    } catch (e) {}
+}
+
+// ==================== ANNOUNCEMENT BAR ====================
+var announceMessages = [
+  '<i class="ph ph-lightning"></i> 10–45 minute delivery across Nairobi',
+  '<i class="ph ph-wallet"></i> Pay safely with M-PESA STK Push',
+  '<i class="ph ph-seal-check"></i> 100% authentic — official distributors only',
+  '<i class="ph ph-clock"></i> Open 24/7 — we never close'
+];
+var announceIdx = 0;
+
+function rotateAnnounce() {
+    var el = document.getElementById('announceText');
+    if (!el) return;
+    announceIdx = (announceIdx + 1) % announceMessages.length;
+    el.style.opacity = 0;
+    setTimeout(function() {
+        el.innerHTML = announceMessages[announceIdx];
+        el.style.opacity = 1;
+    }, 250);
+}
+
+function dismissAnnounceBar() {
+    var bar = document.getElementById('announceBar');
+    if (bar) bar.style.display = 'none';
+    try { sessionStorage.setItem('lb_announce_dismissed', '1'); } catch(e) {}
+}
+
+(function initAnnounceBar() {
+    var dismissed = false;
+    try { dismissed = sessionStorage.getItem('lb_announce_dismissed') === '1'; } catch(e) {}
+    if (dismissed) {
+        document.addEventListener('DOMContentLoaded', function() {
+            var bar = document.getElementById('announceBar');
+            if (bar) bar.style.display = 'none';
+        });
+    } else {
+        setInterval(rotateAnnounce, 4500);
+    }
+})();
+
+// ==================== HEADER ====================
+function openMobileMenu() {
+    document.getElementById('mobileMenu').classList.add('open');
+    document.getElementById('mobileMenuOverlay').classList.add('open');
+}
+function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('mobileMenuOverlay').classList.remove('open');
+}
+function handleHeaderSearch(e) {
+    e.preventDefault();
+    var val = (document.getElementById('headerSearchInput')?.value || document.getElementById('mobileSearchInput')?.value || '').trim();
+    currentFilters.search = val;
+    if (document.getElementById('headerSearchInput')) document.getElementById('headerSearchInput').value = val;
+    if (document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = val;
+    closeMobileMenu();
+    currentPage = 1;
+    applyFilters();
+    document.querySelector('.shop-titlebar').scrollIntoView({behavior:'smooth',block:'start'});
+    return false;
 }
 
 // ==================== CONFIG ====================
-var API_BASE='https://liquorbelle-mpesa-backend.onrender.com';
-var FALLBACK_IMG='https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png';
-var cart=JSON.parse(localStorage.getItem('liquorbelle_cart')||'{}');
-var wishlist=JSON.parse(localStorage.getItem('liquorbelle_wishlist')||'[]');
-var ALL_PRODUCTS=[];
-var filteredProducts=[];
-var currentPage=1;
-var PAGE_SIZE=12;
-var isLoading=true;
-var currentSort='featured';
-var currentFilters={category:'all',search:'',priceMin:null,priceMax:null,onSale:false};
+var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_300,c_fit/v1781119164/liqbb_goc41e.png';
+var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
+var wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
+var ALL_PRODUCTS = [];
+var filteredProducts = [];
+var currentPage = 1;
+var PAGE_SIZE = 12;
+var isLoading = true;
+var currentSort = 'featured';
+var currentFilters = { category: 'all', search: '', priceMin: null, priceMax: null, onSale: false };
 
-// ==================== BACKUP PRODUCTS (ONLY IF DATABASE FAILS) ====================
-function getSampleProducts(){
-  return[
-    {_id:"h1",name:"Jameson Irish Whisky",capacity:"750ml",price:3200,originalPrice:3200,discountPercent:0,category:"whisky",badge:"",image:"https://i.postimg.cc/qRxcssz3/jameson.jpg",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h2",name:"Johnnie Walker Black Label",capacity:"750ml",price:3500,originalPrice:3500,discountPercent:0,category:"whisky",badge:"",image:"https://i.postimg.cc/0yzhN3FK/Johnie-walker-black-label.jpg",isTrending:false,isNew:false,rating:4.5},
-    {_id:"h3",name:"Hennessy XO",capacity:"750ml",price:5500,originalPrice:5500,discountPercent:0,category:"cognac",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273428/2205500339_1_b_rawi81.jpg",isTrending:true,isNew:true,rating:4.5},
-    {_id:"h4",name:"Remy Martin VSOP",capacity:"750ml",price:7800,originalPrice:7800,discountPercent:0,category:"cognac",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781272437/remy-martin-vsop-300-year-anniversary-cognac_RoyalBatch_Fo5YMCyCqg6F_zmgdrq.jpg",isTrending:true,isNew:true,rating:5.0},
-    {_id:"h5",name:"Smirnoff Red Vodka",capacity:"750ml",price:1100,originalPrice:1100,discountPercent:0,category:"vodka",badge:"",image:"https://i.postimg.cc/VLrnYR6K/Greenspoon-Kenya-Smirnoff-Vodka-2-1400x933.webp",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h6",name:"Absolut Vodka",capacity:"750ml",price:2200,originalPrice:2200,discountPercent:0,category:"vodka",badge:"",image:"https://i.postimg.cc/1twFB9db/absolut-vodka.jpg",isTrending:true,isNew:true,rating:5.0},
-    {_id:"h7",name:"Chrome Gin",capacity:"750ml",price:750,originalPrice:750,discountPercent:0,category:"gin",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273803/chrome-gin-750ml_pjpgi8.jpg",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h8",name:"Gilbeys Gin",capacity:"750ml",price:1400,originalPrice:1400,discountPercent:0,category:"gin",badge:"",image:"https://i.postimg.cc/4nkJX9Qn/Greenspoon-Kenya-Gilbeys-Gin-750ml-4.jpg",isTrending:false,isNew:false,rating:4.5},
-    {_id:"h9",name:"Kenya Cane Ginger",capacity:"750ml",price:700,originalPrice:700,discountPercent:0,category:"rum",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780401818/cane-1_izoutd.jpg",isTrending:true,isNew:false,rating:4.0},
-    {_id:"h10",name:"Tusker Lager",capacity:"500ml",price:350,originalPrice:350,discountPercent:0,category:"beer",badge:"",image:"https://i.postimg.cc/9XNRvg3g/TUSKERLAGERBOTTLE500ML.webp",isTrending:false,isNew:false,rating:4.0},
-    {_id:"h11",name:"Heineken Lager",capacity:"500ml",price:320,originalPrice:320,discountPercent:0,category:"beer",badge:"",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781259773/000974__56124.1651683990.1280.1280_pu6xow.jpg",isTrending:true,isNew:false,rating:5.0}
-  ];
+// ==================== BACKUP PRODUCTS ====================
+function getSampleProducts() {
+    return [
+        { _id: "h1", name: "Jameson Irish Whisky", capacity: "750ml", price: 3200, originalPrice: 3200, discountPercent: 0, category: "whisky", badge: "", image: "https://i.postimg.cc/qRxcssz3/jameson.jpg", isTrending: false, isNew: false, rating: 4.0 },
+        { _id: "h2", name: "Johnnie Walker Black Label", capacity: "750ml", price: 3500, originalPrice: 3500, discountPercent: 0, category: "whisky", badge: "", image: "https://i.postimg.cc/0yzhN3FK/Johnie-walker-black-label.jpg", isTrending: false, isNew: false, rating: 4.5 },
+        { _id: "h3", name: "Hennessy XO", capacity: "750ml", price: 5500, originalPrice: 5500, discountPercent: 0, category: "cognac", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273428/2205500339_1_b_rawi81.jpg", isTrending: true, isNew: true, rating: 4.5 },
+        { _id: "h4", name: "Remy Martin VSOP", capacity: "750ml", price: 7800, originalPrice: 7800, discountPercent: 0, category: "cognac", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781272437/remy-martin-vsop-300-year-anniversary-cognac_RoyalBatch_Fo5YMCyCqg6F_zmgdrq.jpg", isTrending: true, isNew: true, rating: 5.0 },
+        { _id: "h5", name: "Smirnoff Red Vodka", capacity: "750ml", price: 1100, originalPrice: 1100, discountPercent: 0, category: "vodka", badge: "", image: "https://i.postimg.cc/VLrnYR6K/Greenspoon-Kenya-Smirnoff-Vodka-2-1400x933.webp", isTrending: false, isNew: false, rating: 4.0 },
+        { _id: "h6", name: "Absolut Vodka", capacity: "750ml", price: 2200, originalPrice: 2200, discountPercent: 0, category: "vodka", badge: "", image: "https://i.postimg.cc/1twFB9db/absolut-vodka.jpg", isTrending: true, isNew: true, rating: 5.0 },
+        { _id: "h7", name: "Chrome Gin", capacity: "750ml", price: 750, originalPrice: 750, discountPercent: 0, category: "gin", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273803/chrome-gin-750ml_pjpgi8.jpg", isTrending: false, isNew: false, rating: 4.0 },
+        { _id: "h8", name: "Gilbeys Gin", capacity: "750ml", price: 1400, originalPrice: 1400, discountPercent: 0, category: "gin", badge: "", image: "https://i.postimg.cc/4nkJX9Qn/Greenspoon-Kenya-Gilbeys-Gin-750ml-4.jpg", isTrending: false, isNew: false, rating: 4.5 },
+        { _id: "h9", name: "Kenya Cane Ginger", capacity: "750ml", price: 700, originalPrice: 700, discountPercent: 0, category: "rum", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780401818/cane-1_izoutd.jpg", isTrending: true, isNew: false, rating: 4.0 },
+        { _id: "h10", name: "Tusker Lager", capacity: "500ml", price: 350, originalPrice: 350, discountPercent: 0, category: "beer", badge: "", image: "https://i.postimg.cc/9XNRvg3g/TUSKERLAGERBOTTLE500ML.webp", isTrending: false, isNew: false, rating: 4.0 },
+        { _id: "h11", name: "Heineken Lager", capacity: "500ml", price: 320, originalPrice: 320, discountPercent: 0, category: "beer", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781259773/000974__56124.1651683990.1280.1280_pu6xow.jpg", isTrending: true, isNew: false, rating: 5.0 }
+    ];
 }
 
-// ==================== UTILITY FUNCTIONS ====================
-function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
+// ==================== UTILITIES ====================
+function escapeHtml(str) { return str ? String(str).replace(/[&<>"']/g, function(m) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]; }) : ''; }
 
-function toast(msg){
-  var t=document.getElementById('toast');
-  if(!t) return;
-  t.innerText=msg;
-  t.style.opacity='1';
-  setTimeout(function(){t.style.opacity='0';},2200);
+function toast(msg) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.innerText = msg;
+    t.style.opacity = '1';
+    setTimeout(function() { t.style.opacity = '0'; }, 2200);
 }
 
-function getQueryParam(name){
-  var params=new URLSearchParams(window.location.search);
-  return params.get(name);
+function getQueryParam(name) {
+    var params = new URLSearchParams(window.location.search);
+    return params.get(name);
 }
 
-// ==================== OFFLINE DETECTION ====================
-window.addEventListener('online', function(){
-  var banner=document.getElementById('offlineBanner');
-  if(banner) banner.classList.remove('show');
-  if(isLoading) loadProducts();
+// ==================== OFFLINE ====================
+window.addEventListener('online', function() {
+    var banner = document.getElementById('offlineBanner');
+    if (banner) banner.classList.remove('show');
+    if (isLoading) loadProducts();
 });
-window.addEventListener('offline', function(){
-  var banner=document.getElementById('offlineBanner');
-  if(banner) banner.classList.add('show');
+window.addEventListener('offline', function() {
+    var banner = document.getElementById('offlineBanner');
+    if (banner) banner.classList.add('show');
 });
 
 // ==================== SCROLL TO TOP ====================
-window.addEventListener('scroll', function(){
-  var btn=document.getElementById('scrollTopBtn');
-  if(!btn) return;
-  if(window.scrollY>300){ btn.classList.add('show'); } else { btn.classList.remove('show'); }
+window.addEventListener('scroll', function() {
+    var btn = document.getElementById('scrollTopBtn');
+    if (!btn) return;
+    if (window.scrollY > 300) { btn.classList.add('show'); } else { btn.classList.remove('show'); }
 });
 
-// ==================== CART FUNCTIONS ====================
-function updateCartUI(){
-  var items=Object.values(cart);
-  var count=items.reduce(function(s,i){return s+i.qty;},0);
+// ==================== CART ====================
+function updateCartUI() {
+    var items = Object.values(cart);
+    var count = items.reduce(function(s, i) { return s + i.qty; }, 0);
 
-  var navCount=document.getElementById('navCartCount');
-  if(navCount) navCount.innerText=count;
-  var cartBadge=document.getElementById('cartBadgeCount');
-  if(cartBadge) cartBadge.innerText=count;
-  var headerCount=document.getElementById('headerCartCount');
-  if(headerCount) headerCount.innerText=count;
+    var navCount = document.getElementById('navCartCount');
+    if (navCount) navCount.innerText = count;
+    var cartBadge = document.getElementById('cartBadgeCount');
+    if (cartBadge) cartBadge.innerText = count;
+    var headerCount = document.getElementById('headerCartCount');
+    if (headerCount) headerCount.innerText = count;
 
-  var container=document.getElementById('cartItemsList');
-  var footer=document.getElementById('cartFooter');
-  if(!container || !footer) return;
+    var container = document.getElementById('cartItemsList');
+    var footer = document.getElementById('cartFooter');
+    if (!container || !footer) return;
 
-  if(!items.length){
-    container.innerHTML=`
+    if (!items.length) {
+        container.innerHTML = `
       <div class="cart-container">
         <div class="cart-icon-wrapper">
           <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
@@ -849,505 +1065,625 @@ function updateCartUI(){
         <a href="shop.html" class="shop-button">Start Shopping</a>
       </div>
     `;
-    footer.style.display='none';
-    return;
-  }
-  footer.style.display='block';
-  var subtotal=items.reduce(function(s,i){return s+i.price*i.qty;},0);
-  var hasBig=items.some(function(i){return ['750ml','1L','1.5L'].includes(i.capacity);});
-  var delivery=hasBig?0:150;
-  var totalEl=document.getElementById('cartTotalAmount');
-  if(totalEl) totalEl.innerHTML='KES '+(subtotal+delivery).toLocaleString();
+        footer.style.display = 'none';
+        return;
+    }
+    footer.style.display = 'block';
+    var subtotal = items.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+    var hasBig = items.some(function(i) { return ['750ml', '1L', '1.5L'].includes(i.capacity); });
+    var delivery = hasBig ? 0 : 150;
+    var totalEl = document.getElementById('cartTotalAmount');
+    if (totalEl) totalEl.innerHTML = 'KES ' + (subtotal + delivery).toLocaleString();
 
-  container.innerHTML=items.map(function(item){
-    return '<div class="cart-item"><div><div class="cart-item-name">'+escapeHtml(item.name)+' <span style="color:var(--primary);">x'+item.qty+'</span></div><div class="cart-item-price">KES '+(item.price*item.qty).toLocaleString()+'</div><div class="cart-qty"><button onclick="updateQty(\''+item.id+'\',-1)">−</button><span>'+item.qty+'</span><button onclick="updateQty(\''+item.id+'\',1)">+</button><button onclick="removeCartItem(\''+item.id+'\')" class="cart-remove-btn">Remove</button></div></div></div>';
-  }).join('');
-}
+    var dp = document.getElementById('deliveryProgress');
+    if (dp) {
+        if (hasBig) {
+            dp.className = 'delivery-progress unlocked';
+            dp.innerHTML = '<strong>🎉 Free delivery unlocked!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div>';
+        } else {
+            dp.className = 'delivery-progress';
+            dp.innerHTML = '🚚 Add any 750ml/1L bottle to unlock <strong>FREE delivery</strong> (save KES 150)<div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:25%;"></div></div>';
+        }
+    }
 
-function removeCartItem(id){
-  if(cart[id]){
-    delete cart[id];
-    localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
-    updateCartUI();
-    toast('Item removed');
-  }
-}
-function updateQty(id,delta){
-  if(cart[id]){
-    cart[id].qty+=delta;
-    if(cart[id].qty<=0) delete cart[id];
-    localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
-    updateCartUI();
-  }
-}
-function openCartDrawer(){
-  var drawer=document.getElementById('cartDrawer');
-  var overlay=document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.add('open');
-  if(overlay) overlay.classList.add('open');
-}
-function closeCartDrawer(){
-  var drawer=document.getElementById('cartDrawer');
-  var overlay=document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.remove('open');
-  if(overlay) overlay.classList.remove('open');
-}
-function addToCart(id,name,price,capacity){
-  if(cart[id]){
-    cart[id].qty+=1;
-  }else{
-    cart[id]={id:id,name:name,price:price,qty:1,capacity:capacity};
-  }
-  localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
-  updateCartUI();
-  toast(name+' added');
-}
-
-// ==================== WISHLIST FUNCTIONS ====================
-function toggleWishlist(id,name,price,image,capacity){
-  var idx=wishlist.findIndex(function(w){return w.id==id;});
-  if(idx>-1){
-    wishlist.splice(idx,1);
-    toast('Removed from wishlist');
-  }else{
-    wishlist.push({id:id,name:name,price:price,image:image,capacity:capacity});
-    toast(name+' added to wishlist ❤️');
-  }
-  localStorage.setItem('liquorbelle_wishlist',JSON.stringify(wishlist));
-  renderShopGrid();
-}
-function openWishlistModal(){
-  var container=document.getElementById('wishlistItems');
-  if(!container) return;
-  if(!wishlist.length){
-    container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
-  }else{
-    container.innerHTML=wishlist.map(function(w){
-      return '<div class="wishlist-item"><img src="'+(w.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button><button class="wishlist-remove" onclick="toggleWishlist(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.image||'')+'\',\''+(w.capacity||'')+'\');openWishlistModal();"><i class="ph ph-trash"></i></button></div>';
+    container.innerHTML = items.map(function(item) {
+        return '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + ' <span style="color:var(--primary);">x' + item.qty + '</span></div><div class="cart-item-price">KES ' + (item.price * item.qty).toLocaleString() + '</div><div class="cart-qty"><button onclick="updateQty(\'' + item.id + '\',-1)">−</button><span>' + item.qty + '</span><button onclick="updateQty(\'' + item.id + '\',1)">+</button><button onclick="removeCartItem(\'' + item.id + '\')" class="cart-remove-btn">Remove</button></div></div></div>';
     }).join('');
-  }
-  var modal=document.getElementById('wishlistModal');
-  if(modal) modal.style.display='flex';
-}
-function closeWishlistModal(){
-  var modal=document.getElementById('wishlistModal');
-  if(modal) modal.style.display='none';
 }
 
-// ==================== CATEGORIES - NO IMAGES ====================
-var categories=[
-  {name:"All",cat:"all"},
-  {name:"Whisky",cat:"whisky"},
-  {name:"Cognac",cat:"cognac"},
-  {name:"Vodka",cat:"vodka"},
-  {name:"Gin",cat:"gin"},
-  {name:"Rum",cat:"rum"},
-  {name:"Wine",cat:"wine"},
-  {name:"Beer",cat:"beer"}
+function removeCartItem(id) {
+    if (cart[id]) {
+        delete cart[id];
+        localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+        updateCartUI();
+        toast('Item removed');
+    }
+}
+function updateQty(id, delta) {
+    if (cart[id]) {
+        cart[id].qty += delta;
+        if (cart[id].qty <= 0) delete cart[id];
+        localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+        updateCartUI();
+    }
+}
+function openCartDrawer() {
+    var drawer = document.getElementById('cartDrawer');
+    var overlay = document.getElementById('cartOverlay');
+    if (drawer) drawer.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+}
+function closeCartDrawer() {
+    var drawer = document.getElementById('cartDrawer');
+    var overlay = document.getElementById('cartOverlay');
+    if (drawer) drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+}
+function addToCart(id, name, price, capacity) {
+    if (cart[id]) {
+        cart[id].qty += 1;
+    } else {
+        cart[id] = { id: id, name: name, price: price, qty: 1, capacity: capacity };
+    }
+    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
+    updateCartUI();
+    toast(name + ' added');
+}
+
+// ==================== RECENTLY VIEWED ====================
+function trackRecentlyViewed(id, name, price, image, capacity) {
+    try {
+        var list = JSON.parse(localStorage.getItem('liquorbelle_recently_viewed') || '[]');
+        list = list.filter(function(item) { return item.id !== id; });
+        list.unshift({ id: id, name: name, price: price, image: image, capacity: capacity });
+        if (list.length > 10) list = list.slice(0, 10);
+        localStorage.setItem('liquorbelle_recently_viewed', JSON.stringify(list));
+    } catch (e) {}
+}
+
+function renderRecentlyViewed() {
+    var section = document.getElementById('recentlyViewedSection');
+    var scroll = document.getElementById('recentlyViewedScroll');
+    if (!section || !scroll) return;
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem('liquorbelle_recently_viewed') || '[]'); } catch (e) {}
+    if (!list.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    scroll.innerHTML = list.map(function(p) {
+        var imgSrc = p.image ? optimizeImage(p.image, 200) : FALLBACK_IMG;
+        return '<div class="recently-item" onclick="goToProduct(\'' + p.id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')">' +
+            '<div class="recently-img-wrap"><img class="recently-img" src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy" alt="' + escapeHtml(p.name) + '"></div>' +
+            '<div class="recently-info"><div class="recently-name">' + escapeHtml(p.name) + '</div><div class="recently-price">KES ' + p.price.toLocaleString() + '</div></div>' +
+            '</div>';
+    }).join('');
+}
+
+function goToProduct(id, name, price, image, capacity) {
+    trackRecentlyViewed(id, name, price, image, capacity);
+    window.location.href = 'product-details.html?id=' + id;
+}
+
+// ==================== WISHLIST ====================
+function toggleWishlist(id, name, price, image, capacity, btnElement) {
+    var idx = wishlist.findIndex(function(w) { return w.id == id; });
+    if (idx > -1) {
+        wishlist.splice(idx, 1);
+        toast('Removed from wishlist');
+        if (btnElement) {
+            btnElement.classList.remove('wishlisted');
+            var icon = btnElement.querySelector('i');
+            if (icon) icon.className = 'ph ph-heart';
+        }
+    } else {
+        wishlist.push({ id: id, name: name, price: price, image: image, capacity: capacity });
+        toast(name + ' added to wishlist ❤️');
+        if (btnElement) {
+            btnElement.classList.add('wishlisted');
+            var icon = btnElement.querySelector('i');
+            if (icon) icon.className = 'ph-fill ph-heart';
+        }
+    }
+    localStorage.setItem('liquorbelle_wishlist', JSON.stringify(wishlist));
+    renderShopGrid();
+    renderFeaturedSections();
+}
+
+function openWishlistModal() {
+    var container = document.getElementById('wishlistItems');
+    if (!container) return;
+    if (!wishlist.length) {
+        container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
+    } else {
+        container.innerHTML = wishlist.map(function(w) {
+            var imgSrc = w.image ? optimizeImage(w.image, 100) : FALLBACK_IMG;
+            return '<div class="wishlist-item"><img src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy"><div class="wishlist-item-info"><div class="wishlist-item-name">' + escapeHtml(w.name) + '</div><div class="wishlist-item-price">KES ' + w.price.toLocaleString() + '</div></div><button class="wishlist-atc" onclick="addToCart(\'' + w.id + '\',\'' + escapeHtml(w.name).replace(/'/g, "\\'") + '\',' + w.price + ',\'' + (w.capacity || '') + '\');closeWishlistModal();">Add</button><button class="wishlist-remove" onclick="toggleWishlist(\'' + w.id + '\',\'' + escapeHtml(w.name).replace(/'/g, "\\'") + '\',' + w.price + ',\'' + (w.image || '') + '\',\'' + (w.capacity || '') + '\');openWishlistModal();"><i class="ph ph-trash"></i></button></div>';
+        }).join('');
+    }
+    var modal = document.getElementById('wishlistModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeWishlistModal() {
+    var modal = document.getElementById('wishlistModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// ==================== CATEGORIES ====================
+var categories = [
+    { name: "All", cat: "all" },
+    { name: "Whisky", cat: "whisky" },
+    { name: "Cognac", cat: "cognac" },
+    { name: "Vodka", cat: "vodka" },
+    { name: "Gin", cat: "gin" },
+    { name: "Rum", cat: "rum" },
+    { name: "Wine", cat: "wine" },
+    { name: "Beer", cat: "beer" }
 ];
 
-function renderCatChips(){
-  var container=document.getElementById('catChips');
-  if(!container) return;
-  container.innerHTML=categories.map(function(cat){
-    var active=currentFilters.category===cat.cat ? 'active' : '';
-    return '<button class="cat-chip '+active+'" data-cat="'+cat.cat+'" onclick="selectCategory(\''+cat.cat+'\')">'+cat.name+'</button>';
-  }).join('');
-}
-
-function selectCategory(cat){
-  currentFilters.category=cat;
-  currentPage=1;
-  var url=new URL(window.location);
-  if(cat==='all'){ url.searchParams.delete('cat'); } else { url.searchParams.set('cat',cat); }
-  window.history.replaceState({},'',url);
-  renderCatChips();
-  applyFilters();
-  // Scroll to top of products
-  document.querySelector('.shop-grid').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-// ==================== FILTER DRAWER ====================
-function openFilterDrawer(){
-  document.getElementById('priceMinInput').value=currentFilters.priceMin ?? '';
-  document.getElementById('priceMaxInput').value=currentFilters.priceMax ?? '';
-  document.getElementById('filterOnSale').checked=currentFilters.onSale;
-  document.getElementById('filterDrawer').classList.add('open');
-  document.getElementById('filterOverlay').classList.add('open');
-}
-function closeFilterDrawer(){
-  document.getElementById('filterDrawer').classList.remove('open');
-  document.getElementById('filterOverlay').classList.remove('open');
-}
-function applyFiltersFromDrawer(){
-  var min=document.getElementById('priceMinInput').value;
-  var max=document.getElementById('priceMaxInput').value;
-  currentFilters.priceMin=min!==''?Number(min):null;
-  currentFilters.priceMax=max!==''?Number(max):null;
-  currentFilters.onSale=document.getElementById('filterOnSale').checked;
-  currentPage=1;
-  closeFilterDrawer();
-  applyFilters();
-}
-function clearFilters(){
-  currentFilters.priceMin=null;
-  currentFilters.priceMax=null;
-  currentFilters.onSale=false;
-  currentFilters.category='all';
-  document.getElementById('priceMinInput').value='';
-  document.getElementById('priceMaxInput').value='';
-  document.getElementById('filterOnSale').checked=false;
-  var url=new URL(window.location);
-  url.searchParams.delete('cat');
-  window.history.replaceState({},'',url);
-  renderCatChips();
-  closeFilterDrawer();
-  applyFilters();
-}
-
-function updateFilterCount(){
-  var n=0;
-  if(currentFilters.priceMin!=null) n++;
-  if(currentFilters.priceMax!=null) n++;
-  if(currentFilters.onSale) n++;
-  var badge=document.getElementById('filterCount');
-  if(n>0){ badge.style.display='flex'; badge.innerText=n; } else { badge.style.display='none'; }
-}
-
-function renderActiveFilterPills(){
-  var wrap=document.getElementById('activeFilters');
-  if(!wrap) return;
-  var pills=[];
-  if(currentFilters.category!=='all'){
-    var catName=(categories.find(function(c){return c.cat===currentFilters.category;})||{}).name||currentFilters.category;
-    pills.push('<div class="filter-pill">'+catName+'<button onclick="selectCategory(\'all\')"><i class="ph ph-x"></i></button></div>');
-  }
-  if(currentFilters.search){
-    pills.push('<div class="filter-pill">"'+escapeHtml(currentFilters.search)+'"<button onclick="clearSearchPill()"><i class="ph ph-x"></i></button></div>');
-  }
-  if(currentFilters.priceMin!=null||currentFilters.priceMax!=null){
-    var label='KES '+(currentFilters.priceMin??0)+' – '+(currentFilters.priceMax??'∞');
-    pills.push('<div class="filter-pill">'+label+'<button onclick="clearPricePill()"><i class="ph ph-x"></i></button></div>');
-  }
-  if(currentFilters.onSale){
-    pills.push('<div class="filter-pill">On Sale<button onclick="clearSalePill()"><i class="ph ph-x"></i></button></div>');
-  }
-  wrap.innerHTML=pills.join('');
-}
-function clearSearchPill(){
-  currentFilters.search='';
-  var h=document.getElementById('headerSearchInput'); if(h) h.value='';
-  var m=document.getElementById('mobileSearchInput'); if(m) m.value='';
-  currentPage=1;
-  applyFilters();
-}
-function clearPricePill(){
-  currentFilters.priceMin=null; currentFilters.priceMax=null;
-  currentPage=1;
-  applyFilters();
-}
-function clearSalePill(){
-  currentFilters.onSale=false;
-  currentPage=1;
-  applyFilters();
-}
-
-// ==================== FEATURED SECTIONS (Trending & New Arrivals) - FILTERED BY CATEGORY ====================
-function renderFeaturedSections(){
-  var selectedCategory = currentFilters.category;
-  var isAll = selectedCategory === 'all';
-  
-  // Filter products by selected category
-  var trendingItems = ALL_PRODUCTS.filter(function(p){ 
-    return p.isTrending === true && (isAll || p.category === selectedCategory); 
-  }).slice(0, 8);
-  
-  var newItems = ALL_PRODUCTS.filter(function(p){ 
-    return p.isNew === true && (isAll || p.category === selectedCategory); 
-  }).slice(0, 8);
-  
-  var trendingScroll = document.getElementById('trendingScroll');
-  var newScroll = document.getElementById('newArrivalsScroll');
-  
-  if(trendingItems.length){
-    trendingScroll.innerHTML = trendingItems.map(function(p){
-      var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
-      var savePercent = p.discountPercent || 0;
-      return '<div class="featured-item" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
-        '<div class="featured-img-wrap">'+
-          '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy">'+
-        '</div>'+
-        '<div class="featured-info">'+
-          '<div class="featured-name">'+escapeHtml(p.name)+'</div>'+
-          '<div class="featured-price">'+(savePercent>0?'<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES '+p.originalPrice.toLocaleString()+'</span>':'')+'KES '+price.toLocaleString()+'</div>'+
-        '</div>'+
-      '</div>';
+function renderCatChips() {
+    var container = document.getElementById('catChips');
+    if (!container) return;
+    container.innerHTML = categories.map(function(cat) {
+        var active = currentFilters.category === cat.cat ? 'active' : '';
+        return '<button class="cat-chip ' + active + '" data-cat="' + cat.cat + '" onclick="selectCategory(\'' + cat.cat + '\')">' + cat.name + '</button>';
     }).join('');
-  } else {
-    trendingScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No trending products'+(isAll?'':' in '+selectedCategory)+'</div>';
-  }
-  
-  if(newItems.length){
-    newScroll.innerHTML = newItems.map(function(p){
-      var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
-      var savePercent = p.discountPercent || 0;
-      return '<div class="featured-item" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
-        '<div class="featured-img-wrap">'+
-          '<img class="featured-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy">'+
-        '</div>'+
-        '<div class="featured-info">'+
-          '<div class="featured-name">'+escapeHtml(p.name)+'</div>'+
-          '<div class="featured-price">'+(savePercent>0?'<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES '+p.originalPrice.toLocaleString()+'</span>':'')+'KES '+price.toLocaleString()+'</div>'+
-        '</div>'+
-      '</div>';
-    }).join('');
-  } else {
-    newScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No new arrivals'+(isAll?'':' in '+selectedCategory)+'</div>';
-  }
+}
+
+function selectCategory(cat) {
+    currentFilters.category = cat;
+    currentPage = 1;
+    var url = new URL(window.location);
+    if (cat === 'all') { url.searchParams.delete('cat'); } else { url.searchParams.set('cat', cat); }
+    window.history.replaceState({}, '', url);
+    renderCatChips();
+    applyFilters();
+    document.querySelector('.shop-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ==================== FILTERS ====================
+function openFilterDrawer() {
+    document.getElementById('priceMinInput').value = currentFilters.priceMin ?? '';
+    document.getElementById('priceMaxInput').value = currentFilters.priceMax ?? '';
+    document.getElementById('filterOnSale').checked = currentFilters.onSale;
+    document.getElementById('filterDrawer').classList.add('open');
+    document.getElementById('filterOverlay').classList.add('open');
+}
+
+function closeFilterDrawer() {
+    document.getElementById('filterDrawer').classList.remove('open');
+    document.getElementById('filterOverlay').classList.remove('open');
+}
+
+function applyFiltersFromDrawer() {
+    var min = document.getElementById('priceMinInput').value;
+    var max = document.getElementById('priceMaxInput').value;
+    currentFilters.priceMin = min !== '' ? Number(min) : null;
+    currentFilters.priceMax = max !== '' ? Number(max) : null;
+    currentFilters.onSale = document.getElementById('filterOnSale').checked;
+    currentPage = 1;
+    closeFilterDrawer();
+    applyFilters();
+}
+
+function clearFilters() {
+    currentFilters.priceMin = null;
+    currentFilters.priceMax = null;
+    currentFilters.onSale = false;
+    currentFilters.category = 'all';
+    document.getElementById('priceMinInput').value = '';
+    document.getElementById('priceMaxInput').value = '';
+    document.getElementById('filterOnSale').checked = false;
+    var url = new URL(window.location);
+    url.searchParams.delete('cat');
+    window.history.replaceState({}, '', url);
+    renderCatChips();
+    closeFilterDrawer();
+    applyFilters();
+}
+
+function updateFilterCount() {
+    var n = 0;
+    if (currentFilters.priceMin != null) n++;
+    if (currentFilters.priceMax != null) n++;
+    if (currentFilters.onSale) n++;
+    var badge = document.getElementById('filterCount');
+    if (n > 0) { badge.style.display = 'flex';
+        badge.innerText = n; } else { badge.style.display = 'none'; }
+}
+
+function renderActiveFilterPills() {
+    var wrap = document.getElementById('activeFilters');
+    if (!wrap) return;
+    var pills = [];
+    if (currentFilters.category !== 'all') {
+        var catName = (categories.find(function(c) { return c.cat === currentFilters.category; }) || {}).name || currentFilters.category;
+        pills.push('<div class="filter-pill">' + catName + '<button onclick="selectCategory(\'all\')"><i class="ph ph-x"></i></button></div>');
+    }
+    if (currentFilters.search) {
+        pills.push('<div class="filter-pill">"' + escapeHtml(currentFilters.search) + '"<button onclick="clearSearchPill()"><i class="ph ph-x"></i></button></div>');
+    }
+    if (currentFilters.priceMin != null || currentFilters.priceMax != null) {
+        var label = 'KES ' + (currentFilters.priceMin ?? 0) + ' – ' + (currentFilters.priceMax ?? '∞');
+        pills.push('<div class="filter-pill">' + label + '<button onclick="clearPricePill()"><i class="ph ph-x"></i></button></div>');
+    }
+    if (currentFilters.onSale) {
+        pills.push('<div class="filter-pill">On Sale<button onclick="clearSalePill()"><i class="ph ph-x"></i></button></div>');
+    }
+    wrap.innerHTML = pills.join('');
+}
+
+function clearSearchPill() {
+    currentFilters.search = '';
+    var h = document.getElementById('headerSearchInput');
+    if (h) h.value = '';
+    var m = document.getElementById('mobileSearchInput');
+    if (m) m.value = '';
+    currentPage = 1;
+    applyFilters();
+}
+
+function clearPricePill() {
+    currentFilters.priceMin = null;
+    currentFilters.priceMax = null;
+    currentPage = 1;
+    applyFilters();
+}
+
+function clearSalePill() {
+    currentFilters.onSale = false;
+    currentPage = 1;
+    applyFilters();
+}
+
+// ==================== STARS ====================
+function renderStars(rating) {
+    rating = rating || 0;
+    var full = Math.round(rating);
+    var html = '<div class="pc-rating">';
+    for (var i = 1; i <= 5; i++) {
+        html += '<i class="ph' + (i <= full ? '-fill' : '') + ' ph-star"></i>';
+    }
+    html += '<span>' + rating.toFixed(1) + '</span></div>';
+    return html;
+}
+
+// ==================== FEATURED SECTIONS ====================
+function renderFeaturedSections() {
+    var selectedCategory = currentFilters.category;
+    var isAll = selectedCategory === 'all';
+
+    var trendingItems = ALL_PRODUCTS.filter(function(p) {
+        return p.isTrending === true && (isAll || p.category === selectedCategory);
+    }).slice(0, 8);
+
+    var newItems = ALL_PRODUCTS.filter(function(p) {
+        return p.isNew === true && (isAll || p.category === selectedCategory);
+    }).slice(0, 8);
+
+    var trendingScroll = document.getElementById('trendingScroll');
+    var newScroll = document.getElementById('newArrivalsScroll');
+
+    function buildItem(p) {
+        var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
+        var savePercent = p.discountPercent || 0;
+        var imgSrc = p.image ? optimizeImage(p.image, 200) : FALLBACK_IMG;
+        return '<div class="featured-item" onclick="goToProduct(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')">' +
+            '<div class="featured-img-wrap">' +
+            '<img class="featured-img" src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy" alt="' + escapeHtml(p.name) + '">' +
+            '</div>' +
+            '<div class="featured-info">' +
+            '<div class="featured-name">' + escapeHtml(p.name) + '</div>' +
+            '<div class="featured-price">' + (savePercent > 0 ? '<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES ' + p.originalPrice.toLocaleString() + '</span>' : '') + 'KES ' + price.toLocaleString() + '</div>' +
+            '</div>' +
+            '</div>';
+    }
+
+    if (trendingItems.length) {
+        trendingScroll.innerHTML = trendingItems.map(buildItem).join('');
+    } else {
+        trendingScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No trending products' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
+    }
+
+    if (newItems.length) {
+        newScroll.innerHTML = newItems.map(buildItem).join('');
+    } else {
+        newScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No new arrivals' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
+    }
 }
 
 // ==================== PRODUCT LOADING ====================
-function renderSkeletons(count, containerId){
-  var container=document.getElementById(containerId);
-  if(!container) return;
-  var skeletons='';
-  for(var i=0;i<count;i++){
-    skeletons+='<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
-  }
-  container.innerHTML=skeletons;
+function renderSkeletons(count, containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var skeletons = '';
+    for (var i = 0; i < count; i++) {
+        skeletons += '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
+    }
+    container.innerHTML = skeletons;
 }
 
-async function loadProducts(){
-  isLoading=true;
-  renderSkeletons(10,'shopGrid');
-  var resultsEl=document.getElementById('shopResultsCount');
-  if(resultsEl) resultsEl.textContent='Loading products…';
+function mapDbProducts(rawProducts) {
+    return rawProducts.map(function(p) {
+        var variants = p.variants || [];
+        var sizeOrderMap = { '250ml': 1, '350ml': 2, '500ml': 3, '750ml': 4, '1L': 5, '1.5L': 6 };
+        var sortedVariants = [...variants].sort(function(a, b) { return (sizeOrderMap[a.size] || 99) - (sizeOrderMap[b.size] || 99); });
+        var cheapestVariant = sortedVariants[0] || null;
 
-  try{
-    var res=await fetch(API_BASE+'/api/db/products');
-    if(!res.ok) throw new Error('Network response was not ok');
-    var data=await res.json();
-    if(data.success&&data.products&&data.products.length>0){
-      ALL_PRODUCTS=data.products.map(function(p){
-        var variants=p.variants||[];
-        var sizeOrderMap={'250ml':1,'350ml':2,'500ml':3,'750ml':4,'1L':5,'1.5L':6};
-        var sortedVariants=[...variants].sort(function(a,b){return (sizeOrderMap[a.size]||99)-(sizeOrderMap[b.size]||99);});
-        var cheapestVariant=sortedVariants[0]||null;
-        
-        // CORRECT DISCOUNT CALCULATION
         var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
         var discountPercent = cheapestVariant?.discount || 0;
         var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
-        
-        return{
-          _id:p._id,
-          id:p._id,
-          name:p.name,
-          capacity:cheapestVariant?.size||'750ml',
-          price:discountedPrice,
-          originalPrice:originalPrice,
-          discountPercent:discountPercent,
-          category:p.category||'',
-          badge:p.badge||(discountPercent>10?'hot':''),
-          image:p.image||'',
-          description:p.description||'',
-          isTrending:p.isTrending||false,
-          isNew:p.isNew||false,
-          rating:p.rating||4,
-          variants:variants
+
+        return {
+            _id: p._id,
+            id: p._id,
+            name: p.name,
+            capacity: cheapestVariant?.size || '750ml',
+            price: discountedPrice,
+            originalPrice: originalPrice,
+            discountPercent: discountPercent,
+            category: p.category || '',
+            badge: p.badge || (discountPercent > 10 ? 'hot' : ''),
+            image: p.image || '',
+            description: p.description || '',
+            isTrending: p.isTrending || false,
+            isNew: p.isNew || false,
+            rating: p.rating || 4,
+            variants: variants
         };
-      });
-      
-      renderFeaturedSections();
-      
-    }else{
-      ALL_PRODUCTS=getSampleProducts();
-      toast('Showing backup products');
-      renderFeaturedSections();
+    });
+}
+
+async function loadProducts() {
+    isLoading = true;
+    renderSkeletons(10, 'shopGrid');
+    var titleEl = document.getElementById('shopTitle');
+    if (titleEl) titleEl.textContent = 'Loading…';
+
+    var cached = getCachedProducts();
+    if (cached) {
+        ALL_PRODUCTS = cached;
+        isLoading = false;
+        renderFeaturedSections();
+        applyFilters();
+        renderRecentlyViewed();
+        fetchFreshProducts();
+        return;
     }
-  }catch(e){
-    console.error('Error loading products:',e);
-    ALL_PRODUCTS=getSampleProducts();
-    toast('Could not connect. Showing backup products.');
+
+    try {
+        var res = await fetch(API_BASE + '/api/db/products');
+        if (!res.ok) throw new Error('Network response was not ok');
+        var data = await res.json();
+        if (data.success && data.products && data.products.length > 0) {
+            ALL_PRODUCTS = mapDbProducts(data.products);
+            setCachedProducts(ALL_PRODUCTS);
+            renderFeaturedSections();
+        } else {
+            ALL_PRODUCTS = getSampleProducts();
+            toast('Showing backup products');
+            renderFeaturedSections();
+        }
+    } catch (e) {
+        console.error('Error loading products:', e);
+        ALL_PRODUCTS = getSampleProducts();
+        toast('Could not connect. Showing backup products.');
+        renderFeaturedSections();
+    }
+    isLoading = false;
+    applyFilters();
+    renderRecentlyViewed();
+}
+
+function fetchFreshProducts() {
+    fetch(API_BASE + '/api/db/products')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.success && data.products && data.products.length > 0) {
+                ALL_PRODUCTS = mapDbProducts(data.products);
+                setCachedProducts(ALL_PRODUCTS);
+                renderFeaturedSections();
+                applyFilters();
+            }
+        })
+        .catch(function(e) { console.error('Background refresh failed:', e); });
+}
+
+function applyFilters() {
+    var f = currentFilters;
+    var list = ALL_PRODUCTS.filter(function(p) {
+        if (f.category !== 'all' && (p.category || '').toLowerCase() !== f.category) return false;
+        if (f.search) {
+            var q = f.search.toLowerCase();
+            var haystack = ((p.name || '') + ' ' + (p.category || '')).toLowerCase();
+            if (haystack.indexOf(q) === -1) return false;
+        }
+        if (f.priceMin != null && p.price < f.priceMin) return false;
+        if (f.priceMax != null && p.price > f.priceMax) return false;
+        if (f.onSale && !(p.discountPercent > 0)) return false;
+        return true;
+    });
+
+    switch (currentSort) {
+        case 'price-asc':
+            list.sort(function(a, b) { return a.price - b.price; });
+            break;
+        case 'price-desc':
+            list.sort(function(a, b) { return b.price - a.price; });
+            break;
+        case 'name-asc':
+            list.sort(function(a, b) { return a.name.localeCompare(b.name); });
+            break;
+        case 'newest':
+            list.sort(function(a, b) { return (b.isNew === true) - (a.isNew === true); });
+            break;
+        default:
+            break;
+    }
+
+    filteredProducts = list;
+    if (currentPage < 1) currentPage = 1;
+    var totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
+    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
     renderFeaturedSections();
-  }
-  isLoading=false;
-  applyFilters();
+    updateTitleBar();
+    updateFilterCount();
+    renderActiveFilterPills();
+    renderShopGrid();
+    renderPagination();
 }
 
-function applyFilters(){
-  var f=currentFilters;
-  var list=ALL_PRODUCTS.filter(function(p){
-    if(f.category!=='all' && (p.category||'').toLowerCase()!==f.category) return false;
-    if(f.search){
-      var q=f.search.toLowerCase();
-      var haystack=((p.name||'')+' '+(p.category||'')).toLowerCase();
-      if(haystack.indexOf(q)===-1) return false;
+function updateTitleBar() {
+    var titleEl = document.getElementById('shopTitle');
+    var breadcrumbEl = document.getElementById('shopBreadcrumbCat');
+    var catName = 'All Products';
+    if (currentFilters.category !== 'all') {
+        catName = (categories.find(function(c) { return c.cat === currentFilters.category; }) || {}).name || currentFilters.category;
     }
-    if(f.priceMin!=null && p.price<f.priceMin) return false;
-    if(f.priceMax!=null && p.price>f.priceMax) return false;
-    if(f.onSale && !(p.discountPercent>0)) return false;
-    return true;
-  });
-
-  switch(currentSort){
-    case 'price-asc': list.sort(function(a,b){return a.price-b.price;}); break;
-    case 'price-desc': list.sort(function(a,b){return b.price-a.price;}); break;
-    case 'name-asc': list.sort(function(a,b){return a.name.localeCompare(b.name);}); break;
-    case 'newest': list.sort(function(a,b){return (b.isNew===true)-(a.isNew===true);}); break;
-    default: break;
-  }
-
-  filteredProducts=list;
-  if(currentPage<1) currentPage=1;
-  var totalPages=Math.ceil(filteredProducts.length/PAGE_SIZE);
-  if(currentPage>totalPages && totalPages>0) currentPage=totalPages;
-  
-  // Re-render featured sections when category changes
-  renderFeaturedSections();
-  
-  updateTitleBar();
-  updateFilterCount();
-  renderActiveFilterPills();
-  renderShopGrid();
-  renderPagination();
-}
-
-function updateTitleBar(){
-  var titleEl=document.getElementById('shopTitle');
-  var breadcrumbEl=document.getElementById('shopBreadcrumbCat');
-  var resultsEl=document.getElementById('shopResultsCount');
-  var catName='All Products';
-  if(currentFilters.category!=='all'){
-    catName=(categories.find(function(c){return c.cat===currentFilters.category;})||{}).name||currentFilters.category;
-  }
-  if(currentFilters.search){
-    titleEl.textContent='Search: "'+currentFilters.search+'"';
-    breadcrumbEl.textContent='Search Results';
-  }else{
-    titleEl.textContent=catName;
-    breadcrumbEl.textContent=catName;
-  }
-  resultsEl.textContent=filteredProducts.length+' product'+(filteredProducts.length===1?'':'s')+' found';
-}
-
-function goToPage(page){
-  var totalPages=Math.ceil(filteredProducts.length/PAGE_SIZE);
-  if(page<1 || page>totalPages) return;
-  currentPage=page;
-  renderShopGrid();
-  renderPagination();
-  document.querySelector('.shop-grid').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function renderPagination(){
-  var wrap=document.getElementById('paginationWrap');
-  if(!wrap) return;
-  var totalPages=Math.ceil(filteredProducts.length/PAGE_SIZE);
-  if(totalPages<=1){ wrap.innerHTML=''; return; }
-  
-  var html='<button class="page-btn" onclick="goToPage('+(currentPage-1)+')" '+(currentPage===1?'disabled':'')+'><i class="ph ph-caret-left"></i></button>';
-  
-  var startPage=Math.max(1,currentPage-2);
-  var endPage=Math.min(totalPages,currentPage+2);
-  
-  if(startPage>1){
-    html+='<button class="page-btn" onclick="goToPage(1)">1</button>';
-    if(startPage>2) html+='<span class="page-ellipsis">…</span>';
-  }
-  
-  for(var i=startPage;i<=endPage;i++){
-    html+='<button class="page-btn '+(i===currentPage?'active':'')+'" onclick="goToPage('+i+')">'+i+'</button>';
-  }
-  
-  if(endPage<totalPages){
-    if(endPage<totalPages-1) html+='<span class="page-ellipsis">…</span>';
-    html+='<button class="page-btn" onclick="goToPage('+totalPages+')">'+totalPages+'</button>';
-  }
-  
-  html+='<button class="page-btn" onclick="goToPage('+(currentPage+1)+')" '+(currentPage===totalPages?'disabled':'')+'><i class="ph ph-caret-right"></i></button>';
-  wrap.innerHTML=html;
-}
-
-function renderShopGrid(){
-  var grid=document.getElementById('shopGrid');
-  if(!grid) return;
-
-  if(!filteredProducts.length){
-    grid.innerHTML='<div class="empty-state"><i class="ph ph-wine"></i><p>No products match your filters.<br>Try adjusting your search or filters.</p><button onclick="clearFilters();clearSearchPill();">Clear Filters</button></div>';
-    return;
-  }
-
-  var start=(currentPage-1)*PAGE_SIZE;
-  var visible=filteredProducts.slice(start,start+PAGE_SIZE);
-  grid.innerHTML=visible.map(function(p){ return renderProductCard(p); }).join('');
-}
-
-function renderProductCard(p){
-  var original=p.originalPrice||p.price;
-  var savePercent=p.discountPercent||0;
-  var isWishlisted=wishlist.some(function(w){return w.id==p._id;});
-  var newBadge=p.isNew ? '<div class="badge-new">NEW</div>' : '';
-  var discountBadge=savePercent>0 ? '<div class="discount-circle">-'+savePercent+'%</div>' : '';
-  var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button>';
-  
-  var variantHtml='';
-  if(p.variants && p.variants.length>1){
-    variantHtml='<select class="variant-selector" onchange="updateVariantPrice(this, \''+p._id+'\')">'+
-      p.variants.map(function(v){ 
-        var selected=(v.size===p.capacity)?'selected':'';
-        return '<option value="'+v.size+'" data-price="'+v.price+'" '+selected+'>'+v.size+' - KES '+v.price.toLocaleString()+'</option>';
-      }).join('')+
-    '</select>';
-  }
-
-  return '<div class="prod-card" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><div class="pc-img-wrap"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div>'+variantHtml+'<button class="atc-btn" onclick="event.stopPropagation();addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button><div class="click-hint">Click for details →</div></div></div>';
-}
-
-function updateVariantPrice(select, productId){
-  var price=parseFloat(select.options[select.selectedIndex].dataset.price);
-  var product=ALL_PRODUCTS.find(function(p){return p._id===productId;});
-  if(product){
-    product.price=price;
-    var card=select.closest('.prod-card');
-    var priceWrap=card.querySelector('.pc-price-wrap');
-    var priceNew=priceWrap.querySelector('.pc-price-new');
-    if(priceNew) priceNew.textContent='KES '+price.toLocaleString();
-    var atcBtn=card.querySelector('.atc-btn');
-    if(atcBtn){
-      var onclickStr=atcBtn.getAttribute('onclick');
-      atcBtn.setAttribute('onclick', onclickStr.replace(/addToCart\('[^']+','[^']+',\d+/, "addToCart('"+productId+"','"+escapeHtml(product.name).replace(/'/g,"\\'")+"',"+price));
+    if (currentFilters.search) {
+        titleEl.textContent = 'Search: "' + currentFilters.search + '"';
+        breadcrumbEl.textContent = 'Search Results';
+    } else {
+        titleEl.textContent = catName;
+        breadcrumbEl.textContent = catName;
     }
-  }
+}
+
+function goToPage(page) {
+    var totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    renderShopGrid();
+    renderPagination();
+    document.querySelector('.shop-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderPagination() {
+    var wrap = document.getElementById('paginationWrap');
+    if (!wrap) return;
+    var totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
+    if (totalPages <= 1) { wrap.innerHTML = ''; return; }
+
+    var html = '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '><i class="ph ph-caret-left"></i></button>';
+
+    var startPage = Math.max(1, currentPage - 2);
+    var endPage = Math.min(totalPages, currentPage + 2);
+
+    if (startPage > 1) {
+        html += '<button class="page-btn" onclick="goToPage(1)">1</button>';
+        if (startPage > 2) html += '<span class="page-ellipsis">…</span>';
+    }
+
+    for (var i = startPage; i <= endPage; i++) {
+        html += '<button class="page-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += '<span class="page-ellipsis">…</span>';
+        html += '<button class="page-btn" onclick="goToPage(' + totalPages + ')">' + totalPages + '</button>';
+    }
+
+    html += '<button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '><i class="ph ph-caret-right"></i></button>';
+    wrap.innerHTML = html;
+}
+
+// ==================== RENDER PRODUCT GRID ====================
+function renderShopGrid() {
+    var grid = document.getElementById('shopGrid');
+    if (!grid) return;
+
+    if (!filteredProducts.length) {
+        grid.innerHTML = '<div class="empty-state"><i class="ph ph-wine"></i><p>No products match your filters.<br>Try adjusting your search or filters.</p><button onclick="clearFilters();clearSearchPill();">Clear Filters</button></div>';
+        return;
+    }
+
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var visible = filteredProducts.slice(start, start + PAGE_SIZE);
+    grid.innerHTML = visible.map(function(p) { return renderProductCard(p); }).join('');
+}
+
+function renderProductCard(p) {
+    var original = p.originalPrice || p.price;
+    var savePercent = p.discountPercent || 0;
+    var isWishlisted = wishlist.some(function(w) { return w.id == p._id; });
+
+    var topBadge = '';
+    if (savePercent > 0) {
+        topBadge = '<div class="discount-circle">-' + savePercent + '%</div>';
+    } else if (p.isNew) {
+        topBadge = '<div class="badge-new">NEW</div>';
+    } else if (p.isTrending) {
+        topBadge = '<div class="badge-bestseller"><i class="ph-fill ph-flame" style="font-size:9px;"></i> BESTSELLER</div>';
+    }
+
+    var heartIcon = isWishlisted ? 'ph-fill ph-heart' : 'ph ph-heart';
+    var wishlistBtn = '<button class="pc-wishlist ' + (isWishlisted ? 'wishlisted' : '') + '" onclick="event.stopPropagation();toggleWishlist(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\', this)"><i class="' + heartIcon + '"></i></button>';
+
+    var variantHtml = '';
+    if (p.variants && p.variants.length > 1) {
+        variantHtml = '<div class="variant-select-wrap">' +
+            '<select onchange="updateVariantPrice(this, \'' + p._id + '\')">' +
+            p.variants.map(function(v) {
+                var selected = (v.size === p.capacity) ? 'selected' : '';
+                return '<option value="' + v.size + '" data-price="' + v.price + '" ' + selected + '>' + v.size + ' — KES ' + v.price.toLocaleString() + '</option>';
+            }).join('') +
+            '</select></div>';
+    }
+
+    var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
+    var escapedName = escapeHtml(p.name).replace(/'/g, "\\'");
+
+    return '<div class="prod-card" onclick="goToProduct(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')"><div class="pc-img-wrap"><img class="pc-img" src="' + imgSrc + '" alt="' + escapeHtml(p.name) + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy">' + topBadge + wishlistBtn + '</div><div class="pc-body"><div class="pc-name">' + escapeHtml(p.name) + '</div>' + renderStars(p.rating) + (p.capacity ? '<div class="pc-vol">' + escapeHtml(p.capacity) + '</div>' : '') + '<div class="pc-price-wrap">' + (savePercent > 0 ? '<span class="pc-price-old">KES ' + original.toLocaleString() + '</span>' : '') + '<span class="pc-price-new">KES ' + p.price.toLocaleString() + '</span></div>' + variantHtml + '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.capacity || '') + '\')"><i class="ph ph-plus"></i> Add</button><div class="click-hint">Click for details →</div></div></div>';
+}
+
+function updateVariantPrice(select, productId) {
+    var price = parseFloat(select.options[select.selectedIndex].dataset.price);
+    var size = select.options[select.selectedIndex].value;
+    var product = ALL_PRODUCTS.find(function(p) { return p._id === productId; });
+    if (!product) return;
+    product.price = price;
+    product.capacity = size;
+    var card = select.closest('.prod-card');
+    if (!card) return;
+    var priceNew = card.querySelector('.pc-price-new');
+    if (priceNew) priceNew.textContent = 'KES ' + price.toLocaleString();
+    var atcBtn = card.querySelector('.atc-btn');
+    if (atcBtn) {
+        atcBtn.setAttribute('onclick', "event.stopPropagation();addToCart('" + productId + "','" + escapeHtml(product.name).replace(/'/g, "\\'") + "'," + price + ",'" + size + "')");
+    }
+    var cardOnclick = card.getAttribute('onclick');
+    if (cardOnclick) {
+        card.setAttribute('onclick', cardOnclick.replace(/goToProduct\('[^']+','[^']+',\d+/, "goToProduct('" + productId + "','" + escapeHtml(product.name).replace(/'/g, "\\'") + "'," + price));
+    }
 }
 
 // ==================== INIT ====================
-var wishlistModal=document.getElementById('wishlistModal');
-if(wishlistModal){
-  wishlistModal.addEventListener('click',function(e){ if(e.target===this) closeWishlistModal(); });
+var wishlistModal = document.getElementById('wishlistModal');
+if (wishlistModal) {
+    wishlistModal.addEventListener('click', function(e) { if (e.target === this) closeWishlistModal(); });
 }
 
-(function initFromQuery(){
-  var catParam=getQueryParam('cat');
-  var searchParam=getQueryParam('search');
-  if(catParam) currentFilters.category=catParam.toLowerCase();
-  if(searchParam){
-    currentFilters.search=searchParam;
-    document.addEventListener('DOMContentLoaded', function(){
-      var h=document.getElementById('headerSearchInput'); if(h) h.value=searchParam;
-    });
-  }
+(function initFromQuery() {
+    var catParam = getQueryParam('cat');
+    var searchParam = getQueryParam('search');
+    if (catParam) currentFilters.category = catParam.toLowerCase();
+    if (searchParam) {
+        currentFilters.search = searchParam;
+        document.addEventListener('DOMContentLoaded', function() {
+            var h = document.getElementById('headerSearchInput');
+            if (h) h.value = searchParam;
+        });
+    }
 })();
 
 renderCatChips();
 loadProducts();
 updateCartUI();
-initAgeGate();
-setInterval(updateCartUI,3000);
+setInterval(updateCartUI, 3000);
 
-if(!navigator.onLine){
-  var banner=document.getElementById('offlineBanner');
-  if(banner) banner.classList.add('show');
+if (!navigator.onLine) {
+    var banner = document.getElementById('offlineBanner');
+    if (banner) banner.classList.add('show');
 }
 </script>
 </body>

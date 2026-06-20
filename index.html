@@ -7,8 +7,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LiquorBelle — Nairobi's Finest Alcohol Delivery</title>
+
+<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -309,11 +318,22 @@ a{color:inherit;text-decoration:none;}
   box-shadow:0 2px 8px rgba(0,0,0,0.06);
 }
 .pc-wishlist i{color:#9ca3af;transition:all .2s;}
-.pc-wishlist.wishlisted{background:#fff5f5;border-color:#DC2626;}
-.pc-wishlist.wishlisted i{color:#DC2626;}
+/* FIXED: Wishlist clicked state matches hover exactly */
+.pc-wishlist.wishlisted{
+  background:var(--primary);
+  border-color:var(--primary);
+}
+.pc-wishlist.wishlisted i{
+  color:#fff;
+}
 .pc-wishlist:active{transform:scale(0.9);}
-.pc-wishlist:hover{background:var(--primary);border-color:var(--primary);}
-.pc-wishlist:hover i{color:white;}
+.pc-wishlist:hover{
+  background:var(--primary);
+  border-color:var(--primary);
+}
+.pc-wishlist:hover i{
+  color:white;
+}
 .pc-body{padding:12px;flex:1;display:flex;flex-direction:column;}
 .pc-name{font-weight:700;font-size:.8rem;margin-bottom:2px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .pc-vol{display:inline-block;background:var(--bg2);padding:2px 8px;border-radius:30px;font-size:.55rem;font-weight:600;color:var(--gold);margin-bottom:6px;align-self:flex-start;}
@@ -660,7 +680,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Age Gate -->
 <div class="age-gate" id="ageGate">
   <div class="age-gate-card">
-    <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <h2>Are you 18+?</h2>
     <p>LiquorBelle sells alcohol. You must be at least 18 years old to enter this site.</p>
     <div class="age-gate-btns">
@@ -669,6 +689,10 @@ a{color:inherit;text-decoration:none;}
     </div>
   </div>
 </div>
+
+<!-- ===== PERFORMANCE: Preload critical images ===== -->
+<link rel="preload" as="image" href="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_1200,c_fit/v1781119164/liqbb_goc41e.png">
+<link rel="preload" as="image" href="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg">
 
 <!-- Wishlist Modal -->
 <div class="modal-overlay wishlist-modal" id="wishlistModal" style="display:none;">
@@ -683,7 +707,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Header -->
 <header class="main-header">
   <a class="logo" href="index.html">
-    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
   </a>
   <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
@@ -725,7 +749,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Pull to Refresh Indicator -->
 <div class="pull-indicator" id="pullIndicator"><i class="ph ph-arrow-clockwise"></i> Pull to refresh</div>
 
-<!-- Marquee - UPDATED: Removed COD, now shows M-PESA only -->
+<!-- Marquee -->
 <div class="marquee-strip">
   <div class="marquee-content">
     <span><i class="ph ph-truck"></i> Fast Delivery • 10-45 minutes across Nairobi</span>
@@ -740,7 +764,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Hero -->
 <div class="hero-section">
   <div class="hero-image-wrap">
-    <img class="hero-supporting-image" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png" alt="LiquorBelle">
+    <img class="hero-supporting-image" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_1200,c_fit/v1781119164/liqbb_goc41e.png" alt="LiquorBelle" loading="eager" fetchpriority="high">
   </div>
   <div class="hero-content">
     <h2>Welcome to <span>LiquorBelle</span></h2>
@@ -895,6 +919,44 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <script>
+// ==================== IMAGE OPTIMIZATION UTILITY ====================
+function optimizeImage(url, width) {
+    if (!url) return '';
+    if (!url.includes('cloudinary.com')) return url;
+    var parts = url.split('/upload/');
+    if (parts.length !== 2) return url;
+    var w = width || 300;
+    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
+}
+
+// ==================== PRODUCT CACHING ====================
+var CACHE_KEY = 'liquorbelle_products_cache';
+var CACHE_DURATION = 300000; // 5 minutes
+
+function getCachedProducts() {
+    try {
+        var cached = localStorage.getItem(CACHE_KEY);
+        if (!cached) return null;
+        var data = JSON.parse(cached);
+        if (Date.now() - data.timestamp > CACHE_DURATION) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+        }
+        return data.products;
+    } catch (e) {
+        return null;
+    }
+}
+
+function setCachedProducts(products) {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+            products: products,
+            timestamp: Date.now()
+        }));
+    } catch (e) {}
+}
+
 // ==================== HEADER MENU & SEARCH ====================
 function openMobileMenu(){
   document.getElementById('mobileMenu').classList.add('open');
@@ -938,14 +1000,11 @@ function initAgeGate(){
 
 // ==================== CONFIG ====================
 var API_BASE='https://liquorbelle-mpesa-backend.onrender.com';
-var FALLBACK_IMG='https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png';
+var FALLBACK_IMG='https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_300,c_fit/v1781119164/liqbb_goc41e.png';
 var cart=JSON.parse(localStorage.getItem('liquorbelle_cart')||'{}');
 var wishlist=JSON.parse(localStorage.getItem('liquorbelle_wishlist')||'[]');
 var PRODUCTS=[];
 var isLoading=true;
-
-// ==================== NO HARDCODED PRODUCTS ====================
-// All products come from database only. Empty state if none.
 
 // ==================== UTILITY FUNCTIONS ====================
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
@@ -1106,18 +1165,27 @@ function addToCart(id,name,price,capacity){
   toast(name+' added');
 }
 
-// ==================== WISHLIST FUNCTIONS ====================
-function toggleWishlist(id,name,price,image,capacity){
-  var idx=wishlist.findIndex(function(w){return w.id==id;});
-  if(idx>-1){
-    wishlist.splice(idx,1);
+// ==================== WISHLIST FUNCTIONS (FIXED - Phosphor v2) ====================
+function toggleWishlist(id, name, price, image, capacity, btnElement) {
+  var idx = wishlist.findIndex(function(w) { return w.id == id; });
+  if (idx > -1) {
+    wishlist.splice(idx, 1);
     toast('Removed from wishlist');
-  }else{
-    wishlist.push({id:id,name:name,price:price,image:image,capacity:capacity});
-    toast(name+' added to wishlist');
+    if (btnElement) {
+      btnElement.classList.remove('wishlisted');
+      var icon = btnElement.querySelector('i');
+      if (icon) icon.className = 'ph ph-heart';
+    }
+  } else {
+    wishlist.push({ id: id, name: name, price: price, image: image, capacity: capacity });
+    toast(name + ' added to wishlist');
+    if (btnElement) {
+      btnElement.classList.add('wishlisted');
+      var icon = btnElement.querySelector('i');
+      if (icon) icon.className = 'ph-fill ph-heart'; // Phosphor v2 filled icon
+    }
   }
-  localStorage.setItem('liquorbelle_wishlist',JSON.stringify(wishlist));
-  renderAllProductSections();
+  localStorage.setItem('liquorbelle_wishlist', JSON.stringify(wishlist));
 }
 
 function openWishlistModal(){
@@ -1127,7 +1195,8 @@ function openWishlistModal(){
     container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
   }else{
     container.innerHTML=wishlist.map(function(w){
-      return '<div class="wishlist-item"><img src="'+(w.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button><button class="wishlist-remove" onclick="toggleWishlist(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.image||'')+'\',\''+(w.capacity||'')+'\');openWishlistModal();"><i class="ph ph-trash"></i></button></div>';
+      var imgSrc = w.image ? optimizeImage(w.image, 100) : FALLBACK_IMG;
+      return '<div class="wishlist-item"><img src="'+imgSrc+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button><button class="wishlist-remove" onclick="toggleWishlist(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.image||'')+'\',\''+(w.capacity||'')+'\');openWishlistModal();"><i class="ph ph-trash"></i></button></div>';
     }).join('');
   }
   var modal=document.getElementById('wishlistModal');
@@ -1141,21 +1210,21 @@ function closeWishlistModal(){
 
 // ==================== CATEGORIES ====================
 var categories=[
-  {name:"All",cat:"all",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg"},
-  {name:"Whisky",cat:"whisky",image:"https://i.postimg.cc/HncvZNLf/ah-U-types-of-whisky.webp"},
-  {name:"Cognac",cat:"cognac",image:"https://i.postimg.cc/W1qvx9dw/cognacs.webp"},
-  {name:"Vodka",cat:"vodka",image:"https://i.postimg.cc/xTQFy62P/vodk-AS.jpg"},
-  {name:"Gin",cat:"gin",image:"https://i.postimg.cc/ZqmMjjpn/champagne.jpg"},
-  {name:"Rum",cat:"rum",image:"https://i.postimg.cc/jS0qX0j9/rums.jpg"},
-  {name:"Wine",cat:"wine",image:"https://i.postimg.cc/W3R7p4pG/wines.jpg"},
-  {name:"Beer",cat:"beer",image:"https://i.postimg.cc/FRkMf1Qy/beer-cans.webp"}
+  {name:"All",cat:"all",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg"},
+  {name:"Whisky",cat:"whisky",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/ah-U-types-of-whisky_ftjnxo.jpg"},
+  {name:"Cognac",cat:"cognac",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/cognacs_ftjnxo.jpg"},
+  {name:"Vodka",cat:"vodka",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/vodk-AS_ftjnxo.jpg"},
+  {name:"Gin",cat:"gin",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/champagne_ftjnxo.jpg"},
+  {name:"Rum",cat:"rum",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/rums_ftjnxo.jpg"},
+  {name:"Wine",cat:"wine",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/wines_ftjnxo.jpg"},
+  {name:"Beer",cat:"beer",image:"https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/beer-cans_ftjnxo.jpg"}
 ];
 
 function renderCategories(){
   var container=document.getElementById('categoryGrid');
   if(container){
     container.innerHTML=categories.map(function(cat){
-      return '<a href="shop.html?cat='+cat.cat+'" class="cat-card"><img class="cat-img" src="'+cat.image+'" alt="'+cat.name+'"><span>'+cat.name+'</span></a>';
+      return '<a href="shop.html?cat='+cat.cat+'" class="cat-card"><img class="cat-img" src="'+cat.image+'" alt="'+cat.name+'" loading="lazy"><span>'+cat.name+'</span></a>';
     }).join('');
   }
 }
@@ -1177,6 +1246,16 @@ async function loadProducts(){
   renderSkeletons(4, 'trendingGrid');
   renderSkeletons(3, 'newArrivalsGrid');
   
+  var cached = getCachedProducts();
+  if (cached) {
+    console.log('📦 Using cached products');
+    PRODUCTS = cached;
+    isLoading=false;
+    renderAllProductSections();
+    fetchFreshProducts();
+    return;
+  }
+  
   try{
     var res=await fetch(API_BASE+'/api/db/products');
     if(!res.ok) throw new Error('Network response was not ok');
@@ -1190,7 +1269,6 @@ async function loadProducts(){
         });
         var cheapestVariant=sortedVariants[0]||null;
         
-        // CORRECT DISCOUNT CALCULATION
         var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
         var discountPercent = cheapestVariant?.discount || 0;
         var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
@@ -1212,6 +1290,7 @@ async function loadProducts(){
           rating:p.rating||4
         };
       });
+      setCachedProducts(PRODUCTS);
     }else{
       PRODUCTS=[];
       toast('No products in database');
@@ -1223,6 +1302,50 @@ async function loadProducts(){
   }
   isLoading=false;
   renderAllProductSections();
+}
+
+function fetchFreshProducts() {
+  fetch(API_BASE+'/api/db/products')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if(data.success&&data.products&&data.products.length>0){
+        PRODUCTS=data.products.map(function(p){
+          var variants=p.variants||[];
+          var sizeOrderMap={'250ml':1,'350ml':2,'500ml':3,'750ml':4,'1L':5,'1.5L':6};
+          var sortedVariants=[...variants].sort(function(a,b){
+            return (sizeOrderMap[a.size]||99)-(sizeOrderMap[b.size]||99);
+          });
+          var cheapestVariant=sortedVariants[0]||null;
+          
+          var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
+          var discountPercent = cheapestVariant?.discount || 0;
+          var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
+          
+          return{
+            _id:p._id,
+            id:p._id,
+            name:p.name,
+            capacity:cheapestVariant?.size||'750ml',
+            price:discountedPrice,
+            originalPrice:originalPrice,
+            discountPercent:discountPercent,
+            category:p.category||'',
+            badge:p.badge||(discountPercent>10?'hot':''),
+            image:p.image||'',
+            description:p.description||'',
+            isTrending:p.isTrending||false,
+            isNew:p.isNew||false,
+            rating:p.rating||4
+          };
+        });
+        setCachedProducts(PRODUCTS);
+        renderAllProductSections();
+        console.log('🔄 Fresh products loaded in background');
+      }
+    })
+    .catch(function(e) {
+      console.error('Background refresh failed:', e);
+    });
 }
 
 function renderAllProductSections(){
@@ -1251,15 +1374,21 @@ function renderAllProductSections(){
   if(newGrid) newGrid.innerHTML=newItems.map(function(p){ return renderProductCard(p, true); }).join('');
 }
 
+// ==================== RENDER PRODUCT CARD (FIXED - Phosphor v2) ====================
 function renderProductCard(p, isNew){
   var original=p.originalPrice||p.price;
   var savePercent=p.discountPercent||0;
   var isWishlisted=wishlist.some(function(w){return w.id==p._id;});
   var newBadge=isNew ? '<div class="badge-new">NEW</div>' : '';
   var discountBadge=savePercent>0 ? '<div class="discount-circle">-'+savePercent+'%</div>' : '';
-  var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\')"><i class="ph '+(isWishlisted?'ph-heart-fill':'ph-heart')+'"></i></button>';
   
-  return '<div class="prod-card pop-in"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+(p.image||FALLBACK_IMG)+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button></div></div>';
+  // FIXED: Phosphor v2 uses 'ph-fill ph-heart' for filled state
+  var heartIcon = isWishlisted ? 'ph-fill ph-heart' : 'ph ph-heart';
+  var wishlistBtn='<button class="pc-wishlist '+(isWishlisted?'wishlisted':'')+'" onclick="event.stopPropagation();toggleWishlist(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.image||'')+'\',\''+(p.capacity||'')+'\', this)"><i class="'+heartIcon+'"></i></button>';
+  
+  var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
+  
+  return '<div class="prod-card pop-in"><div class="pc-img-wrap" onclick="window.location.href=\'product-details.html?id='+p._id+'\'"><img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy">'+newBadge+discountBadge+wishlistBtn+'</div><div class="pc-body"><div class="pc-name">'+escapeHtml(p.name)+'</div>'+(p.capacity?'<div class="pc-vol">'+escapeHtml(p.capacity)+'</div>':'')+'<div class="pc-price-wrap">'+(savePercent>0?'<span class="pc-price-old">KES '+original.toLocaleString()+'</span>':'')+'<span class="pc-price-new">KES '+p.price.toLocaleString()+'</span></div><button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+p.price+',\''+(p.capacity||'')+'\')"><i class="ph ph-plus"></i> Add</button></div></div>';
 }
 
 // ==================== DELIVERY ZONES ====================

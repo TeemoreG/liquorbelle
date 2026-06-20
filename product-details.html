@@ -7,8 +7,17 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LiquorBelle — Product Details</title>
+
+<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -276,7 +285,7 @@ a{color:inherit;text-decoration:none;}
 }
 .payment-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;}
 .mpesa-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(46,204,113,0.08);padding:4px 12px;border-radius:50px;}
-.mpesa-badge img{width:20px;height:20px;}
+.mpesa-badge img{width:20px;height:20px;object-fit:contain;}
 .mpesa-badge span{font-size:11px;font-weight:700;color:#2ecc71;}
 
 .quantity-selector{margin-bottom:16px;}
@@ -381,7 +390,7 @@ a{color:inherit;text-decoration:none;}
   transition:all .2s;
 }
 .related-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary);}
-.related-img{width:100%;height:140px;object-fit:cover;}
+.related-img{width:100%;height:140px;object-fit:cover;display:block;}
 .related-info{padding:10px;}
 .related-name{font-weight:700;font-size:12px;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .related-price{color:var(--sale-red);font-weight:700;font-size:12px;}
@@ -479,7 +488,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Header -->
 <header class="main-header">
   <a class="logo" href="index.html">
-    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
   </a>
   <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
@@ -521,7 +530,7 @@ a{color:inherit;text-decoration:none;}
 <!-- Product Detail Content -->
 <div class="product-detail-container">
   <div class="product-image-section">
-    <img id="productImage" src="" alt="Product Image">
+    <img id="productImage" src="" alt="Product Image" loading="lazy">
   </div>
   <div class="product-info-section">
     <div class="breadcrumb">
@@ -560,7 +569,7 @@ a{color:inherit;text-decoration:none;}
     <div class="payment-icons">
       <span class="payment-label">Secure Payment:</span>
       <div class="mpesa-badge">
-        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781875182/Mpesa_bvcz8v.png" alt="M-PESA" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/M-PESA_Logo.svg/1200px-M-PESA_Logo.svg.png'">
+        <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781875182/Mpesa_bvcz8v.png" alt="M-PESA" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Crect width=%2240%22 height=%2240%22 fill=%22%232ecc71%22 rx=%228%22/%3E%3Ctext x=%2220%22 y=%2226%22 text-anchor=%22middle%22 font-size=%2210%22 fill=%22white%22 font-weight=%22bold%22 font-family=%22sans-serif%22%3EMPESA%3C/text%3E%3C/svg%3E'">
         <span>M-PESA Only</span>
       </div>
     </div>
@@ -583,7 +592,6 @@ a{color:inherit;text-decoration:none;}
       </button>
     </div>
     
-    <!-- UPDATED: Removed COD, M-PESA only -->
     <div class="delivery-info-card">
       <p><i class="ph ph-truck"></i> <strong>Fast Delivery:</strong> 10-45 minutes within Nairobi<br>
       <i class="ph ph-phone-call"></i> Rider will call before arrival<br>
@@ -608,7 +616,7 @@ a{color:inherit;text-decoration:none;}
   <div class="related-grid" id="relatedGrid"></div>
 </div>
 
-<!-- Footer - UPDATED: Added M-PESA only mention -->
+<!-- Footer -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col">
@@ -697,6 +705,16 @@ a{color:inherit;text-decoration:none;}
 <div id="shareToast" class="share-toast"></div>
 
 <script>
+// ==================== IMAGE OPTIMIZATION ====================
+function optimizeImage(url, width) {
+    if (!url) return '';
+    if (!url.includes('cloudinary.com')) return url;
+    var parts = url.split('/upload/');
+    if (parts.length !== 2) return url;
+    var w = width || 300;
+    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
+}
+
 // ==================== HEADER MENU & SEARCH ====================
 function openMobileMenu(){
   document.getElementById('mobileMenu').classList.add('open');
@@ -722,7 +740,8 @@ function openWishlistModal(){
     container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
   }else{
     container.innerHTML=wishlist.map(function(w){
-      return '<div class="wishlist-item"><img src="'+(w.image||'https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png')+'" onerror="this.src=\''+'https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png'+'\'"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button></div>';
+      var imgSrc = w.image ? optimizeImage(w.image, 100) : 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png';
+      return '<div class="wishlist-item"><img src="'+imgSrc+'" onerror="this.src=\''+'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png'+'\'" loading="lazy"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button></div>';
     }).join('');
   }
   document.getElementById('wishlistModal').style.display='flex';
@@ -734,7 +753,7 @@ document.getElementById('wishlistModal')?.addEventListener('click',function(e){ 
 
 // ==================== CONFIG ====================
 var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781119164/liqbb_goc41e.png';
+var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_300,c_fit/v1781119164/liqbb_goc41e.png';
 
 var currentProduct = null;
 var selectedVariant = null;
@@ -747,8 +766,18 @@ var urlParams = new URLSearchParams(window.location.search);
 var productId = urlParams.get('id');
 
 function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
-function toast(msg){var t=document.getElementById('toast');t.innerText=msg;t.style.opacity='1';setTimeout(function(){t.style.opacity='0';},2500);}
-function showShareToast(msg){var t=document.getElementById('shareToast');t.innerText=msg;t.style.opacity='1';setTimeout(function(){t.style.opacity='0';},2000);}
+function toast(msg){var t=document.getElementById('toast');if(!t)return;t.innerText=msg;t.style.opacity='1';setTimeout(function(){t.style.opacity='0';},2500);}
+function showShareToast(msg){var t=document.getElementById('shareToast');if(!t)return;t.innerText=msg;t.style.opacity='1';setTimeout(function(){t.style.opacity='0';},2000);}
+
+// ==================== OFFLINE DETECTION ====================
+window.addEventListener('online', function(){
+  var banner=document.getElementById('offlineBanner');
+  if(banner) banner.classList.remove('show');
+});
+window.addEventListener('offline', function(){
+  var banner=document.getElementById('offlineBanner');
+  if(banner) banner.classList.add('show');
+});
 
 // ==================== SCROLL TO TOP ====================
 window.addEventListener('scroll', function(){
@@ -789,7 +818,18 @@ function shareProductWhatsApp() {
 }
 
 function copyProductLink() {
-  navigator.clipboard.writeText(window.location.href).then(function(){ showShareToast('✅ Link copied!'); });
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href).then(function(){ showShareToast('✅ Link copied!'); });
+  } else {
+    // Fallback
+    var input = document.createElement('input');
+    input.value = window.location.href;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+    showShareToast('✅ Link copied!');
+  }
 }
 
 // ==================== LOAD PRODUCT ====================
@@ -816,7 +856,9 @@ function renderProductDetails() {
   document.getElementById('productName').innerText = name;
   document.getElementById('productCategory').innerText = category;
   document.getElementById('productDescription').innerText = currentProduct.description || 'No description available';
-  document.getElementById('productImage').src = currentProduct.image || FALLBACK_IMG;
+  
+  var imgSrc = currentProduct.image ? optimizeImage(currentProduct.image, 600) : FALLBACK_IMG;
+  document.getElementById('productImage').src = imgSrc;
   document.getElementById('productImage').onerror = function(){ this.src = FALLBACK_IMG; };
   
   updateBreadcrumb(category, name);
@@ -856,9 +898,6 @@ function selectVariant(size, price, discount) {
   }
   
   var hasDiscount = discount > 0;
-  // CORRECT: price is the original price from admin
-  // Discounted price = Original Price × (100 - Discount%) / 100
-  // Example: 1600 × (100 - 5) / 100 = 1520
   var discountedPrice = hasDiscount ? Math.round(price * (100 - discount) / 100) : price;
   var originalPrice = price;
   
@@ -893,8 +932,9 @@ function renderRelatedProducts() {
     for(var i = 0; i < sameBrand.length; i++){
       var p = sameBrand[i];
       var price = p.variants?.[0]?.price || 0;
+      var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
       html += '<div class="related-card" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
-        '<img class="related-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
+        '<img class="related-img" src="'+imgSrc+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy" alt="'+escapeHtml(p.name)+'">'+
         '<div class="related-info">'+
           '<div class="related-name">'+escapeHtml(p.name)+'</div>'+
           '<div class="related-price">KES '+price.toLocaleString()+'</div>'+
@@ -911,8 +951,9 @@ function renderRelatedProducts() {
   for(var i = 0; i < related.length; i++){
     var p = related[i];
     var price = p.variants?.[0]?.price || 0;
+    var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
     html += '<div class="related-card" onclick="window.location.href=\'product-details.html?id='+p._id+'\'">'+
-      '<img class="related-img" src="'+(p.image||FALLBACK_IMG)+'" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
+      '<img class="related-img" src="'+imgSrc+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy" alt="'+escapeHtml(p.name)+'">'+
       '<div class="related-info">'+
         '<div class="related-name">'+escapeHtml(p.name)+'</div>'+
         '<div class="related-price">KES '+price.toLocaleString()+'</div>'+
@@ -937,7 +978,6 @@ function addToCart(id,name,price,capacity){
 function addToCartFromDetail() {
   if(!currentProduct || !selectedVariant) { toast('Select a size'); return; }
   var id = currentProduct._id;
-  // Use the discounted price when adding to cart
   var priceToAdd = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
   if(cart[id]) { cart[id].qty += quantity; } 
   else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size }; }
@@ -1029,6 +1069,11 @@ function closeCartDrawer(){
 loadProduct();
 updateCartUI();
 setInterval(updateCartUI, 3000);
+
+if(!navigator.onLine){
+  var banner = document.getElementById('offlineBanner');
+  if(banner) banner.classList.add('show');
+}
 </script>
 </body>
 </html>
