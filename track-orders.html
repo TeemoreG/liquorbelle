@@ -105,7 +105,7 @@ a{color:inherit;text-decoration:none;}
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  border-bottom:1px solid rgba(255,255,255,0.15);
+  border-bottom:2px solid var(--btn-green);
   position:sticky;top:0;z-index:200;
   box-shadow:0 2px 16px rgba(0,0,0,0.15);
 }
@@ -114,7 +114,7 @@ a{color:inherit;text-decoration:none;}
 .logo-text{font-size:1.2rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;}
 .logo-text small{display:block;font-size:8px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:1px;text-transform:uppercase;}
 
-.header-search-form{flex:1;max-width:420px;display:flex;align-items:center;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0 6px 0 14px;height:38px;transition:.2s;}
+.header-search-form{flex:1;max-width:420px;display:flex;align-items:center;background:rgba(255,255,255,0.14);border:1px solid rgba(34,197,94,0.3);border-radius:50px;padding:0 6px 0 14px;height:38px;transition:.2s;}
 .header-search-form:focus-within{background:rgba(255,255,255,0.95);}
 .header-search-form i{color:rgba(255,255,255,0.8);font-size:16px;flex-shrink:0;}
 .header-search-form:focus-within i{color:var(--primary);}
@@ -125,35 +125,34 @@ a{color:inherit;text-decoration:none;}
 @media(max-width:560px){.header-search-form{display:none;}}
 
 .header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.header-icon-btn{
-  position:relative;width:40px;height:40px;border-radius:50%;border:none;background:transparent;
-  color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;
-}
+.header-icon-btn{position:relative;width:40px;height:40px;border-radius:50%;border:none;background:transparent;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;}
 .header-icon-btn i{font-size:22px;}
-.header-icon-btn:hover{background:rgba(255,255,255,0.15);}
+.header-icon-btn:hover{background:rgba(34,197,94,0.15);}
 .header-icon-btn:active{transform:scale(0.92);}
 .header-cart-badge{
-  position:absolute;top:0;right:0;background:var(--white);color:var(--primary);
-  font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);
+  position:absolute;top:0;right:0;background:var(--white);
+  color:var(--primary);
+  font-size:10px;
+  font-weight:800;
+  min-width:17px;
+  height:17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 3px;
+  border:2px solid var(--primary);
 }
 
 .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
 .mobile-menu-overlay.open{opacity:1;pointer-events:auto;}
-.mobile-menu{
-  position:fixed;top:0;right:-280px;width:260px;height:100%;background:var(--white);
-  z-index:400;box-shadow:-8px 0 30px rgba(0,0,0,0.15);transition:right .3s cubic-bezier(0.4,0,0.2,1);
-  padding:20px 0;overflow-y:auto;
-}
+.mobile-menu{position:fixed;top:0;right:-280px;width:260px;height:100%;background:var(--white);z-index:400;box-shadow:-8px 0 30px rgba(0,0,0,0.15);transition:right .3s cubic-bezier(0.4,0,0.2,1);padding:20px 0;overflow-y:auto;}
 .mobile-menu.open{right:0;}
 .mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:0 20px 16px;border-bottom:1px solid var(--border);margin-bottom:8px;}
 .mobile-menu-head span{font-weight:800;font-size:1rem;color:var(--primary);}
 .mobile-menu-close{border:none;background:var(--bg2);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
-.mobile-menu a, .mobile-menu button.mm-link{
-  display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;
-  font-size:.9rem;text-decoration:none;width:100%;background:none;border:none;text-align:left;cursor:pointer;
-}
-.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--primary);width:20px;}
+.mobile-menu a, .mobile-menu button.mm-link{display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;width:100%;background:none;border:none;text-align:left;cursor:pointer;}
+.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--btn-green);width:20px;}
 .mobile-menu a:active, .mobile-menu button.mm-link:active{background:var(--bg2);}
 .mobile-search-inline{display:none;padding:0 20px 14px;}
 @media(max-width:560px){.mobile-search-inline{display:block;}}
@@ -163,8 +162,8 @@ a{color:inherit;text-decoration:none;}
 
 /* ==================== TRACK PAGE SPECIFIC ==================== */
 .track-container{
-  max-width: 800px;
-  margin: 24px auto 32px;
+  max-width: 900px;
+  margin: 20px auto 32px;
   padding: 0 4%;
 }
 .track-card{
@@ -185,14 +184,109 @@ a{color:inherit;text-decoration:none;}
   justify-content:center;
   gap:12px;
 }
-.track-card h1 i{font-size:32px;color:var(--primary);}
+.track-card h1 i{font-size:32px;color:var(--btn-green);}
 .track-card p{
   color:var(--muted);
   margin-bottom: 24px;
   font-size: .9rem;
 }
 
-/* Dual track options */
+/* ===== GUEST FEATURES BEFORE LOGIN ===== */
+.guest-welcome{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:20px;
+}
+.guest-welcome-card{
+  background:var(--bg2);
+  border-radius:var(--radius-sm);
+  padding:18px 16px;
+  text-align:left;
+  border:1px solid var(--border);
+  transition:all .2s;
+}
+.guest-welcome-card:hover{border-color:var(--btn-green);}
+.guest-welcome-card i{
+  font-size:22px;
+  color:var(--btn-green);
+  margin-bottom:6px;
+  display:block;
+}
+.guest-welcome-card h4{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.guest-welcome-card p{font-size:.7rem;color:var(--muted);line-height:1.4;}
+@media(max-width:600px){
+  .guest-welcome{grid-template-columns:1fr;gap:10px;}
+  .guest-welcome-card{padding:14px;}
+}
+
+/* ===== ORDER STATUS STEPS ===== */
+.order-status-steps{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:20px 0 10px;
+  padding:0 4px;
+  position:relative;
+}
+.order-status-steps::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:10%;
+  right:10%;
+  height:3px;
+  background:var(--border);
+  transform:translateY(-50%);
+  z-index:0;
+}
+.step-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  z-index:1;
+  flex:1;
+}
+.step-dot{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:var(--border);
+  border:3px solid var(--white);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  color:var(--muted);
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  transition:all .3s;
+}
+.step-dot.active{
+  background:var(--btn-green);
+  color:white;
+  border-color:var(--btn-green);
+}
+.step-dot.done{
+  background:var(--btn-green);
+  color:white;
+  border-color:var(--btn-green);
+  opacity:0.7;
+}
+.step-label{
+  font-size:.55rem;
+  font-weight:600;
+  color:var(--muted);
+  text-align:center;
+  max-width:60px;
+}
+.step-label.active{color:var(--primary);}
+@media(max-width:500px){
+  .step-label{font-size:.45rem;max-width:40px;}
+  .step-dot{width:24px;height:24px;font-size:10px;}
+}
+
+/* ===== TRACK OPTIONS ===== */
 .track-options{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -209,7 +303,7 @@ a{color:inherit;text-decoration:none;}
   border:2px solid var(--border);
   transition:all .2s;
 }
-.track-option:hover{border-color:var(--primary);}
+.track-option:hover{border-color:var(--btn-green);}
 .track-option h4{
   font-size:.85rem;
   font-weight:700;
@@ -219,7 +313,7 @@ a{color:inherit;text-decoration:none;}
   align-items:center;
   gap:6px;
 }
-.track-option h4 i{color:var(--primary);}
+.track-option h4 i{color:var(--btn-green);}
 .track-option .track-input{
   width:100%;
   padding:10px 14px;
@@ -233,13 +327,13 @@ a{color:inherit;text-decoration:none;}
 }
 .track-option .track-input:focus{
   outline:none;
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(128,0,0,0.06);
+  border-color:var(--btn-green);
+  box-shadow:0 0 0 3px rgba(34,197,94,0.1);
 }
 .track-option .track-btn-sm{
   width:100%;
   padding:10px;
-  background:var(--primary);
+  background:var(--btn-green);
   color:white;
   border:none;
   border-radius:50px;
@@ -253,8 +347,9 @@ a{color:inherit;text-decoration:none;}
   gap:6px;
 }
 .track-option .track-btn-sm:hover{
-  background:var(--primary-bright);
+  background:var(--btn-green-hover);
   transform:translateY(-2px);
+  box-shadow:0 4px 20px rgba(34,197,94,0.3);
 }
 .track-option .track-btn-sm:active{transform:scale(0.97);}
 
@@ -265,33 +360,33 @@ a{color:inherit;text-decoration:none;}
   display:block;
 }
 
-/* Quick guest order card */
+/* ===== QUICK GUEST ORDER CARD ===== */
 .guest-order-card{
   margin-top:16px;
   background:var(--white);
   border-radius:var(--radius-sm);
   border:2px solid var(--btn-green);
-  padding:16px 20px;
+  padding:14px 18px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   flex-wrap:wrap;
-  gap:12px;
-  box-shadow:0 0 0 4px rgba(34,197,94,0.08);
+  gap:10px;
+  box-shadow:0 0 0 4px rgba(34,197,94,0.06);
 }
 .guest-order-card .guest-label{
   display:flex;
   align-items:center;
   gap:8px;
   font-weight:700;
-  font-size:.85rem;
+  font-size:.8rem;
   color:var(--btn-green);
 }
-.guest-order-card .guest-label i{font-size:20px;}
+.guest-order-card .guest-label i{font-size:18px;}
 .guest-order-card .guest-id{
   font-family:monospace;
   font-weight:700;
-  font-size:.9rem;
+  font-size:.85rem;
   color:var(--text);
   background:var(--bg);
   padding:4px 12px;
@@ -300,22 +395,22 @@ a{color:inherit;text-decoration:none;}
 .guest-order-card .guest-total{
   font-weight:800;
   color:var(--primary);
-  font-size:1rem;
+  font-size:.95rem;
 }
 .guest-order-card .guest-btn{
   padding:6px 18px;
-  background:var(--primary);
+  background:var(--btn-green);
   color:white;
   border:none;
   border-radius:30px;
   font-weight:600;
-  font-size:.75rem;
+  font-size:.7rem;
   cursor:pointer;
   transition:all .2s;
 }
-.guest-order-card .guest-btn:hover{background:var(--primary-bright);transform:scale(1.02);}
+.guest-order-card .guest-btn:hover{background:var(--btn-green-hover);transform:scale(1.02);}
 
-/* My Account Section */
+/* ===== MY ACCOUNT SECTION ===== */
 .my-account-section{
   margin-top: 24px;
   background:var(--white);
@@ -333,7 +428,7 @@ a{color:inherit;text-decoration:none;}
   align-items:center;
   gap:10px;
 }
-.my-account-section h3 i{font-size:24px;}
+.my-account-section h3 i{font-size:24px;color:var(--btn-green);}
 .account-info-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -364,6 +459,7 @@ a{color:inherit;text-decoration:none;}
   .my-account-section{padding:18px 16px;}
 }
 
+/* ===== ORDERS LIST ===== */
 .orders-list{
   margin-top: 28px;
   display: flex;
@@ -376,7 +472,9 @@ a{color:inherit;text-decoration:none;}
   border: 1px solid var(--border);
   overflow: hidden;
   box-shadow:var(--shadow);
+  transition:all .2s;
 }
+.order-card:hover{box-shadow:var(--shadow-lg);border-color:var(--btn-green);}
 .order-header{
   background: var(--bg2);
   padding: 14px 18px;
@@ -478,24 +576,24 @@ a{color:inherit;text-decoration:none;}
   font-size:.9rem;
   transition:all .2s;
 }
-.back-link:hover{color:var(--primary-bright);gap:12px;}
+.back-link:hover{color:var(--btn-green);gap:12px;}
 
-/* Footer */
-.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:32px 4% 24px;margin-top:32px;}
+/* ===== FOOTER ===== */
+.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:32px 4% 24px;margin-top:32px;border-top:3px solid var(--gold);}
 .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;margin-bottom:24px;}
 .footer-col h4{font-size:.8rem;font-weight:700;margin-bottom:12px;color:#fff;opacity:.9;}
 .footer-col p,.footer-col a{display:block;font-size:.7rem;margin-bottom:6px;opacity:.7;color:#fff;text-decoration:none;}
-.footer-col a:hover{opacity:1;}
+.footer-col a:hover{opacity:1;color:var(--gold);}
 .footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
 
-/* ====== CART DRAWER ====== */
+/* ===== CART DRAWER ===== */
 .cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background-color:#ffffff;font-family:var(--font-body);text-align:center;}
 .cart-icon-wrapper{position:relative;margin-bottom:25px;width:90px;height:80px;}
 .cart-svg{width:100%;height:100%;}
-.cart-badge{position:absolute;top:-2px;right:2px;background-color:var(--primary);color:#ffffff;font-size:13px;font-weight:bold;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.cart-badge{position:absolute;top:-2px;right:2px;background-color:var(--btn-green);color:#ffffff;font-size:13px;font-weight:bold;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 .cart-message{color:#111111;font-size:24px;font-weight:600;margin:0 0 20px 0;letter-spacing:-0.5px;}
-.shop-button{display:inline-block;background-color:var(--primary);color:#ffffff;text-decoration:none;font-size:18px;font-weight:500;padding:10px 42px;border-radius:25px;transition:background-color 0.2s ease-in-out;border:none;cursor:pointer;}
-.shop-button:hover{background-color:var(--primary-bright);}
+.shop-button{display:inline-block;background-color:var(--btn-green);color:#ffffff;text-decoration:none;font-size:18px;font-weight:500;padding:10px 42px;border-radius:25px;transition:background-color 0.2s ease-in-out;border:none;cursor:pointer;}
+.shop-button:hover{background-color:var(--btn-green-hover);}
 
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
 .overlay.open{opacity:1;pointer-events:auto;}
@@ -516,18 +614,18 @@ a{color:inherit;text-decoration:none;}
 .cart-qty{display:flex;align-items:center;gap:6px;margin-top:4px;}
 .cart-qty button{width:24px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:12px;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .cart-qty button:active{transform:scale(0.9);}
-.cart-qty button:hover{background:var(--primary);color:white;border-color:var(--primary);}
+.cart-qty button:hover{background:var(--btn-green);color:white;border-color:var(--btn-green);}
 .cart-footer{padding:12px 16px 20px;border-top:1px solid var(--border);}
 .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:12px;}
-.btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
+.btn-checkout{width:100%;padding:12px;background:var(--btn-green);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
 .btn-checkout:active{transform:scale(0.97);}
-.btn-checkout:hover{background:var(--primary-bright);}
+.btn-checkout:hover{background:var(--btn-green-hover);}
 #toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
 .cart-remove-btn{background:#dc3545!important;color:white!important;border:none!important;border-radius:4px!important;padding:2px 10px!important;font-size:.6rem!important;cursor:pointer!important;margin-left:6px!important;font-weight:600!important;width:auto!important;height:auto!important;}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(128,0,0,0.3);border-radius:50%;border-top-color:var(--primary);animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(34,197,94,0.2);border-radius:50%;border-top-color:var(--btn-green);animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Wishlist Modal */
+/* ===== WISHLIST MODAL ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-card{background:var(--white);border-radius:var(--radius);padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
 .modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
@@ -548,12 +646,16 @@ a{color:inherit;text-decoration:none;}
 .wishlist-modal.open{display:flex;}
 
 @media(max-width:768px){
-  .track-container{padding:0 3%;margin:16px auto 24px;}
+  .track-container{padding:0 3%;margin:12px auto 20px;}
   .track-card{padding:20px 16px;}
   .track-card h1{font-size:1.3rem;}
   .track-card h1 i{font-size:26px;}
   .order-header{flex-direction:column;align-items:flex-start;}
   .my-account-section{padding:16px;}
+  .guest-order-card{flex-direction:column;align-items:stretch;text-align:center;}
+  .guest-order-card .guest-btn{width:100%;}
+  .order-status-steps{padding:0;}
+  .order-status-steps::before{left:5%;right:5%;}
 }
 </style>
 </head>
@@ -621,6 +723,38 @@ a{color:inherit;text-decoration:none;}
   <div class="track-card">
     <h1><i class="ph ph-magnifying-glass"></i> Track Your Order</h1>
     <p>Find your order — choose how you want to track</p>
+
+    <!-- ===== GUEST WELCOME FEATURES (BEFORE LOGIN) ===== -->
+    <div class="guest-welcome">
+      <div class="guest-welcome-card">
+        <i class="ph ph-clock-counter-clockwise"></i>
+        <h4>Recent Order</h4>
+        <p>Quick access to your last placed order</p>
+      </div>
+      <div class="guest-welcome-card">
+        <i class="ph ph-envelope-simple"></i>
+        <h4>Email Lookup</h4>
+        <p>All orders sent to your email address</p>
+      </div>
+      <div class="guest-welcome-card">
+        <i class="ph ph-hash"></i>
+        <h4>Order ID Lookup</h4>
+        <p>Found in your confirmation email</p>
+      </div>
+      <div class="guest-welcome-card">
+        <i class="ph ph-whatsapp-logo"></i>
+        <h4>WhatsApp Support</h4>
+        <p>Chat with us for order help</p>
+      </div>
+    </div>
+
+    <!-- ===== ORDER STATUS STEPS VISUAL ===== -->
+    <div class="order-status-steps" id="statusSteps">
+      <div class="step-item"><div class="step-dot" id="step1"><i class="ph ph-check"></i></div><span class="step-label" id="label1">Order Placed</span></div>
+      <div class="step-item"><div class="step-dot" id="step2"><i class="ph ph-clock"></i></div><span class="step-label" id="label2">Processing</span></div>
+      <div class="step-item"><div class="step-dot" id="step3"><i class="ph ph-credit-card"></i></div><span class="step-label" id="label3">Payment</span></div>
+      <div class="step-item"><div class="step-dot" id="step4"><i class="ph ph-truck"></i></div><span class="step-label" id="label4">Delivery</span></div>
+    </div>
     
     <div class="track-options">
       <!-- Option 1: Track by Email -->
@@ -814,7 +948,6 @@ function showGuestOrderCard() {
   if (lastOrder) {
     try {
       var order = JSON.parse(lastOrder);
-      // Only show if it's recent (within 7 days)
       var orderDate = new Date(order.timestamp || Date.now());
       var daysAgo = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
       if (daysAgo > 7) {
@@ -853,6 +986,27 @@ var urlParams = new URLSearchParams(window.location.search);
 var emailParam = urlParams.get('email') || '';
 var orderIdParam = urlParams.get('orderId') || '';
 
+// ==================== UPDATE STATUS STEPS ====================
+function updateStatusSteps(status) {
+  var steps = ['step1','step2','step3','step4'];
+  var labels = ['label1','label2','label3','label4'];
+  var stepMap = {'pending':0,'paid':1,'delivered':3};
+  var activeIndex = stepMap[status] !== undefined ? stepMap[status] : 0;
+  
+  for(var i = 0; i < steps.length; i++){
+    var dot = document.getElementById(steps[i]);
+    var label = document.getElementById(labels[i]);
+    if(i <= activeIndex){
+      dot.classList.add('active');
+      dot.classList.remove('done');
+      label.classList.add('active');
+    } else {
+      dot.classList.remove('active','done');
+      label.classList.remove('active');
+    }
+  }
+}
+
 // ==================== TRACK BY EMAIL ====================
 async function trackByEmail(){
   var email = document.getElementById('trackEmail').value.trim();
@@ -882,7 +1036,6 @@ async function fetchOrders(method, value){
   var container = document.getElementById('ordersContainer');
   container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
   
-  // Hide account section initially
   document.getElementById('myAccountSection').style.display = 'none';
   
   try{
@@ -890,7 +1043,6 @@ async function fetchOrders(method, value){
     if (method === 'email') {
       url = API_BASE + '/api/orders/track?email=' + encodeURIComponent(value);
     } else {
-      // Track by order ID - we need to get all orders and filter
       url = API_BASE + '/api/admin/all-orders?limit=100';
     }
     
@@ -903,7 +1055,6 @@ async function fetchOrders(method, value){
       if (method === 'email') {
         userOrders = data.orders;
       } else {
-        // Filter by order ID (case insensitive, partial match)
         var searchId = value.toUpperCase().trim();
         userOrders = data.orders.filter(function(o) {
           var orderNumber = (o.order_number || '').toUpperCase();
@@ -912,7 +1063,6 @@ async function fetchOrders(method, value){
         });
       }
       
-      // Show My Account section only for email search with results
       if (method === 'email' && userOrders.length > 0) {
         var accountSection = document.getElementById('myAccountSection');
         accountSection.style.display = 'block';
@@ -926,9 +1076,15 @@ async function fetchOrders(method, value){
       
       if(userOrders.length > 0){
         userOrders.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
+        // Update status steps based on first order
+        if(userOrders[0] && userOrders[0].status){
+          updateStatusSteps(userOrders[0].status);
+        }
         renderOrders(userOrders, method);
       } else {
         container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Try checking your email or Order ID again</small></div>';
+        // Reset status steps
+        updateStatusSteps('pending');
       }
     } else {
       container.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>Unable to fetch orders. Please try again.</p></div>';
@@ -1077,6 +1233,9 @@ document.getElementById('trackOrderId').addEventListener('keypress', function(e)
 });
 
 // ==================== INIT ====================
+// Reset status steps to pending initially
+updateStatusSteps('pending');
+
 updateCartUI();
 setInterval(updateCartUI, 3000);
 showGuestOrderCard();
