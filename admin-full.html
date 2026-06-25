@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <title>LiquorBelle — Full Admin Control</title>
 
-<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<!-- ===== PERFORMANCE ===== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com">
@@ -50,6 +50,23 @@
   --font-body:'Inter',sans-serif;
 }
 body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* ===== CATEGORY COLORS ===== */
+.cat-beer{background:#F59E0B;color:white;}
+.cat-brandy{background:#B8860B;color:white;}
+.cat-bourbon{background:#8B4513;color:white;}
+.cat-rum{background:#DC2626;color:white;}
+.cat-spirits{background:#7C3AED;color:white;}
+.cat-liqueur{background:#EC4899;color:white;}
+.cat-juice{background:#EF4444;color:white;}
+.cat-soda{background:#3B82F6;color:white;}
+.cat-water{background:#06B6D4;color:white;}
+.cat-energy{background:#F97316;color:white;}
+.cat-cigar{background:#92400E;color:white;}
+.cat-accessory{background:#6B7280;color:white;}
+
+.category-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+
 .login-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:2000;}
 .login-modal-card{background:var(--white);border-radius:var(--radius);padding:40px 32px;width:90%;max-width:400px;text-align:center;border-top:4px solid var(--primary);}
 .login-logo img{width:70px;height:70px;border-radius:12px;margin-bottom:12px;}
@@ -142,7 +159,7 @@ textarea{resize:vertical;}
 .product-row:hover{background:var(--bg);}
 .product-img{width:40px;height:40px;object-fit:cover;border-radius:8px;background:var(--bg2);}
 .product-name{font-weight:600;font-size:13.5px;color:var(--text);}
-.product-cat{font-size:11.5px;color:var(--muted);margin-top:2px;text-transform:capitalize;}
+.product-cat{font-size:11.5px;color:var(--muted);margin-top:2px;}
 .variant-badge{background:var(--bg2);color:var(--text-secondary);padding:3px 8px;border-radius:5px;font-size:11px;margin:2px;display:inline-block;font-weight:500;border:1px solid var(--border-light);}
 .discount-badge{background:#F0FDF4;color:var(--green);padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600;border:1px solid #bbf7d0;}
 .trending-badge{background:#FFF7ED;color:#C2410C;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;border:1px solid #FED7AA;display:inline-flex;align-items:center;gap:4px;}
@@ -206,6 +223,15 @@ textarea{resize:vertical;}
 .empty-state i{font-size:40px;display:block;margin-bottom:12px;color:var(--border);}
 .help-text{font-size:12px;color:var(--muted);background:var(--bg);padding:8px 12px;border-radius:6px;border-left:3px solid var(--border);line-height:1.5;margin-bottom:14px;}
 .help-text i{color:var(--primary);margin-right:4px;}
+
+/* ===== BULK IMPORT ===== */
+.bulk-import-area{border:2px dashed var(--border);border-radius:var(--radius);padding:30px;text-align:center;transition:all 0.2s;background:var(--bg);}
+.bulk-import-area:hover{border-color:var(--primary);background:var(--bg2);}
+.bulk-import-area.dragover{border-color:var(--primary);background:rgba(128,0,0,0.05);}
+.bulk-import-area i{font-size:32px;color:var(--muted);margin-bottom:10px;}
+.bulk-import-area p{color:var(--muted);font-size:13px;}
+.bulk-preview{max-height:300px;overflow-y:auto;margin-top:12px;background:white;border-radius:var(--radius-xs);border:1px solid var(--border-light);}
+
 @media(max-width:900px){.table-header,.product-row{grid-template-columns:48px 1fr 150px 80px 80px 60px;}}
 @media(max-width:768px){
   .admin-header{padding:0 4%;height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;gap:10px;}
@@ -275,12 +301,51 @@ textarea{resize:vertical;}
   <!-- Products Tab -->
   <div id="productsTab">
     <div class="stats-grid" id="productStats"></div>
+    
+    <!-- ===== BULK IMPORT SECTION ===== -->
+    <div class="form-card">
+      <div class="form-card-title"><i class="ph ph-upload"></i> Bulk Import from Google Sheets</div>
+      <div class="help-text"><i class="ph ph-info"></i> Paste your Google Sheets data in CSV format. Each row should have: <strong>Name, Category, Badge, Image URL, Description, IsTrending, IsNew, Rating, Size1, Price1, Discount1, Size2, Price2, Discount2...</strong></div>
+      
+      <div class="bulk-import-area" id="bulkDropZone">
+        <i class="ph ph-table"></i>
+        <p><strong>Paste CSV Data or Upload File</strong></p>
+        <p style="font-size:12px;">Click to paste, or drag & drop a CSV file</p>
+        <textarea id="bulkCsvInput" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-family:monospace;font-size:12px;min-height:120px;margin-top:12px;background:white;" placeholder="Paste your CSV data here...&#10;Example:&#10;Name,Category,Badge,Image,Description,IsTrending,IsNew,Rating,Size1,Price1,Discount1,Size2,Price2,Discount2&#10;Tusker,beer,local,https://...,Great beer,TRUE,FALSE,4.5,500ml,230,0,12pack,2500,0"></textarea>
+        <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-green" onclick="bulkImport()"><i class="ph ph-upload"></i> Import Products</button>
+          <button class="btn btn-outline" onclick="document.getElementById('bulkCsvInput').value=''">Clear</button>
+          <label class="btn btn-outline" style="cursor:pointer;">
+            <i class="ph ph-file-csv"></i> Upload CSV
+            <input type="file" id="bulkFileInput" accept=".csv" style="display:none;" onchange="loadCsvFile(event)">
+          </label>
+        </div>
+        <div id="bulkPreview" class="bulk-preview" style="display:none;"></div>
+        <div id="bulkProgress" style="display:none;margin-top:10px;color:var(--muted);"></div>
+      </div>
+    </div>
+
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
       <div class="help-text"><i class="ph ph-info"></i> Fill in the product details. Add multiple bottle sizes. Discount % is applied to the price you enter (e.g., Price 500, Discount 20% = Sale Price 400).</div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="prodName" placeholder="e.g. Jameson Irish Whiskey"></div>
-        <div class="form-group"><label class="form-label">Category</label><select id="prodCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div>
+        <div class="form-group"><label class="form-label">Category</label>
+          <select id="prodCategory">
+            <option value="beer">Beer</option>
+            <option value="brandy">Brandy</option>
+            <option value="bourbon">Bourbon</option>
+            <option value="rum">Rum</option>
+            <option value="spirits">Spirits</option>
+            <option value="liqueur">Liqueur</option>
+            <option value="juice">Juice</option>
+            <option value="soda">Soda</option>
+            <option value="water">Water</option>
+            <option value="energy">Energy Drink</option>
+            <option value="cigar">Cigar</option>
+            <option value="accessory">Accessory</option>
+          </select>
+        </div>
         <div class="form-group"><label class="form-label">Badge</label><select id="prodBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
         <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="prodImage" placeholder="https://..."><span class="form-hint">Paste the image web address here</span></div>
         <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="prodDesc" placeholder="Brief description of the product..." rows="2"></textarea></div>
@@ -305,7 +370,6 @@ textarea{resize:vertical;}
   <!-- Orders Tab -->
   <div id="ordersTab" style="display:none;">
     <div class="stats-grid" id="orderStats"></div>
-    
     <div class="filter-bar">
       <select id="dateFilter" class="date-filter-select" onchange="applyFilters()">
         <option value="24h">📅 Last 24 Hours</option>
@@ -315,16 +379,13 @@ textarea{resize:vertical;}
         <option value="1y">📅 Last 1 Year</option>
         <option value="all">📊 All Time</option>
       </select>
-      
       <select id="statusFilter" class="status-filter-select" onchange="applyFilters()">
         <option value="all">📋 All Orders</option>
         <option value="paid">✅ Paid (Ready to Deliver)</option>
         <option value="delivered">🚚 Delivered (Completed)</option>
       </select>
-      
       <span class="filter-stats" id="orderCountDisplay"></span>
     </div>
-    
     <div class="search-bar">
       <div class="search-input-wrap" style="flex:1;"><i class="ph ph-magnifying-glass"></i><input type="text" id="orderSearch" class="search-input" placeholder="Search by customer name or email..."></div>
       <button class="btn btn-outline" onclick="clearOrderSearch()"><i class="ph ph-x"></i> Clear</button>
@@ -335,8 +396,24 @@ textarea{resize:vertical;}
 
   <!-- Analytics Tab -->
   <div id="analyticsTab" style="display:none;">
-    <div class="stats-grid"><div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div><div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div><div class="sub">All time</div></div><div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In catalogue</div></div><div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per delivered order</div></div></div>
-    <div class="form-card"><div class="form-card-title"><i class="ph ph-chart-bar"></i> Order Breakdown</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;"><div class="stat-card" style="padding:14px;"><h4>Paid</h4><div class="value" id="paidCount">0</div><div class="sub">Ready to deliver</div></div><div class="stat-card" style="padding:14px;"><h4>Delivered</h4><div class="value" id="deliveredCount">0</div><div class="sub">Completed orders</div></div><div class="stat-card" style="padding:14px;"><h4>Trending</h4><div class="value" id="trendingCount">0</div><div class="sub">On homepage</div></div></div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><h4>Total Revenue</h4><div class="value" id="totalRevenue">KES 0</div><div class="sub">From delivered orders</div></div>
+      <div class="stat-card"><h4>Total Orders</h4><div class="value" id="totalOrders">0</div><div class="sub">All time</div></div>
+      <div class="stat-card"><h4>Total Products</h4><div class="value" id="totalProducts">0</div><div class="sub">In catalogue</div></div>
+      <div class="stat-card"><h4>Avg Order Value</h4><div class="value" id="avgOrder">KES 0</div><div class="sub">Per delivered order</div></div>
+    </div>
+    <div class="form-card">
+      <div class="form-card-title"><i class="ph ph-chart-bar"></i> Category Breakdown</div>
+      <div id="categoryBreakdown" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:12px;"></div>
+    </div>
+    <div class="form-card">
+      <div class="form-card-title"><i class="ph ph-chart-bar"></i> Order Breakdown</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;">
+        <div class="stat-card" style="padding:14px;"><h4>Paid</h4><div class="value" id="paidCount">0</div><div class="sub">Ready to deliver</div></div>
+        <div class="stat-card" style="padding:14px;"><h4>Delivered</h4><div class="value" id="deliveredCount">0</div><div class="sub">Completed orders</div></div>
+        <div class="stat-card" style="padding:14px;"><h4>Trending</h4><div class="value" id="trendingCount">0</div><div class="sub">On homepage</div></div>
+      </div>
+    </div>
   </div>
 
   <!-- Settings Tab -->
@@ -370,7 +447,6 @@ textarea{resize:vertical;}
         <button class="btn" id="updatePasswordsBtn" onclick="updatePasswords(event)"><i class="ph ph-floppy-disk"></i> Save Passwords</button>
       </div>
     </div>
-    
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div>
       <div class="help-text"><i class="ph ph-info"></i> Set the delivery fee customers pay at checkout.</div>
@@ -401,12 +477,68 @@ textarea{resize:vertical;}
 </div>
 
 <!-- ===== EDIT MODAL ===== -->
-<div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label><select id="editCategory"><option value="whisky">Whisky</option><option value="cognac">Cognac</option><option value="vodka">Vodka</option><option value="gin">Gin</option><option value="rum">Rum</option><option value="wine">Wine</option><option value="beer">Beer</option><option value="champagne">Champagne</option></select></div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody></table><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
+<div class="modal-overlay" id="editModal"><div class="modal-card"><div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div><input type="hidden" id="editProductId"><div class="form-row"><div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div><div class="form-group"><label class="form-label">Category</label>
+  <select id="editCategory">
+    <option value="beer">Beer</option>
+    <option value="brandy">Brandy</option>
+    <option value="bourbon">Bourbon</option>
+    <option value="rum">Rum</option>
+    <option value="spirits">Spirits</option>
+    <option value="liqueur">Liqueur</option>
+    <option value="juice">Juice</option>
+    <option value="soda">Soda</option>
+    <option value="water">Water</option>
+    <option value="energy">Energy Drink</option>
+    <option value="cigar">Cigar</option>
+    <option value="accessory">Accessory</option>
+  </select>
+</div><div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div><div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div></div><div class="toggles-row"><div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label for="editTrending" onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div><div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label for="editNew" onclick="event.preventDefault()"><i class="ph ph-star"></i> New Arrival</label></div></div><div class="rating-input" style="margin-bottom:16px;"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div><div class="variants-label">Bottle Sizes & Prices</div><table class="variants-table"><tbody id="editVariantsBody"></tbody></table><button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Another Size</button><div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save Changes</button></div></div></div>
 
 <!-- ===== TOAST ===== -->
 <div id="toast" class="toast"></div>
 
 <script>
+// ==================== CATEGORY CONFIG ====================
+var CATEGORY_LABELS = {
+  'beer': 'Beer',
+  'brandy': 'Brandy',
+  'bourbon': 'Bourbon',
+  'rum': 'Rum',
+  'spirits': 'Spirits',
+  'liqueur': 'Liqueur',
+  'juice': 'Juice',
+  'soda': 'Soda',
+  'water': 'Water',
+  'energy': 'Energy Drink',
+  'cigar': 'Cigar',
+  'accessory': 'Accessory'
+};
+
+var CATEGORY_COLORS = {
+  'beer': 'cat-beer',
+  'brandy': 'cat-brandy',
+  'bourbon': 'cat-bourbon',
+  'rum': 'cat-rum',
+  'spirits': 'cat-spirits',
+  'liqueur': 'cat-liqueur',
+  'juice': 'cat-juice',
+  'soda': 'cat-soda',
+  'water': 'cat-water',
+  'energy': 'cat-energy',
+  'cigar': 'cat-cigar',
+  'accessory': 'cat-accessory'
+};
+
+function getCategoryLabel(cat) {
+  return CATEGORY_LABELS[cat] || cat || 'Uncategorized';
+}
+
+function getCategoryBadge(cat) {
+  var label = getCategoryLabel(cat);
+  var colorClass = CATEGORY_COLORS[cat] || 'cat-accessory';
+  return '<span class="category-badge ' + colorClass + '">' + label + '</span>';
+}
+
 // ==================== IMAGE OPTIMIZATION ====================
 function optimizeImage(url, width) {
     if (!url) return '';
@@ -633,7 +765,7 @@ function openEditModal(productId){
   if(!p) return;
   document.getElementById('editProductId').value = p._id;
   document.getElementById('editName').value = p.name || '';
-  document.getElementById('editCategory').value = p.category || 'whisky';
+  document.getElementById('editCategory').value = p.category || 'beer';
   document.getElementById('editBadge').value = p.badge || '';
   document.getElementById('editImage').value = p.image || '';
   document.getElementById('editDesc').value = p.description || '';
@@ -703,6 +835,116 @@ async function deleteProduct(id){
   } catch(e){ showToast('Error deleting', true); }
 }
 
+// ==================== BULK IMPORT ====================
+function loadCsvFile(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('bulkCsvInput').value = e.target.result;
+    showToast('CSV file loaded: ' + file.name);
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+async function bulkImport() {
+  var csvText = document.getElementById('bulkCsvInput').value.trim();
+  if (!csvText) {
+    showToast('Please paste CSV data first', true);
+    return;
+  }
+  
+  var btn = document.querySelector('#bulkDropZone .btn-green');
+  var originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="loading-spinner"></span> Importing...';
+  btn.disabled = true;
+  
+  try {
+    // Parse CSV
+    var lines = csvText.split('\n').filter(function(line) { return line.trim(); });
+    if (lines.length < 2) {
+      showToast('CSV must have header row + data rows', true);
+      return;
+    }
+    
+    // Parse header
+    var headers = lines[0].split(',').map(function(h) { return h.trim().replace(/^"|"$/g, ''); });
+    var imported = 0;
+    var errors = 0;
+    
+    var progressEl = document.getElementById('bulkProgress');
+    progressEl.style.display = 'block';
+    
+    for (var i = 1; i < lines.length; i++) {
+      var values = lines[i].split(',').map(function(v) { return v.trim().replace(/^"|"$/g, ''); });
+      var obj = {};
+      for (var j = 0; j < headers.length; j++) {
+        obj[headers[j]] = values[j] || '';
+      }
+      
+      // Build product object
+      var product = {
+        name: obj.Name || obj.name || '',
+        category: obj.Category || obj.category || 'beer',
+        badge: obj.Badge || obj.badge || '',
+        image: obj.Image || obj.image || obj['Image URL'] || '',
+        description: obj.Description || obj.description || '',
+        isTrending: (obj.IsTrending || obj.isTrending || '').toLowerCase() === 'true' || false,
+        isNew: (obj.IsNew || obj.isNew || '').toLowerCase() === 'true' || false,
+        rating: parseFloat(obj.Rating || obj.rating || 4) || 4,
+        variants: []
+      };
+      
+      // Collect variants (Size1, Price1, Discount1, Size2, Price2, Discount2, ...)
+      for (var k = 1; k <= 10; k++) {
+        var sizeKey = 'Size' + k;
+        var priceKey = 'Price' + k;
+        var discountKey = 'Discount' + k;
+        if (obj[sizeKey] && obj[priceKey]) {
+          product.variants.push({
+            size: obj[sizeKey],
+            price: parseFloat(obj[priceKey]) || 0,
+            discount: parseInt(obj[discountKey]) || 0
+          });
+        }
+      }
+      
+      // If no variants, skip
+      if (product.variants.length === 0) {
+        errors++;
+        continue;
+      }
+      
+      // Save to database
+      var res = await fetch(API_BASE + '/api/db/products', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(product)
+      });
+      
+      if (res.ok) {
+        imported++;
+        progressEl.innerHTML = '📦 Imported ' + imported + ' products...';
+      } else {
+        errors++;
+      }
+    }
+    
+    progressEl.innerHTML = '';
+    showToast('✅ Imported ' + imported + ' products' + (errors > 0 ? ' (' + errors + ' failed)' : ''));
+    await loadProducts();
+    document.getElementById('bulkCsvInput').value = '';
+    document.getElementById('bulkPreview').style.display = 'none';
+    
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
 // ==================== LOAD PRODUCTS ====================
 async function loadProducts(){
   try{
@@ -712,6 +954,7 @@ async function loadProducts(){
   } catch(e){ products = []; }
   renderProducts();
   updateStats();
+  renderCategoryBreakdown();
 }
 
 function renderProducts(){
@@ -734,8 +977,32 @@ function renderProducts(){
     if(p.isTrending) badgesHtml += '<span class="trending-badge"><i class="ph ph-fire"></i> Trending</span> ';
     if(p.isNew) badgesHtml += '<span class="new-badge"><i class="ph ph-star"></i> New</span>';
     var ratingHtml = '<span class="star-badge"><i class="ph ph-star-fill"></i> ' + (p.rating || 4).toFixed(1) + '</span>';
-    html += '<div class="product-row"><div><img class="product-img" src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy"></div><div><div class="product-name">' + escapeHtml(p.name) + '</div><div class="product-cat">' + (p.category || '') + '</div></div><div>' + variantsHtml + '</div><div>' + badgesHtml + '</div><div>' + ratingHtml + '</div><div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal(\'' + p._id + '\')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(\'' + p._id + '\')"><i class="ph ph-trash"></i></button></div></div>';
+    var catBadge = getCategoryBadge(p.category);
+    html += '<div class="product-row"><div><img class="product-img" src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy"></div><div><div class="product-name">' + escapeHtml(p.name) + '</div><div class="product-cat">' + catBadge + '</div></div><div>' + variantsHtml + '</div><div>' + badgesHtml + '</div><div>' + ratingHtml + '</div><div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal(\'' + p._id + '\')"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(\'' + p._id + '\')"><i class="ph ph-trash"></i></button></div></div>';
   }
+  container.innerHTML = html;
+}
+
+// ==================== CATEGORY BREAKDOWN ====================
+function renderCategoryBreakdown() {
+  var container = document.getElementById('categoryBreakdown');
+  var counts = {};
+  for (var i = 0; i < products.length; i++) {
+    var cat = products[i].category || 'uncategorized';
+    if (!counts[cat]) counts[cat] = 0;
+    counts[cat]++;
+  }
+  
+  var html = '';
+  var sorted = Object.keys(counts).sort();
+  for (var i = 0; i < sorted.length; i++) {
+    var cat = sorted[i];
+    var count = counts[cat];
+    var label = getCategoryLabel(cat);
+    var colorClass = CATEGORY_COLORS[cat] || 'cat-accessory';
+    html += '<div class="stat-card" style="padding:12px 14px;"><h4>' + label + '</h4><div class="value" style="font-size:20px;">' + count + '</div><div class="sub">products</div></div>';
+  }
+  if (!html) html = '<div class="empty-state"><i class="ph ph-chart-bar"></i><p>No products to show</p></div>';
   container.innerHTML = html;
 }
 
@@ -909,9 +1176,9 @@ function renderOrders(){
     var deliveryFee = o.delivery_fee || o.delivery || 0;
     var subtotal = o.subtotal || (o.total - deliveryFee);
     
-    var statusClass = o.status === 'paid' ? 'status-paid' : 'status-delivered';
-    var statusIcon = o.status === 'paid' ? 'ph-check-circle' : 'ph-truck';
-    var statusText = o.status === 'paid' ? 'Paid ✅' : 'Delivered 🚚';
+    var statusClass = o.status === 'paid' ? 'status-paid' : o.status === 'delivered' ? 'status-delivered' : 'status-pending';
+    var statusIcon = o.status === 'paid' ? 'ph-check-circle' : o.status === 'delivered' ? 'ph-truck' : 'ph-clock';
+    var statusText = o.status === 'paid' ? 'Paid ✅' : o.status === 'delivered' ? 'Delivered 🚚' : 'Pending ⏳';
     
     html += '<div class="order-card">' +
       '<div class="order-header">' +
@@ -1103,6 +1370,32 @@ function logout(){ localStorage.removeItem('liquorbelle_admin_token'); adminToke
 
 // ==================== MODAL CLOSE ON OVERLAY ====================
 document.getElementById('editModal').addEventListener('click', function(e){ if(e.target === this) closeEditModal(); });
+
+// ==================== DRAG & DROP FOR CSV ====================
+var dropZone = document.getElementById('bulkDropZone');
+if (dropZone) {
+  dropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    this.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    this.classList.remove('dragover');
+  });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('dragover');
+    var files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].name.endsWith('.csv')) {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById('bulkCsvInput').value = ev.target.result;
+        showToast('CSV file loaded: ' + files[0].name);
+      };
+      reader.readAsText(files[0]);
+    }
+  });
+}
 
 // ==================== INIT ====================
 async function initAdmin() {

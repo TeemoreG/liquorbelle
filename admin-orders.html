@@ -149,6 +149,22 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 .empty-state{text-align:center;padding:56px 24px;color:var(--muted);}
 .empty-state i{font-size:40px;display:block;margin-bottom:12px;color:var(--border);}
 .empty-state p{font-size:14px;}
+
+/* ===== CATEGORY COLORS ===== */
+.cat-beer{background:#F59E0B;color:white;}
+.cat-brandy{background:#B8860B;color:white;}
+.cat-bourbon{background:#8B4513;color:white;}
+.cat-rum{background:#DC2626;color:white;}
+.cat-spirits{background:#7C3AED;color:white;}
+.cat-liqueur{background:#EC4899;color:white;}
+.cat-juice{background:#EF4444;color:white;}
+.cat-soda{background:#3B82F6;color:white;}
+.cat-water{background:#06B6D4;color:white;}
+.cat-energy{background:#F97316;color:white;}
+.cat-cigar{background:#92400E;color:white;}
+.cat-accessory{background:#6B7280;color:white;}
+.category-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;margin-left:6px;}
+
 @media(max-width:768px){
   .admin-header{padding:0 4%;height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;gap:10px;}
   .stats-grid{grid-template-columns:repeat(2,1fr);}
@@ -251,6 +267,47 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);-webk
 <div id="toast" class="toast"></div>
 
 <script>
+// ==================== CATEGORY CONFIG ====================
+var CATEGORY_LABELS = {
+  'beer': 'Beer',
+  'brandy': 'Brandy',
+  'bourbon': 'Bourbon',
+  'rum': 'Rum',
+  'spirits': 'Spirits',
+  'liqueur': 'Liqueur',
+  'juice': 'Juice',
+  'soda': 'Soda',
+  'water': 'Water',
+  'energy': 'Energy Drink',
+  'cigar': 'Cigar',
+  'accessory': 'Accessory'
+};
+
+var CATEGORY_COLORS = {
+  'beer': 'cat-beer',
+  'brandy': 'cat-brandy',
+  'bourbon': 'cat-bourbon',
+  'rum': 'cat-rum',
+  'spirits': 'cat-spirits',
+  'liqueur': 'cat-liqueur',
+  'juice': 'cat-juice',
+  'soda': 'cat-soda',
+  'water': 'cat-water',
+  'energy': 'cat-energy',
+  'cigar': 'cat-cigar',
+  'accessory': 'cat-accessory'
+};
+
+function getCategoryLabel(cat) {
+  return CATEGORY_LABELS[cat] || cat || 'Uncategorized';
+}
+
+function getCategoryBadge(cat) {
+  var label = getCategoryLabel(cat);
+  var colorClass = CATEGORY_COLORS[cat] || 'cat-accessory';
+  return '<span class="category-badge ' + colorClass + '">' + label + '</span>';
+}
+
 // ==================== IMAGE OPTIMIZATION ====================
 function optimizeImage(url, width) {
     if (!url) return '';
