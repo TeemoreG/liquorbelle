@@ -1147,6 +1147,27 @@ textarea { resize: vertical; }
   .stat-card .value { font-size: 22px; }
   .stat-card { padding: 14px 16px; }
 }
+
+/* ============================================
+   CSS - FLAVOR/DESCRIPTION FIELD ENHANCEMENT
+   ============================================ */
+.flavor-field textarea {
+  min-height: 60px;
+  background: #faf8f6;
+  border-color: var(--gold-light);
+}
+.flavor-field textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184,134,11,0.15);
+}
+.flavor-field .form-label {
+  color: var(--gold);
+  font-weight: 700;
+}
+.flavor-field .form-hint {
+  color: var(--muted);
+  font-size: 10px;
+}
 </style>
 </head>
 <body>
@@ -1204,12 +1225,12 @@ textarea { resize: vertical; }
     <!-- Bulk Import -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-upload"></i> Bulk Import</div>
-      <div class="help-text"><i class="ph ph-info"></i> Paste CSV with: <strong>Name, Category, Badge, Image, Description, IsTrending, IsNew, Rating, Size1, Price1, Discount1...</strong></div>
+      <div class="help-text"><i class="ph ph-info"></i> Paste CSV with: <strong>Name, Category, Badge, Image, Flavor/Description, IsTrending, IsNew, Rating, Size1, Price1, Discount1...</strong></div>
       <div class="bulk-import-area" id="bulkDropZone">
         <i class="ph ph-table"></i>
         <p><strong>Paste CSV Data or Upload File</strong></p>
         <p style="font-size:12px;">Click to paste, or drag & drop a CSV file</p>
-        <textarea id="bulkCsvInput" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-family:monospace;font-size:12px;min-height:120px;margin-top:12px;background:white;" placeholder="Paste your CSV data here...&#10;Example:&#10;Name,Category,Badge,Image,Description,IsTrending,IsNew,Rating,Size1,Price1,Discount1,Size2,Price2,Discount2&#10;Tusker,beer,local,https://...,Great beer,TRUE,FALSE,4.5,500ml,230,0,12pack,2500,0"></textarea>
+        <textarea id="bulkCsvInput" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-family:monospace;font-size:12px;min-height:120px;margin-top:12px;background:white;" placeholder="Paste your CSV data here...&#10;Example:&#10;Name,Category,Badge,Image,Description,IsTrending,IsNew,Rating,Size1,Price1,Discount1,Size2,Price2,Discount2&#10;Fanta Orange,soda,,https://...,Refreshing orange soda,TRUE,FALSE,4.5,350ml,50,0,500ml,80,0,1.25L,150,0,2L,200,0"></textarea>
         <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
           <button class="btn btn-green" onclick="bulkImport()"><i class="ph ph-upload"></i> Import</button>
           <button class="btn btn-outline" onclick="document.getElementById('bulkCsvInput').value=''"><i class="ph ph-x"></i> Clear</button>
@@ -1222,12 +1243,12 @@ textarea { resize: vertical; }
       </div>
     </div>
 
-    <!-- Add Product -->
+    <!-- Add Product - FLAVOR FIELD NOW PROMINENT -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
       <div class="help-text"><i class="ph ph-info"></i> Select category first to see relevant sizes. <strong>Choose "Other"</strong> for custom sizes.</div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="prodName" placeholder="e.g. Jameson Irish Whiskey"></div>
+        <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="prodName" placeholder="e.g. Fanta Orange, Coca-Cola, Jameson Irish Whiskey"></div>
         <div class="form-group"><label class="form-label">Category</label>
           <select id="prodCategory" onchange="updateVariantOptions(this.value)">
             <option value="beer">Beer</option>
@@ -1245,14 +1266,30 @@ textarea { resize: vertical; }
           </select>
         </div>
         <div class="form-group"><label class="form-label">Badge</label><select id="prodBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
-        <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="prodImage" placeholder="https://..."><span class="form-hint">Paste the image web address here</span></div>
-        <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="prodDesc" placeholder="Brief description of the product..." rows="2"></textarea></div>
       </div>
+
+      <!-- Image URL -->
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="prodImage" placeholder="https://res.cloudinary.com/..."><span class="form-hint">Paste the image web address here</span></div>
+      </div>
+
+      <!-- ===== FLAVOR / DESCRIPTION FIELD - PROMINENT ===== -->
+      <div class="form-row">
+        <div class="form-group flavor-field" style="grid-column:1/-1;">
+          <label class="form-label" for="prodDesc"><i class="ph ph-note-pencil" style="color:var(--gold);"></i> Flavor / Description</label>
+          <textarea id="prodDesc" placeholder="e.g. Refreshing orange soda with a citrus twist. (Or any product description...)" rows="2" style="min-height:60px;"></textarea>
+          <span class="form-hint">Describe the product — flavor, taste notes, or special features</span>
+        </div>
+      </div>
+
+      <!-- Toggles & Rating -->
       <div class="toggles-row">
         <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()"><input type="checkbox" id="prodTrending" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Trending</label></div>
         <div class="trending-toggle" onclick="document.getElementById('prodNew').click()"><input type="checkbox" id="prodNew" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-star" style="color:#1D4ED8;"></i> New Arrival</label></div>
       </div>
       <div class="rating-input"><label><i class="ph ph-star" style="color:var(--gold);"></i> Rating:</label><select id="prodRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4" selected>★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
+
+      <!-- Variants -->
       <div class="variants-section">
         <div class="variants-label"><i class="ph ph-ruler"></i> Sizes & Prices <span id="variantCategoryHint" style="font-weight:400;color:var(--muted);font-size:11px;">(Beer sizes shown)</span></div>
         <table class="variants-table" id="variantsTable">
@@ -1381,7 +1418,7 @@ textarea { resize: vertical; }
     </div>
   </div>
 
-  <!-- ===== SETTINGS TAB (fixed with form wrapper) ===== -->
+  <!-- ===== SETTINGS TAB ===== -->
   <div id="settingsTab" style="display:none;">
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-lock-key"></i> Password Management</div>
@@ -1437,8 +1474,16 @@ textarea { resize: vertical; }
         </select>
       </div>
       <div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
+    </div>
+    <div class="form-row">
       <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div>
-      <div class="form-group" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="editDesc" rows="2"></textarea></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group flavor-field" style="grid-column:1/-1;">
+        <label class="form-label" for="editDesc"><i class="ph ph-note-pencil" style="color:var(--gold);"></i> Flavor / Description</label>
+        <textarea id="editDesc" rows="2" style="min-height:60px;"></textarea>
+        <span class="form-hint">Describe the product — flavor, taste notes, or special features</span>
+      </div>
     </div>
     <div class="toggles-row">
       <div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div>
@@ -1458,7 +1503,7 @@ textarea { resize: vertical; }
 <div id="toast" class="toast"></div>
 
 <!-- ============================================
-   JAVASCRIPT
+   JAVASCRIPT - ALL FIXES INCLUDED
    ============================================ -->
 <script>
 // ============================================
@@ -2235,8 +2280,9 @@ function renderProducts() {
     if (p.isNew) badgesHtml += '<span class="new-badge"><i class="ph ph-star"></i> New</span>';
     var ratingHtml = '<span class="star-badge"><i class="ph ph-star-fill"></i> ' + (p.rating || 4).toFixed(1) + '</span>';
     var catBadge = getCategoryBadge(p.category);
+    var descSnippet = p.description ? '<div style="font-size:11px;color:var(--muted);font-weight:400;margin-top:2px;">' + escapeHtml(p.description.slice(0, 60)) + (p.description.length > 60 ? '...' : '') + '</div>' : '';
     html += '<div class="product-row"><div><img class="product-img" src="' + imgSrc + '" onerror="this.src=\'\'" loading="lazy"></div>' +
-      '<div><div class="product-name">' + escapeHtml(p.name) + '</div><div class="product-cat">' + catBadge + '</div></div>' +
+      '<div><div class="product-name">' + escapeHtml(p.name) + '</div><div class="product-cat">' + catBadge + '</div>' + descSnippet + '</div>' +
       '<div>' + variantsHtml + '</div><div>' + badgesHtml + '</div><div>' + ratingHtml + '</div>' +
       '<div style="display:flex;gap:4px;"><button class="edit-btn" onclick="openEditModal(\'' + p._id + '\')"><i class="ph ph-pencil-simple"></i></button>' +
       '<button class="delete-btn" onclick="deleteProduct(\'' + p._id + '\')"><i class="ph ph-trash"></i></button></div></div>';
@@ -2280,10 +2326,9 @@ function updateStats() {
     '<div class="stat-card"><h4>Categories</h4><div class="value">' + categoryCount + '</div></div>' +
     '<div class="stat-card"><h4>Variants</h4><div class="value">' + variantCount + '</div></div>' +
     '<div class="stat-card"><h4>Trending</h4><div class="value">' + trendingCount + '</div></div>';
-  // Only update totalProducts if it exists (Analytics tab)
+  // Only update totalProducts if it exists
   var totalProductsEl = document.getElementById('totalProducts');
   if (totalProductsEl) totalProductsEl.innerText = products.length;
-  // trendingCount element doesn't exist in HTML, so skip it
 }
 
 // ============================================
