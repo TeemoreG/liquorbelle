@@ -546,7 +546,7 @@ textarea { resize: vertical; }
 }
 
 /* ============================================
-   CSS - VARIANTS TABLE (with FLAVOUR column)
+   CSS - VARIANTS TABLE (with FLAVOUR after discount)
    ============================================ */
 .variants-section { margin: 18px 0 10px; }
 .variants-label {
@@ -1157,38 +1157,6 @@ textarea { resize: vertical; }
   .stat-card .value { font-size: 22px; }
   .stat-card { padding: 14px 16px; }
 }
-
-/* ============================================
-   CSS - FLAVOUR FIELD ENHANCEMENT
-   ============================================ */
-.flavour-field textarea {
-  min-height: 60px;
-  background: #faf8f6;
-  border-color: var(--gold-light);
-}
-.flavour-field textarea:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(184,134,11,0.15);
-}
-.flavour-field .form-label {
-  color: var(--gold);
-  font-weight: 700;
-}
-.flavour-field .form-hint {
-  color: var(--muted);
-  font-size: 10px;
-}
-.flavour-input {
-  border-color: var(--gold-light) !important;
-}
-.flavour-input:focus {
-  border-color: var(--gold) !important;
-  box-shadow: 0 0 0 2px rgba(184,134,11,0.1) !important;
-}
-.flavour-input::placeholder {
-  color: #bbb;
-  font-style: italic;
-}
 </style>
 </head>
 <body>
@@ -1264,10 +1232,10 @@ textarea { resize: vertical; }
       </div>
     </div>
 
-    <!-- Add Product - with FLAVOUR in variants table -->
+    <!-- Add Product - with FLAVOUR in variants table (last column) -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
-      <div class="help-text"><i class="ph ph-info"></i> Select category first to see relevant sizes. <strong>Choose "Other"</strong> for custom sizes. Add flavour per variant.</div>
+      <div class="help-text"><i class="ph ph-info"></i> Select category first to see relevant sizes. <strong>Choose "Other"</strong> for custom sizes. Add flavour per variant (last column).</div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="prodName" placeholder="e.g. Fanta, Coca-Cola, Jameson"></div>
         <div class="form-group"><label class="form-label">Category</label>
@@ -1310,24 +1278,21 @@ textarea { resize: vertical; }
       </div>
       <div class="rating-input"><label><i class="ph ph-star" style="color:var(--gold);"></i> Rating:</label><select id="prodRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4" selected>★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
 
-      <!-- ===== VARIANTS TABLE WITH FLAVOUR COLUMN ===== -->
+      <!-- ===== VARIANTS TABLE WITH FLAVOUR AFTER DISCOUNT ===== -->
       <div class="variants-section">
-        <div class="variants-label"><i class="ph ph-ruler"></i> Variants (Flavour, Size, Price, Discount) <span id="variantCategoryHint" style="font-weight:400;color:var(--muted);font-size:11px;">(Beer sizes shown)</span></div>
+        <div class="variants-label"><i class="ph ph-ruler"></i> Variants (Size, Price, Discount, Flavour) <span id="variantCategoryHint" style="font-weight:400;color:var(--muted);font-size:11px;">(Beer sizes shown)</span></div>
         <table class="variants-table" id="variantsTable">
           <thead>
             <tr>
-              <th style="min-width:120px;">Flavour</th>
               <th>Size</th>
               <th>Price (KES)</th>
               <th>Discount %</th>
+              <th style="min-width:100px;">Flavour</th>
               <th style="width:40px;"></th>
             </tr>
           </thead>
           <tbody id="variantsBody">
             <tr class="variant-row">
-              <td>
-                <input type="text" class="variant-flavour" placeholder="e.g. Orange, Passion, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              </td>
               <td id="variantCell">
                 <select class="variant-size" onchange="toggleVariantOther(this)">
                   <optgroup label="🍺 Beer">
@@ -1382,6 +1347,7 @@ textarea { resize: vertical; }
               </td>
               <td><input type="number" class="variant-price" placeholder="Price" step="1"></td>
               <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
+              <td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
               <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
             </tr>
           </tbody>
@@ -1481,7 +1447,7 @@ textarea { resize: vertical; }
 </div>
 
 <!-- ============================================
-   HTML - EDIT MODAL (with FLAVOUR column)
+   HTML - EDIT MODAL (with FLAVOUR after discount)
    ============================================ -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
@@ -1522,7 +1488,7 @@ textarea { resize: vertical; }
       <div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-star"></i> New</label></div>
     </div>
     <div class="rating-input"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
-    <div class="variants-label">Variants (Flavour, Size, Price, Discount) <span id="editVariantHint" style="font-weight:400;color:var(--muted);font-size:11px;"></span></div>
+    <div class="variants-label">Variants (Size, Price, Discount, Flavour) <span id="editVariantHint" style="font-weight:400;color:var(--muted);font-size:11px;"></span></div>
     <table class="variants-table"><tbody id="editVariantsBody"></tbody></table>
     <button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Variant</button>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save</button></div>
@@ -1535,7 +1501,7 @@ textarea { resize: vertical; }
 <div id="toast" class="toast"></div>
 
 <!-- ============================================
-   JAVASCRIPT - WITH FLAVOUR SUPPORT
+   JAVASCRIPT - WITH FLAVOUR SUPPORT (last column)
    ============================================ -->
 <script>
 // ============================================
@@ -1824,7 +1790,7 @@ document.getElementById('adminPassword').addEventListener('keydown', function(e)
 });
 
 // ============================================
-// VARIANT TOGGLE & OPTIONS (with FLAVOUR)
+// VARIANT TOGGLE & OPTIONS (with FLAVOUR last)
 // ============================================
 function toggleVariantOther(select) {
   var td = select.parentElement;
@@ -1954,20 +1920,24 @@ function updateEditVariantOptions(category) {
 }
 
 // ============================================
-// VARIANT ROWS (with FLAVOUR)
+// VARIANT ROWS (with FLAVOUR after discount)
 // ============================================
 function addVariantRow() {
   var tbody = document.getElementById('variantsBody');
   var category = document.getElementById('prodCategory').value;
   var row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = '<td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Passion..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>' +
+  row.innerHTML =
     '<td>' +
-    '<select class="variant-size" onchange="toggleVariantOther(this)">' +
-      buildVariantOptionsHTML(category) +
-    '</select>' +
-    '<input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">' +
-  '</td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>';
+      '<select class="variant-size" onchange="toggleVariantOther(this)">' +
+        buildVariantOptionsHTML(category) +
+      '</select>' +
+      '<input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">' +
+    '</td>' +
+    '<td><input type="number" class="variant-price" placeholder="Price" step="1"></td>' +
+    '<td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>' +
+    '<td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>' +
+    '<td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>';
   tbody.appendChild(row);
 }
 
@@ -1985,13 +1955,17 @@ function addEditVariantRow() {
   var category = document.getElementById('editCategory').value;
   var row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = '<td><input type="text" class="edit-variant-flavour" placeholder="e.g. Orange, Passion..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>' +
+  row.innerHTML =
     '<td>' +
-    '<select class="edit-variant-size" onchange="toggleEditVariantOther(this)">' +
-      buildVariantOptionsHTML(category) +
-    '</select>' +
-    '<input type="text" class="edit-variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">' +
-  '</td><td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td><td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>';
+      '<select class="edit-variant-size" onchange="toggleEditVariantOther(this)">' +
+        buildVariantOptionsHTML(category) +
+      '</select>' +
+      '<input type="text" class="edit-variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">' +
+    '</td>' +
+    '<td><input type="number" class="edit-variant-price" placeholder="Price" step="1"></td>' +
+    '<td><input type="number" class="edit-variant-discount" placeholder="0" value="0" step="1"></td>' +
+    '<td><input type="text" class="edit-variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>' +
+    '<td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>';
   tbody.appendChild(row);
 }
 
@@ -2098,13 +2072,17 @@ function openEditModal(productId) {
     var otherValue = isCustom ? v.size : '';
     var row = document.createElement('tr');
     row.className = 'variant-row';
-    row.innerHTML = '<td><input type="text" class="edit-variant-flavour" value="' + escapeHtml(v.flavour || 'Original') + '" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>' +
+    row.innerHTML =
       '<td>' +
-      '<select class="edit-variant-size" onchange="toggleEditVariantOther(this)">' +
-        optionsHTML +
-      '</select>' +
-      '<input type="text" class="edit-variant-size-other" value="' + otherValue + '" placeholder="Type custom size..." style="display:' + (isCustom ? 'block' : 'none') + ';margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">' +
-    '</td><td><input type="number" class="edit-variant-price" value="' + v.price + '"></td><td><input type="number" class="edit-variant-discount" value="' + (v.discount || 0) + '"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>';
+        '<select class="edit-variant-size" onchange="toggleEditVariantOther(this)">' +
+          optionsHTML +
+        '</select>' +
+        '<input type="text" class="edit-variant-size-other" value="' + otherValue + '" placeholder="Type custom size..." style="display:' + (isCustom ? 'block' : 'none') + ';margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">' +
+      '</td>' +
+      '<td><input type="number" class="edit-variant-price" value="' + v.price + '"></td>' +
+      '<td><input type="number" class="edit-variant-discount" value="' + (v.discount || 0) + '"></td>' +
+      '<td><input type="text" class="edit-variant-flavour" value="' + escapeHtml(v.flavour || 'Original') + '" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>' +
+      '<td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>';
     var sel = row.querySelector('.edit-variant-size');
     for (var j = 0; j < sel.options.length; j++) {
       if (sel.options[j].value === selectValue) {
