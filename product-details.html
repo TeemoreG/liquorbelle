@@ -23,7 +23,6 @@
   --primary:#800000;
   --primary-bright:#990000;
   --primary-dark:#5C0000;
-  --primary-light:#a02020;
   --sale-red:#D50000;
   --white:#FFFFFF;
   --bg:#F5F2EE;
@@ -287,33 +286,52 @@ a{color:inherit;text-decoration:none;}
   margin-bottom:10px;
   color:var(--text);
 }
+/* Remove extra text from label – we handle it in HTML */
 .variant-buttons{
   display:flex;
   flex-wrap:wrap;
   gap:10px;
 }
 .variant-btn{
-  padding:10px 18px;
+  padding:10px 16px;
   border:2px solid var(--border);
   background:white;
   border-radius:var(--radius-sm);
   cursor:pointer;
-  font-weight:600;
-  font-size:.75rem;
-  transition:all .2s;
+  transition:all .25s;
   line-height:1.3;
   text-align:center;
-  min-width:80px;
+  min-width:70px;
   flex:1 0 auto;
-  max-width:160px;
+  max-width:140px;
+  font-weight:600;
+  font-size:.75rem;
 }
-.variant-btn:hover{border-color:var(--btn-green);}
-.variant-btn.selected{background:var(--primary);color:white;border-color:var(--primary);}
-.variant-btn .flavour{display:block;font-weight:800;font-size:.8rem;}
-.variant-btn .size{display:block;font-weight:400;font-size:.6rem;color:var(--muted);}
-.variant-btn.selected .size{color:rgba(255,255,255,0.8);}
-.variant-btn .price-tag{display:block;font-weight:700;font-size:.65rem;color:var(--sale-red);margin-top:3px;}
-.variant-btn.selected .price-tag{color:rgba(255,255,255,0.9);}
+.variant-btn:hover{
+  border-color:var(--btn-green);
+  box-shadow:0 2px 12px rgba(34,197,94,0.15);
+}
+.variant-btn.selected{
+  background:linear-gradient(135deg, var(--btn-green), var(--btn-green-hover));
+  color:white;
+  border-color:var(--btn-green-hover);
+  box-shadow:0 4px 16px rgba(34,197,94,0.3);
+}
+.variant-btn .flavour{
+  display:block;
+  font-weight:800;
+  font-size:.8rem;
+}
+.variant-btn .size{
+  display:block;
+  font-weight:400;
+  font-size:.65rem;
+  color:var(--muted);
+}
+.variant-btn.selected .size{
+  color:rgba(255,255,255,0.85);
+}
+/* No price tag inside button */
 
 /* ===== Price ===== */
 .price-display{
@@ -798,9 +816,9 @@ a{color:inherit;text-decoration:none;}
     <div id="productBadge"></div>
     <p class="product-description" id="productDescription"></p>
     
-    <!-- Variant Selector -->
+    <!-- Variant Selector – no extra text -->
     <div class="variant-selector">
-      <label>Select Variant <span style="font-weight:400;color:var(--muted);font-size:.7rem;">(Flavour + Size)</span></label>
+      <label>Select Variant</label>
       <div class="variant-buttons" id="variantButtons"></div>
     </div>
     
@@ -836,11 +854,12 @@ a{color:inherit;text-decoration:none;}
       </button>
     </div>
     
+    <!-- Delivery info – free delivery only over KES 3,000 -->
     <div class="delivery-info-card">
       <p><i class="ph ph-truck"></i> <strong>Fast Delivery:</strong> 10-45 minutes within Nairobi<br>
       <i class="ph ph-phone-call"></i> Rider will call before arrival<br>
       <i class="ph ph-wallet"></i> <strong>Pay with M-PESA</strong> • STK Push sent to your phone<br>
-      <i class="ph ph-gift"></i> Free delivery on orders over KES 3,000 or any 750ml+ bottle</p>
+      <i class="ph ph-gift"></i> <strong>Free delivery</strong> on orders over KES 3,000</p>
     </div>
     
     <div class="share-section">
@@ -1103,7 +1122,6 @@ function updateDeliveryProgress() {
     dp.innerHTML = 'Add any 750ml/1L bottle to unlock <strong>FREE delivery</strong> (save KES 150)<div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:25%;"></div></div>';
   }
 }
-
 // ==================== LOAD PRODUCT ====================
 async function loadProduct() {
   if(!productId) { toast('Product not found'); return; }
@@ -1146,7 +1164,7 @@ function renderProductDetails() {
     badgeContainer.innerHTML = '<div class="product-badge badge-'+currentProduct.badge+'">'+badgeText+'</div>';
   } else { badgeContainer.innerHTML = ''; }
   
-  // Build variants with flavour + size
+  // Build variants with flavour + size – NO PRICE INSIDE BUTTON
   var variants = currentProduct.variants || [];
   variants.sort(function(a,b){
     if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
@@ -1161,28 +1179,25 @@ function renderProductDetails() {
   var html = '';
   for(var i = 0; i < variants.length; i++){
     var v = variants[i];
-    var flavour = v.flavour || 'Original';
+    var flavour = v.flavour || '';
     var size = v.size || '';
-    var price = v.price || 0;
-    var discount = v.discount || 0;
-    var displayPrice = discount > 0 ? Math.round(price * (100 - discount) / 100) : price;
-    var flavourDisplay = flavour.length > 14 ? flavour.substring(0,12)+'…' : flavour;
+    // Only show flavour if it exists, otherwise just show size (or nothing if both empty)
+    var flavourDisplay = flavour;
     html += '<button class="variant-btn" '+
             'data-flavour="'+escapeHtml(flavour)+'" '+
             'data-size="'+escapeHtml(size)+'" '+
-            'data-price="'+price+'" '+
-            'data-discount="'+discount+'" '+
-            'onclick="selectVariant(\''+escapeHtml(flavour).replace(/'/g,"\\'")+'\', \''+escapeHtml(size).replace(/'/g,"\\'")+'\', '+price+', '+discount+')">'+
-            '<span class="flavour">'+escapeHtml(flavourDisplay)+'</span>'+
+            'data-price="'+v.price+'" '+
+            'data-discount="'+(v.discount||0)+'" '+
+            'onclick="selectVariant(\''+escapeHtml(flavour).replace(/'/g,"\\'")+'\', \''+escapeHtml(size).replace(/'/g,"\\'")+'\', '+v.price+', '+(v.discount||0)+')">'+
+            (flavourDisplay ? '<span class="flavour">'+escapeHtml(flavourDisplay)+'</span>' : '')+
             '<span class="size">'+escapeHtml(size)+'</span>'+
-            '<span class="price-tag">KES '+displayPrice.toLocaleString()+'</span>'+
             '</button>';
   }
   variantContainer.innerHTML = html;
   
   if(variants.length) {
     var first = variants[0];
-    selectVariant(first.flavour || 'Original', first.size || '', first.price, first.discount || 0);
+    selectVariant(first.flavour || '', first.size || '', first.price, first.discount || 0);
   }
 }
 
@@ -1192,8 +1207,8 @@ function selectVariant(flavour, size, price, discount) {
   var btns = document.querySelectorAll('.variant-btn');
   for(var i = 0; i < btns.length; i++){
     var btn = btns[i];
-    var btnFlavour = btn.dataset.flavour;
-    var btnSize = btn.dataset.size;
+    var btnFlavour = btn.dataset.flavour || '';
+    var btnSize = btn.dataset.size || '';
     var isSelected = (btnFlavour === flavour && btnSize === size);
     btn.classList.toggle('selected', isSelected);
   }
@@ -1250,8 +1265,7 @@ function renderDontForgetSuggestions() {
       '<div class="card-img-wrap">'+
         '<div class="suggestion-tag">'+tag+'</div>'+
         '<img src="'+imgSrc+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy" alt="'+escapeHtml(p.name)+'">'+
-      '</div>'+
-      '<div class="card-info">'+
+      '</div>'+'<div class="card-info">'+
         '<div class="name">'+escapeHtml(p.name)+'</div>'+
         '<div class="price">KES '+price.toLocaleString()+'</div>'+
         '<button class="add-btn" onclick="event.stopPropagation();addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+price+',\''+(p.variants?.[0]?.size||'')+'\')">'+
