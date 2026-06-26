@@ -147,7 +147,24 @@ a{color:inherit;text-decoration:none;}
 .header-icon-btn i{font-size:22px;}
 .header-icon-btn:hover{background:rgba(255,255,255,0.15);}
 .header-icon-btn:active{transform:scale(0.92);}
-.header-cart-badge{position:absolute;top:0;right:0;background:var(--white);color:var(--primary);font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);}
+/* ===== GOLDEN CART BADGE ===== */
+.header-cart-badge{
+  position:absolute;
+  top:0;
+  right:0;
+  background:var(--gold);
+  color:white;
+  font-size:10px;
+  font-weight:800;
+  min-width:17px;
+  height:17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 3px;
+  border:2px solid var(--primary);
+}
 
 .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
 .mobile-menu-overlay.open{opacity:1;pointer-events:auto;}
@@ -278,6 +295,42 @@ a{color:inherit;text-decoration:none;}
   .ad-poster{margin:6px 5% 16px;}
   .ad-poster-inner{padding:16px 28px;}
   .ad-poster-text h3{font-size:1.05rem;}
+}
+
+/* ===== BANNER IMAGE - MODERN SHOP STYLE ===== */
+.banner-image-wrap{
+  margin:0 4% 16px;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  position:relative;
+}
+.banner-image-wrap img{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:cover;
+  max-height:280px;
+  transition:transform .4s ease;
+}
+.banner-image-wrap:hover img{
+  transform:scale(1.02);
+}
+@media(min-width:768px){
+  .banner-image-wrap{
+    margin:0 5% 20px;
+  }
+  .banner-image-wrap img{
+    max-height:320px;
+  }
+}
+@media(max-width:400px){
+  .banner-image-wrap{
+    margin:0 3% 12px;
+  }
+  .banner-image-wrap img{
+    max-height:180px;
+  }
 }
 
 /* ===== Category Chips ===== */
@@ -952,7 +1005,7 @@ a{color:inherit;text-decoration:none;}
   <h1 class="shop-title" id="shopTitle">All Products</h1>
 </div>
 
-<!-- ===== AD POSTER (BELOW TITLE BAR) ===== -->
+<!-- ===== AD POSTER ===== -->
 <div class="ad-poster" id="adPoster">
   <div class="ad-poster-inner" id="adPosterInner">
     <div class="ad-poster-icon" id="adIcon"><i class="ph ph-shield-check"></i></div>
@@ -963,6 +1016,11 @@ a{color:inherit;text-decoration:none;}
     <span class="ad-poster-badge" id="adBadge">Trusted</span>
   </div>
   <div class="ad-dots" id="adDots"></div>
+</div>
+
+<!-- ===== BANNER IMAGE - MODERN SHOP STYLE ===== -->
+<div class="banner-image-wrap">
+  <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782462538/af530399-7256-422f-97b7-71496c648bc1_osqga6.png" alt="LiquorBelle Premium Selection" loading="lazy" fetchpriority="high">
 </div>
 
 <!-- ===== CATEGORY CHIPS ===== -->
