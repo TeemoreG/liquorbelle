@@ -1381,23 +1381,31 @@ textarea { resize: vertical; }
     </div>
   </div>
 
-  <!-- ===== SETTINGS TAB ===== -->
+  <!-- ===== SETTINGS TAB (fixed with form wrapper) ===== -->
   <div id="settingsTab" style="display:none;">
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-lock-key"></i> Password Management</div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPassword" placeholder="New admin password"></div>
-        <div class="form-group"><label class="form-label">Cashier Password</label><input type="password" id="newCashierPassword" placeholder="New cashier password"></div>
-      </div>
-      <button class="btn" onclick="updatePasswords()"><i class="ph ph-floppy-disk"></i> Save Passwords</button>
+      <form id="passwordForm" onsubmit="event.preventDefault(); updatePasswords();">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPassword" placeholder="New admin password"></div>
+          <div class="form-group"><label class="form-label">Cashier Password</label><input type="password" id="newCashierPassword" placeholder="New cashier password"></div>
+        </div>
+        <button type="submit" class="btn" id="updatePasswordsBtn"><i class="ph ph-floppy-disk"></i> Save Passwords</button>
+      </form>
     </div>
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Delivery Fee (KES)</label><input type="number" id="deliveryFee" value="150"></div>
-        <div class="form-group"><label class="form-label">Free Delivery Threshold</label><input type="number" id="freeThreshold" value="3000"></div>
-      </div>
-      <button class="btn" onclick="saveDeliverySettings()"><i class="ph ph-floppy-disk"></i> Save Settings</button>
+      <form id="deliveryForm" onsubmit="event.preventDefault(); saveDeliverySettings();">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Delivery Fee (KES)</label><input type="number" id="deliveryFee" value="150"></div>
+          <div class="form-group"><label class="form-label">Free Delivery Threshold</label><input type="number" id="freeThreshold" value="3000"></div>
+          <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+            <label class="form-label" style="margin:0;">Enabled</label>
+            <input type="checkbox" id="deliveryEnabled" checked style="width:auto;">
+          </div>
+        </div>
+        <button type="submit" class="btn"><i class="ph ph-floppy-disk"></i> Save Settings</button>
+      </form>
     </div>
   </div>
 
@@ -1639,30 +1647,6 @@ function toggleAdminPasswordVisibility() {
   }
 }
 
-function toggleNewAdminPasswordVisibility() {
-  var i = document.getElementById('newAdminPassword');
-  var ic = document.getElementById('toggleNewAdminIcon');
-  if (i.type === 'password') {
-    i.type = 'text';
-    ic.className = 'ph ph-eye-slash';
-  } else {
-    i.type = 'password';
-    ic.className = 'ph ph-eye';
-  }
-}
-
-function toggleNewCashierPasswordVisibility() {
-  var i = document.getElementById('newCashierPassword');
-  var ic = document.getElementById('toggleNewCashierIcon');
-  if (i.type === 'password') {
-    i.type = 'text';
-    ic.className = 'ph ph-eye-slash';
-  } else {
-    i.type = 'password';
-    ic.className = 'ph ph-eye';
-  }
-}
-
 // ============================================
 // FILTERS
 // ============================================
@@ -1830,7 +1814,6 @@ function updateVariantOptions(category) {
   var otherInput = cell.querySelector('.variant-size-other');
   var currentVal = select.value;
   select.innerHTML = buildVariantOptionsHTML(category);
-  // Try to keep current value if it exists in new options
   var found = false;
   for (var i = 0; i < select.options.length; i++) {
     if (select.options[i].value === currentVal) {
@@ -1840,7 +1823,6 @@ function updateVariantOptions(category) {
     }
   }
   if (!found && currentVal !== 'OTHER') {
-    // If not found, select first option
     select.selectedIndex = 0;
   }
   if (select.value === 'OTHER') {
@@ -1849,14 +1831,12 @@ function updateVariantOptions(category) {
     otherInput.style.display = 'none';
     otherInput.value = '';
   }
-  // Update hint
   var hint = document.getElementById('variantCategoryHint');
   hint.innerText = '(' + getCategoryLabel(category) + ' sizes shown)';
 }
 
 function updateEditVariantOptions(category) {
   var tbody = document.getElementById('editVariantsBody');
-  // Update all existing edit rows
   var rows = tbody.querySelectorAll('.variant-row');
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
@@ -1882,7 +1862,6 @@ function updateEditVariantOptions(category) {
       otherInput.value = '';
     }
   }
-  // Update hint
   var hint = document.getElementById('editVariantHint');
   if (hint) hint.innerText = '(' + getCategoryLabel(category) + ' sizes shown)';
 }
@@ -2014,7 +1993,6 @@ function openEditModal(productId) {
   tbody.innerHTML = '';
   var variants = p.variants || [{ size: '750ml', price: 0, discount: 0 }];
   var category = p.category || 'beer';
-  // Build options for edit
   var optionsHTML = buildVariantOptionsHTML(category);
   var commonSizes = [];
   var optGroups = VARIANT_OPTIONS[category] || VARIANT_OPTIONS['beer'];
@@ -2036,7 +2014,6 @@ function openEditModal(productId) {
       '</select>' +
       '<input type="text" class="edit-variant-size-other" value="' + otherValue + '" placeholder="Type custom size..." style="display:' + (isCustom ? 'block' : 'none') + ';margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">' +
     '</td><td><input type="number" class="edit-variant-price" value="' + v.price + '"></td><td><input type="number" class="edit-variant-discount" value="' + (v.discount || 0) + '"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>';
-    // Set selected value
     var sel = row.querySelector('.edit-variant-size');
     for (var j = 0; j < sel.options.length; j++) {
       if (sel.options[j].value === selectValue) {
@@ -2046,7 +2023,6 @@ function openEditModal(productId) {
     }
     tbody.appendChild(row);
   }
-  // Update hint
   var hint = document.getElementById('editVariantHint');
   if (hint) hint.innerText = '(' + getCategoryLabel(category) + ' sizes shown)';
   document.getElementById('editModal').classList.add('active');
@@ -2288,6 +2264,9 @@ function renderCategoryBreakdown() {
   container.innerHTML = html;
 }
 
+// ============================================
+// FIXED: updateStats() - removed trendingCount reference
+// ============================================
 function updateStats() {
   var trendingCount = 0, categories = {}, variantCount = 0;
   for (var i = 0; i < products.length; i++) {
@@ -2301,8 +2280,10 @@ function updateStats() {
     '<div class="stat-card"><h4>Categories</h4><div class="value">' + categoryCount + '</div></div>' +
     '<div class="stat-card"><h4>Variants</h4><div class="value">' + variantCount + '</div></div>' +
     '<div class="stat-card"><h4>Trending</h4><div class="value">' + trendingCount + '</div></div>';
-  document.getElementById('totalProducts').innerText = products.length;
-  document.getElementById('trendingCount').innerText = trendingCount;
+  // Only update totalProducts if it exists (Analytics tab)
+  var totalProductsEl = document.getElementById('totalProducts');
+  if (totalProductsEl) totalProductsEl.innerText = products.length;
+  // trendingCount element doesn't exist in HTML, so skip it
 }
 
 // ============================================
@@ -2334,11 +2315,16 @@ async function loadOrders() {
   if (currentTab === 'analytics') renderAnalytics();
 }
 
+// ============================================
+// FIXED: updateOrderStats() - safe element checks
+// ============================================
 function updateOrderStats() {
   var paid = filteredOrders.filter(function(o) { return o.status === 'paid'; }).length;
   var delivered = filteredOrders.filter(function(o) { return o.status === 'delivered'; }).length;
-  document.getElementById('paidCount').innerText = paid;
-  document.getElementById('deliveredCount').innerText = delivered;
+  var paidEl = document.getElementById('paidCount');
+  var deliveredEl = document.getElementById('deliveredCount');
+  if (paidEl) paidEl.innerText = paid;
+  if (deliveredEl) deliveredEl.innerText = delivered;
 }
 
 function renderAnalytics() {
@@ -2524,7 +2510,8 @@ async function loadDeliverySettings() {
     if (data.success && data.settings) {
       document.getElementById('deliveryFee').value = data.settings.delivery_fee || 150;
       document.getElementById('freeThreshold').value = data.settings.free_delivery_threshold || 3000;
-      document.getElementById('deliveryEnabled').checked = data.settings.delivery_enabled !== false;
+      var enabledEl = document.getElementById('deliveryEnabled');
+      if (enabledEl) enabledEl.checked = data.settings.delivery_enabled !== false;
     }
   } catch(e) {}
 }
@@ -2533,7 +2520,7 @@ async function saveDeliverySettings() {
   var settings = {
     delivery_fee: parseInt(document.getElementById('deliveryFee').value) || 0,
     free_delivery_threshold: parseInt(document.getElementById('freeThreshold').value) || 0,
-    delivery_enabled: document.getElementById('deliveryEnabled').checked
+    delivery_enabled: document.getElementById('deliveryEnabled') ? document.getElementById('deliveryEnabled').checked : true
   };
   try {
     var res = await fetch(API_BASE + '/api/admin/delivery-settings', {
@@ -2548,6 +2535,9 @@ async function saveDeliverySettings() {
   }
 }
 
+// ============================================
+// FIXED: updatePasswords() - fixed btn reference
+// ============================================
 async function updatePasswords() {
   var adminPassword = document.getElementById('newAdminPassword').value.trim();
   var cashierPassword = document.getElementById('newCashierPassword').value.trim();
@@ -2556,6 +2546,10 @@ async function updatePasswords() {
     return;
   }
   var btn = document.getElementById('updatePasswordsBtn');
+  if (!btn) {
+    showToast('Save button not found', true);
+    return;
+  }
   var originalHTML = btn.innerHTML;
   btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
   btn.disabled = true;
