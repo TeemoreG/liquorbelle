@@ -822,17 +822,17 @@ a{color:inherit;text-decoration:none;}
 <div class="section-header"><h2>Shop by Category</h2><a href="shop.html">View All</a></div>
 <div class="category-grid" id="categoryGrid"></div>
 
-<!-- ===== FEATURED PRODUCTS ===== -->
-<div class="section-header"><h2>Featured</h2><a href="shop.html">View All</a></div>
-<div class="products-grid" id="featuredGrid"></div>
+<!-- ===== NEW ARRIVALS (FIRST) ===== -->
+<div class="section-header"><h2>New Arrivals</h2><a href="shop.html">View All</a></div>
+<div class="new-arrivals-grid" id="newArrivalsGrid"></div>
 
-<!-- ===== TRENDING ===== -->
+<!-- ===== TRENDING (SECOND) ===== -->
 <div class="section-header"><h2>Trending</h2><a href="shop.html">View All</a></div>
 <div class="trending-grid" id="trendingGrid"></div>
 
-<!-- ===== NEW ARRIVALS ===== -->
-<div class="section-header"><h2>New Arrivals</h2><a href="shop.html">View All</a></div>
-<div class="new-arrivals-grid" id="newArrivalsGrid"></div>
+<!-- ===== FEATURED (THIRD) ===== -->
+<div class="section-header"><h2>Featured</h2><a href="shop.html">View All</a></div>
+<div class="products-grid" id="featuredGrid"></div>
 
 <!-- ===== QUICK SHORTCUTS ===== -->
 <div class="quick-shortcuts">
@@ -1220,9 +1220,9 @@ function loadProductsFromAPI() {
   var trendingGrid = document.getElementById('trendingGrid');
   var newArrivalsGrid = document.getElementById('newArrivalsGrid');
   
-  renderSkeletons(4, 'featuredGrid');
-  renderSkeletons(4, 'trendingGrid');
   renderSkeletons(4, 'newArrivalsGrid');
+  renderSkeletons(4, 'trendingGrid');
+  renderSkeletons(4, 'featuredGrid');
   
   fetch(API_BASE + '/api/db/products')
     .then(function(res){ return res.json(); })
@@ -1232,21 +1232,21 @@ function loadProductsFromAPI() {
         var trending = products.filter(function(p){ return p.isTrending === true; });
         var featured = products.slice(0, 8);
         var newArrivals = products.filter(function(p){ return p.isNew === true; });
-        renderProductSection(featured, 'featuredGrid', 8);
+        renderProductSection(newArrivals.length ? newArrivals : products.slice(0, 8), 'newArrivalsGrid', 8);
         renderProductSection(trending.length ? trending : products, 'trendingGrid', 8);
-        renderProductSection(newArrivals.length ? newArrivals : products.slice(8, 16), 'newArrivalsGrid', 8);
+        renderProductSection(featured, 'featuredGrid', 8);
       } else {
         var msg = '<div class="empty-state"><i class="ph ph-clock"></i><h3>Loading products</h3><p>Products will appear here shortly.</p></div>';
-        featuredGrid.innerHTML = msg;
-        trendingGrid.innerHTML = msg;
         newArrivalsGrid.innerHTML = msg;
+        trendingGrid.innerHTML = msg;
+        featuredGrid.innerHTML = msg;
       }
     })
     .catch(function(){
       var msg = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><h3>Connection Error</h3><p>Could not load products. Please refresh.</p></div>';
-      featuredGrid.innerHTML = msg;
-      trendingGrid.innerHTML = msg;
       newArrivalsGrid.innerHTML = msg;
+      trendingGrid.innerHTML = msg;
+      featuredGrid.innerHTML = msg;
     });
 }
 
