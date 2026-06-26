@@ -99,7 +99,7 @@ a{color:inherit;text-decoration:none;}
 }
 .nav-item:active{transform:scale(0.92);}
 
-/* Header - MATCHES SHOP.HTML */
+/* Header */
 .main-header{
   background:var(--primary);
   padding:10px 4%;
@@ -132,23 +132,11 @@ a{color:inherit;text-decoration:none;}
 .header-icon-btn i{font-size:22px;}
 .header-icon-btn:hover{background:rgba(255,255,255,0.15);}
 .header-icon-btn:active{transform:scale(0.92);}
-/* ===== GOLDEN CART BADGE ===== */
 .header-cart-badge{
-  position:absolute;
-  top:0;
-  right:0;
-  background:var(--gold);
-  color:white;
-  font-size:10px;
-  font-weight:800;
-  min-width:17px;
-  height:17px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:0 3px;
-  border:2px solid var(--primary);
+  position:absolute;top:0;right:0;background:var(--gold);color:white;
+  font-size:10px;font-weight:800;min-width:17px;height:17px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  padding:0 3px;border:2px solid var(--primary);
 }
 
 .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
@@ -274,22 +262,33 @@ a{color:inherit;text-decoration:none;}
   margin-bottom: 16px;
 }
 
-/* ===== Variant Selector ===== */
+/* ===== Variant Selector (Flavour + Size) ===== */
 .variant-selector{margin-bottom:16px;}
 .variant-selector label{display:block;font-weight:600;font-size:.85rem;margin-bottom:8px;color:var(--text);}
-.variant-buttons{display:flex;flex-wrap:wrap;gap:8px;}
+.variant-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
 .variant-btn{
-  padding:8px 18px;
+  padding:8px 16px;
   border:2px solid var(--border);
   background:white;
   border-radius:40px;
   cursor:pointer;
   font-weight:600;
-  font-size:.8rem;
+  font-size:.75rem;
   transition:all .2s;
+  line-height:1.2;
+  text-align:center;
 }
 .variant-btn:hover{border-color:var(--primary);}
 .variant-btn.selected{background:var(--primary);color:white;border-color:var(--primary);}
+.variant-btn .flavour{display:block;font-weight:800;font-size:.8rem;}
+.variant-btn .size{display:block;font-weight:400;font-size:.65rem;color:var(--muted);}
+.variant-btn.selected .size{color:rgba(255,255,255,0.8);}
+.variant-btn .price-tag{display:block;font-weight:700;font-size:.65rem;color:var(--sale-red);margin-top:2px;}
+.variant-btn.selected .price-tag{color:rgba(255,255,255,0.9);}
 
 /* ===== Price Display ===== */
 .price-display{margin-bottom:16px;}
@@ -402,10 +401,7 @@ a{color:inherit;text-decoration:none;}
   align-items:center;
   gap:10px;
 }
-.dont-forget-header i{
-  color:var(--primary);
-  font-size:22px;
-}
+.dont-forget-header i{color:var(--primary);font-size:22px;}
 .dont-forget-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
@@ -507,7 +503,7 @@ a{color:inherit;text-decoration:none;}
   .related-img{height:120px;}
 }
 
-/* ===== Footer - MATCHES SHOP.HTML ===== */
+/* ===== Footer ===== */
 .footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:24px 4% 20px;margin-top:24px;}
 .footer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px;}
 .footer-col h4{font-size:.7rem;font-weight:700;margin-bottom:8px;color:#fff;opacity:.9;}
@@ -599,6 +595,11 @@ a{color:inherit;text-decoration:none;}
 .share-toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--btn-green);color:white;padding:10px 20px;border-radius:50px;font-size:13px;opacity:0;transition:opacity 0.2s;z-index:601;pointer-events:none;}
 .wishlist-modal{display:none;}
 .wishlist-modal.open{display:flex;}
+
+.delivery-progress{padding:8px 12px;background:var(--bg2);border-radius:var(--radius-xs);margin-bottom:10px;font-size:.65rem;color:var(--text);line-height:1.4;}
+.delivery-progress.unlocked{background:#EAF8EF;color:#1A6B35;}
+.delivery-progress-bar{height:4px;background:var(--border);border-radius:10px;margin-top:4px;overflow:hidden;}
+.delivery-progress-fill{height:100%;background:var(--btn-green);border-radius:10px;transition:width .3s;}
 </style>
 </head>
 <body>
@@ -685,9 +686,9 @@ a{color:inherit;text-decoration:none;}
     <div id="productBadge"></div>
     <p class="product-description" id="productDescription"></p>
     
-    <!-- Select Size -->
+    <!-- ===== SELECT FLAVOUR + SIZE (combined variants) ===== -->
     <div class="variant-selector">
-      <label>Select Size:</label>
+      <label>Select Variant <span style="font-weight:400;color:var(--muted);font-size:.7rem;">(Flavour + Size)</span></label>
       <div class="variant-buttons" id="variantButtons"></div>
     </div>
     
@@ -952,9 +953,12 @@ function updateBreadcrumb(category, productName){
 
 // ==================== SHARE ====================
 function shareProductWhatsApp() {
-  if(!currentProduct) return;
+  if(!currentProduct || !selectedVariant) return;
   var url = window.location.href;
-  var text = '🍾 '+currentProduct.name+' at LiquorBelle! '+(selectedVariant?.size||'')+' - KES '+(selectedVariant?.price?.toLocaleString()||'')+'\n'+url;
+  var flavour = selectedVariant.flavour || '';
+  var size = selectedVariant.size || '';
+  var price = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
+  var text = '🍾 '+currentProduct.name + (flavour ? ' ('+flavour+')' : '') + ' at LiquorBelle! '+size+' - KES '+price.toLocaleString()+'\n'+url;
   window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank');
 }
 
@@ -1006,6 +1010,7 @@ async function loadProduct() {
   } catch(e){ toast('Error loading product'); }
 }
 
+// ==================== RENDER PRODUCT (with flavour+size variants) ====================
 function renderProductDetails() {
   var name = currentProduct.name;
   var category = currentProduct.category || '';
@@ -1030,27 +1035,60 @@ function renderProductDetails() {
     badgeContainer.innerHTML = '<div class="product-badge badge-'+currentProduct.badge+'">'+badgeText+'</div>';
   } else { badgeContainer.innerHTML = ''; }
   
+  // Build variants with flavour + size
   var variants = currentProduct.variants || [];
-  var sizeOrder = {'250ml':1, '350ml':2, '500ml':3, '750ml':4, '1L':5, '1.5L':6};
-  variants.sort(function(a,b){ return (sizeOrder[a.size]||99) - (sizeOrder[b.size]||99); });
+  // Sort by flavour then size
+  variants.sort(function(a,b){
+    if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
+    if (a.flavour) return -1;
+    if (b.flavour) return 1;
+    return 0;
+  });
   
   var variantContainer = document.getElementById('variantButtons');
-  if(!variants.length) { variantContainer.innerHTML = '<p>No sizes available</p>'; return; }
+  if(!variants.length) { variantContainer.innerHTML = '<p>No variants available</p>'; return; }
   
   var html = '';
   for(var i = 0; i < variants.length; i++){
     var v = variants[i];
-    html += '<button class="variant-btn" data-size="'+v.size+'" data-price="'+v.price+'" data-discount="'+(v.discount||0)+'" onclick="selectVariant(\''+v.size+'\', '+v.price+', '+(v.discount||0)+')">'+v.size+'</button>';
+    var flavour = v.flavour || 'Original';
+    var size = v.size || '';
+    var price = v.price || 0;
+    var discount = v.discount || 0;
+    var displayPrice = discount > 0 ? Math.round(price * (100 - discount) / 100) : price;
+    var flavourDisplay = flavour.length > 12 ? flavour.substring(0,10)+'…' : flavour;
+    html += '<button class="variant-btn" '+
+            'data-flavour="'+escapeHtml(flavour)+'" '+
+            'data-size="'+escapeHtml(size)+'" '+
+            'data-price="'+price+'" '+
+            'data-discount="'+discount+'" '+
+            'onclick="selectVariant(\''+escapeHtml(flavour).replace(/'/g,"\\'")+'\', \''+escapeHtml(size).replace(/'/g,"\\'")+'\', '+price+', '+discount+')">'+
+            '<span class="flavour">'+escapeHtml(flavourDisplay)+'</span>'+
+            '<span class="size">'+escapeHtml(size)+'</span>'+
+            '<span class="price-tag">KES '+displayPrice.toLocaleString()+'</span>'+
+            '</button>';
   }
   variantContainer.innerHTML = html;
-  selectVariant(variants[0].size, variants[0].price, variants[0].discount || 0);
+  
+  // Auto-select first variant
+  if(variants.length) {
+    var first = variants[0];
+    selectVariant(first.flavour || 'Original', first.size || '', first.price, first.discount || 0);
+  }
 }
 
-function selectVariant(size, price, discount) {
-  selectedVariant = { size: size, price: price, discount: discount };
+// ==================== SELECT VARIANT ====================
+function selectVariant(flavour, size, price, discount) {
+  selectedVariant = { flavour: flavour, size: size, price: price, discount: discount };
+  
+  // Update button styles
   var btns = document.querySelectorAll('.variant-btn');
   for(var i = 0; i < btns.length; i++){
-    btns[i].classList.toggle('selected', btns[i].dataset.size === size);
+    var btn = btns[i];
+    var btnFlavour = btn.dataset.flavour;
+    var btnSize = btn.dataset.size;
+    var isSelected = (btnFlavour === flavour && btnSize === size);
+    btn.classList.toggle('selected', isSelected);
   }
   
   var hasDiscount = discount > 0;
@@ -1184,22 +1222,23 @@ function addToCart(id,name,price,capacity){
 }
 
 function addToCartFromDetail() {
-  if(!currentProduct || !selectedVariant) { toast('Select a size'); return; }
+  if(!currentProduct || !selectedVariant) { toast('Select a variant'); return; }
   var id = currentProduct._id;
   var priceToAdd = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
+  var variantLabel = selectedVariant.flavour + ' ' + selectedVariant.size;
   if(cart[id]) { cart[id].qty += quantity; } 
-  else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size }; }
+  else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size, flavour: selectedVariant.flavour }; }
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   updateCartUI();
-  toast(quantity+'× '+currentProduct.name+' ('+selectedVariant.size+') added ✓');
+  toast(quantity+'× '+currentProduct.name+' ('+variantLabel+') added ✓');
 }
 
 function buyNow() {
-  if(!currentProduct || !selectedVariant) { toast('Select a size'); return; }
+  if(!currentProduct || !selectedVariant) { toast('Select a variant'); return; }
   var id = currentProduct._id;
   var priceToAdd = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
   if(cart[id]) { cart[id].qty += quantity; } 
-  else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size }; }
+  else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size, flavour: selectedVariant.flavour }; }
   localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
   window.location.href = 'checkout.html';
 }
@@ -1207,9 +1246,6 @@ function buyNow() {
 function updateCartUI(){
   var items = Object.values(cart);
   var count = items.reduce(function(s,i){ return s + i.qty; }, 0);
-  
-  var cartCount = document.getElementById('cartCount');
-  if(cartCount) cartCount.innerText = count;
   
   var navCartCount = document.getElementById('navCartCount');
   if(navCartCount) navCartCount.innerText = count;
@@ -1241,7 +1277,8 @@ function updateCartUI(){
   var html = '';
   for(var i = 0; i < items.length; i++){
     var item = items[i];
-    html += '<div class="cart-item"><div><div class="cart-item-name">'+escapeHtml(item.name)+' <span style="color:var(--primary);">x'+item.qty+'</span></div><div class="cart-item-price">KES '+(item.price*item.qty).toLocaleString()+'</div><div class="cart-qty"><button onclick="updateQty(\''+item.id+'\',-1)">−</button><span>'+item.qty+'</span><button onclick="updateQty(\''+item.id+'\',1)">+</button><button onclick="removeCartItem(\''+item.id+'\')" class="cart-remove-btn">Remove</button></div></div></div>';
+    var flavourTag = item.flavour ? ' <span style="color:var(--gold);font-size:.65rem;">('+escapeHtml(item.flavour)+')</span>' : '';
+    html += '<div class="cart-item"><div><div class="cart-item-name">'+escapeHtml(item.name)+flavourTag+' <span style="color:var(--primary);">x'+item.qty+'</span></div><div class="cart-item-price">KES '+(item.price*item.qty).toLocaleString()+'</div><div class="cart-qty"><button onclick="updateQty(\''+item.id+'\',-1)">−</button><span>'+item.qty+'</span><button onclick="updateQty(\''+item.id+'\',1)">+</button><button onclick="removeCartItem(\''+item.id+'\')" class="cart-remove-btn">Remove</button></div></div></div>';
   }
   container.innerHTML = html;
 }
