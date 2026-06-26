@@ -322,6 +322,7 @@ a{color:inherit;text-decoration:none;}
   flex-direction:column;
   box-shadow:var(--shadow);
   height:100%;
+  cursor:pointer;
 }
 .prod-card:active{transform:scale(0.97);}
 .prod-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(184,134,11,0.2);}
@@ -438,6 +439,169 @@ a{color:inherit;text-decoration:none;}
 }
 .atc-btn:active{transform:scale(0.95);}
 .atc-btn:hover{background:var(--btn-green-hover);}
+
+/* ===== QUICK VIEW MODAL ===== */
+.quickview-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:800;backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+  opacity:0;transition:opacity 0.3s ease;
+}
+.quickview-overlay.active{display:flex;opacity:1;}
+.quickview-modal{
+  background:var(--white);
+  border-radius:var(--radius-sm);
+  max-width:700px;
+  width:100%;
+  max-height:85vh;
+  overflow-y:auto;
+  padding:28px 24px;
+  box-shadow:var(--shadow-xl);
+  transform:scale(0.95);
+  transition:transform 0.3s ease;
+  position:relative;
+}
+.quickview-overlay.active .quickview-modal{transform:scale(1);}
+.quickview-close{
+  position:absolute;top:12px;right:16px;
+  background:none;border:none;font-size:24px;color:var(--muted);
+  cursor:pointer;transition:.2s;padding:4px;
+}
+.quickview-close:hover{color:var(--primary);}
+.quickview-grid{
+  display:grid;
+  grid-template-columns:1fr 1.2fr;
+  gap:24px;
+  align-items:start;
+}
+.quickview-img-wrap{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--bg);
+  border-radius:var(--radius-xs);
+  padding:12px;
+  min-height:200px;
+}
+.quickview-img{
+  max-width:100%;
+  max-height:280px;
+  object-fit:contain;
+  display:block;
+}
+.quickview-info{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.quickview-name{
+  font-size:1.2rem;
+  font-weight:800;
+  color:var(--text);
+  line-height:1.2;
+}
+.quickview-category{
+  font-size:.7rem;
+  text-transform:uppercase;
+  color:var(--muted);
+  letter-spacing:1px;
+}
+.quickview-rating{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.quickview-rating .stars{font-size:13px;}
+.quickview-rating .text{font-size:11px;color:var(--muted);}
+.quickview-price{
+  margin:4px 0;
+}
+.quickview-price .old{font-size:.85rem;color:var(--muted);text-decoration:line-through;margin-right:10px;}
+.quickview-price .new{font-size:1.6rem;font-weight:800;color:var(--sale-red);}
+.quickview-price .discount-badge{background:var(--btn-green);color:white;padding:2px 12px;border-radius:30px;font-size:.65rem;margin-left:8px;}
+.quickview-variants{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:6px 0;
+}
+.quickview-variant-btn{
+  padding:6px 14px;
+  border:1.5px solid var(--border);
+  border-radius:30px;
+  background:white;
+  font-size:.7rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+  text-align:center;
+  line-height:1.3;
+}
+.quickview-variant-btn:hover{border-color:var(--btn-green);}
+.quickview-variant-btn.selected{background:var(--primary);color:white;border-color:var(--primary);}
+.quickview-variant-btn .flavour{display:block;font-weight:700;}
+.quickview-variant-btn .size{font-weight:400;font-size:.6rem;color:var(--muted);}
+.quickview-variant-btn.selected .size{color:rgba(255,255,255,0.8);}
+.quickview-variant-btn .price-tag{font-size:.6rem;font-weight:700;color:var(--sale-red);}
+.quickview-variant-btn.selected .price-tag{color:rgba(255,255,255,0.9);}
+
+.quickview-qty{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:6px 0;
+}
+.quickview-qty label{font-weight:600;font-size:.8rem;}
+.quickview-qty .qty-btn{
+  width:32px;height:32px;
+  border:1.5px solid var(--border);
+  border-radius:50%;
+  background:white;
+  font-size:1rem;
+  cursor:pointer;
+  transition:.2s;
+}
+.quickview-qty .qty-btn:hover{background:var(--primary);color:white;border-color:var(--primary);}
+.quickview-qty .qty-val{font-size:1rem;font-weight:700;min-width:30px;text-align:center;}
+
+.quickview-actions{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+}
+.quickview-actions .add-btn,.quickview-actions .buy-btn{
+  flex:1;
+  padding:10px;
+  border-radius:50px;
+  font-weight:700;
+  font-size:.8rem;
+  cursor:pointer;
+  transition:all .2s;
+  border:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.quickview-actions .add-btn{
+  background:white;
+  color:var(--primary);
+  border:2px solid var(--btn-green);
+}
+.quickview-actions .add-btn:hover{background:var(--btn-green);color:white;}
+.quickview-actions .buy-btn{
+  background:var(--btn-green);
+  color:white;
+}
+.quickview-actions .buy-btn:hover{background:var(--btn-green-hover);}
+@media(max-width:600px){
+  .quickview-grid{grid-template-columns:1fr;gap:16px;}
+  .quickview-modal{padding:20px 16px;}
+  .quickview-img-wrap{min-height:140px;}
+  .quickview-img{max-height:180px;}
+  .quickview-name{font-size:1rem;}
+  .quickview-price .new{font-size:1.3rem;}
+}
 
 /* ===== QUICK SHORTCUTS ===== */
 .quick-shortcuts{
@@ -697,6 +861,12 @@ a{color:inherit;text-decoration:none;}
   .quick-shortcuts{grid-template-columns:1fr 1fr;gap:8px;padding:0 3%;}
   .reminder-section{padding:14px 16px;}
   .reminder-section i{font-size:22px;}
+  .quickview-modal{padding:16px 12px;}
+  .quickview-grid{grid-template-columns:1fr;gap:12px;}
+  .quickview-img-wrap{min-height:100px;}
+  .quickview-img{max-height:140px;}
+  .quickview-name{font-size:.95rem;}
+  .quickview-price .new{font-size:1.2rem;}
 }
 @media(min-width:600px){
   .category-grid{grid-template-columns:repeat(4,1fr);gap:16px;}
@@ -1009,6 +1179,42 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
+<!-- ===== QUICK VIEW MODAL ===== -->
+<div class="quickview-overlay" id="quickviewOverlay" onclick="closeQuickView(event)">
+  <div class="quickview-modal" onclick="event.stopPropagation();">
+    <button class="quickview-close" onclick="closeQuickView()"><i class="ph ph-x"></i></button>
+    <div class="quickview-grid">
+      <div class="quickview-img-wrap">
+        <img id="qvImage" class="quickview-img" src="" alt="Product">
+      </div>
+      <div class="quickview-info">
+        <div class="quickview-name" id="qvName">Product Name</div>
+        <div class="quickview-category" id="qvCategory">Category</div>
+        <div class="quickview-rating">
+          <span class="stars" id="qvStars"></span>
+          <span class="text" id="qvRatingText"></span>
+        </div>
+        <div class="quickview-price">
+          <span class="old" id="qvOldPrice"></span>
+          <span class="new" id="qvPrice">KES 0</span>
+          <span class="discount-badge" id="qvDiscount" style="display:none;"></span>
+        </div>
+        <div class="quickview-variants" id="qvVariants"></div>
+        <div class="quickview-qty">
+          <label>Qty:</label>
+          <button class="qty-btn" onclick="qvChangeQty(-1)">−</button>
+          <span class="qty-val" id="qvQty">1</span>
+          <button class="qty-btn" onclick="qvChangeQty(1)">+</button>
+        </div>
+        <div class="quickview-actions">
+          <button class="add-btn" id="qvAddBtn" onclick="qvAddToCart()"><i class="ph ph-shopping-cart"></i> Add to Cart</button>
+          <button class="buy-btn" id="qvBuyBtn" onclick="qvBuyNow()"><i class="ph ph-credit-card"></i> Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1171,6 +1377,145 @@ function populateCategoryDropdown(selectId) {
 }
 
 // ============================================
+// QUICK VIEW (New)
+// ============================================
+var qvProduct = null;
+var qvSelectedVariant = null;
+var qvQuantity = 1;
+
+function openQuickView(product) {
+  qvProduct = product;
+  qvQuantity = 1;
+  document.getElementById('qvQty').innerText = '1';
+  
+  // Populate basic info
+  document.getElementById('qvName').innerText = product.name;
+  document.getElementById('qvCategory').innerText = product.category || '';
+  document.getElementById('qvImage').src = product.image ? optimizeImage(product.image, 400) : FALLBACK_IMG;
+  document.getElementById('qvImage').onerror = function(){ this.src = FALLBACK_IMG; };
+  
+  // Rating
+  var rating = product.rating || 4.0;
+  var fullStars = Math.floor(rating);
+  var hasHalf = rating - fullStars >= 0.5;
+  var starsHtml = '';
+  for(var i=0;i<fullStars;i++) starsHtml += '<i class="ph ph-star-fill star-filled" style="color:#F59E0B;font-size:13px;"></i>';
+  if(hasHalf) starsHtml += '<i class="ph ph-star-half star-filled" style="color:#F59E0B;font-size:13px;"></i>';
+  var empty = 5 - Math.ceil(rating);
+  for(var i=0;i<empty;i++) starsHtml += '<i class="ph ph-star star-empty" style="color:#d1d5db;font-size:13px;"></i>';
+  document.getElementById('qvStars').innerHTML = starsHtml;
+  document.getElementById('qvRatingText').innerText = rating.toFixed(1)+' out of 5 stars';
+  
+  // Variants
+  var variants = product.variants || [];
+  variants.sort(function(a,b){
+    if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
+    if (a.flavour) return -1;
+    if (b.flavour) return 1;
+    return 0;
+  });
+  var container = document.getElementById('qvVariants');
+  container.innerHTML = '';
+  if(!variants.length){
+    container.innerHTML = '<p style="color:var(--muted);font-size:.75rem;">No variants available</p>';
+    qvSelectedVariant = null;
+    document.getElementById('qvPrice').innerHTML = 'KES 0';
+    document.getElementById('qvOldPrice').style.display = 'none';
+    document.getElementById('qvDiscount').style.display = 'none';
+    return;
+  }
+  variants.forEach(function(v){
+    var btn = document.createElement('button');
+    btn.className = 'quickview-variant-btn';
+    var flavour = v.flavour || 'Original';
+    var size = v.size || '';
+    var price = v.price || 0;
+    var discount = v.discount || 0;
+    var displayPrice = discount > 0 ? Math.round(price * (100 - discount) / 100) : price;
+    btn.innerHTML = '<span class="flavour">'+escapeHtml(flavour)+'</span><span class="size">'+escapeHtml(size)+'</span><span class="price-tag">KES '+displayPrice.toLocaleString()+'</span>';
+    btn.dataset.flavour = flavour;
+    btn.dataset.size = size;
+    btn.dataset.price = price;
+    btn.dataset.discount = discount;
+    btn.onclick = function(){
+      qvSelectVariant(flavour, size, price, discount);
+    };
+    container.appendChild(btn);
+  });
+  // Select first variant
+  var first = variants[0];
+  qvSelectVariant(first.flavour || 'Original', first.size || '', first.price, first.discount || 0);
+  
+  // Show modal
+  var overlay = document.getElementById('quickviewOverlay');
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function qvSelectVariant(flavour, size, price, discount) {
+  qvSelectedVariant = { flavour: flavour, size: size, price: price, discount: discount };
+  // Update button styles
+  var btns = document.querySelectorAll('.quickview-variant-btn');
+  btns.forEach(function(btn){
+    var isSelected = (btn.dataset.flavour === flavour && btn.dataset.size === size);
+    btn.classList.toggle('selected', isSelected);
+  });
+  // Update price
+  var hasDiscount = discount > 0;
+  var discountedPrice = hasDiscount ? Math.round(price * (100 - discount) / 100) : price;
+  var priceEl = document.getElementById('qvPrice');
+  priceEl.innerHTML = 'KES '+discountedPrice.toLocaleString();
+  var oldEl = document.getElementById('qvOldPrice');
+  var discountEl = document.getElementById('qvDiscount');
+  if(hasDiscount){
+    oldEl.style.display = 'inline';
+    oldEl.innerHTML = 'KES '+price.toLocaleString();
+    discountEl.style.display = 'inline';
+    discountEl.innerHTML = '-'+discount+'%';
+  } else {
+    oldEl.style.display = 'none';
+    discountEl.style.display = 'none';
+  }
+}
+
+function qvChangeQty(delta) {
+  qvQuantity += delta;
+  if(qvQuantity < 1) qvQuantity = 1;
+  if(qvQuantity > 10) qvQuantity = 10;
+  document.getElementById('qvQty').innerText = qvQuantity;
+}
+
+function qvAddToCart() {
+  if(!qvProduct || !qvSelectedVariant) { toast('Select a variant first'); return; }
+  var id = qvProduct._id;
+  var priceToAdd = qvSelectedVariant.discount > 0 ? Math.round(qvSelectedVariant.price * (100 - qvSelectedVariant.discount) / 100) : qvSelectedVariant.price;
+  var variantLabel = qvSelectedVariant.flavour + ' ' + qvSelectedVariant.size;
+  if(cart[id]){ cart[id].qty += qvQuantity; }
+  else { cart[id] = { id: id, name: qvProduct.name, price: priceToAdd, qty: qvQuantity, capacity: qvSelectedVariant.size, size: qvSelectedVariant.size, flavour: qvSelectedVariant.flavour }; }
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartUI();
+  toast(qvQuantity+'× '+qvProduct.name+' ('+variantLabel+') added ✓');
+  closeQuickView();
+}
+
+function qvBuyNow() {
+  if(!qvProduct || !qvSelectedVariant) { toast('Select a variant first'); return; }
+  var id = qvProduct._id;
+  var priceToAdd = qvSelectedVariant.discount > 0 ? Math.round(qvSelectedVariant.price * (100 - qvSelectedVariant.discount) / 100) : qvSelectedVariant.price;
+  if(cart[id]){ cart[id].qty += qvQuantity; }
+  else { cart[id] = { id: id, name: qvProduct.name, price: priceToAdd, qty: qvQuantity, capacity: qvSelectedVariant.size, size: qvSelectedVariant.size, flavour: qvSelectedVariant.flavour }; }
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  window.location.href = 'checkout.html';
+}
+
+function closeQuickView(e) {
+  if(e && e.target !== e.currentTarget) return;
+  var overlay = document.getElementById('quickviewOverlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ============================================
 // LOAD PRODUCTS FROM API
 // ============================================
 function renderProductCard(p) {
@@ -1179,7 +1524,8 @@ function renderProductCard(p) {
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
   
-  return '<div class="prod-card">'+
+  // Use onclick to open quick view
+  var cardHtml = '<div class="prod-card" onclick="openQuickView(\''+p._id+'\')">'+
     '<div class="pc-img-wrap">'+
       '<img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" loading="lazy" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
       (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '')+
@@ -1189,20 +1535,14 @@ function renderProductCard(p) {
       (capacity ? '<div class="pc-vol">'+escapeHtml(capacity)+'</div>' : '')+
       ratingHtml+
       '<div class="pc-price-wrap"><span class="pc-price-regular">KES '+price.toLocaleString()+'</span></div>'+
-      '<button class="atc-btn" onclick="addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+price+',\''+escapeHtml(capacity)+'\',\''+escapeHtml(p.image||'')+'\')"><i class="ph ph-plus"></i> Add</button>'+
+      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+price+',\''+escapeHtml(capacity)+'\',\''+escapeHtml(p.image||'')+'\')"><i class="ph ph-plus"></i> Add</button>'+
     '</div>'+
   '</div>';
+  return cardHtml;
 }
 
-function renderSkeletons(count, containerId){
-  var container=document.getElementById(containerId);
-  if(!container) return;
-  var skeletons='';
-  for(var i=0;i<count;i++){
-    skeletons+='<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
-  }
-  container.innerHTML=skeletons;
-}
+// But we need to pass the product object, not just id. We'll store products globally.
+var allProductsCache = [];
 
 function renderProductSection(products, containerId, limit) {
   var container = document.getElementById(containerId);
@@ -1212,6 +1552,142 @@ function renderProductSection(products, containerId, limit) {
     container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products available</p></div>';
     return;
   }
+  // Store for quick view
+  allProductsCache = products;
+  container.innerHTML = items.map(function(p){ return renderProductCard(p); }).join('');
+}
+
+// Override openQuickView to accept product id
+function openQuickView(productId) {
+  var product = allProductsCache.find(function(p){ return p._id === productId; });
+  if(!product) { toast('Product not found'); return; }
+  // Use the existing openQuickView function but with product object
+  qvOpen(product);
+}
+
+// Rename the original to avoid conflict
+var qvOpen = openQuickView; // We'll reassign
+// We'll redefine openQuickView to accept productId
+// Actually we need to keep the original function but use a wrapper.
+// Let's define a new function that takes productId and uses allProductsCache.
+// We'll override the inline onclick to call this new function.
+// We'll modify the renderProductCard to call a global function that uses allProductsCache.
+
+// We'll keep the existing openQuickView for product object but rename it to qvShowProduct.
+// Then we'll create a new openQuickView that looks up by id.
+
+function qvShowProduct(product) {
+  // same as openQuickView but with product object
+  qvProduct = product;
+  qvQuantity = 1;
+  document.getElementById('qvQty').innerText = '1';
+  
+  document.getElementById('qvName').innerText = product.name;
+  document.getElementById('qvCategory').innerText = product.category || '';
+  document.getElementById('qvImage').src = product.image ? optimizeImage(product.image, 400) : FALLBACK_IMG;
+  document.getElementById('qvImage').onerror = function(){ this.src = FALLBACK_IMG; };
+  
+  var rating = product.rating || 4.0;
+  var fullStars = Math.floor(rating);
+  var hasHalf = rating - fullStars >= 0.5;
+  var starsHtml = '';
+  for(var i=0;i<fullStars;i++) starsHtml += '<i class="ph ph-star-fill star-filled" style="color:#F59E0B;font-size:13px;"></i>';
+  if(hasHalf) starsHtml += '<i class="ph ph-star-half star-filled" style="color:#F59E0B;font-size:13px;"></i>';
+  var empty = 5 - Math.ceil(rating);
+  for(var i=0;i<empty;i++) starsHtml += '<i class="ph ph-star star-empty" style="color:#d1d5db;font-size:13px;"></i>';
+  document.getElementById('qvStars').innerHTML = starsHtml;
+  document.getElementById('qvRatingText').innerText = rating.toFixed(1)+' out of 5 stars';
+  
+  var variants = product.variants || [];
+  variants.sort(function(a,b){
+    if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
+    if (a.flavour) return -1;
+    if (b.flavour) return 1;
+    return 0;
+  });
+  var container = document.getElementById('qvVariants');
+  container.innerHTML = '';
+  if(!variants.length){
+    container.innerHTML = '<p style="color:var(--muted);font-size:.75rem;">No variants available</p>';
+    qvSelectedVariant = null;
+    document.getElementById('qvPrice').innerHTML = 'KES 0';
+    document.getElementById('qvOldPrice').style.display = 'none';
+    document.getElementById('qvDiscount').style.display = 'none';
+    return;
+  }
+  variants.forEach(function(v){
+    var btn = document.createElement('button');
+    btn.className = 'quickview-variant-btn';
+    var flavour = v.flavour || 'Original';
+    var size = v.size || '';
+    var price = v.price || 0;
+    var discount = v.discount || 0;
+    var displayPrice = discount > 0 ? Math.round(price * (100 - discount) / 100) : price;
+    btn.innerHTML = '<span class="flavour">'+escapeHtml(flavour)+'</span><span class="size">'+escapeHtml(size)+'</span><span class="price-tag">KES '+displayPrice.toLocaleString()+'</span>';
+    btn.dataset.flavour = flavour;
+    btn.dataset.size = size;
+    btn.dataset.price = price;
+    btn.dataset.discount = discount;
+    btn.onclick = function(){
+      qvSelectVariant(flavour, size, price, discount);
+    };
+    container.appendChild(btn);
+  });
+  var first = variants[0];
+  qvSelectVariant(first.flavour || 'Original', first.size || '', first.price, first.discount || 0);
+  
+  var overlay = document.getElementById('quickviewOverlay');
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// Override the inline onclick: we'll set the onclick in renderProductCard to call a new function that gets product by id.
+// We'll define a global function getProductById.
+function getProductById(id) {
+  return allProductsCache.find(function(p){ return p._id === id; });
+}
+
+// Modify renderProductCard to use onclick="quickViewById('id')"
+// We'll redefine renderProductCard after allProductsCache is populated? Actually we can just use a function that calls qvShowProduct with the found product.
+
+function renderProductCard(p) {
+  var imgSrc = p.image ? optimizeImage(p.image, 200) : FALLBACK_IMG;
+  var price = p.variants && p.variants.length ? p.variants[0].price : 0;
+  var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
+  var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
+  
+  var cardHtml = '<div class="prod-card" onclick="quickViewById(\''+p._id+'\')">'+
+    '<div class="pc-img-wrap">'+
+      '<img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" loading="lazy" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
+      (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '')+
+    '</div>'+
+    '<div class="pc-body">'+
+      '<div class="pc-name">'+escapeHtml(p.name)+'</div>'+
+      (capacity ? '<div class="pc-vol">'+escapeHtml(capacity)+'</div>' : '')+
+      ratingHtml+
+      '<div class="pc-price-wrap"><span class="pc-price-regular">KES '+price.toLocaleString()+'</span></div>'+
+      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+price+',\''+escapeHtml(capacity)+'\',\''+escapeHtml(p.image||'')+'\')"><i class="ph ph-plus"></i> Add</button>'+
+    '</div>'+
+  '</div>';
+  return cardHtml;
+}
+
+function quickViewById(id) {
+  var product = allProductsCache.find(function(p){ return p._id === id; });
+  if(!product) { toast('Product not found'); return; }
+  qvShowProduct(product);
+}
+
+// Now update renderProductSection to use allProductsCache and call the new renderProductCard
+function renderProductSection(products, containerId, limit) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var items = products.slice(0, limit || 8);
+  if (!items.length) {
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products available</p></div>';
+    return;
+  }
+  allProductsCache = products; // store globally
   container.innerHTML = items.map(function(p){ return renderProductCard(p); }).join('');
 }
 
