@@ -1227,6 +1227,14 @@ var CART_KEY = 'liquorbelle_cart';
 var WISHLIST_KEY = 'liquorbelle_wishlist';
 
 // ============================================
+// GLOBAL VARIABLES FOR QUICK VIEW
+// ============================================
+var allProductsCache = [];
+var qvProduct = null;
+var qvSelectedVariant = null;
+var qvQuantity = 1;
+
+// ============================================
 // UTILITIES
 // ============================================
 function optimizeImage(url, width) {
@@ -1377,24 +1385,24 @@ function populateCategoryDropdown(selectId) {
 }
 
 // ============================================
-// QUICK VIEW (New)
+// QUICK VIEW FUNCTIONS
 // ============================================
-var qvProduct = null;
-var qvSelectedVariant = null;
-var qvQuantity = 1;
+function quickViewById(id) {
+  var product = allProductsCache.find(function(p){ return p._id === id; });
+  if(!product) { toast('Product not found'); return; }
+  qvShowProduct(product);
+}
 
-function openQuickView(product) {
+function qvShowProduct(product) {
   qvProduct = product;
   qvQuantity = 1;
   document.getElementById('qvQty').innerText = '1';
   
-  // Populate basic info
   document.getElementById('qvName').innerText = product.name;
   document.getElementById('qvCategory').innerText = product.category || '';
   document.getElementById('qvImage').src = product.image ? optimizeImage(product.image, 400) : FALLBACK_IMG;
   document.getElementById('qvImage').onerror = function(){ this.src = FALLBACK_IMG; };
   
-  // Rating
   var rating = product.rating || 4.0;
   var fullStars = Math.floor(rating);
   var hasHalf = rating - fullStars >= 0.5;
@@ -1406,7 +1414,6 @@ function openQuickView(product) {
   document.getElementById('qvStars').innerHTML = starsHtml;
   document.getElementById('qvRatingText').innerText = rating.toFixed(1)+' out of 5 stars';
   
-  // Variants
   var variants = product.variants || [];
   variants.sort(function(a,b){
     if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
@@ -1442,11 +1449,9 @@ function openQuickView(product) {
     };
     container.appendChild(btn);
   });
-  // Select first variant
   var first = variants[0];
   qvSelectVariant(first.flavour || 'Original', first.size || '', first.price, first.discount || 0);
   
-  // Show modal
   var overlay = document.getElementById('quickviewOverlay');
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1454,17 +1459,14 @@ function openQuickView(product) {
 
 function qvSelectVariant(flavour, size, price, discount) {
   qvSelectedVariant = { flavour: flavour, size: size, price: price, discount: discount };
-  // Update button styles
   var btns = document.querySelectorAll('.quickview-variant-btn');
   btns.forEach(function(btn){
     var isSelected = (btn.dataset.flavour === flavour && btn.dataset.size === size);
     btn.classList.toggle('selected', isSelected);
   });
-  // Update price
   var hasDiscount = discount > 0;
   var discountedPrice = hasDiscount ? Math.round(price * (100 - discount) / 100) : price;
-  var priceEl = document.getElementById('qvPrice');
-  priceEl.innerHTML = 'KES '+discountedPrice.toLocaleString();
+  document.getElementById('qvPrice').innerHTML = 'KES '+discountedPrice.toLocaleString();
   var oldEl = document.getElementById('qvOldPrice');
   var discountEl = document.getElementById('qvDiscount');
   if(hasDiscount){
@@ -1524,138 +1526,6 @@ function renderProductCard(p) {
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
   
-  // Use onclick to open quick view
-  var cardHtml = '<div class="prod-card" onclick="openQuickView(\''+p._id+'\')">'+
-    '<div class="pc-img-wrap">'+
-      '<img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" loading="lazy" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
-      (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '')+
-    '</div>'+
-    '<div class="pc-body">'+
-      '<div class="pc-name">'+escapeHtml(p.name)+'</div>'+
-      (capacity ? '<div class="pc-vol">'+escapeHtml(capacity)+'</div>' : '')+
-      ratingHtml+
-      '<div class="pc-price-wrap"><span class="pc-price-regular">KES '+price.toLocaleString()+'</span></div>'+
-      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\''+p._id+'\',\''+escapeHtml(p.name).replace(/'/g,"\\'")+'\','+price+',\''+escapeHtml(capacity)+'\',\''+escapeHtml(p.image||'')+'\')"><i class="ph ph-plus"></i> Add</button>'+
-    '</div>'+
-  '</div>';
-  return cardHtml;
-}
-
-// But we need to pass the product object, not just id. We'll store products globally.
-var allProductsCache = [];
-
-function renderProductSection(products, containerId, limit) {
-  var container = document.getElementById(containerId);
-  if (!container) return;
-  var items = products.slice(0, limit || 8);
-  if (!items.length) {
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products available</p></div>';
-    return;
-  }
-  // Store for quick view
-  allProductsCache = products;
-  container.innerHTML = items.map(function(p){ return renderProductCard(p); }).join('');
-}
-
-// Override openQuickView to accept product id
-function openQuickView(productId) {
-  var product = allProductsCache.find(function(p){ return p._id === productId; });
-  if(!product) { toast('Product not found'); return; }
-  // Use the existing openQuickView function but with product object
-  qvOpen(product);
-}
-
-// Rename the original to avoid conflict
-var qvOpen = openQuickView; // We'll reassign
-// We'll redefine openQuickView to accept productId
-// Actually we need to keep the original function but use a wrapper.
-// Let's define a new function that takes productId and uses allProductsCache.
-// We'll override the inline onclick to call this new function.
-// We'll modify the renderProductCard to call a global function that uses allProductsCache.
-
-// We'll keep the existing openQuickView for product object but rename it to qvShowProduct.
-// Then we'll create a new openQuickView that looks up by id.
-
-function qvShowProduct(product) {
-  // same as openQuickView but with product object
-  qvProduct = product;
-  qvQuantity = 1;
-  document.getElementById('qvQty').innerText = '1';
-  
-  document.getElementById('qvName').innerText = product.name;
-  document.getElementById('qvCategory').innerText = product.category || '';
-  document.getElementById('qvImage').src = product.image ? optimizeImage(product.image, 400) : FALLBACK_IMG;
-  document.getElementById('qvImage').onerror = function(){ this.src = FALLBACK_IMG; };
-  
-  var rating = product.rating || 4.0;
-  var fullStars = Math.floor(rating);
-  var hasHalf = rating - fullStars >= 0.5;
-  var starsHtml = '';
-  for(var i=0;i<fullStars;i++) starsHtml += '<i class="ph ph-star-fill star-filled" style="color:#F59E0B;font-size:13px;"></i>';
-  if(hasHalf) starsHtml += '<i class="ph ph-star-half star-filled" style="color:#F59E0B;font-size:13px;"></i>';
-  var empty = 5 - Math.ceil(rating);
-  for(var i=0;i<empty;i++) starsHtml += '<i class="ph ph-star star-empty" style="color:#d1d5db;font-size:13px;"></i>';
-  document.getElementById('qvStars').innerHTML = starsHtml;
-  document.getElementById('qvRatingText').innerText = rating.toFixed(1)+' out of 5 stars';
-  
-  var variants = product.variants || [];
-  variants.sort(function(a,b){
-    if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
-    if (a.flavour) return -1;
-    if (b.flavour) return 1;
-    return 0;
-  });
-  var container = document.getElementById('qvVariants');
-  container.innerHTML = '';
-  if(!variants.length){
-    container.innerHTML = '<p style="color:var(--muted);font-size:.75rem;">No variants available</p>';
-    qvSelectedVariant = null;
-    document.getElementById('qvPrice').innerHTML = 'KES 0';
-    document.getElementById('qvOldPrice').style.display = 'none';
-    document.getElementById('qvDiscount').style.display = 'none';
-    return;
-  }
-  variants.forEach(function(v){
-    var btn = document.createElement('button');
-    btn.className = 'quickview-variant-btn';
-    var flavour = v.flavour || 'Original';
-    var size = v.size || '';
-    var price = v.price || 0;
-    var discount = v.discount || 0;
-    var displayPrice = discount > 0 ? Math.round(price * (100 - discount) / 100) : price;
-    btn.innerHTML = '<span class="flavour">'+escapeHtml(flavour)+'</span><span class="size">'+escapeHtml(size)+'</span><span class="price-tag">KES '+displayPrice.toLocaleString()+'</span>';
-    btn.dataset.flavour = flavour;
-    btn.dataset.size = size;
-    btn.dataset.price = price;
-    btn.dataset.discount = discount;
-    btn.onclick = function(){
-      qvSelectVariant(flavour, size, price, discount);
-    };
-    container.appendChild(btn);
-  });
-  var first = variants[0];
-  qvSelectVariant(first.flavour || 'Original', first.size || '', first.price, first.discount || 0);
-  
-  var overlay = document.getElementById('quickviewOverlay');
-  overlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-// Override the inline onclick: we'll set the onclick in renderProductCard to call a new function that gets product by id.
-// We'll define a global function getProductById.
-function getProductById(id) {
-  return allProductsCache.find(function(p){ return p._id === id; });
-}
-
-// Modify renderProductCard to use onclick="quickViewById('id')"
-// We'll redefine renderProductCard after allProductsCache is populated? Actually we can just use a function that calls qvShowProduct with the found product.
-
-function renderProductCard(p) {
-  var imgSrc = p.image ? optimizeImage(p.image, 200) : FALLBACK_IMG;
-  var price = p.variants && p.variants.length ? p.variants[0].price : 0;
-  var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
-  var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
-  
   var cardHtml = '<div class="prod-card" onclick="quickViewById(\''+p._id+'\')">'+
     '<div class="pc-img-wrap">'+
       '<img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" loading="lazy" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
@@ -1672,13 +1542,16 @@ function renderProductCard(p) {
   return cardHtml;
 }
 
-function quickViewById(id) {
-  var product = allProductsCache.find(function(p){ return p._id === id; });
-  if(!product) { toast('Product not found'); return; }
-  qvShowProduct(product);
+function renderSkeletons(count, containerId){
+  var container=document.getElementById(containerId);
+  if(!container) return;
+  var skeletons='';
+  for(var i=0;i<count;i++){
+    skeletons+='<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
+  }
+  container.innerHTML=skeletons;
 }
 
-// Now update renderProductSection to use allProductsCache and call the new renderProductCard
 function renderProductSection(products, containerId, limit) {
   var container = document.getElementById(containerId);
   if (!container) return;
@@ -1687,7 +1560,7 @@ function renderProductSection(products, containerId, limit) {
     container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products available</p></div>';
     return;
   }
-  allProductsCache = products; // store globally
+  allProductsCache = products; // store globally for quick view
   container.innerHTML = items.map(function(p){ return renderProductCard(p); }).join('');
 }
 
@@ -1718,7 +1591,8 @@ function loadProductsFromAPI() {
         featuredGrid.innerHTML = msg;
       }
     })
-    .catch(function(){
+    .catch(function(err){
+      console.error('Error loading products:', err);
       var msg = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><h3>Connection Error</h3><p>Could not load products. Please refresh.</p></div>';
       newArrivalsGrid.innerHTML = msg;
       trendingGrid.innerHTML = msg;
