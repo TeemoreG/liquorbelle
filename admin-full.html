@@ -119,6 +119,8 @@ body {
   max-width: 400px;
   text-align: center;
   box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
 }
 .login-modal-card::before {
   content: '';
@@ -128,7 +130,6 @@ body {
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, var(--primary), var(--gold), var(--primary));
-  border-radius: var(--radius) var(--radius) 0 0;
 }
 .login-logo img {
   width: 70px;
@@ -147,6 +148,27 @@ body {
   color: var(--muted);
   font-size: 13px;
   margin-bottom: 24px;
+}
+.login-session-message {
+  background: var(--gold-bg);
+  border: 1px solid var(--gold-light);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  display: none;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: left;
+  align-items: center;
+  gap: 8px;
+}
+.login-session-message i {
+  color: var(--gold);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.login-session-message.show {
+  display: flex;
 }
 .password-input-wrapper {
   position: relative;
@@ -205,7 +227,64 @@ body {
 }
 
 /* ============================================
-   CSS - BUTTONS (Modern)
+   CSS - TOAST (Styled)
+   ============================================ */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--text);
+  color: white;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 3000;
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+  min-width: 200px;
+  max-width: 90%;
+  text-align: center;
+  border-left: 4px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.toast.error {
+  background: var(--red);
+  border-left-color: #7f1d1d;
+}
+.toast.success {
+  background: var(--green);
+  border-left-color: #0f4f2a;
+}
+.toast i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.toast .toast-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 4px;
+  padding: 0 4px;
+  transition: var(--transition);
+}
+.toast .toast-close:hover { color: white; }
+
+/* ============================================
+   CSS - BUTTONS
    ============================================ */
 .btn {
   background: var(--primary);
@@ -254,7 +333,7 @@ body {
   transform: translateY(-2px);
 }
 .btn-wa { background: var(--wa); color: white; }
-.btn-wa:hover { background: var(--wa-dark); }
+.btn-wa:hover { background: #1ebe5d; }
 .btn-call { background: var(--call); color: white; }
 .btn-call:hover { background: #1e40af; }
 .btn:disabled {
@@ -264,7 +343,7 @@ body {
 }
 
 /* ============================================
-   CSS - HEADER (Glass)
+   CSS - HEADER
    ============================================ */
 .admin-header {
   background: rgba(128,0,0,0.95);
@@ -352,6 +431,14 @@ body {
   background: rgba(255,255,255,0.2);
   color: white;
 }
+.session-indicator {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  background: rgba(0,0,0,0.2);
+  padding: 2px 10px;
+  border-radius: 30px;
+  white-space: nowrap;
+}
 
 /* ============================================
    CSS - CONTAINER & STATS
@@ -419,7 +506,7 @@ body {
 }
 
 /* ============================================
-   CSS - FORM CARDS (Glass)
+   CSS - FORM CARDS
    ============================================ */
 .form-card {
   background: var(--glass);
@@ -546,7 +633,7 @@ textarea { resize: vertical; }
 }
 
 /* ============================================
-   CSS - VARIANTS TABLE (with FLAVOUR after discount)
+   CSS - VARIANTS TABLE
    ============================================ */
 .variants-section { margin: 18px 0 10px; }
 .variants-label {
@@ -1068,27 +1155,6 @@ textarea { resize: vertical; }
   vertical-align: middle;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.toast {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  background: var(--text);
-  color: white;
-  padding: 12px 24px;
-  border-radius: var(--radius-sm);
-  font-size: 13.5px;
-  font-weight: 500;
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 2000;
-  pointer-events: none;
-  box-shadow: var(--shadow-lg);
-  white-space: nowrap;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast.error { background: var(--red); }
-.toast.success { background: var(--green); }
 .empty-state {
   text-align: center;
   padding: 56px 24px;
@@ -1105,6 +1171,48 @@ textarea { resize: vertical; }
   margin-bottom: 14px;
 }
 .help-text i { color: var(--gold); margin-right: 4px; }
+.inactivity-warning {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold-bg);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius-sm);
+  padding: 14px 24px;
+  box-shadow: var(--shadow-lg);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  gap: 14px;
+  max-width: 90%;
+  animation: slideUp 0.3s ease;
+}
+.inactivity-warning.show { display: flex; }
+.inactivity-warning i { font-size: 22px; color: var(--gold); flex-shrink: 0; }
+.inactivity-warning .text { font-size: 13px; color: var(--text-secondary); }
+.inactivity-warning .text strong { color: var(--primary); }
+.inactivity-warning .inactivity-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 6px 18px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 12px;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.inactivity-warning .inactivity-btn:hover {
+  background: var(--primary-light);
+  transform: scale(1.03);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
 
 /* ============================================
    CSS - RESPONSIVE
@@ -1171,6 +1279,10 @@ textarea { resize: vertical; }
       <h2>Admin <span class="gold">Login</span></h2>
       <p>Enter password to access admin panel</p>
     </div>
+    <div id="sessionExpiredMessage" class="login-session-message">
+      <i class="ph ph-clock"></i>
+      <span>Your session expired. Please log in again.</span>
+    </div>
     <form id="adminLoginForm" onsubmit="event.preventDefault(); submitAdminLogin();">
       <div class="password-input-wrapper">
         <input type="password" id="adminPassword" class="login-input" placeholder="Enter admin password" autocomplete="off">
@@ -1182,6 +1294,18 @@ textarea { resize: vertical; }
       <div id="loginError" class="login-error"></div>
     </form>
   </div>
+</div>
+
+<!-- ============================================
+   HTML - INACTIVITY WARNING
+   ============================================ -->
+<div id="inactivityWarning" class="inactivity-warning">
+  <i class="ph ph-clock"></i>
+  <div class="text">
+    <strong>Session expiring soon.</strong>
+    <span id="inactivityCountdown">30</span> seconds left. Click to stay logged in.
+  </div>
+  <button class="inactivity-btn" onclick="resetInactivityTimer()">Stay Logged In</button>
 </div>
 
 <!-- ============================================
@@ -1199,7 +1323,10 @@ textarea { resize: vertical; }
     <button class="tab" data-tab="analytics"><i class="ph ph-chart-bar"></i> Analytics</button>
     <button class="tab" data-tab="settings"><i class="ph ph-gear"></i> Settings</button>
   </div>
-  <button class="header-logout" onclick="logout()"><i class="ph ph-sign-out"></i> Logout</button>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="session-indicator" id="sessionIndicator">● Active</span>
+    <button class="header-logout" onclick="logout()"><i class="ph ph-sign-out"></i> Logout</button>
+  </div>
 </div>
 
 <!-- ============================================
@@ -1232,7 +1359,7 @@ textarea { resize: vertical; }
       </div>
     </div>
 
-    <!-- Add Product - with FLAVOUR in variants table (last column) -->
+    <!-- Add Product -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
       <div class="help-text"><i class="ph ph-info"></i> Select category first to see relevant sizes. <strong>Choose "Other"</strong> for custom sizes. Add flavour per variant (last column).</div>
@@ -1256,13 +1383,9 @@ textarea { resize: vertical; }
         </div>
         <div class="form-group"><label class="form-label">Badge</label><select id="prodBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
       </div>
-
-      <!-- Image URL -->
       <div class="form-row">
         <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="prodImage" placeholder="https://res.cloudinary.com/..."><span class="form-hint">Paste the image web address here</span></div>
       </div>
-
-      <!-- Description -->
       <div class="form-row">
         <div class="form-group" style="grid-column:1/-1;">
           <label class="form-label" for="prodDesc"><i class="ph ph-note-pencil" style="color:var(--gold);"></i> Description</label>
@@ -1270,15 +1393,12 @@ textarea { resize: vertical; }
           <span class="form-hint">Brief description of the product</span>
         </div>
       </div>
-
-      <!-- Toggles & Rating -->
       <div class="toggles-row">
         <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()"><input type="checkbox" id="prodTrending" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Trending</label></div>
         <div class="trending-toggle" onclick="document.getElementById('prodNew').click()"><input type="checkbox" id="prodNew" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-star" style="color:#1D4ED8;"></i> New Arrival</label></div>
       </div>
       <div class="rating-input"><label><i class="ph ph-star" style="color:var(--gold);"></i> Rating:</label><select id="prodRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4" selected>★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
 
-      <!-- ===== VARIANTS TABLE WITH FLAVOUR AFTER DISCOUNT ===== -->
       <div class="variants-section">
         <div class="variants-label"><i class="ph ph-ruler"></i> Variants (Size, Price, Discount, Flavour) <span id="variantCategoryHint" style="font-weight:400;color:var(--muted);font-size:11px;">(Beer sizes shown)</span></div>
         <table class="variants-table" id="variantsTable">
@@ -1447,7 +1567,7 @@ textarea { resize: vertical; }
 </div>
 
 <!-- ============================================
-   HTML - EDIT MODAL (with FLAVOUR after discount)
+   HTML - EDIT MODAL
    ============================================ -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-card">
@@ -1498,10 +1618,13 @@ textarea { resize: vertical; }
 <!-- ============================================
    HTML - TOAST
    ============================================ -->
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast">
+  <span id="toastMessage"></span>
+  <button class="toast-close" onclick="hideToast()"><i class="ph ph-x"></i></button>
+</div>
 
 <!-- ============================================
-   JAVASCRIPT - WITH FLAVOUR SUPPORT (last column)
+   JAVASCRIPT
    ============================================ -->
 <script>
 // ============================================
@@ -1605,26 +1728,149 @@ var currentDateFilter = '24h';
 var currentStatusFilter = 'all';
 
 // ============================================
-// TOAST
+// TOAST SYSTEM (Styled)
 // ============================================
+var toastTimeout = null;
+
 function showToast(msg, isError) {
   var t = document.getElementById('toast');
-  t.innerText = msg;
-  t.classList.toggle('error', isError);
-  t.classList.toggle('success', !isError);
+  var msgEl = document.getElementById('toastMessage');
+  if (!t || !msgEl) return;
+  msgEl.innerText = msg;
+  t.className = 'toast';
+  if (isError) t.classList.add('error');
+  else t.classList.add('success');
   t.classList.add('show');
-  clearTimeout(t._timeout);
-  t._timeout = setTimeout(function() {
-    t.classList.remove('show', 'error', 'success');
-  }, 3200);
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(function() {
+    hideToast();
+  }, 4000);
 }
 
+function hideToast() {
+  var t = document.getElementById('toast');
+  if (t) t.classList.remove('show', 'error', 'success');
+  clearTimeout(toastTimeout);
+}
+
+// ============================================
+// INACTIVITY TIMER (30 minutes)
+// ============================================
+var inactivityTimer = null;
+var inactivityCountdown = null;
+var countdownSeconds = 30;
+var isInactivityWarningShowing = false;
+
+function resetInactivityTimer() {
+  // Hide warning
+  var warning = document.getElementById('inactivityWarning');
+  if (warning) {
+    warning.classList.remove('show');
+    isInactivityWarningShowing = false;
+  }
+  clearTimeout(inactivityTimer);
+  clearInterval(inactivityCountdown);
+  // Reset timer for 30 minutes
+  inactivityTimer = setTimeout(function() {
+    showInactivityWarning();
+  }, 30 * 60 * 1000);
+  // Update indicator
+  updateSessionIndicator();
+}
+
+function showInactivityWarning() {
+  if (!adminToken) return;
+  var warning = document.getElementById('inactivityWarning');
+  if (!warning) return;
+  countdownSeconds = 30;
+  var countdownEl = document.getElementById('inactivityCountdown');
+  if (countdownEl) countdownEl.innerText = countdownSeconds;
+  warning.classList.add('show');
+  isInactivityWarningShowing = true;
+  // Start countdown
+  clearInterval(inactivityCountdown);
+  inactivityCountdown = setInterval(function() {
+    countdownSeconds--;
+    if (countdownEl) countdownEl.innerText = countdownSeconds;
+    if (countdownSeconds <= 0) {
+      clearInterval(inactivityCountdown);
+      warning.classList.remove('show');
+      isInactivityWarningShowing = false;
+      // Force logout with styled toast
+      showToast('⏰ Session expired due to inactivity.', true);
+      setTimeout(function() {
+        logout();
+      }, 1500);
+    }
+  }, 1000);
+}
+
+function updateSessionIndicator() {
+  var el = document.getElementById('sessionIndicator');
+  if (el) {
+    if (adminToken) {
+      el.innerHTML = '● Active';
+      el.style.color = 'rgba(255,255,255,0.6)';
+    } else {
+      el.innerHTML = '○ Offline';
+      el.style.color = 'rgba(255,255,255,0.3)';
+    }
+  }
+}
+
+// Reset inactivity timer on user activity
+var activityEvents = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+for (var e = 0; e < activityEvents.length; e++) {
+  document.addEventListener(activityEvents[e], function() {
+    if (adminToken) resetInactivityTimer();
+  });
+}
+
+// ============================================
+// GLOBAL FETCH INTERCEPTOR (403 handler)
+// ============================================
+var originalFetch = window.fetch;
+window.fetch = function() {
+  var args = arguments;
+  return originalFetch.apply(this, args)
+    .then(function(response) {
+      if (response.status === 403 || response.status === 401) {
+        // Check if this is an admin API call (not login)
+        var url = args[0];
+        if (typeof url === 'string' && url.includes('/api/')) {
+          // Clear token and redirect to login with styled toast
+          showToast('🔒 Session expired. Please log in again.', true);
+          adminToken = null;
+          localStorage.removeItem('liquorbelle_admin_token');
+          // Clear inactivity timers
+          clearTimeout(inactivityTimer);
+          clearInterval(inactivityCountdown);
+          var warning = document.getElementById('inactivityWarning');
+          if (warning) warning.classList.remove('show');
+          isInactivityWarningShowing = false;
+          // Redirect after toast
+          setTimeout(function() {
+            window.location.href = window.location.pathname + '?session=expired';
+          }, 1500);
+        }
+        return response;
+      }
+      return response;
+    });
+};
+
+// ============================================
+// ESCAPE HTML
+// ============================================
 function escapeHtml(str) {
   return str ? String(str).replace(/[&<>]/g, function(m) {
     return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m];
   }) : '';
 }
 
+// ============================================
+// AUTH HEADERS
+// ============================================
 function getAuthHeaders() {
   return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken };
 }
@@ -1759,7 +2005,9 @@ async function adminLogin(password) {
 function submitAdminLogin() {
   var password = document.getElementById('adminPassword').value;
   var errorDiv = document.getElementById('loginError');
+  var sessionMsg = document.getElementById('sessionExpiredMessage');
   errorDiv.innerText = '';
+  if (sessionMsg) sessionMsg.classList.remove('show');
   if (!password) {
     errorDiv.innerText = 'Please enter your password.';
     return;
@@ -1789,8 +2037,20 @@ document.getElementById('adminPassword').addEventListener('keydown', function(e)
   }
 });
 
+// Check for session expired query param
+if (window.location.search.includes('session=expired')) {
+  document.addEventListener('DOMContentLoaded', function() {
+    var sessionMsg = document.getElementById('sessionExpiredMessage');
+    if (sessionMsg) sessionMsg.classList.add('show');
+    // Also show styled toast
+    setTimeout(function() {
+      showToast('🔒 Your session expired. Please log in again.', true);
+    }, 500);
+  });
+}
+
 // ============================================
-// VARIANT TOGGLE & OPTIONS (with FLAVOUR last)
+// VARIANT TOGGLE & OPTIONS
 // ============================================
 function toggleVariantOther(select) {
   var td = select.parentElement;
@@ -1920,7 +2180,7 @@ function updateEditVariantOptions(category) {
 }
 
 // ============================================
-// VARIANT ROWS (with FLAVOUR after discount)
+// VARIANT ROWS
 // ============================================
 function addVariantRow() {
   var tbody = document.getElementById('variantsBody');
@@ -1946,7 +2206,7 @@ function removeVariantRow(btn) {
   if (tbody.children.length > 1) {
     btn.closest('tr').remove();
   } else {
-    showToast('At least one variant is required');
+    showToast('At least one variant is required', true);
   }
 }
 
@@ -1974,12 +2234,12 @@ function removeEditVariantRow(btn) {
   if (tbody.children.length > 1) {
     btn.closest('tr').remove();
   } else {
-    showToast('At least one variant is required');
+    showToast('At least one variant is required', true);
   }
 }
 
 // ============================================
-// PRODUCT CRUD (with FLAVOUR)
+// PRODUCT CRUD
 // ============================================
 async function addProduct() {
   var btn = document.getElementById('addProductBtn');
@@ -2168,7 +2428,7 @@ async function deleteProduct(id) {
 }
 
 // ============================================
-// BULK IMPORT (with FLAVOUR)
+// BULK IMPORT
 // ============================================
 function loadCsvFile(event) {
   var file = event.target.files[0];
@@ -2341,9 +2601,6 @@ function renderCategoryBreakdown() {
   container.innerHTML = html;
 }
 
-// ============================================
-// FIXED: updateStats()
-// ============================================
 function updateStats() {
   var trendingCount = 0, categories = {}, variantCount = 0;
   for (var i = 0; i < products.length; i++) {
@@ -2390,9 +2647,6 @@ async function loadOrders() {
   if (currentTab === 'analytics') renderAnalytics();
 }
 
-// ============================================
-// FIXED: updateOrderStats()
-// ============================================
 function updateOrderStats() {
   var paid = filteredOrders.filter(function(o) { return o.status === 'paid'; }).length;
   var delivered = filteredOrders.filter(function(o) { return o.status === 'delivered'; }).length;
@@ -2638,14 +2892,11 @@ async function updatePasswords() {
     if (data.success) {
       showToast('Passwords updated! Logging out...');
       localStorage.removeItem('liquorbelle_admin_token');
-      localStorage.removeItem('liquorbelle_cashier_token');
-      localStorage.removeItem('liquorbelle_admin_role');
       adminToken = null;
       document.getElementById('newAdminPassword').value = '';
       document.getElementById('newCashierPassword').value = '';
       setTimeout(function() {
-        alert('Passwords updated. Login with new password.');
-        location.reload();
+        window.location.href = window.location.pathname;
       }, 1500);
     } else {
       showToast(data.message || 'Error updating passwords', true);
@@ -2687,13 +2938,6 @@ if (productSearchInput) {
     renderProducts();
   });
 }
-var orderSearchInput = document.getElementById('orderSearch');
-if (orderSearchInput) {
-  orderSearchInput.addEventListener('input', function(e) {
-    orderSearch = e.target.value.toLowerCase();
-    renderOrders();
-  });
-}
 
 function clearProductSearch() {
   productSearch = '';
@@ -2701,15 +2945,15 @@ function clearProductSearch() {
   renderProducts();
 }
 
-function clearOrderSearch() {
-  orderSearch = '';
-  document.getElementById('orderSearch').value = '';
-  renderOrders();
-}
-
 function logout() {
   localStorage.removeItem('liquorbelle_admin_token');
   adminToken = null;
+  clearTimeout(inactivityTimer);
+  clearInterval(inactivityCountdown);
+  var warning = document.getElementById('inactivityWarning');
+  if (warning) warning.classList.remove('show');
+  isInactivityWarningShowing = false;
+  updateSessionIndicator();
   location.reload();
 }
 
@@ -2755,6 +2999,8 @@ async function initAdmin() {
   adminToken = localStorage.getItem('liquorbelle_admin_token');
   if (adminToken) {
     document.getElementById('adminLoginModal').style.display = 'none';
+    resetInactivityTimer();
+    updateSessionIndicator();
     await initAdminAfterLogin();
   } else {
     document.getElementById('adminLoginModal').style.display = 'flex';
@@ -2768,6 +3014,8 @@ async function initAdminAfterLogin() {
   await loadProducts();
   await loadOrders();
   await loadDeliverySettings();
+  resetInactivityTimer();
+  updateSessionIndicator();
 }
 
 initAdmin();
