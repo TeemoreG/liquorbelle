@@ -928,13 +928,12 @@ var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 var CART_KEY = 'liquorbelle_cart';
 var WISHLIST_KEY = 'liquorbelle_wishlist';
 
+// Use a fixed width for ALL product images so the browser caches the same URL
+var IMG_WIDTH = 500; // 500px is crisp enough for both cards and quick view
+
 // ============================================
 // IMAGE OPTIMIZATION
 // ============================================
-// Detect screen width once for optimal image size
-var SCREEN_W = window.screen.width * (window.devicePixelRatio || 1);
-var PROD_IMG_W = SCREEN_W < 600 ? 320 : SCREEN_W < 1024 ? 400 : 500;
-
 function cloudinaryOpt(url, width) {
   if (!url || typeof url !== 'string') return '';
   if (!url.includes('cloudinary.com')) return url;
@@ -942,7 +941,7 @@ function cloudinaryOpt(url, width) {
   if (parts.length !== 2) return url;
   // Strip existing transformations cleanly
   var publicId = parts[1].replace(/^(f_auto|q_auto|w_\d+|c_\w+|[,\/]+)+/, '');
-  return parts[0] + '/upload/f_auto,q_auto,w_' + (width || 300) + ',c_fit/' + publicId;
+  return parts[0] + '/upload/f_auto,q_auto,w_' + (width || IMG_WIDTH) + ',c_fit/' + publicId;
 }
 
 // ============================================
@@ -1164,7 +1163,7 @@ function populateCategoryDropdown(selectId) {
 }
 
 // ============================================
-// QUICK VIEW FUNCTIONS (INSTANT, NO FALLBACK)
+// QUICK VIEW FUNCTIONS
 // ============================================
 function quickViewById(id) {
   var idStr = String(id);
@@ -1212,8 +1211,8 @@ function qvShowProduct(product) {
   document.getElementById('qvName').innerText = product.name;
   document.getElementById('qvCategory').innerText = product.category || '';
 
-  // Use optimised image if available, else hide (no fallback)
-  var imgUrl = product.image ? cloudinaryOpt(product.image, 500) : '';
+  // Use the same 500px URL as the cards – already cached!
+  var imgUrl = product.image ? cloudinaryOpt(product.image) : '';
   var imgEl = document.getElementById('qvImage');
   if (imgUrl) {
     imgEl.src = imgUrl;
@@ -1234,7 +1233,6 @@ function qvShowProduct(product) {
   document.getElementById('qvStars').innerHTML = starsHtml;
   document.getElementById('qvRatingText').innerText = rating.toFixed(1) + ' out of 5 stars';
 
-  // Always hide old price and discount
   document.getElementById('qvOldPrice').style.display = 'none';
   document.getElementById('qvDiscount').style.display = 'none';
 
@@ -1330,10 +1328,28 @@ function closeQuickView(e) {
 }
 
 // ============================================
+// BACKGROUND IMAGE PRE-CACHING (Suggestion 4)
+// ============================================
+function preloadAllProductImages() {
+  if (!allProductsCache || allProductsCache.length === 0) return;
+  // Use requestIdleCallback if available, else fallback to setTimeout
+  var schedule = window.requestIdleCallback || function(cb) { setTimeout(cb, 100); };
+  schedule(function() {
+    allProductsCache.forEach(function(product) {
+      if (product.image) {
+        var img = new Image();
+        // Use the same 500px URL – it will be cached by the browser
+        img.src = cloudinaryOpt(product.image);
+      }
+    });
+  });
+}
+
+// ============================================
 // LOAD PRODUCTS FROM API
 // ============================================
 function renderProductCard(p, index) {
-  var imgSrc = p.image ? cloudinaryOpt(p.image, PROD_IMG_W) : '';
+  var imgSrc = p.image ? cloudinaryOpt(p.image) : '';
   var price = p.variants && p.variants.length ? p.variants[0].price : 0;
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>' + p.rating.toFixed(1) + '</span></div>' : '';
@@ -1388,7 +1404,6 @@ function loadProductsFromAPI() {
   renderSkeletons(4, 'trendingGrid');
   renderSkeletons(4, 'featuredGrid');
 
-  // Use AbortController with timeout
   var controller = new AbortController();
   var timeoutId = setTimeout(function(){ controller.abort(); }, 12000);
 
@@ -1404,6 +1419,8 @@ function loadProductsFromAPI() {
         renderProductSection(newArrivals.length ? newArrivals : products.slice(0, 8), 'newArrivalsGrid', 8);
         renderProductSection(trending.length ? trending : products, 'trendingGrid', 8);
         renderProductSection(featured, 'featuredGrid', 8);
+        // Preload all product images in the background
+        preloadAllProductImages();
       } else {
         var msg = '<div class="empty-state"><i class="ph ph-clock"></i><h3>Loading products</h3><p>Products will appear here shortly.</p></div>';
         newArrivalsGrid.innerHTML = msg;
@@ -1447,7 +1464,7 @@ window.addEventListener('offline', function(){ document.getElementById('offlineB
 if (!navigator.onLine) { document.getElementById('offlineBanner').classList.add('show'); }
 
 // ============================================
-// STORAGE LISTENER (cross-tab sync)
+// STORAGE LISTENER
 // ============================================
 window.addEventListener('storage', function(e) {
   if (e.key === CART_KEY) { cart = JSON.parse(e.newValue || '{}'); updateCartUI(); }
@@ -1466,7 +1483,7 @@ renderCategories();
 loadProductsFromAPI();
 updateCartUI();
 
-// No setInterval – storage event and add/remove actions handle updates.
+// No polling loop – storage event + add/remove actions handle updates.
 
 initMainSearch();
 
