@@ -1498,20 +1498,35 @@ function populateCategoryDropdown(selectId) {
 }
 
 // ============================================
-// QUICK VIEW FUNCTIONS (FIXED – fallback to API)
+// QUICK VIEW FUNCTIONS (INSTANT, NO TOAST)
 // ============================================
 function quickViewById(id) {
   var idStr = String(id);
   
-  // First, try to find in cache
+  // Try to find in cache first
   var product = allProductsCache.find(function(p){ return String(p._id) === idStr; });
   if (product) {
     qvShowProduct(product);
     return;
   }
   
-  // Not in cache – fetch from API
-  toast('Loading product...');
+  // If not in cache, show a loading state inside the modal
+  var overlay = document.getElementById('quickviewOverlay');
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  // Show a spinner/loading message in the quickview
+  document.getElementById('qvName').innerText = 'Loading...';
+  document.getElementById('qvCategory').innerText = '';
+  document.getElementById('qvImage').src = '';
+  document.getElementById('qvPrice').innerHTML = 'Loading...';
+  document.getElementById('qvStars').innerHTML = '';
+  document.getElementById('qvRatingText').innerText = '';
+  document.getElementById('qvVariants').innerHTML = '';
+  document.getElementById('qvOldPrice').style.display = 'none';
+  document.getElementById('qvDiscount').style.display = 'none';
+  
+  // Fetch from API
   fetch(API_BASE + '/api/db/products/' + idStr)
     .then(function(res){ return res.json(); })
     .then(function(data){
@@ -1521,10 +1536,12 @@ function quickViewById(id) {
         qvShowProduct(data.product);
       } else {
         toast('Product not found');
+        closeQuickView();
       }
     })
     .catch(function(){
       toast('Error loading product');
+      closeQuickView();
     });
 }
 
@@ -1661,7 +1678,6 @@ function renderProductCard(p) {
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
   
-  // FIX: convert _id to string to avoid [object Object]
   var cardHtml = '<div class="prod-card" onclick="quickViewById(\'' + String(p._id) + '\')">'+
     '<div class="pc-img-wrap">'+
       '<img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" loading="lazy" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
@@ -1779,7 +1795,7 @@ renderCategories();
 loadProductsFromAPI();
 updateCartUI();
 setInterval(updateCartUI,3000);
-initMainSearch(); // initialise the persistent search bar
+initMainSearch();
 
 console.log('🚀 LiquorBelle ready — products loaded from database.');
 console.log('📦 Categories loaded:', categories.length);
