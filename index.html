@@ -307,13 +307,14 @@ a{color:inherit;text-decoration:none;}
   position:relative;overflow:hidden;background:var(--bg);cursor:pointer;
   aspect-ratio:1/1;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:var(--bg);
 }
 .pc-img{
   width:100%;height:100%;object-fit:contain;display:block;
-  transition:transform .4s cubic-bezier(0.4,0,0.2,1);background:var(--bg);padding:8px;
+  transition:transform .4s cubic-bezier(0.4,0,0.2,1);
+  background:transparent;
+  padding:8px;
 }
-.pc-img.img-loading{opacity:0;}
-.pc-img.img-loaded{opacity:1;transition:opacity .25s ease, transform .4s cubic-bezier(0.4,0,0.2,1);}
 .prod-card:hover .pc-img{transform:scale(1.03);}
 .badge-new{
   position:absolute;top:8px;left:8px;background:var(--gold);color:#fff;
@@ -927,21 +928,36 @@ a{color:inherit;text-decoration:none;}
 var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 var CART_KEY = 'liquorbelle_cart';
 var WISHLIST_KEY = 'liquorbelle_wishlist';
-
-// Use a fixed width for ALL product images so the browser caches the same URL
-var IMG_WIDTH = 500; // 500px is crisp enough for both cards and quick view
+var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_300,c_fit/v1781119164/liqbb_goc41e.png';
 
 // ============================================
-// IMAGE OPTIMIZATION
+// IMAGE OPTIMIZATION – RESPONSIVE srcset
 // ============================================
 function cloudinaryOpt(url, width) {
   if (!url || typeof url !== 'string') return '';
   if (!url.includes('cloudinary.com')) return url;
   var parts = url.split('/upload/');
   if (parts.length !== 2) return url;
-  // Strip existing transformations cleanly
   var publicId = parts[1].replace(/^(f_auto|q_auto|w_\d+|c_\w+|[,\/]+)+/, '');
-  return parts[0] + '/upload/f_auto,q_auto,w_' + (width || IMG_WIDTH) + ',c_fit/' + publicId;
+  return parts[0] + '/upload/f_auto,q_auto,w_' + (width || 500) + ',c_fit/' + publicId;
+}
+
+function getResponsiveImage(url) {
+  if (!url || typeof url !== 'string' || !url.includes('cloudinary.com')) {
+    return { src: url || FALLBACK_IMG, srcset: '', sizes: '' };
+  }
+  var parts = url.split('/upload/');
+  if (parts.length !== 2) return { src: url, srcset: '', sizes: '' };
+  var publicId = parts[1].replace(/^(f_auto|q_auto|w_\d+|c_\w+|[,\/]+)+/, '');
+  var base = parts[0] + '/upload/f_auto,q_auto,fl_progressive,c_fit/';
+  return {
+    src: base + 'w_400/' + publicId,
+    srcset: base + 'w_200/' + publicId + ' 200w, ' +
+             base + 'w_400/' + publicId + ' 400w, ' +
+             base + 'w_600/' + publicId + ' 600w, ' +
+             base + 'w_800/' + publicId + ' 800w',
+    sizes: '(max-width: 400px) 200px, (max-width: 800px) 400px, 600px'
+  };
 }
 
 // ============================================
@@ -1173,7 +1189,6 @@ function quickViewById(id) {
     return;
   }
 
-  // Loading state
   var overlay = document.getElementById('quickviewOverlay');
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1211,12 +1226,12 @@ function qvShowProduct(product) {
   document.getElementById('qvName').innerText = product.name;
   document.getElementById('qvCategory').innerText = product.category || '';
 
-  // Use the same 500px URL as the cards – already cached!
-  var imgUrl = product.image ? cloudinaryOpt(product.image) : '';
+  var imgUrl = product.image ? cloudinaryOpt(product.image, 600) : '';
   var imgEl = document.getElementById('qvImage');
   if (imgUrl) {
     imgEl.src = imgUrl;
     imgEl.style.display = 'block';
+    imgEl.setAttribute('fetchpriority', 'high');
   } else {
     imgEl.src = '';
     imgEl.style.display = 'none';
@@ -1328,16 +1343,32 @@ function closeQuickView(e) {
 }
 
 // ============================================
-// BACKGROUND IMAGE PRE-CACHING
+// BACKGROUND IMAGE PRE-CACHING & PRELOAD
 // ============================================
-function preloadAllProductImages() {
-  if (!allProductsCache || allProductsCache.length === 0) return;
+function preloadProductImages(products) {
+  if (!products || !products.length) return;
+  // Preload first 20 images with a moderate width (400px)
+  var preloadCount = Math.min(20, products.length);
+  for (var i = 0; i < preloadCount; i++) {
+    var p = products[i];
+    if (p.image) {
+      var url = cloudinaryOpt(p.image, 400);
+      if (url) {
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = url;
+        document.head.appendChild(link);
+      }
+    }
+  }
+  // Background preload for all using Image object (lower priority)
   var schedule = window.requestIdleCallback || function(cb) { setTimeout(cb, 100); };
   schedule(function() {
-    allProductsCache.forEach(function(product) {
+    products.forEach(function(product) {
       if (product.image) {
         var img = new Image();
-        img.src = cloudinaryOpt(product.image);
+        img.src = cloudinaryOpt(product.image, 400);
       }
     });
   });
@@ -1347,17 +1378,17 @@ function preloadAllProductImages() {
 // LOAD PRODUCTS FROM API
 // ============================================
 function renderProductCard(p, index) {
-  var imgSrc = p.image ? cloudinaryOpt(p.image) : '';
+  var imgData = getResponsiveImage(p.image);
   var price = p.variants && p.variants.length ? p.variants[0].price : 0;
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>' + p.rating.toFixed(1) + '</span></div>' : '';
 
-  var loadingAttr = index < 4 ? 'loading="eager"' : 'loading="lazy"';
+  var loadingAttr = index < 12 ? 'loading="eager"' : 'loading="lazy"';
+  var fetchPriority = index < 8 ? 'fetchpriority="high"' : '';
 
-  // Use data-product-id instead of inline onclick
   var cardHtml = '<div class="prod-card" data-product-id="' + String(p._id) + '">' +
     '<div class="pc-img-wrap">' +
-      (imgSrc ? '<img class="pc-img img-loading" src="' + imgSrc + '" alt="' + escapeHtml(p.name) + '" ' + loadingAttr + ' decoding="async" onload="this.classList.remove(\'img-loading\');this.classList.add(\'img-loaded\')">' : '') +
+      (imgData.src ? '<img class="pc-img" src="' + imgData.src + '" srcset="' + imgData.srcset + '" sizes="' + imgData.sizes + '" alt="' + escapeHtml(p.name) + '" ' + loadingAttr + ' ' + fetchPriority + ' decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'">' : '') +
       (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '') +
     '</div>' +
     '<div class="pc-body">' +
@@ -1417,7 +1448,7 @@ function loadProductsFromAPI() {
         renderProductSection(newArrivals.length ? newArrivals : products.slice(0, 8), 'newArrivalsGrid', 8);
         renderProductSection(trending.length ? trending : products, 'trendingGrid', 8);
         renderProductSection(featured, 'featuredGrid', 8);
-        preloadAllProductImages();
+        preloadProductImages(products);
       } else {
         var msg = '<div class="empty-state"><i class="ph ph-clock"></i><h3>Loading products</h3><p>Products will appear here shortly.</p></div>';
         newArrivalsGrid.innerHTML = msg;
@@ -1490,11 +1521,25 @@ populateCategoryDropdown('categoryDropdown');
 renderCategories();
 loadProductsFromAPI();
 updateCartUI();
-
 initMainSearch();
 
 console.log('🚀 LiquorBelle ready — products loaded from database.');
 console.log('📦 Categories loaded:', categories.length);
+
+// ============================================
+// SERVICE WORKER REGISTRATION
+// ============================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg) {
+        console.log('[SW] Registered successfully:', reg);
+      })
+      .catch(function(err) {
+        console.log('[SW] Registration failed:', err);
+      });
+  });
+}
 </script>
 </body>
 </html>

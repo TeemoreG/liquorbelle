@@ -15,13 +15,11 @@
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
 <link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
-<link rel="preconnect" href="https://maps.googleapis.com">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
 <style>
-/* ===== YOUR EXISTING STYLES (unchanged) ===== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --primary:#800000;
@@ -882,47 +880,6 @@ function optimizeImage(url, width) {
     return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
 }
 
-// ==================== GOOGLE MAPS GEOCODING ====================
-const GMAPS_API_KEY = 'AIzaSyC4-tuGhQ0Ww1SjycD7nup7LA_G9hNB-l8';
-
-function getAddressFromCoords(lat, lng) {
-  var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + lng + '&key=' + GMAPS_API_KEY;
-  return fetch(url)
-    .then(function(res){ return res.json(); })
-    .then(function(data){
-      if (data.status === 'OK' && data.results && data.results.length > 0) {
-        var result = data.results[0];
-        var fullAddress = result.formatted_address;
-        // Extract area (suburb/locality/neighborhood)
-        var area = '';
-        if (result.address_components) {
-          for (var i = 0; i < result.address_components.length; i++) {
-            var comp = result.address_components[i];
-            var types = comp.types;
-            if (types.indexOf('sublocality') !== -1 || types.indexOf('neighborhood') !== -1 || types.indexOf('locality') !== -1) {
-              area = comp.long_name;
-              break;
-            }
-          }
-          if (!area) {
-            // fallback: use city or administrative area
-            for (var j = 0; j < result.address_components.length; j++) {
-              var comp2 = result.address_components[j];
-              if (comp2.types.indexOf('administrative_area_level_2') !== -1 || comp2.types.indexOf('administrative_area_level_1') !== -1) {
-                area = comp2.long_name;
-                break;
-              }
-            }
-          }
-        }
-        if (!area) area = 'Nairobi';
-        return { street: fullAddress, area: area };
-      }
-      return null;
-    })
-    .catch(function(){ return null; });
-}
-
 // ==================== HEADER MENU & SEARCH ====================
 function openMobileMenu(){
   document.getElementById('mobileMenu').classList.add('open');
@@ -1033,7 +990,29 @@ function loadDeliverySettings() {
     .catch(function(){});
 }
 
-// Location PIN with Google Maps
+// ==================== GEOCODING VIA BACKEND ====================
+function getAddressFromCoords(lat, lng) {
+  return fetch(API_BASE_URL + '/api/geocode/reverse', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lat: lat, lng: lng })
+  })
+  .then(function(res){ return res.json(); })
+  .then(function(data){
+    if (data && data.address) {
+      var addr = data.address;
+      var parts = [];
+      if (addr.road) parts.push(addr.road);
+      var area = addr.suburb || addr.neighbourhood || addr.town || addr.city || 'Nairobi';
+      var street = parts.join(', ') || data.display_name || '';
+      return { street: street, area: area };
+    }
+    return null;
+  })
+  .catch(function(){ return null; });
+}
+
+// Location PIN
 document.getElementById('getLocationBtn').addEventListener('click', function() {
   var statusDiv = document.getElementById('locationStatus');
   statusDiv.innerHTML = '<span class="spinner"></span> Getting your exact location...';
@@ -1057,7 +1036,7 @@ document.getElementById('getLocationBtn').addEventListener('click', function() {
         statusDiv.innerHTML = '✅ Location found: ' + result.area;
         statusDiv.style.color = '#2ecc71';
         setTimeout(function(){ statusDiv.innerHTML = ''; }, 4000);
-        renderCartSummary(); // recalc delivery fee
+        renderCartSummary();
       } else {
         statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
         statusDiv.style.color = '#e03131';
