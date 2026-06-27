@@ -265,7 +265,7 @@ a{color:inherit;text-decoration:none;}
 .hero-content .shop-btn:active{transform:scale(0.96);}
 .hero-content .shop-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(128,0,0,0.35);}
 
-/* ===== NEW SEARCH BAR (mobile & desktop) ===== */
+/* ===== NEW SEARCH BAR ===== */
 .search-section{
   padding:12px 4% 0;
 }
@@ -1040,7 +1040,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ===== NEW SEARCH BAR (visible on all devices) ===== -->
+<!-- ===== NEW SEARCH BAR ===== -->
 <div class="search-section">
   <div class="search-box">
     <i class="ph ph-magnifying-glass"></i>
@@ -1390,11 +1390,9 @@ function initMainSearch() {
   var clearBtn = document.getElementById('mainSearchClear');
   if (!input) return;
   
-  // Sync with header/mobile search inputs
   input.addEventListener('input', function() {
     var val = this.value.trim();
     if (val.length > 0) { clearBtn.style.display = 'block'; } else { clearBtn.style.display = 'none'; }
-    // Also sync header and mobile inputs (optional)
     var headerInput = document.getElementById('headerSearchInput');
     if (headerInput) headerInput.value = val;
     var mobileInput = document.getElementById('mobileSearchInput');
@@ -1413,7 +1411,6 @@ function initMainSearch() {
     input.value = '';
     clearBtn.style.display = 'none';
     input.focus();
-    // Sync clearing
     var headerInput = document.getElementById('headerSearchInput');
     if (headerInput) headerInput.value = '';
     var mobileInput = document.getElementById('mobileSearchInput');
@@ -1428,7 +1425,6 @@ function clearMainSearch() {
     input.value = '';
     clearBtn.style.display = 'none';
     input.focus();
-    // Sync
     var headerInput = document.getElementById('headerSearchInput');
     if (headerInput) headerInput.value = '';
     var mobileInput = document.getElementById('mobileSearchInput');
@@ -1497,11 +1493,18 @@ function populateCategoryDropdown(selectId) {
 }
 
 // ============================================
-// QUICK VIEW FUNCTIONS
+// QUICK VIEW FUNCTIONS (FIXED)
 // ============================================
 function quickViewById(id) {
-  var product = allProductsCache.find(function(p){ return p._id === id; });
-  if(!product) { toast('Product not found'); return; }
+  // Convert id to string for safe comparison
+  var idStr = String(id);
+  var product = allProductsCache.find(function(p){ return String(p._id) === idStr; });
+  if(!product) {
+    toast('Product not found');
+    // Optional: try to fetch the product individually
+    // For now, just show a message
+    return;
+  }
   qvShowProduct(product);
 }
 
@@ -1638,7 +1641,8 @@ function renderProductCard(p) {
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
   
-  var cardHtml = '<div class="prod-card" onclick="quickViewById(\''+p._id+'\')">'+
+  // Use data attribute for product ID – this avoids inline onclick issues
+  var cardHtml = '<div class="prod-card" data-product-id="'+p._id+'">'+
     '<div class="pc-img-wrap">'+
       '<img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" loading="lazy" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
       (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '')+
@@ -1672,9 +1676,23 @@ function renderProductSection(products, containerId, limit) {
     container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products available</p></div>';
     return;
   }
-  allProductsCache = products; // store globally for quick view
+  // Update the global cache with ALL products (not just the sliced ones)
+  allProductsCache = products;
   container.innerHTML = items.map(function(p){ return renderProductCard(p); }).join('');
+
+  // After rendering, attach click listeners to each card using event delegation
+  // We'll use a single delegated listener on the container instead.
+  // But since we have multiple containers, we'll add a global listener.
 }
+
+// Global delegated click handler for product cards
+document.addEventListener('click', function(e) {
+  var card = e.target.closest('.prod-card');
+  if (card && card.dataset.productId) {
+    var id = card.dataset.productId;
+    quickViewById(id);
+  }
+});
 
 function loadProductsFromAPI() {
   var featuredGrid = document.getElementById('featuredGrid');
@@ -1755,7 +1773,7 @@ renderCategories();
 loadProductsFromAPI();
 updateCartUI();
 setInterval(updateCartUI,3000);
-initMainSearch(); // initialise the persistent search bar
+initMainSearch();
 
 console.log('🚀 LiquorBelle ready — products loaded from database.');
 console.log('📦 Categories loaded:', categories.length);
