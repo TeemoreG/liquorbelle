@@ -990,7 +990,7 @@ function loadDeliverySettings() {
     .catch(function(){});
 }
 
-// ==================== GEOCODING VIA BACKEND ====================
+// ==================== GEOCODING VIA BACKEND (CONCISE PARSING) ====================
 function getAddressFromCoords(lat, lng) {
   return fetch(API_BASE_URL + '/api/geocode/reverse', {
     method: 'POST',
@@ -1001,11 +1001,31 @@ function getAddressFromCoords(lat, lng) {
   .then(function(data){
     if (data && data.address) {
       var addr = data.address;
-      var parts = [];
-      if (addr.road) parts.push(addr.road);
-      var area = addr.suburb || addr.neighbourhood || addr.town || addr.city || 'Nairobi';
-      var street = parts.join(', ') || data.display_name || '';
-      return { street: street, area: area };
+      
+      // --- Extract road/street ---
+      var street = addr.road || addr.pedestrian || addr.footway || '';
+      // If no road, try neighbourhood or suburb as last resort
+      if (!street) {
+        street = addr.neighbourhood || addr.suburb || addr.city || '';
+      }
+      
+      // --- Extract area (suburb/neighbourhood/town/city) ---
+      var area = addr.suburb || addr.neighbourhood || addr.village || addr.town || addr.city || '';
+      // If area is still empty, fall back to county or state
+      if (!area) {
+        area = addr.county || addr.state || addr.region || '';
+      }
+      // If still empty, use 'Nairobi' as default
+      if (!area) area = 'Nairobi';
+      
+      // Clean up: if area has "ward" or "division", keep only the main name
+      // (e.g., "Waithaka ward" -> "Waithaka")
+      var areaClean = area.replace(/\s*(ward|division|sub-county|constituency|location)\s*/i, '').trim();
+      
+      return { 
+        street: street || 'Location found', 
+        area: areaClean || 'Nairobi'
+      };
     }
     return null;
   })
