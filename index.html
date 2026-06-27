@@ -19,7 +19,6 @@
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
 <style>
-/* ===== YOUR FULL CSS (unchanged) ===== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --primary:#800000;
@@ -571,31 +570,57 @@ a{color:inherit;text-decoration:none;}
 .quickview-price .old{font-size:.85rem;color:var(--muted);text-decoration:line-through;margin-right:10px;}
 .quickview-price .new{font-size:1.6rem;font-weight:800;color:var(--sale-red);}
 .quickview-price .discount-badge{background:var(--btn-green);color:white;padding:2px 12px;border-radius:30px;font-size:.65rem;margin-left:8px;}
+
+/* ===== CLEAN VARIANT BUTTONS (Quick View) ===== */
 .quickview-variants{
   display:flex;
   flex-wrap:wrap;
-  gap:6px;
+  gap:8px;
   margin:6px 0;
 }
 .quickview-variant-btn{
-  padding:6px 14px;
+  padding:8px 16px;
   border:1.5px solid var(--border);
   border-radius:30px;
   background:white;
-  font-size:.7rem;
+  font-size:.75rem;
   font-weight:600;
   cursor:pointer;
   transition:all .2s;
   text-align:center;
   line-height:1.3;
+  min-width:80px;
+  flex:1 0 auto;
+  max-width:140px;
 }
-.quickview-variant-btn:hover{border-color:var(--btn-green);}
-.quickview-variant-btn.selected{background:var(--primary);color:white;border-color:var(--primary);}
-.quickview-variant-btn .flavour{display:block;font-weight:700;}
-.quickview-variant-btn .size{font-weight:400;font-size:.6rem;color:var(--muted);}
-.quickview-variant-btn.selected .size{color:rgba(255,255,255,0.8);}
-.quickview-variant-btn .price-tag{font-size:.6rem;font-weight:700;color:var(--sale-red);}
-.quickview-variant-btn.selected .price-tag{color:rgba(255,255,255,0.9);}
+.quickview-variant-btn:hover{
+  border-color:var(--btn-green);
+  transform:translateY(-2px);
+  box-shadow:0 2px 12px rgba(34,197,94,0.15);
+}
+.quickview-variant-btn .flavour{
+  display:block;
+  font-weight:700;
+  font-size:.8rem;
+}
+.quickview-variant-btn .size{
+  display:block;
+  font-weight:400;
+  font-size:.6rem;
+  color:var(--muted);
+}
+.quickview-variant-btn.selected{
+  background:var(--primary);
+  color:white;
+  border-color:var(--primary);
+  box-shadow:0 4px 16px rgba(128,0,0,0.25);
+}
+.quickview-variant-btn.selected .size{
+  color:rgba(255,255,255,0.8);
+}
+.quickview-variant-btn:active{
+  transform:scale(0.95);
+}
 
 .quickview-qty{
   display:flex;
@@ -1258,7 +1283,7 @@ a{color:inherit;text-decoration:none;}
           <span class="text" id="qvRatingText"></span>
         </div>
         <div class="quickview-price">
-          <span class="old" id="qvOldPrice"></span>
+          <span class="old" id="qvOldPrice" style="display:none;"></span>
           <span class="new" id="qvPrice">KES 0</span>
           <span class="discount-badge" id="qvDiscount" style="display:none;"></span>
         </div>
@@ -1391,11 +1416,9 @@ function initMainSearch() {
   var clearBtn = document.getElementById('mainSearchClear');
   if (!input) return;
   
-  // Sync with header/mobile search inputs
   input.addEventListener('input', function() {
     var val = this.value.trim();
     if (val.length > 0) { clearBtn.style.display = 'block'; } else { clearBtn.style.display = 'none'; }
-    // Also sync header and mobile inputs (optional)
     var headerInput = document.getElementById('headerSearchInput');
     if (headerInput) headerInput.value = val;
     var mobileInput = document.getElementById('mobileSearchInput');
@@ -1414,7 +1437,6 @@ function initMainSearch() {
     input.value = '';
     clearBtn.style.display = 'none';
     input.focus();
-    // Sync clearing
     var headerInput = document.getElementById('headerSearchInput');
     if (headerInput) headerInput.value = '';
     var mobileInput = document.getElementById('mobileSearchInput');
@@ -1429,7 +1451,6 @@ function clearMainSearch() {
     input.value = '';
     clearBtn.style.display = 'none';
     input.focus();
-    // Sync
     var headerInput = document.getElementById('headerSearchInput');
     if (headerInput) headerInput.value = '';
     var mobileInput = document.getElementById('mobileSearchInput');
@@ -1498,24 +1519,22 @@ function populateCategoryDropdown(selectId) {
 }
 
 // ============================================
-// QUICK VIEW FUNCTIONS (INSTANT, NO TOAST)
+// QUICK VIEW FUNCTIONS (FIXED)
 // ============================================
 function quickViewById(id) {
   var idStr = String(id);
   
-  // Try to find in cache first
   var product = allProductsCache.find(function(p){ return String(p._id) === idStr; });
   if (product) {
     qvShowProduct(product);
     return;
   }
   
-  // If not in cache, show a loading state inside the modal
+  // Show loading state
   var overlay = document.getElementById('quickviewOverlay');
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
   
-  // Show a spinner/loading message in the quickview
   document.getElementById('qvName').innerText = 'Loading...';
   document.getElementById('qvCategory').innerText = '';
   document.getElementById('qvImage').src = '';
@@ -1526,12 +1545,10 @@ function quickViewById(id) {
   document.getElementById('qvOldPrice').style.display = 'none';
   document.getElementById('qvDiscount').style.display = 'none';
   
-  // Fetch from API
   fetch(API_BASE + '/api/db/products/' + idStr)
     .then(function(res){ return res.json(); })
     .then(function(data){
       if (data.success && data.product) {
-        // Add to cache for next time
         allProductsCache.push(data.product);
         qvShowProduct(data.product);
       } else {
@@ -1552,7 +1569,7 @@ function qvShowProduct(product) {
   
   document.getElementById('qvName').innerText = product.name;
   document.getElementById('qvCategory').innerText = product.category || '';
-  document.getElementById('qvImage').src = product.image ? optimizeImage(product.image, 400) : FALLBACK_IMG;
+  document.getElementById('qvImage').src = product.image ? product.image : FALLBACK_IMG;
   document.getElementById('qvImage').onerror = function(){ this.src = FALLBACK_IMG; };
   
   var rating = product.rating || 4.0;
@@ -1565,6 +1582,10 @@ function qvShowProduct(product) {
   for(var i=0;i<empty;i++) starsHtml += '<i class="ph ph-star star-empty" style="color:#d1d5db;font-size:13px;"></i>';
   document.getElementById('qvStars').innerHTML = starsHtml;
   document.getElementById('qvRatingText').innerText = rating.toFixed(1)+' out of 5 stars';
+  
+  // HIDE old price and discount always
+  document.getElementById('qvOldPrice').style.display = 'none';
+  document.getElementById('qvDiscount').style.display = 'none';
   
   var variants = product.variants || [];
   variants.sort(function(a,b){
@@ -1579,8 +1600,6 @@ function qvShowProduct(product) {
     container.innerHTML = '<p style="color:var(--muted);font-size:.75rem;">No variants available</p>';
     qvSelectedVariant = null;
     document.getElementById('qvPrice').innerHTML = 'KES 0';
-    document.getElementById('qvOldPrice').style.display = 'none';
-    document.getElementById('qvDiscount').style.display = 'none';
     return;
   }
   variants.forEach(function(v){
@@ -1590,8 +1609,8 @@ function qvShowProduct(product) {
     var size = v.size || '';
     var price = v.price || 0;
     var discount = v.discount || 0;
-    var displayPrice = discount > 0 ? Math.round(price * (100 - discount) / 100) : price;
-    btn.innerHTML = '<span class="flavour">'+escapeHtml(flavour)+'</span><span class="size">'+escapeHtml(size)+'</span><span class="price-tag">KES '+displayPrice.toLocaleString()+'</span>';
+    // No price tag inside button - just flavour and size
+    btn.innerHTML = '<span class="flavour">'+escapeHtml(flavour)+'</span><span class="size">'+escapeHtml(size)+'</span>';
     btn.dataset.flavour = flavour;
     btn.dataset.size = size;
     btn.dataset.price = price;
@@ -1619,17 +1638,9 @@ function qvSelectVariant(flavour, size, price, discount) {
   var hasDiscount = discount > 0;
   var discountedPrice = hasDiscount ? Math.round(price * (100 - discount) / 100) : price;
   document.getElementById('qvPrice').innerHTML = 'KES '+discountedPrice.toLocaleString();
-  var oldEl = document.getElementById('qvOldPrice');
-  var discountEl = document.getElementById('qvDiscount');
-  if(hasDiscount){
-    oldEl.style.display = 'inline';
-    oldEl.innerHTML = 'KES '+price.toLocaleString();
-    discountEl.style.display = 'inline';
-    discountEl.innerHTML = '-'+discount+'%';
-  } else {
-    oldEl.style.display = 'none';
-    discountEl.style.display = 'none';
-  }
+  // Always hide old price and discount
+  document.getElementById('qvOldPrice').style.display = 'none';
+  document.getElementById('qvDiscount').style.display = 'none';
 }
 
 function qvChangeQty(delta) {
@@ -1673,7 +1684,8 @@ function closeQuickView(e) {
 // LOAD PRODUCTS FROM API
 // ============================================
 function renderProductCard(p) {
-  var imgSrc = p.image ? optimizeImage(p.image, 200) : FALLBACK_IMG;
+  // Use direct URL - no optimization to avoid flicker
+  var imgSrc = p.image ? p.image : FALLBACK_IMG;
   var price = p.variants && p.variants.length ? p.variants[0].price : 0;
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
@@ -1712,8 +1724,18 @@ function renderProductSection(products, containerId, limit) {
     container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products available</p></div>';
     return;
   }
-  allProductsCache = products; // store globally for quick view
+  allProductsCache = products;
   container.innerHTML = items.map(function(p){ return renderProductCard(p); }).join('');
+}
+
+// Preload images for faster display
+function preloadProductImages(products) {
+  products.slice(0, 20).forEach(function(p) {
+    if (p.image) {
+      var img = new Image();
+      img.src = p.image;
+    }
+  });
 }
 
 function loadProductsFromAPI() {
@@ -1736,6 +1758,8 @@ function loadProductsFromAPI() {
         renderProductSection(newArrivals.length ? newArrivals : products.slice(0, 8), 'newArrivalsGrid', 8);
         renderProductSection(trending.length ? trending : products, 'trendingGrid', 8);
         renderProductSection(featured, 'featuredGrid', 8);
+        // Preload images for faster display
+        preloadProductImages(products);
       } else {
         var msg = '<div class="empty-state"><i class="ph ph-clock"></i><h3>Loading products</h3><p>Products will appear here shortly.</p></div>';
         newArrivalsGrid.innerHTML = msg;
