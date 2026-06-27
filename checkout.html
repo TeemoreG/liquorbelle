@@ -372,6 +372,21 @@ a{color:inherit;text-decoration:none;}
 .location-helper{display:block;margin-top:4px;font-size:10px;color:var(--muted);}
 .location-helper i{margin-right:4px;}
 
+/* ===== NEW: Delivery Area Field ===== */
+.delivery-area-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.delivery-area-row input{flex:1;}
+.area-hint{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:4px;
+  display:block;
+}
+.area-hint i{margin-right:4px;}
+
 /* Payment Options - M-PESA ONLY */
 .payment-section-title{
   font-size:1.1rem;
@@ -727,7 +742,7 @@ a{color:inherit;text-decoration:none;}
       <div class="cart-items-scroll" id="cartSummaryItems"></div>
       <div class="summary-calc">
         <div class="summary-row"><span>Subtotal</span><span id="subtotalAmount">KES 0</span></div>
-        <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 150</span></div>
+        <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 0</span></div>
         <div class="free-delivery-note" id="freeDeliveryNote"></div>
         <div class="summary-row total"><span>Total</span><span id="totalAmount">KES 0</span></div>
       </div>
@@ -783,6 +798,15 @@ a{color:inherit;text-decoration:none;}
       <div class="form-group">
         <label>Building / Apartment Name</label>
         <input type="text" id="building" placeholder="e.g. Quickmart Plaza">
+      </div>
+
+      <!-- ===== NEW: Delivery Area Input ===== -->
+      <div class="form-group">
+        <label>Delivery Area (e.g. Dagoretti, Karen, Westlands) *</label>
+        <div class="delivery-area-row">
+          <input type="text" id="deliveryArea" placeholder="e.g. Dagoretti" value="Dagoretti">
+        </div>
+        <span class="area-hint"><i class="ph ph-map-pin"></i> Your area determines the delivery fee. We'll auto‑detect it with a location API soon.</span>
       </div>
       
       <div class="payment-section-title"><i class="ph ph-credit-card"></i> Payment Method</div>
@@ -907,6 +931,34 @@ var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, deliv
 var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 var selectedPayment = 'mpesa';
 
+// ===== Area Delivery Fee Mapping (client-side for now) =====
+var areaDeliveryFees = {
+  'dagoretti': 0,
+  'karen': 50,
+  'westlands': 100,
+  'cbd': 80,
+  'upperhill': 70,
+  'kilimani': 60,
+  'lavington': 80,
+  'kileleshwa': 70,
+  'rongai': 120,
+  'ngong': 150,
+  'south b': 100,
+  'langata': 130,
+  'waithaka': 140,
+  'kikuyu': 160,
+  'runda': 180
+};
+
+function getDeliveryFee(area) {
+  if (!area) return deliverySettings.delivery_fee;
+  var key = area.trim().toLowerCase();
+  var fee = areaDeliveryFees[key];
+  if (fee !== undefined) return fee;
+  // if area not found, use default
+  return deliverySettings.delivery_fee;
+}
+
 // ==================== TOAST ====================
 function toast(msg, isError) {
   isError = isError || false;
@@ -932,6 +984,15 @@ function updateCartUI(){
   if(headerCount) headerCount.innerText = count;
   var cartBadge = document.getElementById('cartBadgeCount');
   if(cartBadge) cartBadge.innerText = count;
+
+  // Update cart drawer total
+  var totals = calculateTotals();
+  var cartTotalEl = document.getElementById('cartTotalAmount');
+  if (cartTotalEl) {
+    cartTotalEl.innerText = 'KES ' + totals.total.toLocaleString();
+  }
+  
+  // Update order summary
   renderCartSummary();
 }
 
@@ -1049,12 +1110,24 @@ function calculateTotals() {
   for (var i = 0; i < items.length; i++) {
     subtotal = subtotal + items[i].price * items[i].qty;
   }
+  // Get area from input
+  var areaInput = document.getElementById('deliveryArea');
+  var area = areaInput ? areaInput.value.trim() : '';
+  var baseDelivery = getDeliveryFee(area);
   var delivery = 0;
   var isFreeDelivery = false;
-  if (deliverySettings.delivery_enabled && subtotal < deliverySettings.free_delivery_threshold) {
-    delivery = deliverySettings.delivery_fee;
-  } else if (subtotal >= deliverySettings.free_delivery_threshold) {
-    isFreeDelivery = true;
+  
+  if (deliverySettings.delivery_enabled) {
+    // If subtotal >= threshold, delivery is free regardless of area
+    if (subtotal >= deliverySettings.free_delivery_threshold) {
+      delivery = 0;
+      isFreeDelivery = true;
+    } else {
+      // Use area-based fee, but cap at default if area not recognised
+      delivery = baseDelivery;
+      // If area is empty, use default
+      if (!area) delivery = deliverySettings.delivery_fee;
+    }
   }
   return { subtotal: subtotal, delivery: delivery, total: subtotal + delivery, isFreeDelivery: isFreeDelivery };
 }
@@ -1076,6 +1149,7 @@ function renderCartSummary() {
   if (items.length === 0) { 
     container.innerHTML = '<div class="empty-cart"><i class="ph ph-shopping-bag-open"></i><p>Your cart is empty</p><a href="shop.html" style="color:var(--primary);font-weight:700;">Continue Shopping →</a></div>'; 
     document.getElementById('subtotalAmount').innerText = 'KES 0'; 
+    document.getElementById('deliveryFee').innerText = 'KES 0';
     document.getElementById('totalAmount').innerText = 'KES 0';
     document.getElementById('freeDeliveryNote').innerHTML = '';
     return; 
@@ -1089,7 +1163,7 @@ function renderCartSummary() {
   
   var totals = calculateTotals();
   document.getElementById('subtotalAmount').innerText = 'KES ' + totals.subtotal.toLocaleString();
-  var deliveryText = deliverySettings.delivery_enabled ? (totals.delivery === 0 ? 'FREE' : 'KES ' + totals.delivery) : 'FREE';
+  var deliveryText = (totals.delivery === 0) ? 'FREE' : 'KES ' + totals.delivery.toLocaleString();
   document.getElementById('deliveryFee').innerText = deliveryText;
   document.getElementById('totalAmount').innerText = 'KES ' + totals.total.toLocaleString();
   
@@ -1166,16 +1240,18 @@ function placeOrder() {
   var phone = document.getElementById('phone').value.trim();
   var street = document.getElementById('street').value.trim();
   var building = document.getElementById('building').value.trim();
+  var area = document.getElementById('deliveryArea').value.trim();
   
   if (!email || email.indexOf('@') === -1) { toast('Please enter a valid email address'); return; }
   if (!fullName) { toast('Please enter your full name'); return; }
   if (!phone) { toast('Please enter your phone number'); return; }
   if (!validatePhone(phone)) { toast('Please enter a valid Kenyan phone number (e.g., 0712345678)'); return; }
   if (!street && !building) { toast('Please enter at least Street OR Building name'); return; }
+  if (!area) { toast('Please enter your delivery area (e.g. Dagoretti)'); return; }
   
   var displayPhone = formatPhoneForDisplay(phone);
   var apiPhone = formatPhoneForAPI(phone);
-  var address = getFullAddress();
+  var address = getFullAddress() + ', ' + area;
   var totals = calculateTotals();
   var subtotal = totals.subtotal;
   var delivery = totals.delivery;
@@ -1328,6 +1404,12 @@ function addToCart(id, name, price, capacity){
   updateCartUI();
   toast(name + ' added');
 }
+
+// ==================== AREA INPUT LISTENER ====================
+document.getElementById('deliveryArea').addEventListener('input', function() {
+  renderCartSummary();
+  updateCartUI(); // also update drawer total
+});
 
 // ==================== OFFLINE DETECTION ====================
 window.addEventListener('online', function(){

@@ -265,6 +265,57 @@ a{color:inherit;text-decoration:none;}
 .hero-content .shop-btn:active{transform:scale(0.96);}
 .hero-content .shop-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(128,0,0,0.35);}
 
+/* ===== NEW SEARCH BAR (mobile & desktop) ===== */
+.search-section{
+  padding:12px 4% 0;
+}
+.search-section .search-box{
+  display:flex;
+  align-items:center;
+  background:var(--white);
+  border:2px solid var(--border);
+  border-radius:50px;
+  padding:0 6px 0 18px;
+  height:46px;
+  box-shadow:var(--shadow);
+  transition:border-color .2s, box-shadow .2s;
+}
+.search-section .search-box:focus-within{
+  border-color:var(--primary);
+  box-shadow:0 4px 16px rgba(128,0,0,0.12);
+}
+.search-section .search-box i{
+  color:var(--muted);
+  font-size:18px;
+  margin-right:8px;
+  flex-shrink:0;
+}
+.search-section .search-box input{
+  flex:1;
+  border:none;
+  background:transparent;
+  outline:none;
+  font-family:var(--font-body);
+  font-size:.95rem;
+  padding:10px 0;
+  color:var(--text);
+  min-width:0;
+}
+.search-section .search-box input::placeholder{
+  color:var(--muted);
+  opacity:.7;
+}
+@media(min-width:768px){
+  .search-section{
+    padding:16px 5% 0;
+  }
+  .search-section .search-box{
+    height:50px;
+    max-width:600px;
+    margin:0 auto;
+  }
+}
+
 /* ===== SECTION HEADERS ===== */
 .section-header{
   display:flex;justify-content:space-between;align-items:center;
@@ -801,7 +852,8 @@ a{color:inherit;text-decoration:none;}
 .cart-qty button:active{transform:scale(0.9);}
 .cart-qty button:hover{background:var(--gold);color:white;border-color:var(--gold);}
 .cart-footer{padding:12px 16px 20px;border-top:1px solid var(--border);}
-.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:12px;}
+.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:6px;}
+.cart-delivery-note{font-size:.7rem;color:var(--muted);text-align:right;margin-bottom:10px;}
 .btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
 .btn-checkout:active{transform:scale(0.97);}
 .btn-checkout:hover{background:var(--primary-bright);}
@@ -988,19 +1040,28 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
+<!-- ===== NEW SEARCH BAR (visible on all devices) ===== -->
+<div class="search-section">
+  <div class="search-box">
+    <i class="ph ph-magnifying-glass"></i>
+    <input type="text" id="mainSearchInput" placeholder="Search for whisky, vodka, gin, beer...">
+    <button class="clear-btn" id="mainSearchClear" onclick="clearMainSearch()" style="background:none;border:none;padding:0 10px;cursor:pointer;color:var(--muted);font-size:18px;display:none;"><i class="ph ph-x-circle"></i></button>
+  </div>
+</div>
+
 <!-- ===== CATEGORIES ===== -->
 <div class="section-header"><h2>Shop by Category</h2><a href="shop.html">View All</a></div>
 <div class="category-grid" id="categoryGrid"></div>
 
-<!-- ===== NEW ARRIVALS (FIRST) ===== -->
+<!-- ===== NEW ARRIVALS ===== -->
 <div class="section-header"><h2>New Arrivals</h2><a href="shop.html">View All</a></div>
 <div class="new-arrivals-grid" id="newArrivalsGrid"></div>
 
-<!-- ===== TRENDING (SECOND) ===== -->
+<!-- ===== TRENDING ===== -->
 <div class="section-header"><h2>Trending</h2><a href="shop.html">View All</a></div>
 <div class="trending-grid" id="trendingGrid"></div>
 
-<!-- ===== FEATURED (THIRD) ===== -->
+<!-- ===== FEATURED ===== -->
 <div class="section-header"><h2>Featured</h2><a href="shop.html">View All</a></div>
 <div class="products-grid" id="featuredGrid"></div>
 
@@ -1164,7 +1225,8 @@ a{color:inherit;text-decoration:none;}
     </div>
   </div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
-    <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
+    <div class="cart-total"><span>Subtotal</span><span id="cartTotalAmount">KES 0</span></div>
+    <div class="cart-delivery-note">🚚 Delivery fee calculated at checkout</div>
     <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
   </div>
 </div>
@@ -1275,8 +1337,7 @@ function updateCartUI(){
   }
   footer.style.display='block';
   var subtotal=items.reduce(function(s,i){return s+i.price*i.qty;},0);
-  var delivery=150;
-  document.getElementById('cartTotalAmount').innerHTML='KES '+(subtotal+delivery).toLocaleString();
+  document.getElementById('cartTotalAmount').innerHTML='KES '+subtotal.toLocaleString();
   container.innerHTML=items.map(function(item){
     return '<div class="cart-item"><div><div class="cart-item-name">'+escapeHtml(item.name)+' <span style="color:var(--gold);">x'+item.qty+'</span></div><div class="cart-item-price">KES '+(item.price*item.qty).toLocaleString()+'</div><div class="cart-qty"><button onclick="updateQty(\''+item.id+'\',-1)">−</button><span>'+item.qty+'</span><button onclick="updateQty(\''+item.id+'\',1)">+</button><button onclick="removeCartItem(\''+item.id+'\')" class="cart-remove-btn">Remove</button></div></div></div>';
   }).join('');
@@ -1321,7 +1382,59 @@ function closeWishlistModal(){ document.getElementById('wishlistModal').style.di
 // ============================================
 function openMobileMenu(){ document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('open'); }
 function closeMobileMenu(){ document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('open'); }
-function handleHeaderSearch(e){ e.preventDefault(); var val=(document.getElementById('headerSearchInput')?.value||document.getElementById('mobileSearchInput')?.value||'').trim(); if(val) window.location.href='shop.html?search='+encodeURIComponent(val); return false; }
+function handleHeaderSearch(e){ e.preventDefault(); var val=(document.getElementById('headerSearchInput')?.value||document.getElementById('mobileSearchInput')?.value||document.getElementById('mainSearchInput')?.value||'').trim(); if(val) window.location.href='shop.html?search='+encodeURIComponent(val); return false; }
+
+// ===== NEW: Main search (with clear button) =====
+function initMainSearch() {
+  var input = document.getElementById('mainSearchInput');
+  var clearBtn = document.getElementById('mainSearchClear');
+  if (!input) return;
+  
+  // Sync with header/mobile search inputs
+  input.addEventListener('input', function() {
+    var val = this.value.trim();
+    if (val.length > 0) { clearBtn.style.display = 'block'; } else { clearBtn.style.display = 'none'; }
+    // Also sync header and mobile inputs (optional)
+    var headerInput = document.getElementById('headerSearchInput');
+    if (headerInput) headerInput.value = val;
+    var mobileInput = document.getElementById('mobileSearchInput');
+    if (mobileInput) mobileInput.value = val;
+  });
+  
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var val = this.value.trim();
+      if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
+    }
+  });
+  
+  clearBtn.addEventListener('click', function() {
+    input.value = '';
+    clearBtn.style.display = 'none';
+    input.focus();
+    // Sync clearing
+    var headerInput = document.getElementById('headerSearchInput');
+    if (headerInput) headerInput.value = '';
+    var mobileInput = document.getElementById('mobileSearchInput');
+    if (mobileInput) mobileInput.value = '';
+  });
+}
+
+function clearMainSearch() {
+  var input = document.getElementById('mainSearchInput');
+  var clearBtn = document.getElementById('mainSearchClear');
+  if (input) {
+    input.value = '';
+    clearBtn.style.display = 'none';
+    input.focus();
+    // Sync
+    var headerInput = document.getElementById('headerSearchInput');
+    if (headerInput) headerInput.value = '';
+    var mobileInput = document.getElementById('mobileSearchInput');
+    if (mobileInput) mobileInput.value = '';
+  }
+}
 
 // ============================================
 // AGE GATE
@@ -1642,6 +1755,7 @@ renderCategories();
 loadProductsFromAPI();
 updateCartUI();
 setInterval(updateCartUI,3000);
+initMainSearch(); // initialise the persistent search bar
 
 console.log('🚀 LiquorBelle ready — products loaded from database.');
 console.log('📦 Categories loaded:', categories.length);
