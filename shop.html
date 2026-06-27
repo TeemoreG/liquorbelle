@@ -1646,6 +1646,7 @@ function renderRecentlyViewed() {
   }).join('');
 }
 
+// ==================== GO TO PRODUCT DETAILS ====================
 function goToProduct(id, name, price, image, capacity) {
   trackRecentlyViewed(id, name, price, image, capacity);
   window.location.href = 'product-details.html?id=' + id;
@@ -2131,6 +2132,7 @@ function renderShopGrid() {
   grid.innerHTML = visible.map(function(p) { return renderProductCard(p); }).join('');
 }
 
+// ==================== RENDER PRODUCT CARD ====================
 function renderProductCard(p) {
   var original = p.originalPrice || p.price;
   var savePercent = p.discountPercent || 0;
@@ -2155,9 +2157,9 @@ function renderProductCard(p) {
   }
   var imgSrc = p.image ? cloudinaryOpt(p.image, 300) : FALLBACK_IMG;
   var escapedName = escapeHtml(p.name).replace(/'/g, "\\'");
-  
-  // Use data-product-id and delegated listener (no inline onclick)
-  return '<div class="prod-card" data-product-id="' + p._id + '">' +
+
+  // PRODUCT CARD WITH ONCLICK TO GO TO PRODUCT DETAILS
+  return '<div class="prod-card" data-product-id="' + p._id + '" onclick="goToProduct(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')">' +
     '<div class="pc-img-wrap">' +
       '<img class="pc-img" src="' + imgSrc + '" alt="' + escapeHtml(p.name) + '" loading="lazy" onerror="this.src=\'' + FALLBACK_IMG + '\'">' +
       topBadge + wishlistBtn +
@@ -2177,22 +2179,6 @@ function renderProductCard(p) {
   '</div>';
 }
 
-// ==================== DELEGATED EVENT LISTENER FOR PRODUCT CARDS ====================
-document.addEventListener('click', function(e) {
-  var card = e.target.closest('.prod-card');
-  if (card && card.dataset.productId) {
-    e.preventDefault();
-    var product = ALL_PRODUCTS.find(function(p) { return String(p._id) === card.dataset.productId; });
-    if (product) {
-      goToProduct(product._id, product.name, product.price, product.image, product.capacity);
-    } else {
-      // fallback: try to use the ID directly
-      goToProduct(card.dataset.productId, '', 0, '', '');
-    }
-  }
-});
-
-// Also handle variant dropdown changes without interfering with card click
 function updateVariantPrice(select, productId) {
   var price = parseFloat(select.options[select.selectedIndex].dataset.price);
   var size = select.options[select.selectedIndex].value;
@@ -2208,8 +2194,8 @@ function updateVariantPrice(select, productId) {
   if (atcBtn) {
     atcBtn.setAttribute('onclick', "event.stopPropagation();addToCart('" + productId + "','" + escapeHtml(product.name).replace(/'/g, "\\'") + "'," + price + ",'" + size + "')");
   }
-  // Update data attributes for the card
-  card.dataset.productId = productId; // already set, but keep it
+  // Update card's onclick to reflect new price
+  card.setAttribute('onclick', "goToProduct('" + productId + "','" + escapeHtml(product.name).replace(/'/g, "\\'") + "'," + price + ",'" + (product.image || '') + "','" + size + "')");
 }
 
 // ==================== INIT ====================
@@ -2235,7 +2221,6 @@ updateCartUI();
 initMainSearch();
 
 // Preload product images after products are loaded (they get triggered in loadProducts)
-// We'll also call it after loadProducts to ensure preloading.
 setTimeout(function() {
   if (ALL_PRODUCTS.length) preloadAllProductImages();
 }, 1000);
