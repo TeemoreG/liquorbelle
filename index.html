@@ -19,6 +19,7 @@
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
 <style>
+/* ===== YOUR FULL CSS (unchanged – keep as is) ===== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --primary:#800000;
@@ -1497,11 +1498,15 @@ function populateCategoryDropdown(selectId) {
 }
 
 // ============================================
-// QUICK VIEW FUNCTIONS
+// QUICK VIEW FUNCTIONS (FIXED)
 // ============================================
 function quickViewById(id) {
-  var product = allProductsCache.find(function(p){ return p._id === id; });
-  if(!product) { toast('Product not found'); return; }
+  var idStr = String(id); // ensure string comparison
+  var product = allProductsCache.find(function(p){ return String(p._id) === idStr; });
+  if(!product) {
+    toast('Product not found');
+    return;
+  }
   qvShowProduct(product);
 }
 
@@ -1638,7 +1643,8 @@ function renderProductCard(p) {
   var capacity = p.variants && p.variants.length ? p.variants[0].size : '';
   var ratingHtml = p.rating ? '<div class="pc-rating"><i class="ph-fill ph-star"></i><span>'+p.rating.toFixed(1)+'</span></div>' : '';
   
-  var cardHtml = '<div class="prod-card" onclick="quickViewById(\''+p._id+'\')">'+
+  // FIX: convert _id to string to avoid [object Object]
+  var cardHtml = '<div class="prod-card" onclick="quickViewById(\'' + String(p._id) + '\')">'+
     '<div class="pc-img-wrap">'+
       '<img class="pc-img" src="'+imgSrc+'" alt="'+escapeHtml(p.name)+'" loading="lazy" onerror="this.src=\''+FALLBACK_IMG+'\'">'+
       (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '')+
