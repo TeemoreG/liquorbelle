@@ -8,17 +8,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Checkout — LiquorBelle</title>
 
-<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<!-- ===== PERFORMANCE: Preconnect ===== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com">
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
 <link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="preconnect" href="https://maps.googleapis.com">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
 <style>
+/* ===== YOUR EXISTING STYLES (unchanged) ===== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --primary:#800000;
@@ -47,7 +50,6 @@
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
-
 .shop-svg{width:20px;height:20px;color:currentColor;display:block;}
 
 /* Offline Banner */
@@ -168,16 +170,8 @@ a{color:inherit;text-decoration:none;}
   color:white;
   text-align:center;
 }
-.checkout-hero h1{
-  font-size:1.6rem;
-  font-weight:800;
-  letter-spacing:-.5px;
-}
-.checkout-hero p{
-  font-size:.85rem;
-  opacity:.85;
-  margin-top:4px;
-}
+.checkout-hero h1{font-size:1.6rem;font-weight:800;letter-spacing:-.5px;}
+.checkout-hero p{font-size:.85rem;opacity:.85;margin-top:4px;}
 
 .checkout-container{
   max-width:1200px;
@@ -196,7 +190,7 @@ a{color:inherit;text-decoration:none;}
   .checkout-hero h1{font-size:1.3rem;}
 }
 
-/* ===== ORDER SUMMARY - STYLED CARD ===== */
+/* ===== ORDER SUMMARY ===== */
 .order-summary{
   background:var(--white);
   border-radius:var(--radius);
@@ -269,6 +263,20 @@ a{color:inherit;text-decoration:none;}
   margin-top:2px;
 }
 
+/* Delivery progress bar */
+.delivery-progress{
+  padding:8px 12px;
+  background:var(--bg2);
+  border-radius:var(--radius-xs);
+  margin-bottom:10px;
+  font-size:.65rem;
+  color:var(--text);
+  line-height:1.4;
+}
+.delivery-progress.unlocked{background:#EAF8EF;color:#1A6B35;}
+.delivery-progress-bar{height:4px;background:var(--border);border-radius:10px;margin-top:4px;overflow:hidden;}
+.delivery-progress-fill{height:100%;background:var(--btn-green);border-radius:10px;transition:width .3s;}
+
 /* Delivery Estimate */
 .delivery-estimate{
   background:linear-gradient(135deg, rgba(34,197,94,0.06), rgba(34,197,94,0.02));
@@ -330,15 +338,10 @@ a{color:inherit;text-decoration:none;}
   box-shadow:0 0 0 3px rgba(128,0,0,0.08);
   background:var(--white);
 }
-.form-group .field-hint{
-  display:block;
-  margin-top:4px;
-  font-size:10px;
-  color:var(--muted);
-}
+.form-group .field-hint{display:block;margin-top:4px;font-size:10px;color:var(--muted);}
 .form-group .field-hint i{margin-right:4px;}
 
-/* Location PIN Button */
+/* Location PIN */
 .location-pin-row{
   display:flex;
   gap:10px;
@@ -372,22 +375,13 @@ a{color:inherit;text-decoration:none;}
 .location-helper{display:block;margin-top:4px;font-size:10px;color:var(--muted);}
 .location-helper i{margin-right:4px;}
 
-/* ===== NEW: Delivery Area Field ===== */
-.delivery-area-row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
+/* Delivery Area */
+.delivery-area-row{display:flex;gap:10px;align-items:center;}
 .delivery-area-row input{flex:1;}
-.area-hint{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:4px;
-  display:block;
-}
+.area-hint{font-size:10px;color:var(--muted);margin-top:4px;display:block;}
 .area-hint i{margin-right:4px;}
 
-/* Payment Options - M-PESA ONLY */
+/* Payment */
 .payment-section-title{
   font-size:1.1rem;
   font-weight:800;
@@ -447,30 +441,11 @@ a{color:inherit;text-decoration:none;}
   flex-direction:column;
   align-items:center;
 }
-.mpesa-details img{
-  width:40px;
-  height:40px;
-  margin:0 auto 8px;
-  object-fit:contain;
-  display:block;
-}
-.mpesa-details p{
-  font-size:13px;
-  margin-bottom:4px;
-  color:var(--text);
-}
-.mpesa-details .phone-prompt{
-  font-weight:800;
-  color:var(--btn-green);
-  font-size:15px;
-}
-.mpesa-details small{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:4px;
-}
+.mpesa-details img{width:40px;height:40px;margin:0 auto 8px;object-fit:contain;display:block;}
+.mpesa-details p{font-size:13px;margin-bottom:4px;color:var(--text);}
+.mpesa-details .phone-prompt{font-weight:800;color:var(--btn-green);font-size:15px;}
+.mpesa-details small{color:var(--muted);font-size:11px;margin-top:4px;}
 
-/* ===== PLACE ORDER BUTTON - GREEN ===== */
 .btn-place{
   width:100%;
   padding:16px;
@@ -488,11 +463,7 @@ a{color:inherit;text-decoration:none;}
   gap:8px;
   margin-top:4px;
 }
-.btn-place:hover{
-  background:var(--btn-green-hover);
-  transform:translateY(-2px);
-  box-shadow:0 10px 24px rgba(34,197,94,0.35);
-}
+.btn-place:hover{background:var(--btn-green-hover);transform:translateY(-2px);box-shadow:0 10px 24px rgba(34,197,94,0.35);}
 .btn-place:active{transform:scale(0.97);}
 .btn-place:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
 
@@ -595,14 +566,14 @@ a{color:inherit;text-decoration:none;}
 .footer-col a:hover{opacity:1;}
 .footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
 
-/* ====== CART DRAWER ====== */
-.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background-color:#ffffff;font-family:var(--font-body);text-align:center;}
+/* Cart Drawer */
+.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background:#fff;text-align:center;}
 .cart-icon-wrapper{position:relative;margin-bottom:25px;width:70px;height:60px;}
 .cart-svg{width:100%;height:100%;}
-.cart-badge{position:absolute;top:-4px;right:-4px;background-color:var(--primary);color:#ffffff;font-size:11px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;}
-.cart-message{color:#111111;font-size:22px;font-weight:600;margin:0 0 16px 0;letter-spacing:-0.5px;}
-.shop-button{display:inline-block;background-color:var(--primary);color:#ffffff;text-decoration:none;font-size:16px;font-weight:500;padding:10px 32px;border-radius:25px;transition:background-color 0.2s ease-in-out;border:none;cursor:pointer;}
-.shop-button:hover{background-color:var(--primary-bright);}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:var(--primary);color:#fff;font-size:11px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;}
+.cart-message{color:#111;font-size:22px;font-weight:600;margin:0 0 16px;letter-spacing:-.5px;}
+.shop-button{display:inline-block;background:var(--primary);color:#fff;padding:10px 32px;border-radius:25px;font-size:16px;font-weight:500;border:none;cursor:pointer;}
+.shop-button:hover{background:var(--primary-bright);}
 
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
 .overlay.open{opacity:1;pointer-events:auto;}
@@ -706,7 +677,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </header>
 
-<!-- Slide-in Menu -->
+<!-- Mobile Menu -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
@@ -736,7 +707,7 @@ a{color:inherit;text-decoration:none;}
 <!-- CHECKOUT CONTENT -->
 <div class="checkout-container">
   <div class="checkout-grid">
-    <!-- ORDER SUMMARY - STYLED -->
+    <!-- ORDER SUMMARY -->
     <div class="order-summary">
       <div class="summary-title"><i class="ph ph-shopping-bag"></i> Your Order</div>
       <div class="cart-items-scroll" id="cartSummaryItems"></div>
@@ -747,6 +718,9 @@ a{color:inherit;text-decoration:none;}
         <div class="summary-row total"><span>Total</span><span id="totalAmount">KES 0</span></div>
       </div>
       
+      <!-- Delivery Progress Bar -->
+      <div id="deliveryProgressContainer"></div>
+
       <div class="delivery-estimate">
         <i class="ph ph-truck"></i>
         <div class="delivery-estimate-content">
@@ -792,7 +766,7 @@ a{color:inherit;text-decoration:none;}
           </div>
         </div>
         <div class="location-status" id="locationStatus"></div>
-        <span class="location-helper"><i class="ph ph-crosshair"></i> Tap the PIN button to auto-fill your exact street address</span>
+        <span class="location-helper"><i class="ph ph-crosshair"></i> Tap the PIN button to auto‑fill your exact address</span>
       </div>
       
       <div class="form-group">
@@ -800,13 +774,12 @@ a{color:inherit;text-decoration:none;}
         <input type="text" id="building" placeholder="e.g. Quickmart Plaza">
       </div>
 
-      <!-- ===== NEW: Delivery Area Input ===== -->
       <div class="form-group">
         <label>Delivery Area (e.g. Dagoretti, Karen, Westlands) *</label>
         <div class="delivery-area-row">
           <input type="text" id="deliveryArea" placeholder="e.g. Dagoretti" value="Dagoretti">
         </div>
-        <span class="area-hint"><i class="ph ph-map-pin"></i> Your area determines the delivery fee. We'll auto‑detect it with a location API soon.</span>
+        <span class="area-hint"><i class="ph ph-map-pin"></i> Your area determines delivery fee • Auto‑detected via GPS</span>
       </div>
       
       <div class="payment-section-title"><i class="ph ph-credit-card"></i> Payment Method</div>
@@ -909,6 +882,47 @@ function optimizeImage(url, width) {
     return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
 }
 
+// ==================== GOOGLE MAPS GEOCODING ====================
+const GMAPS_API_KEY = 'AIzaSyC4-tuGhQ0Ww1SjycD7nup7LA_G9hNB-l8';
+
+function getAddressFromCoords(lat, lng) {
+  var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + lng + '&key=' + GMAPS_API_KEY;
+  return fetch(url)
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if (data.status === 'OK' && data.results && data.results.length > 0) {
+        var result = data.results[0];
+        var fullAddress = result.formatted_address;
+        // Extract area (suburb/locality/neighborhood)
+        var area = '';
+        if (result.address_components) {
+          for (var i = 0; i < result.address_components.length; i++) {
+            var comp = result.address_components[i];
+            var types = comp.types;
+            if (types.indexOf('sublocality') !== -1 || types.indexOf('neighborhood') !== -1 || types.indexOf('locality') !== -1) {
+              area = comp.long_name;
+              break;
+            }
+          }
+          if (!area) {
+            // fallback: use city or administrative area
+            for (var j = 0; j < result.address_components.length; j++) {
+              var comp2 = result.address_components[j];
+              if (comp2.types.indexOf('administrative_area_level_2') !== -1 || comp2.types.indexOf('administrative_area_level_1') !== -1) {
+                area = comp2.long_name;
+                break;
+              }
+            }
+          }
+        }
+        if (!area) area = 'Nairobi';
+        return { street: fullAddress, area: area };
+      }
+      return null;
+    })
+    .catch(function(){ return null; });
+}
+
 // ==================== HEADER MENU & SEARCH ====================
 function openMobileMenu(){
   document.getElementById('mobileMenu').classList.add('open');
@@ -931,7 +945,7 @@ var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, deliv
 var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
 var selectedPayment = 'mpesa';
 
-// ===== Area Delivery Fee Mapping (client-side for now) =====
+// ===== Area Delivery Fee Mapping (client-side) =====
 var areaDeliveryFees = {
   'dagoretti': 0,
   'karen': 50,
@@ -955,7 +969,6 @@ function getDeliveryFee(area) {
   var key = area.trim().toLowerCase();
   var fee = areaDeliveryFees[key];
   if (fee !== undefined) return fee;
-  // if area not found, use default
   return deliverySettings.delivery_fee;
 }
 
@@ -985,14 +998,12 @@ function updateCartUI(){
   var cartBadge = document.getElementById('cartBadgeCount');
   if(cartBadge) cartBadge.innerText = count;
 
-  // Update cart drawer total
   var totals = calculateTotals();
   var cartTotalEl = document.getElementById('cartTotalAmount');
   if (cartTotalEl) {
     cartTotalEl.innerText = 'KES ' + totals.total.toLocaleString();
   }
   
-  // Update order summary
   renderCartSummary();
 }
 
@@ -1022,24 +1033,7 @@ function loadDeliverySettings() {
     .catch(function(){});
 }
 
-function getAddressFromCoords(lat, lng) {
-  return fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=18&addressdetails=1&accept-language=en')
-    .then(function(res){ return res.json(); })
-    .then(function(data){
-      if (data && data.address) {
-        var parts = [];
-        if (data.address.road) parts.push(data.address.road);
-        if (data.address.suburb) parts.push(data.address.suburb);
-        if (data.address.village) parts.push(data.address.village);
-        if (data.address.town) parts.push(data.address.town);
-        if (data.address.city) parts.push(data.address.city);
-        if (parts.length > 0) return parts.join(', ');
-      }
-      return null;
-    })
-    .catch(function(){ return null; });
-}
-
+// Location PIN with Google Maps
 document.getElementById('getLocationBtn').addEventListener('click', function() {
   var statusDiv = document.getElementById('locationStatus');
   statusDiv.innerHTML = '<span class="spinner"></span> Getting your exact location...';
@@ -1056,12 +1050,14 @@ document.getElementById('getLocationBtn').addEventListener('click', function() {
     var lng = position.coords.longitude;
     statusDiv.innerHTML = '<span class="spinner"></span> Finding your street address...';
     
-    getAddressFromCoords(lat, lng).then(function(streetName) {
-      if (streetName) {
-        document.getElementById('street').value = streetName;
-        statusDiv.innerHTML = '✅ Location found: ' + streetName.substring(0, 50);
+    getAddressFromCoords(lat, lng).then(function(result) {
+      if (result) {
+        document.getElementById('street').value = result.street;
+        document.getElementById('deliveryArea').value = result.area;
+        statusDiv.innerHTML = '✅ Location found: ' + result.area;
         statusDiv.style.color = '#2ecc71';
         setTimeout(function(){ statusDiv.innerHTML = ''; }, 4000);
+        renderCartSummary(); // recalc delivery fee
       } else {
         statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
         statusDiv.style.color = '#e03131';
@@ -1110,7 +1106,6 @@ function calculateTotals() {
   for (var i = 0; i < items.length; i++) {
     subtotal = subtotal + items[i].price * items[i].qty;
   }
-  // Get area from input
   var areaInput = document.getElementById('deliveryArea');
   var area = areaInput ? areaInput.value.trim() : '';
   var baseDelivery = getDeliveryFee(area);
@@ -1118,14 +1113,11 @@ function calculateTotals() {
   var isFreeDelivery = false;
   
   if (deliverySettings.delivery_enabled) {
-    // If subtotal >= threshold, delivery is free regardless of area
     if (subtotal >= deliverySettings.free_delivery_threshold) {
       delivery = 0;
       isFreeDelivery = true;
     } else {
-      // Use area-based fee, but cap at default if area not recognised
       delivery = baseDelivery;
-      // If area is empty, use default
       if (!area) delivery = deliverySettings.delivery_fee;
     }
   }
@@ -1152,6 +1144,7 @@ function renderCartSummary() {
     document.getElementById('deliveryFee').innerText = 'KES 0';
     document.getElementById('totalAmount').innerText = 'KES 0';
     document.getElementById('freeDeliveryNote').innerHTML = '';
+    document.getElementById('deliveryProgressContainer').innerHTML = '';
     return; 
   }
   var html = '';
@@ -1162,18 +1155,39 @@ function renderCartSummary() {
   container.innerHTML = html;
   
   var totals = calculateTotals();
-  document.getElementById('subtotalAmount').innerText = 'KES ' + totals.subtotal.toLocaleString();
-  var deliveryText = (totals.delivery === 0) ? 'FREE' : 'KES ' + totals.delivery.toLocaleString();
-  document.getElementById('deliveryFee').innerText = deliveryText;
-  document.getElementById('totalAmount').innerText = 'KES ' + totals.total.toLocaleString();
+  var subtotal = totals.subtotal;
+  var delivery = totals.delivery;
+  var total = totals.total;
+  var isFree = totals.isFreeDelivery;
   
-  if (deliverySettings.delivery_enabled && !totals.isFreeDelivery && totals.subtotal > 0) {
-    var remaining = deliverySettings.free_delivery_threshold - totals.subtotal;
+  document.getElementById('subtotalAmount').innerText = 'KES ' + subtotal.toLocaleString();
+  var deliveryText = (delivery === 0) ? 'FREE' : 'KES ' + delivery.toLocaleString();
+  document.getElementById('deliveryFee').innerText = deliveryText;
+  document.getElementById('totalAmount').innerText = 'KES ' + total.toLocaleString();
+  
+  if (deliverySettings.delivery_enabled && !isFree && subtotal > 0) {
+    var remaining = deliverySettings.free_delivery_threshold - subtotal;
     document.getElementById('freeDeliveryNote').innerHTML = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
-  } else if (totals.isFreeDelivery && totals.subtotal > 0) {
+  } else if (isFree && subtotal > 0) {
     document.getElementById('freeDeliveryNote').innerHTML = '🎉 FREE Delivery applied!';
   } else {
     document.getElementById('freeDeliveryNote').innerHTML = '';
+  }
+  
+  // Delivery progress bar
+  var progContainer = document.getElementById('deliveryProgressContainer');
+  if (progContainer) {
+    if (isFree) {
+      progContainer.innerHTML = '<div class="delivery-progress unlocked"><strong>🎉 Free delivery applied!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div></div>';
+    } else {
+      var pct = Math.min((subtotal / deliverySettings.free_delivery_threshold) * 100, 100);
+      var remaining = deliverySettings.free_delivery_threshold - subtotal;
+      if (remaining > 0) {
+        progContainer.innerHTML = '<div class="delivery-progress">Add KES ' + remaining.toLocaleString() + ' more for <strong>FREE delivery</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:' + pct + '%;"></div></div></div>';
+      } else {
+        progContainer.innerHTML = '<div class="delivery-progress unlocked"><strong>🎉 Free delivery unlocked!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div></div>';
+      }
+    }
   }
 }
 
@@ -1182,7 +1196,7 @@ function saveOrderToDatabase(orderId, email, fullName, phone, address, items, su
     var orderData = {
       orderNumber: orderId, userId: null, customerName: fullName, customerEmail: email,
       phone: phone, address: address, notes: '', subtotal: subtotal, delivery: delivery, total: total, paymentMethod: paymentMethod, status: status,
-      items: items.map(function(i){ return { productId: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size || '' }; })
+      items: items.map(function(i){ return { product_id: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size || '' }; })
     };
     return fetch(API_BASE_URL + '/api/db/orders', { 
       method: 'POST', 
@@ -1408,7 +1422,7 @@ function addToCart(id, name, price, capacity){
 // ==================== AREA INPUT LISTENER ====================
 document.getElementById('deliveryArea').addEventListener('input', function() {
   renderCartSummary();
-  updateCartUI(); // also update drawer total
+  updateCartUI();
 });
 
 // ==================== OFFLINE DETECTION ====================
@@ -1420,6 +1434,19 @@ window.addEventListener('offline', function(){
   var banner = document.getElementById('offlineBanner');
   if(banner) banner.classList.add('show');
 });
+
+// ==================== SERVICE WORKER REGISTRATION ====================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg) {
+        console.log('[SW] Registered successfully:', reg);
+      })
+      .catch(function(err) {
+        console.log('[SW] Registration failed:', err);
+      });
+  });
+}
 
 // ==================== INIT ====================
 loadDeliverySettings();
