@@ -6,13 +6,11 @@
 const CACHE_NAME = 'liquorbelle-v3';
 
 // --- AUTO-DETECT BASE PATH ---
-// If SW is at /liquorbelle/sw.js  -> BASE_PATH = '/liquorbelle/'
-// If SW is at /sw.js             -> BASE_PATH = '/'
 const BASE_PATH = self.location.pathname.replace('sw.js', '');
-
 console.log('[SW] Base Path detected:', BASE_PATH);
 
 // --- BUILD ASSET LIST DYNAMICALLY ---
+// Only cache the HTML files we know exist (no manifest.json)
 const STATIC_PAGES = [
   'index.html',
   'shop.html',
@@ -21,13 +19,14 @@ const STATIC_PAGES = [
   'track-orders.html',
   'admin-full.html',
   'admin-orders.html',
-  'manifest.json',
 ];
 
-const STATIC_ASSETS = [
-  BASE_PATH, // The root of the site (e.g., /liquorbelle/ or /)
-  ...STATIC_PAGES.map(page => BASE_PATH + page),
-];
+// We explicitly add BASE_PATH + each page
+const STATIC_ASSETS = STATIC_PAGES.map(page => BASE_PATH + page);
+
+// Optionally add the root path if you want to cache the directory index
+// But it's often safer to just cache the HTML files directly.
+// STATIC_ASSETS.push(BASE_PATH); // Uncomment if you want to cache /liquorbelle/
 
 console.log('[SW] Caching assets:', STATIC_ASSETS);
 
@@ -39,14 +38,18 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Caching static assets...');
-        return cache.addAll(STATIC_ASSETS);
+        // Use cache.addAll with a catch for each request to avoid failing the whole install
+        return Promise.all(
+          STATIC_ASSETS.map(url =>
+            cache.add(url).catch(err => {
+              console.warn('[SW] Failed to cache:', url, err);
+            })
+          )
+        );
       })
       .then(() => {
         console.log('[SW] Install complete. Skipping wait...');
         return self.skipWaiting();
-      })
-      .catch((err) => {
-        console.error('[SW] Install failed:', err);
       })
   );
 });
@@ -82,25 +85,21 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
 
   // --- 1. BACKEND API (stale-while-revalidate) ---
-  // Catches your Render API calls (any path starting with /api/)
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return fetch(request)
           .then((networkResponse) => {
-            // Cache the fresh response for next time
             cache.put(request, networkResponse.clone());
             console.log('[SW] API: Network response cached');
             return networkResponse;
           })
           .catch(() => {
-            // Network failed — serve from cache
             return cache.match(request).then((cached) => {
               if (cached) {
                 console.log('[SW] API: Served from cache');
                 return cached;
               }
-              // No cache available
               console.warn('[SW] API: No cache, no network');
               return new Response(
                 JSON.stringify({ success: false, message: 'Offline' }),
@@ -131,7 +130,6 @@ self.addEventListener('fetch', (event) => {
             return networkResponse;
           })
           .catch(() => {
-            // Fallback: transparent 1x1 pixel
             return new Response(
               'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
               { status: 200, headers: { 'Content-Type': 'image/gif' } }
@@ -143,7 +141,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   // --- 3. LOCAL STATIC ASSETS (cache-first) ---
-  // Check if the requested file is one of our HTML/JS/CSS assets
   const isLocalAsset = STATIC_ASSETS.some((asset) => {
     return url.pathname === asset || url.pathname === asset + '/';
   });
@@ -165,7 +162,6 @@ self.addEventListener('fetch', (event) => {
             return networkResponse;
           })
           .catch(() => {
-            // If a page fails, serve the homepage as fallback
             console.warn('[SW] Static: Fallback to index');
             return caches.match(BASE_PATH + 'index.html');
           });
@@ -175,7 +171,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   // --- 4. EVERYTHING ELSE (network-first) ---
-  // Fonts, external scripts, etc.
   event.respondWith(
     fetch(request)
       .catch(() => {
