@@ -1316,20 +1316,1000 @@ if (document.getElementById('catChips')) {
   updateCartUI();
 }
 
-// ---------- PRODUCT-DETAILS.HTML ----------
+// ============================================================
+// PRODUCT-DETAILS.HTML
+// ============================================================
 if (document.getElementById('productImage')) {
-  // I'll keep this compact but functional - all functions from original are here
-  // [product-details functions would go here]
+  
+  var productId = getQueryParam('id');
+  var currentProduct = null;
+  var selectedVariant = null;
+  var quantity = 1;
+  var allProducts = [];
+
+  // ---- CACHE ----
+  function getCachedProduct() {
+    try {
+      var cached = localStorage.getItem('liquorbelle_product_' + productId);
+      if (!cached) return null;
+      var data = JSON.parse(cached);
+      if (Date.now() - data.timestamp > CACHE_DURATION) {
+        localStorage.removeItem('liquorbelle_product_' + productId);
+        return null;
+      }
+      return data.product;
+    } catch (e) { return null; }
+  }
+
+  function setCachedProduct(product) {
+    try {
+      localStorage.setItem('liquorbelle_product_' + productId, JSON.stringify({ product: product, timestamp: Date.now() }));
+    } catch (e) {}
+  }
+
+  // ---- LOAD PRODUCT ----
+  window.loadProduct = function() {
+    if (!productId) { toast('Product not found'); return; }
+
+    var cachedProduct = getCachedProduct();
+    if (cachedProduct) {
+      currentProduct = cachedProduct;
+      renderProductDetails();
+      renderRelatedProducts();
+      renderDontForgetSuggestions();
+      fetchFreshProduct();
+      return;
+    }
+
+    fetch(API_BASE + '/api/db/products')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success && data.products) {
+          allProducts = data.products;
+          currentProduct = allProducts.find(function(p) { return p._id === productId; });
+          if (currentProduct) {
+            setCachedProduct(currentProduct);
+            renderProductDetails();
+            renderRelatedProducts();
+            renderDontForgetSuggestions();
+          } else { toast('Product not found'); }
+        }
+      })
+      .catch(function(e) { toast('Error loading product'); });
+  };
+
+  function fetchFreshProduct() {
+    fetch(API_BASE + '/api/db/products')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success && data.products) {
+          allProducts = data.products;
+          var freshProduct = allProducts.find(function(p) { return p._id === productId; });
+          if (freshProduct) {
+            currentProduct = freshProduct;
+            setCachedProduct(freshProduct);
+            renderProductDetails();
+            renderRelatedProducts();
+            renderDontForgetSuggestions();
+          }
+        }
+      })
+      .catch(function() {});
+  }
+
+  // ---- RENDER ----
+  window.renderProductDetails = function() {
+    var name = currentProduct.name;
+    var category = currentProduct.category || '';
+
+    document.getElementById('productName').innerText = name;
+    document.getElementById('productCategory').innerText = category;
+
+    var descEl = document.getElementById('productDescription');
+    var descText = currentProduct.description || '';
+    if (descText.trim()) {
+      descEl.innerText = descText;
+      descEl.classList.remove('hidden');
+    } else {
+      descEl.classList.add('hidden');
+    }
+
+    var imgData = getResponsiveImage(currentProduct.image);
+    var imgEl = document.getElementById('productImage');
+    if (imgData.src) {
+      imgEl.src = imgData.src;
+      imgEl.srcset = imgData.srcset;
+      imgEl.sizes = imgData.sizes;
+      imgEl.onerror = function() { this.src = FALLBACK_IMG; };
+    } else {
+      imgEl.src = FALLBACK_IMG;
+    }
+
+    var catSpan = document.getElementById('breadcrumbCategory');
+    var prodSpan = document.getElementById('breadcrumbProduct');
+    if (catSpan) catSpan.innerText = category.charAt(0).toUpperCase() + category.slice(1);
+    if (prodSpan) prodSpan.innerText = name;
+
+    var rating = currentProduct.rating || 4.0;
+    document.getElementById('starsContainer').innerHTML = renderStars(rating);
+    document.getElementById('ratingText').innerText = rating.toFixed(1) + ' out of 5 stars';
+
+    var badgeContainer = document.getElementById('productBadge');
+    if (currentProduct.badge) {
+      var badgeText = currentProduct.badge === 'hot' ? '🔥 Hot Deal' : currentProduct.badge === 'local' ? '🇰🇪 Local Favorite' : '⭐ Premium';
+      badgeContainer.innerHTML = '<div class="product-badge badge-' + currentProduct.badge + '">' + badgeText + '</div>';
+    } else { badgeContainer.innerHTML = ''; }
+
+    var variants = currentProduct.variants || [];
+    variants.sort(function(a, b) {
+      if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
+      if (a.flavour) return -1;
+      if (b.flavour) return 1;
+      return 0;
+    });
+
+    var variantContainer = document.getElementById('variantButtons');
+    if (!variants.length) { variantContainer.innerHTML = '<p>No variants available</p>'; return; }
+
+    var html = '';
+    for (var i = 0; i < variants.length; i++) {
+      var v = variants[i];
+      var flavour = v.flavour || '';
+      var size = v.size || '';
+      html += '<button class="variant-btn" ' +
+        'data-flavour="' + escapeHtml(flavour) + '" ' +
+        'data-size="' + escapeHtml(size) + '" ' +
+        'data-price="' + v.price + '" ' +
+        'data-discount="' + (v.discount || 0) + '" ' +
+        'onclick="selectVariant(\'' + escapeHtml(flavour).replace(/'/g, "\\'") + '\', \'' + escapeHtml(size).replace(/'/g, "\\'") + '\', ' + v.price + ', ' + (v.discount || 0) + ')">' +
+        (flavour ? '<span class="flavour">' + escapeHtml(flavour) + '</span>' : '') +
+        '<span class="size">' + escapeHtml(size) + '</span>' +
+        '</button>';
+    }
+    variantContainer.innerHTML = html;
+
+    if (variants.length) {
+      var first = variants[0];
+      selectVariant(first.flavour || '', first.size || '', first.price, first.discount || 0);
+    }
+  };
+
+  // ---- SELECT VARIANT ----
+  window.selectVariant = function(flavour, size, price, discount) {
+    selectedVariant = { flavour: flavour, size: size, price: price, discount: discount };
+
+    var btns = document.querySelectorAll('.variant-btn');
+    for (var i = 0; i < btns.length; i++) {
+      var btn = btns[i];
+      var btnFlavour = btn.dataset.flavour || '';
+      var btnSize = btn.dataset.size || '';
+      var isSelected = (btnFlavour === flavour && btnSize === size);
+      btn.classList.toggle('selected', isSelected);
+    }
+
+    var hasDiscount = discount > 0;
+    var discountedPrice = hasDiscount ? Math.round(price * (100 - discount) / 100) : price;
+    var originalPrice = price;
+
+    var priceOld = document.getElementById('priceOld');
+    var priceNew = document.getElementById('priceNew');
+    var discountBadge = document.getElementById('discountBadge');
+
+    if (hasDiscount) {
+      priceOld.style.display = 'inline';
+      priceOld.innerHTML = 'KES ' + originalPrice.toLocaleString();
+      priceNew.innerHTML = 'KES ' + discountedPrice.toLocaleString();
+      discountBadge.style.display = 'inline';
+      discountBadge.innerHTML = '-' + discount + '%';
+    } else {
+      priceOld.style.display = 'none';
+      priceNew.innerHTML = 'KES ' + price.toLocaleString();
+      discountBadge.style.display = 'none';
+    }
+  };
+
+  // ---- QUANTITY ----
+  window.increaseQty = function() { if (quantity < 10) { quantity++; document.getElementById('qtyValue').innerText = quantity; } };
+  window.decreaseQty = function() { if (quantity > 1) { quantity--; document.getElementById('qtyValue').innerText = quantity; } };
+
+  // ---- ADD TO CART ----
+  window.addToCartFromDetail = function() {
+    if (!currentProduct || !selectedVariant) { toast('Select a variant'); return; }
+    var id = currentProduct._id;
+    var priceToAdd = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
+    var variantLabel = selectedVariant.flavour + ' ' + selectedVariant.size;
+    if (cart[id]) { cart[id].qty += quantity; } else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size, flavour: selectedVariant.flavour }; }
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    updateCartUI();
+    toast(quantity + '× ' + currentProduct.name + ' (' + variantLabel + ') added ✓');
+  };
+
+  window.buyNow = function() {
+    if (!currentProduct || !selectedVariant) { toast('Select a variant'); return; }
+    var id = currentProduct._id;
+    var priceToAdd = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
+    if (cart[id]) { cart[id].qty += quantity; } else { cart[id] = { id: id, name: currentProduct.name, price: priceToAdd, qty: quantity, capacity: selectedVariant.size, size: selectedVariant.size, flavour: selectedVariant.flavour }; }
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    window.location.href = 'checkout.html';
+  };
+
+  // ---- SHARE ----
+  window.shareProductWhatsApp = function() {
+    if (!currentProduct || !selectedVariant) return;
+    var url = window.location.href;
+    var flavour = selectedVariant.flavour || '';
+    var size = selectedVariant.size || '';
+    var price = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
+    var text = '🍾 ' + currentProduct.name + (flavour ? ' (' + flavour + ')' : '') + ' at LiquorBelle! ' + size + ' - KES ' + price.toLocaleString() + '\n' + url;
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  };
+
+  window.copyProductLink = function() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        var t = document.getElementById('shareToast');
+        if (t) { t.innerText = '✅ Link copied!'; t.style.opacity = '1'; setTimeout(function() { t.style.opacity = '0'; }, 2000); }
+      });
+    } else {
+      var input = document.createElement('input');
+      input.value = window.location.href;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      var t = document.getElementById('shareToast');
+      if (t) { t.innerText = '✅ Link copied!'; t.style.opacity = '1'; setTimeout(function() { t.style.opacity = '0'; }, 2000); }
+    }
+  };
+
+  // ---- DON'T FORGET ----
+  window.renderDontForgetSuggestions = function() {
+    if (!allProducts.length || !currentProduct) return;
+
+    var extraCategories = ['accessory', 'juice', 'soda', 'water', 'energy', 'cigar'];
+    var suggestions = allProducts.filter(function(p) {
+      return p._id !== currentProduct._id && extraCategories.indexOf(p.category) !== -1;
+    });
+    suggestions = shuffleArray(suggestions).slice(0, 4);
+
+    var section = document.getElementById('dontForgetSection');
+    var grid = document.getElementById('dontForgetGrid');
+    if (!suggestions.length) {
+      if (section) section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+
+    var html = '';
+    for (var i = 0; i < suggestions.length; i++) {
+      var p = suggestions[i];
+      var price = p.variants?.[0]?.price || 0;
+      var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
+      var tag = p.category === 'accessory' ? 'Accessory' : p.category === 'juice' ? 'Mixer' : p.category === 'soda' ? 'Fizzy' : p.category === 'water' ? 'Water' : p.category === 'cigar' ? 'Cigar' : 'Extra';
+
+      html += '<div class="dont-forget-card" onclick="window.location.href=\'product-details.html?id=' + p._id + '\'">' +
+        '<div class="card-img-wrap">' +
+        '<div class="suggestion-tag">' + tag + '</div>' +
+        '<img src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy" alt="' + escapeHtml(p.name) + '">' +
+        '</div>' + '<div class="card-info">' +
+        '<div class="name">' + escapeHtml(p.name) + '</div>' + '<div class="price">KES ' + price.toLocaleString() + '</div>' +
+        '<button class="add-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + price + ',\'' + (p.variants?.[0]?.size || '') + '\')">' +
+        '<i class="ph ph-plus"></i> Add' +
+        '</button>' +
+        '</div>' +
+        '</div>';
+    }
+    grid.innerHTML = html;
+  };
+
+  function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+
+  // ---- RELATED ----
+  window.renderRelatedProducts = function() {
+    if (!allProducts.length || !currentProduct) return;
+    var related = allProducts.filter(function(p) { return p._id !== currentProduct._id && p.category === currentProduct.category; }).slice(0, 4);
+    var section = document.getElementById('relatedSection');
+    var grid = document.getElementById('relatedGrid');
+
+    if (!related.length) {
+      var fallback = allProducts.filter(function(p) { return p._id !== currentProduct._id; }).slice(0, 4);
+      if (!fallback.length) return;
+      section.style.display = 'block';
+      var html = '';
+      for (var i = 0; i < fallback.length; i++) {
+        var p = fallback[i];
+        var price = p.variants?.[0]?.price || 0;
+        var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
+        html += '<div class="related-card" onclick="window.location.href=\'product-details.html?id=' + p._id + '\'">' +
+          '<div class="card-img-wrap"><img src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy" alt="' + escapeHtml(p.name) + '"></div>' +
+          '<div class="card-info"><div class="name">' + escapeHtml(p.name) + '</div><div class="price">KES ' + price.toLocaleString() + '</div></div></div>';
+      }
+      grid.innerHTML = html;
+      return;
+    }
+    section.style.display = 'block';
+    var html = '';
+    for (var i = 0; i < related.length; i++) {
+      var p = related[i];
+      var price = p.variants?.[0]?.price || 0;
+      var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
+      html += '<div class="related-card" onclick="window.location.href=\'product-details.html?id=' + p._id + '\'">' +
+        '<div class="card-img-wrap"><img src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy" alt="' + escapeHtml(p.name) + '"></div>' +
+        '<div class="card-info"><div class="name">' + escapeHtml(p.name) + '</div><div class="price">KES ' + price.toLocaleString() + '</div></div></div>';
+    }
+    grid.innerHTML = html;
+  };
+
+  // ---- INIT ----
+  loadProduct();
+  updateCartUI();
+  setInterval(updateCartUI, 3000);
 }
 
-// ---------- CHECKOUT.HTML ----------
+// ============================================================
+// CHECKOUT.HTML
+// ============================================================
 if (document.getElementById('customerEmail')) {
-  // [checkout functions would go here]
+  
+  var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
+  var selectedPayment = 'mpesa';
+
+  // ---- AREA DELIVERY FEES ----
+  var areaDeliveryFees = {
+    'dagoretti': 0,
+    'karen': 50,
+    'westlands': 100,
+    'cbd': 80,
+    'upperhill': 70,
+    'kilimani': 60,
+    'lavington': 80,
+    'kileleshwa': 70,
+    'rongai': 120,
+    'ngong': 150,
+    'south b': 100,
+    'langata': 130,
+    'waithaka': 140,
+    'kikuyu': 160,
+    'runda': 180
+  };
+
+  function getDeliveryFee(area) {
+    if (!area) return deliverySettings.delivery_fee;
+    var key = area.trim().toLowerCase();
+    var fee = areaDeliveryFees[key];
+    if (fee !== undefined) return fee;
+    return deliverySettings.delivery_fee;
+  }
+
+  // ---- CALCULATE TOTALS ----
+  function calculateTotals() {
+    var items = Object.values(cart);
+    var subtotal = 0;
+    for (var i = 0; i < items.length; i++) {
+      subtotal = subtotal + items[i].price * items[i].qty;
+    }
+    var areaInput = document.getElementById('deliveryArea');
+    var area = areaInput ? areaInput.value.trim() : '';
+    var baseDelivery = getDeliveryFee(area);
+    var delivery = 0;
+    var isFreeDelivery = false;
+
+    if (deliverySettings.delivery_enabled) {
+      if (subtotal >= deliverySettings.free_delivery_threshold) {
+        delivery = 0;
+        isFreeDelivery = true;
+      } else {
+        delivery = baseDelivery;
+        if (!area) delivery = deliverySettings.delivery_fee;
+      }
+    }
+    return { subtotal: subtotal, delivery: delivery, total: subtotal + delivery, isFreeDelivery: isFreeDelivery };
+  }
+
+  // ---- RENDER CART SUMMARY ----
+  window.renderCartSummary = function() {
+    var items = Object.values(cart);
+    var container = document.getElementById('cartSummaryItems');
+    if (items.length === 0) {
+      container.innerHTML = '<div class="empty-cart"><i class="ph ph-shopping-bag-open"></i><p>Your cart is empty</p><a href="shop.html" style="color:var(--primary);font-weight:700;">Continue Shopping →</a></div>';
+      document.getElementById('subtotalAmount').innerText = 'KES 0';
+      document.getElementById('deliveryFee').innerText = 'KES 0';
+      document.getElementById('totalAmount').innerText = 'KES 0';
+      document.getElementById('freeDeliveryNote').innerHTML = '';
+      document.getElementById('deliveryProgressContainer').innerHTML = '';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      html += '<div class="cart-item-checkout"><span class="item-name">' + escapeHtml(item.name) + ' <small>x' + item.qty + '</small></span><span class="item-price">KES ' + (item.price * item.qty).toLocaleString() + '</span></div>';
+    }
+    container.innerHTML = html;
+
+    var totals = calculateTotals();
+    var subtotal = totals.subtotal;
+    var delivery = totals.delivery;
+    var total = totals.total;
+    var isFree = totals.isFreeDelivery;
+
+    document.getElementById('subtotalAmount').innerText = 'KES ' + subtotal.toLocaleString();
+    var deliveryText = (delivery === 0) ? 'FREE' : 'KES ' + delivery.toLocaleString();
+    document.getElementById('deliveryFee').innerText = deliveryText;
+    document.getElementById('totalAmount').innerText = 'KES ' + total.toLocaleString();
+
+    if (deliverySettings.delivery_enabled && !isFree && subtotal > 0) {
+      var remaining = deliverySettings.free_delivery_threshold - subtotal;
+      document.getElementById('freeDeliveryNote').innerHTML = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
+    } else if (isFree && subtotal > 0) {
+      document.getElementById('freeDeliveryNote').innerHTML = '🎉 FREE Delivery applied!';
+    } else {
+      document.getElementById('freeDeliveryNote').innerHTML = '';
+    }
+
+    var progContainer = document.getElementById('deliveryProgressContainer');
+    if (progContainer) {
+      if (isFree) {
+        progContainer.innerHTML = '<div class="delivery-progress unlocked"><strong>🎉 Free delivery applied!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div></div>';
+      } else {
+        var pct = Math.min((subtotal / deliverySettings.free_delivery_threshold) * 100, 100);
+        var remaining = deliverySettings.free_delivery_threshold - subtotal;
+        if (remaining > 0) {
+          progContainer.innerHTML = '<div class="delivery-progress">Add KES ' + remaining.toLocaleString() + ' more for <strong>FREE delivery</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:' + pct + '%;"></div></div></div>';
+        } else {
+          progContainer.innerHTML = '<div class="delivery-progress unlocked"><strong>🎉 Free delivery unlocked!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div></div>';
+        }
+      }
+    }
+  };
+
+  // ---- LOAD DELIVERY SETTINGS ----
+  function loadDeliverySettings() {
+    fetch(API_BASE + '/api/delivery-settings')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success && data.settings) {
+          deliverySettings = data.settings;
+          renderCartSummary();
+        }
+      })
+      .catch(function() {});
+  }
+
+  // ---- GEOCODING ----
+  function getAddressFromCoords(lat, lng) {
+    return fetch(API_BASE + '/api/geocode/reverse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat: lat, lng: lng })
+    })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data && data.address) {
+          var addr = data.address;
+          var street = addr.road || addr.pedestrian || addr.footway || '';
+          if (!street) { street = addr.neighbourhood || addr.suburb || addr.city || ''; }
+          var area = addr.suburb || addr.neighbourhood || addr.village || addr.town || addr.city || '';
+          if (!area) { area = addr.county || addr.state || addr.region || ''; }
+          if (!area) area = 'Nairobi';
+          var areaClean = area.replace(/\s*(ward|division|sub-county|constituency|location)\s*/i, '').trim();
+          return { street: street || 'Location found', area: areaClean || 'Nairobi' };
+        }
+        return null;
+      })
+      .catch(function() { return null; });
+  }
+
+  // ---- LOCATION PIN BUTTON ----
+  document.getElementById('getLocationBtn')?.addEventListener('click', function() {
+    var statusDiv = document.getElementById('locationStatus');
+    statusDiv.innerHTML = '<span class="spinner"></span> Getting your exact location...';
+    statusDiv.style.color = '#666';
+
+    if (!navigator.geolocation) {
+      statusDiv.innerHTML = '❌ Geolocation not supported';
+      statusDiv.style.color = '#e03131';
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      statusDiv.innerHTML = '<span class="spinner"></span> Finding your street address...';
+
+      getAddressFromCoords(lat, lng).then(function(result) {
+        if (result) {
+          document.getElementById('street').value = result.street;
+          document.getElementById('deliveryArea').value = result.area;
+          statusDiv.innerHTML = '✅ Location found: ' + result.area;
+          statusDiv.style.color = '#2ecc71';
+          setTimeout(function() { statusDiv.innerHTML = ''; }, 4000);
+          renderCartSummary();
+        } else {
+          statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
+          statusDiv.style.color = '#e03131';
+        }
+      });
+    }, function(error) {
+      var errorMsg = '❌ Location access denied. Please enter address manually.';
+      if (error.code === 1) errorMsg = '❌ Please allow location access to use this feature';
+      else if (error.code === 2) errorMsg = '❌ Location unavailable. Please enter manually.';
+      else if (error.code === 3) errorMsg = '❌ Location request timed out. Please enter manually.';
+      statusDiv.innerHTML = errorMsg;
+      statusDiv.style.color = '#e03131';
+      setTimeout(function() { statusDiv.innerHTML = ''; }, 5000);
+    });
+  });
+
+  // ---- PHONE HELPERS ----
+  function validatePhone(phone) {
+    var cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
+    if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
+    return false;
+  }
+
+  function formatPhoneForAPI(phone) {
+    var cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) {
+      return '254' + cleaned.slice(1);
+    }
+    if (cleaned.length === 12 && cleaned.startsWith('254')) {
+      return cleaned;
+    }
+    return cleaned;
+  }
+
+  function formatPhoneForDisplay(phone) {
+    var cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 12 && cleaned.startsWith('254')) {
+      return '0' + cleaned.slice(3);
+    }
+    return phone;
+  }
+
+  function getFullAddress() {
+    var street = document.getElementById('street').value.trim();
+    var building = document.getElementById('building').value.trim();
+    var parts = [];
+    if (building) parts.push(building);
+    if (street) parts.push(street);
+    return parts.join(', ') || 'Address not specified';
+  }
+
+  // ---- PAYMENT ----
+  var paymentInterval = null;
+  var paymentTimeout = null;
+  var statusCheckCount = 0;
+  var MAX_STATUS_CHECKS = 12;
+
+  function resetPlaceOrderButton(btn, originalHTML) {
+    if (paymentInterval) { clearInterval(paymentInterval); paymentInterval = null; }
+    if (paymentTimeout) { clearTimeout(paymentTimeout); paymentTimeout = null; }
+    statusCheckCount = 0;
+    btn.innerHTML = originalHTML;
+    btn.disabled = false;
+  }
+
+  // ---- PLACE ORDER ----
+  window.placeOrder = function() {
+    var items = Object.values(cart);
+    if (items.length === 0) { toast('Your cart is empty'); return; }
+
+    var email = document.getElementById('customerEmail').value.trim();
+    var fullName = document.getElementById('fullName').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var street = document.getElementById('street').value.trim();
+    var building = document.getElementById('building').value.trim();
+    var area = document.getElementById('deliveryArea').value.trim();
+
+    if (!email || email.indexOf('@') === -1) { toast('Please enter a valid email address'); return; }
+    if (!fullName) { toast('Please enter your full name'); return; }
+    if (!phone) { toast('Please enter your phone number'); return; }
+    if (!validatePhone(phone)) { toast('Please enter a valid Kenyan phone number (e.g., 0712345678)'); return; }
+    if (!street && !building) { toast('Please enter at least Street OR Building name'); return; }
+    if (!area) { toast('Please enter your delivery area (e.g. Dagoretti)'); return; }
+
+    var displayPhone = formatPhoneForDisplay(phone);
+    var apiPhone = formatPhoneForAPI(phone);
+    var address = getFullAddress() + ', ' + area;
+    var totals = calculateTotals();
+    var subtotal = totals.subtotal;
+    var delivery = totals.delivery;
+    var total = totals.total;
+    var orderId = 'LB-' + Date.now().toString().slice(-8);
+    var timestamp = new Date().toLocaleString('en-KE', { hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
+
+    var btn = document.querySelector('.btn-place');
+    var originalHTML = btn.innerHTML;
+    btn.innerHTML = '<div class="spinner"></div> Processing...';
+    btn.disabled = true;
+
+    try {
+      var requestData = {
+        phone: apiPhone,
+        amount: total,
+        orderId: orderId,
+        customerName: fullName,
+        address: address,
+        items: items,
+        subtotal: subtotal,
+        delivery: delivery,
+        total: total,
+        paymentMethod: 'mpesa',
+        customerEmail: email
+      };
+
+      fetch(API_BASE + '/api/stkpush', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (!data.success) throw new Error(data.message || 'STK push failed');
+
+          toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay. You have 35 seconds to complete payment.');
+
+          var paymentCompleted = false;
+          statusCheckCount = 0;
+
+          paymentTimeout = setTimeout(function() {
+            if (!paymentCompleted) {
+              if (paymentInterval) clearInterval(paymentInterval);
+              paymentInterval = null;
+              resetPlaceOrderButton(btn, originalHTML);
+              toast('❌ Payment timeout. You did not complete the payment in time. Please try again.', true);
+            }
+          }, 35000);
+
+          paymentInterval = setInterval(function() {
+            if (paymentCompleted) {
+              clearInterval(paymentInterval);
+              paymentInterval = null;
+              return;
+            }
+            statusCheckCount++;
+            if (statusCheckCount > MAX_STATUS_CHECKS) {
+              clearInterval(paymentInterval);
+              paymentInterval = null;
+              if (!paymentCompleted) {
+                resetPlaceOrderButton(btn, originalHTML);
+                toast('❌ Payment confirmation timeout. Please check your M-PESA and contact support.', true);
+              }
+              return;
+            }
+
+            fetch(API_BASE + '/api/status/' + orderId)
+              .then(function(res) { return res.json(); })
+              .then(function(statusData) {
+                if (statusData.status === 'paid') {
+                  paymentCompleted = true;
+                  clearInterval(paymentInterval);
+                  clearTimeout(paymentTimeout);
+                  paymentInterval = null;
+                  paymentTimeout = null;
+
+                  // Save order to database
+                  fetch(API_BASE + '/api/db/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      orderNumber: orderId,
+                      customerName: fullName,
+                      customerEmail: email,
+                      phone: displayPhone,
+                      address: address,
+                      items: items.map(function(i) { return { product_id: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size || '' }; }),
+                      subtotal: subtotal,
+                      delivery: delivery,
+                      total: total,
+                      paymentMethod: 'M-PESA',
+                      status: 'paid'
+                    })
+                  })
+                    .then(function() {
+                      // Send confirmation email
+                      fetch(API_BASE + '/api/send-order-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          email: email,
+                          orderId: orderId,
+                          customerName: fullName,
+                          phone: displayPhone,
+                          items: items.map(function(i) { return { name: i.name, qty: i.qty, price: i.price, size: i.size || '' }; }),
+                          subtotal: subtotal,
+                          delivery: delivery,
+                          total: total,
+                          address: address,
+                          timestamp: timestamp,
+                          paymentMethod: 'mpesa'
+                        })
+                      });
+
+                      cart = {};
+                      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+                      renderCartSummary();
+                      updateCartUI();
+                      resetPlaceOrderButton(btn, originalHTML);
+
+                      var modal = document.getElementById('successModal');
+                      document.getElementById('successOrderId').textContent = orderId;
+                      document.getElementById('successMessage').textContent = '✅ Payment confirmed! Check your email for order details.';
+                      modal.classList.add('active');
+
+                      try {
+                        localStorage.setItem('liquorbelle_last_order', JSON.stringify({ orderId: orderId, total: total, timestamp: Date.now() }));
+                      } catch(e) {}
+                    })
+                    .catch(function() {
+                      resetPlaceOrderButton(btn, originalHTML);
+                      toast('❌ Order saved but email failed. Please contact support.', true);
+                    });
+                } else if (statusData.status === 'failed') {
+                  clearInterval(paymentInterval);
+                  clearTimeout(paymentTimeout);
+                  paymentInterval = null;
+                  paymentTimeout = null;
+                  resetPlaceOrderButton(btn, originalHTML);
+                  toast('❌ Payment failed. Please try again.', true);
+                }
+              })
+              .catch(function(e) {
+                console.error('Status check error:', e);
+              });
+          }, 3000);
+        })
+        .catch(function(err) {
+          resetPlaceOrderButton(btn, originalHTML);
+          toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
+        });
+
+    } catch (err) {
+      resetPlaceOrderButton(btn, originalHTML);
+      toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
+    }
+  };
+
+  // ---- CLOSE SUCCESS MODAL ----
+  window.closeSuccessModal = function() {
+    document.getElementById('successModal').classList.remove('active');
+    window.location.href = 'track-orders.html';
+  };
+
+  // ---- AREA INPUT LISTENER ----
+  document.getElementById('deliveryArea')?.addEventListener('input', function() {
+    renderCartSummary();
+  });
+
+  // ---- INIT ----
+  loadDeliverySettings();
+  renderCartSummary();
+  updateCartUI();
+
+  setInterval(function() {
+    renderCartSummary();
+    updateCartUI();
+  }, 3000);
 }
 
 // ---------- TRACK-ORDERS.HTML ----------
 if (document.getElementById('trackEmail')) {
-  // [track-orders functions would go here]
+  
+  // ---- GUEST ORDER CARD ----
+  function showGuestOrderCard() {
+    var container = document.getElementById('guestOrderCard');
+    var lastOrder = localStorage.getItem('liquorbelle_last_order');
+    if (lastOrder) {
+      try {
+        var order = JSON.parse(lastOrder);
+        var orderDate = new Date(order.timestamp || Date.now());
+        var daysAgo = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
+        if (daysAgo > 7) {
+          container.innerHTML = '';
+          return;
+        }
+        container.innerHTML =
+          '<div class="guest-order-card">' +
+          '<div class="guest-label"><i class="ph ph-clock-counter-clockwise"></i><span>Recent Order</span></div>' +
+          '<span class="guest-id">' + escapeHtml(order.orderId || 'LB-??????') + '</span>' +
+          '<span class="guest-total">KES ' + (order.total || 0).toLocaleString() + '</span>' +
+          '<button class="guest-btn" onclick="quickTrackOrder(\'' + escapeHtml(order.orderId || '') + '\')"><i class="ph ph-magnifying-glass"></i> View</button>' +
+          '</div>';
+      } catch(e) {
+        container.innerHTML = '';
+      }
+    } else {
+      container.innerHTML = '';
+    }
+  }
+
+  // ---- QUICK TRACK ----
+  window.quickTrackOrder = function(orderId) {
+    if (!orderId) return;
+    document.getElementById('trackOrderId').value = orderId;
+    trackByOrderId();
+  };
+
+  // ---- STATUS STEPS ----
+  function updateStatusSteps(status) {
+    var steps = ['step1', 'step2', 'step3', 'step4'];
+    var labels = ['label1', 'label2', 'label3', 'label4'];
+    var stepMap = { 'pending': 0, 'paid': 1, 'delivered': 3 };
+    var activeIndex = stepMap[status] !== undefined ? stepMap[status] : 0;
+
+    for (var i = 0; i < steps.length; i++) {
+      var dot = document.getElementById(steps[i]);
+      var label = document.getElementById(labels[i]);
+      if (i <= activeIndex) {
+        dot.classList.add('active');
+        dot.classList.remove('done');
+        label.classList.add('active');
+      } else {
+        dot.classList.remove('active', 'done');
+        label.classList.remove('active');
+      }
+    }
+  }
+
+  // ---- TRACK BY EMAIL ----
+  window.trackByEmail = function() {
+    var email = document.getElementById('trackEmail').value.trim();
+    if (!email) { toast('Please enter your email address'); return; }
+    if (!email.includes('@')) { toast('Please enter a valid email'); return; }
+    fetchOrders('email', email);
+  };
+
+  // ---- TRACK BY ORDER ID ----
+  window.trackByOrderId = function() {
+    var orderId = document.getElementById('trackOrderId').value.trim();
+    if (!orderId) { toast('Please enter your Order ID (e.g. LB-12345678)'); return; }
+    fetchOrders('orderId', orderId);
+  };
+
+  // ---- FETCH ORDERS ----
+  function fetchOrders(method, value) {
+    var container = document.getElementById('ordersContainer');
+    container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
+    document.getElementById('myAccountSection').style.display = 'none';
+
+    try {
+      var url = API_BASE + '/api/orders/track';
+      var body = { email: value };
+      if (method === 'orderId') {
+        body = { orderId: value };
+      }
+
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data.success && data.orders) {
+            var userOrders = data.orders;
+
+            if (method === 'orderId') {
+              var searchId = value.toUpperCase().trim();
+              userOrders = data.orders.filter(function(o) {
+                var orderNumber = (o.order_number || '').toUpperCase();
+                var id = (o._id || '').toUpperCase();
+                return orderNumber.includes(searchId) || id.includes(searchId);
+              });
+            }
+
+            if (method === 'email' && userOrders.length > 0) {
+              var accountSection = document.getElementById('myAccountSection');
+              accountSection.style.display = 'block';
+              var firstOrder = userOrders[0];
+              document.getElementById('accountName').textContent = firstOrder.customer_name || '—';
+              document.getElementById('accountEmail').textContent = firstOrder.customer_email || value;
+              document.getElementById('accountPhone').textContent = firstOrder.phone || '—';
+              document.getElementById('accountOrderCount').textContent = userOrders.length;
+            }
+
+            if (userOrders.length > 0) {
+              userOrders.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+              if (userOrders[0] && userOrders[0].status) {
+                updateStatusSteps(userOrders[0].status);
+              }
+              renderOrders(userOrders);
+            } else {
+              container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Try checking your email or Order ID again</small></div>';
+              updateStatusSteps('pending');
+            }
+          } else {
+            container.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>Unable to fetch orders. Please try again.</p></div>';
+          }
+        })
+        .catch(function(e) {
+          console.error('Error tracking orders:', e);
+          container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Error loading orders. Please check your connection and try again.</p></div>';
+        });
+    } catch(e) {
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Error loading orders. Please check your connection and try again.</p></div>';
+    }
+  }
+
+  // ---- RENDER ORDERS ----
+  function renderOrders(orders) {
+    var container = document.getElementById('ordersContainer');
+    var html = '<div class="orders-list">';
+    for (var i = 0; i < orders.length; i++) {
+      var o = orders[i];
+      var items = o.items;
+      if (typeof items === 'string') { try { items = JSON.parse(items); } catch(e) { items = []; } }
+      if (!items || !items.length) items = [];
+
+      var statusText = o.status === 'pending' ? '⏳ Pending' : (o.status === 'paid' ? '✅ Paid' : (o.status === 'delivered' ? '🚚 Delivered' : '❌ Cancelled'));
+      var statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'paid' ? 'status-paid' : (o.status === 'delivered' ? 'status-delivered' : 'status-cancelled'));
+
+      var deliveryFee = o.delivery || 0;
+      var subtotal = o.subtotal || (o.total - deliveryFee);
+      var deliveryDisplay = deliveryFee === 0 ? '<span style="color:#1A8A3E;">FREE</span>' : 'KES ' + deliveryFee.toLocaleString();
+
+      var orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
+
+      html += '<div class="order-card">';
+      html += '<div class="order-header">';
+      html += '<div><div class="order-number">📦 Order #' + orderNumber + '</div>';
+      html += '<div class="order-date">📅 ' + new Date(o.created_at).toLocaleDateString() + ' at ' + new Date(o.created_at).toLocaleTimeString() + '</div>';
+      html += '<div class="order-breakdown"><i class="ph ph-credit-card"></i> ' + (o.payment_method || 'M-PESA') + '</div></div>';
+      html += '<span class="order-status ' + statusClass + '">' + statusText + '</span>';
+      html += '</div>';
+      html += '<div class="order-items">';
+      for (var j = 0; j < items.length; j++) {
+        var item = items[j];
+        var itemName = item.product_name || item.name || 'Product';
+        var itemQty = item.quantity || item.qty || 1;
+        var itemPrice = item.price || 0;
+        html += '<div class="order-item"><div><div class="order-item-name">' + escapeHtml(itemName) + (item.size ? ' (' + item.size + ')' : '') + '</div><div class="order-item-qty">Quantity: ' + itemQty + '</div></div><div class="order-item-price">KES ' + (itemPrice * itemQty).toLocaleString() + '</div></div>';
+      }
+      html += '</div>';
+      html += '<div class="order-footer">';
+      html += '<div class="order-total-row"><span>Subtotal</span><span>KES ' + (subtotal || 0).toLocaleString() + '</span></div>';
+      html += '<div class="order-total-row"><span>Delivery Fee</span><span>' + deliveryDisplay + '</span></div>';
+      html += '<div class="order-total-row"><span>Total</span><span>KES ' + (o.total || 0).toLocaleString() + '</span></div>';
+      html += '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  // ---- AUTO-TRACK FROM URL PARAMS ----
+  var emailParam = getQueryParam('email');
+  var orderIdParam = getQueryParam('orderId');
+  if (emailParam) {
+    document.getElementById('trackEmail').value = emailParam;
+    setTimeout(function() { trackByEmail(); }, 500);
+  } else if (orderIdParam) {
+    document.getElementById('trackOrderId').value = orderIdParam;
+    setTimeout(function() { trackByOrderId(); }, 500);
+  }
+
+  // ---- ENTER KEY HANDLERS ----
+  document.getElementById('trackEmail')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') trackByEmail();
+  });
+  document.getElementById('trackOrderId')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') trackByOrderId();
+  });
+
+  // ---- INIT ----
+  updateStatusSteps('pending');
+  showGuestOrderCard();
+  updateCartUI();
+  setInterval(updateCartUI, 3000);
 }
 
 // ============================================================
