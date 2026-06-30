@@ -3425,7 +3425,14 @@ if (document.getElementById('productsTab')) {
       await loadDeliverySettingsAdmin();
     }
 
-    // Override toggleVariantOther for admin
+    // ---- EXPOSE ALL ADMIN FUNCTIONS TO GLOBAL SCOPE ----
+    window.submitAdminLogin = submitAdminLogin;
+    window.toggleAdminPasswordVisibility = toggleAdminPasswordVisibility;
+    window.resetInactivityTimer = resetInactivityTimer;
+    window.logout = logoutAdmin;
+    window.hideToast = hideToastAdmin;
+    window.showToast = showToastAdmin;
+
     window.toggleVariantOther = toggleVariantOther;
     window.toggleEditVariantOther = toggleEditVariantOther;
     window.addVariantRow = addVariantRow;
@@ -3434,6 +3441,7 @@ if (document.getElementById('productsTab')) {
     window.removeEditVariantRow = removeEditVariantRow;
     window.updateVariantOptions = updateVariantOptions;
     window.updateEditVariantOptions = updateEditVariantOptions;
+
     window.addProduct = addProduct;
     window.openEditModal = openEditModal;
     window.closeEditModal = closeEditModal;
@@ -3443,10 +3451,14 @@ if (document.getElementById('productsTab')) {
     window.bulkImport = bulkImport;
     window.applySort = applySort;
     window.clearProductSearch = clearProductSearch;
+
     window.markOrderDelivered = markOrderDelivered;
     window.deleteOrderAdmin = deleteOrderAdmin;
+
     window.saveDeliverySettings = saveDeliverySettings;
     window.updatePasswords = updatePasswords;
+
+    window.applyFilters = applyFiltersAdmin;
     window.applyFiltersAdmin = applyFiltersAdmin;
 
     initAdminFull();
@@ -3999,13 +4011,15 @@ if (document.getElementById('cashierLoginModal')) {
       }
     }
 
-    // Expose to global
-    window.markPaidOrders = markPaidOrders;
-    window.markDeliveredOrders = markDeliveredOrders;
+    // ---- EXPOSE ALL CASHIER FUNCTIONS TO GLOBAL SCOPE ----
+    window.submitCashierLogin = submitCashierLogin;
+    window.togglePasswordVisibility = togglePasswordVisibility;
+    window.logout = logoutOrders;
+    window.applyFilters = applyFiltersOrders;
+    window.markPaid = markPaidOrders;
+    window.markDelivered = markDeliveredOrders;
+    window.clearSearch = clearSearchOrders;
     window.manualRefresh = manualRefresh;
-    window.clearSearchOrders = clearSearchOrders;
-    window.applyFiltersOrders = applyFiltersOrders;
-    window.logoutOrders = logoutOrders;
 
     initOrders();
   })();
