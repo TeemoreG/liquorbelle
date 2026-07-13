@@ -2236,6 +2236,25 @@ if (document.getElementById('customerEmail')) {
 // ADMIN FUNCTIONS
 // ============================================================
 
+window.adminLogin = async function(password) {
+  try {
+    const res = await fetch(API_BASE + '/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (data.success && data.token) {
+      localStorage.setItem('liquorbelle_admin_token', data.token);
+      return true;
+    }
+    return false;
+  } catch(e) {
+    console.error('Admin login error:', e);
+    return false;
+  }
+};
+
 window.toggleAdminPasswordVisibility = function() {
   const input = document.getElementById('adminPassword');
   const icon = document.getElementById('toggleAdminPasswordIcon');
