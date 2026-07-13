@@ -2232,6 +2232,64 @@ if (document.getElementById('customerEmail')) {
     updateCartUI();
   }, 3000);
 }
+// ============================================================
+// ADMIN FUNCTIONS
+// ============================================================
+
+window.toggleAdminPasswordVisibility = function() {
+  const input = document.getElementById('adminPassword');
+  const icon = document.getElementById('toggleAdminPasswordIcon');
+  if (!input || !icon) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'ph ph-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'ph ph-eye';
+  }
+};
+
+window.submitAdminLogin = function() {
+  const password = document.getElementById('adminPassword');
+  const errorDiv = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  
+  if (!password || !password.value) {
+    if (errorDiv) errorDiv.innerText = 'Please enter your password.';
+    return;
+  }
+  
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
+  }
+  
+  // Call the admin login function from your existing code
+  window.adminLogin(password.value)
+    .then(success => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = 'Login';
+      }
+      if (success) {
+        document.getElementById('adminLoginModal').style.display = 'none';
+        if (typeof initAdminAfterLogin === 'function') {
+          initAdminAfterLogin();
+        }
+      } else {
+        if (errorDiv) errorDiv.innerText = 'Invalid admin password. Try again.';
+        if (password) password.value = '';
+        if (password) password.focus();
+      }
+    })
+    .catch(() => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = 'Login';
+      }
+      if (errorDiv) errorDiv.innerText = 'Network error. Please try again.';
+    });
+};
 
 // ============================================================
 // TRACK-ORDERS.HTML
