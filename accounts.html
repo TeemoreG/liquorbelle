@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<meta name="theme-color" content="#800000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>My Account — LiquorBelle</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --primary:#800000;
+  --primary-bright:#990000;
+  --primary-dark:#5C0000;
+  --sale-red:#D50000;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --gold:#B8860B;
+  --gold-light:#d4a017;
+  --gold-bg:#fdf6e3;
+  --btn-green:#22C55E;
+  --btn-green-hover:#16A34A;
+  --green-light:#E8F5E9;
+  --radius:24px;
+  --radius-sm:14px;
+  --radius-xs:10px;
+  --shadow:0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg:0 20px 50px rgba(0,0,0,0.10);
+  --shadow-xl:0 30px 80px rgba(0,0,0,0.12);
+  --font-body:'Inter',-apple-system,sans-serif;
+  --bottom-nav-height:70px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
+img{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+.shop-svg{width:22px;height:22px;color:currentColor;display:block;}
+
+/* ===== GOLD & GREEN ACCENTS ===== */
+.gold-text{color:var(--gold);}
+.gold-border{border-color:var(--gold);}
+.gold-bg{background:var(--gold-bg);}
+.gold-gradient{background:linear-gradient(135deg, var(--gold), var(--gold-light));}
+.green{color:var(--btn-green);}
+.green-bg{background:var(--green-light);}
+.green-border{border-color:var(--btn-green);}
+
+/* ===== OFFLINE BANNER ===== */
+.offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
+.offline-banner.show{display:block;}
+
+/* ===== WHATSAPP FLOAT ===== */
+.whatsapp-float{
+  position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;
+  width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:1000;box-shadow:0 4px 20px rgba(37,211,102,0.4);
+  transition:all .3s;border:none;text-decoration:none;
+}
+.whatsapp-float:hover{transform:scale(1.08);box-shadow:0 8px 30px rgba(37,211,102,0.5);}
+.whatsapp-float i{font-size:28px;}
+.whatsapp-float .tooltip{
+  position:absolute;right:68px;background:rgba(0,0,0,0.85);color:white;
+  padding:6px 14px;border-radius:30px;font-size:11px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:all .3s;font-weight:500;
+}
+.whatsapp-float:hover .tooltip{opacity:1;right:62px;}
+@media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:20px;right:24px;}}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:calc(var(--bottom-nav-height) + var(--safe-bottom));
+  background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
+  border-top:1px solid rgba(0,0,0,0.06);
+  display:flex;align-items:center;justify-content:space-around;
+  z-index:300;padding:4px 0 var(--safe-bottom);
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  cursor:pointer;padding:4px 12px;transition:.2s;position:relative;
+  border:none;background:none;color:var(--muted);
+  font-family:var(--font-body);font-size:9px;font-weight:500;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-item i{font-size:22px;transition:.2s;}
+.nav-item.active{color:var(--primary);}
+.nav-item.active i{color:var(--primary);}
+.nav-item .nav-badge{
+  position:absolute;top:-2px;right:2px;background:var(--sale-red);
+  color:white;font-size:9px;font-weight:700;min-width:18px;height:18px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;
+  padding:0 5px;
+}
+.nav-item:active{transform:scale(0.92);}
+
+/* ===== HEADER ===== */
+.main-header{
+  background:var(--primary);
+  padding:10px 4%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:2px solid var(--btn-green);
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 16px rgba(0,0,0,0.15);
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.logo-img{height:40px;width:40px;object-fit:cover;border-radius:12px;background:white;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.logo-text{font-size:1.2rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;}
+.logo-text small{display:block;font-size:8px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:1px;text-transform:uppercase;}
+.logo-text .gold{color:var(--gold-light);}
+
+.header-search-form{flex:1;max-width:420px;display:flex;align-items:center;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0 6px 0 14px;height:38px;transition:.2s;}
+.header-search-form:focus-within{background:rgba(255,255,255,0.95);}
+.header-search-form i{color:rgba(255,255,255,0.8);font-size:16px;flex-shrink:0;}
+.header-search-form:focus-within i{color:var(--gold);}
+.header-search-input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.82rem;color:white;min-width:0;}
+.header-search-form:focus-within .header-search-input{color:var(--text);}
+.header-search-input::placeholder{color:rgba(255,255,255,0.75);}
+.header-search-form:focus-within .header-search-input::placeholder{color:var(--muted);}
+@media(max-width:560px){.header-search-form{display:none;}}
+
+.header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+
+/* ===== HEADER USER BADGE ===== */
+.header-user-badge{
+  position:relative;
+  width:36px;height:36px;
+  border-radius:50%;
+  border:2px solid var(--btn-green);
+  background:rgba(255,255,255,0.08);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+  font-size:16px;
+}
+.header-user-badge:hover{background:rgba(255,255,255,0.2);}
+.header-user-badge .user-initial{
+  font-weight:700;
+  font-size:14px;
+  text-transform:uppercase;
+}
+.header-user-badge .user-dot{
+  position:absolute;bottom:-2px;right:-2px;
+  width:12px;height:12px;
+  border-radius:50%;
+  background:var(--btn-green);
+  border:2px solid var(--primary);
+}
+.header-user-badge .user-dot.guest{
+  background:var(--muted);
+}
+
+.header-icon-btn{
+  position:relative;width:40px;height:40px;border-radius:50%;border:none;
+  background:transparent;color:white;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;
+}
+.header-icon-btn i{font-size:22px;}
+.header-icon-btn:hover{background:rgba(34,197,94,0.15);}
+.header-icon-btn:active{transform:scale(0.92);}
+.header-cart-badge{
+  position:absolute;top:0;right:0;background:var(--gold);color:white;
+  font-size:10px;font-weight:800;min-width:17px;height:17px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);
+}
+
+/* ===== MOBILE MENU ===== */
+.mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
+.mobile-menu-overlay.open{opacity:1;pointer-events:auto;}
+.mobile-menu{position:fixed;top:0;right:-280px;width:260px;height:100%;background:var(--white);z-index:400;box-shadow:-8px 0 30px rgba(0,0,0,0.15);transition:right .3s cubic-bezier(0.4,0,0.2,1);padding:20px 0;overflow-y:auto;}
+.mobile-menu.open{right:0;}
+.mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:0 20px 16px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.mobile-menu-head span{font-weight:800;font-size:1rem;color:var(--primary);}
+.mobile-menu-close{border:none;background:var(--bg2);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
+.mobile-menu a, .mobile-menu button.mm-link{display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;width:100%;background:none;border:none;text-align:left;cursor:pointer;}
+.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--btn-green);width:20px;}
+.mobile-menu a:active, .mobile-menu button.mm-link:active{background:var(--bg2);}
+.mobile-search-inline{display:none;padding:0 20px 14px;}
+@media(max-width:560px){.mobile-search-inline{display:block;}}
+.mobile-search-inline form{display:flex;align-items:center;background:var(--bg2);border-radius:50px;padding:0 14px;height:40px;}
+.mobile-search-inline i{color:var(--muted);font-size:16px;}
+.mobile-search-inline input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.85rem;color:var(--text);}
+
+/* ============================================================
+   ACCOUNT PAGE SPECIFIC
+   ============================================================ */
+.account-container{
+  max-width: 900px;
+  margin: 20px auto 32px;
+  padding: 0 4%;
+}
+.account-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  padding: 32px;
+  box-shadow:var(--shadow);
+  border-top:4px solid var(--gold);
+}
+.account-card h1{
+  font-size: 1.6rem;
+  font-weight: 800;
+  color:var(--primary);
+  margin-bottom: 4px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.account-card h1 i{font-size:32px;color:var(--gold);}
+.account-card .subtitle{
+  color:var(--muted);
+  margin-bottom: 24px;
+  font-size: .9rem;
+}
+
+/* ===== AUTH TABS ===== */
+.auth-tabs{
+  display:flex;
+  gap:4px;
+  background:var(--bg2);
+  border-radius:var(--radius-sm);
+  padding:4px;
+  margin-bottom:24px;
+}
+.auth-tab{
+  flex:1;
+  padding:12px;
+  border:none;
+  background:transparent;
+  border-radius:var(--radius-xs);
+  font-weight:700;
+  font-size:.9rem;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .2s;
+  font-family:var(--font-body);
+}
+.auth-tab.active{
+  background:var(--white);
+  color:var(--primary);
+  box-shadow:var(--shadow);
+}
+.auth-tab-login.active{background:var(--primary);color:white;}
+.auth-tab-register.active{background:var(--gold);color:white;}
+.auth-tab:active{transform:scale(0.97);}
+
+/* ===== AUTH FORMS ===== */
+.auth-form{display:none;}
+.auth-form.active{display:block;}
+.auth-form .form-group{margin-bottom:16px;}
+.auth-form .form-group label{
+  display:block;
+  margin-bottom:4px;
+  font-weight:600;
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+.auth-form .form-group input{
+  width:100%;
+  padding:12px 16px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-family:var(--font-body);
+  font-size:14px;
+  transition:all .2s;
+}
+.auth-form .form-group input:focus{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(184,134,11,0.08);
+  background:var(--white);
+}
+.auth-form .form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media(max-width:500px){.auth-form .form-row{grid-template-columns:1fr;}}
+
+/* ===== PIN INPUT ===== */
+.pin-input-group{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin:8px 0 12px;
+}
+.pin-input-group input{
+  width:48px !important;
+  height:56px !important;
+  text-align:center;
+  font-size:22px !important;
+  font-weight:700;
+  letter-spacing:4px;
+  border-radius:12px !important;
+  padding:0 !important;
+  background:var(--bg);
+  border:2px solid var(--border);
+  transition:all .2s;
+  font-family:monospace;
+}
+.pin-input-group input:focus{
+  border-color:var(--gold);
+  background:var(--white);
+  box-shadow:0 0 0 3px rgba(184,134,11,0.1);
+}
+.pin-input-group input.error{
+  border-color:var(--sale-red);
+  background:#FFF5F5;
+}
+.pin-input-group input.valid{
+  border-color:var(--btn-green);
+  background:#F0FFF4;
+}
+.pin-dots{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  margin:8px 0;
+}
+.pin-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--border);
+  transition:all .2s;
+}
+.pin-dot.filled{background:var(--gold);}
+.pin-dot.active{background:var(--gold-light);transform:scale(1.2);}
+
+/* ===== VALIDATION STYLES ===== */
+.form-group .input-error{
+  color:var(--sale-red);
+  font-size:10px;
+  margin-top:4px;
+  display:none;
+}
+.form-group .input-error.show{display:block;}
+.form-group input.error{
+  border-color:var(--sale-red);
+  background:#FFF5F5;
+}
+.form-group input.valid{
+  border-color:var(--btn-green);
+  background:#F0FFF4;
+}
+
+.btn-primary{
+  width:100%;
+  padding:14px;
+  background:var(--gold);
+  color:white;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-weight:700;
+  font-size:1rem;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:var(--font-body);
+}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 4px 20px rgba(184,134,11,0.3);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ===== OTP INPUT ===== */
+.otp-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:4px;
+}
+.otp-row input{flex:1;}
+.otp-row .btn-sm{
+  padding:12px 20px;
+  background:var(--gold);
+  color:white;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-weight:700;
+  font-size:.8rem;
+  cursor:pointer;
+  transition:all .2s;
+  white-space:nowrap;
+  font-family:var(--font-body);
+}
+.otp-row .btn-sm:hover{background:var(--gold-light);}
+.otp-row .btn-sm:disabled{opacity:0.5;cursor:not-allowed;}
+.otp-timer{font-size:.75rem;color:var(--muted);margin-top:4px;display:block;}
+
+/* ===== STATUS MESSAGES ===== */
+.auth-status{
+  padding:10px 14px;
+  border-radius:var(--radius-xs);
+  font-size:.85rem;
+  font-weight:600;
+  margin-bottom:12px;
+  display:none;
+}
+.auth-status.error{display:block;background:#FFEBEE;color:#D32F2F;border:1px solid #FFCDD2;}
+.auth-status.success{display:block;background:#E8F5E9;color:#1A8A3E;border:1px solid #C8E6C9;}
+.auth-status.info{display:block;background:#FFF3E0;color:#E67E22;border:1px solid #FFE0B2;}
+
+/* ===== LOGGED IN STATE ===== */
+.logged-in-section{display:none;}
+.logged-in-section.active{display:block;}
+
+.user-greeting{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  padding:16px 20px;
+  background:var(--gold-bg);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  margin-bottom:20px;
+}
+.user-greeting .greeting-text{font-size:1.1rem;font-weight:700;color:var(--text);}
+.user-greeting .greeting-text i{color:var(--gold);margin-right:8px;}
+.user-greeting .greeting-email{font-size:.85rem;color:var(--muted);}
+.user-greeting .greeting-phone{font-size:.85rem;color:var(--muted);margin-top:2px;}
+.user-greeting .logout-btn{
+  padding:8px 20px;
+  background:var(--sale-red);
+  color:white;
+  border:none;
+  border-radius:50px;
+  font-weight:600;
+  font-size:.8rem;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:var(--font-body);
+}
+.user-greeting .logout-btn:hover{background:#b71c1c;transform:scale(1.02);}
+
+/* ===== ACCOUNT FEATURES GRID ===== */
+.account-features-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;
+  margin:16px 0 20px;
+}
+.feature-card{
+  background:var(--white);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  padding:16px 14px;
+  text-align:center;
+  transition:all .2s;
+  cursor:pointer;
+  text-decoration:none;
+  color:var(--text);
+  box-shadow:var(--shadow);
+}
+.feature-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-lg);
+  border-color:var(--btn-green);
+}
+.feature-card i{
+  font-size:28px;
+  display:block;
+  margin-bottom:6px;
+  color:var(--btn-green);
+}
+.feature-card .feature-label{
+  font-weight:700;
+  font-size:.75rem;
+  display:block;
+}
+.feature-card .feature-desc{
+  font-size:.6rem;
+  color:var(--muted);
+  display:block;
+  margin-top:2px;
+}
+.feature-card.card-gold i{color:var(--gold);}
+.feature-card.card-gold:hover{border-color:var(--gold);}
+.feature-card.card-red i{color:var(--sale-red);}
+.feature-card.card-red:hover{border-color:var(--sale-red);}
+.feature-card.card-green i{color:var(--btn-green);}
+.feature-card.card-green:hover{border-color:var(--btn-green);}
+
+/* ===== ORDERS SECTION ===== */
+.orders-section{
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border);
+}
+.orders-section .section-title{
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+.orders-section .section-title i{color:var(--gold);}
+.orders-section .section-subtitle{
+  font-size: .8rem;
+  color: var(--muted);
+  margin-bottom:6px;
+}
+
+.view-all-orders-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:white;
+  font-weight:600;
+  font-size:.85rem;
+  text-decoration:none;
+  padding:8px 20px;
+  background:var(--btn-green);
+  border-radius:50px;
+  transition:all .2s;
+  margin-bottom:12px;
+}
+.view-all-orders-link:hover{
+  background:var(--btn-green-hover);
+  transform:translateY(-2px);
+  box-shadow:0 4px 20px rgba(34,197,94,0.3);
+}
+.view-all-orders-link i{font-size:16px;}
+
+/* ===== ORDERS LIST ===== */
+.orders-list{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.order-card{
+  background:var(--white);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:all .2s;
+}
+.order-card:hover{box-shadow:var(--shadow-lg);border-color:var(--gold);}
+.order-header{
+  background:var(--gold-bg);
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.order-number{font-weight:700;color:var(--primary);font-size:.9rem;}
+.order-date{font-size:12px;color:var(--muted);}
+.order-status{
+  padding:4px 12px;
+  border-radius:40px;
+  font-size:11px;
+  font-weight:700;
+}
+.status-pending{background:#FFF3E0;color:#E67E22;}
+.status-paid{background:#E8F5E9;color:#1A8A3E;}
+.status-delivered{background:#E3F2FD;color:#2196F3;}
+.status-cancelled{background:#FFEBEE;color:#D32F2F;}
+
+.order-items{padding:14px 18px;max-height:240px;overflow-y:auto;}
+.order-item{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.order-item:last-child{border-bottom:none;}
+.order-item-name{font-weight:600;font-size:13px;}
+.order-item-qty{font-size:11px;color:var(--muted);margin-top:2px;}
+.order-item-price{font-weight:700;color:var(--sale-red);font-size:13px;white-space:nowrap;}
+
+.order-footer{
+  background:var(--bg2);
+  padding:10px 18px;
+}
+.order-total-row{
+  display:flex;
+  justify-content:space-between;
+  font-weight:700;
+  font-size:.85rem;
+  padding:4px 0;
+}
+.order-total-row:last-child{
+  font-weight:800;
+  font-size:1rem;
+  color:var(--primary);
+  border-top:1px solid var(--border);
+  padding-top:8px;
+  margin-top:4px;
+}
+.empty-state{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--muted);
+}
+.empty-state i{font-size:44px;display:block;margin-bottom:12px;color:var(--border);}
+.empty-state p{margin-bottom:4px;font-size:.9rem;}
+.empty-state small{font-size:.75rem;}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:32px 4% 24px;margin-top:32px;border-top:3px solid var(--gold);}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;margin-bottom:24px;}
+.footer-col h4{font-size:.8rem;font-weight:700;margin-bottom:12px;color:#fff;opacity:.9;}
+.footer-col p,.footer-col a{display:block;font-size:.7rem;margin-bottom:6px;opacity:.7;color:#fff;text-decoration:none;}
+.footer-col a:hover{opacity:1;color:var(--gold);}
+.footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
+
+/* ===== CART DRAWER ===== */
+.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background:#fff;text-align:center;}
+.cart-icon-wrapper{position:relative;margin-bottom:25px;width:90px;height:80px;}
+.cart-svg{width:100%;height:100%;}
+.cart-badge{position:absolute;top:-2px;right:2px;background:var(--primary);color:#fff;font-size:13px;font-weight:bold;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.cart-message{color:#111;font-size:24px;font-weight:600;margin:0 0 20px;letter-spacing:-.5px;}
+.shop-button{display:inline-block;background:var(--primary);color:#fff;padding:10px 42px;border-radius:25px;font-size:18px;font-weight:500;border:none;cursor:pointer;transition:.2s;}
+.shop-button:hover{background:var(--primary-bright);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
+.overlay.open{opacity:1;pointer-events:auto;}
+.cart-drawer{
+  position:fixed;bottom:-100%;left:0;right:0;background:var(--white);
+  border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s cubic-bezier(0.4,0,0.2,1);
+  max-height:80vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,0.12);
+}
+.cart-drawer.open{bottom:0;}
+.cart-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1;}
+.cart-head span{font-weight:800;font-size:1rem;}
+.cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px;}
+.cart-items{padding:12px 16px;}
+.cart-item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.cart-item-name{font-weight:700;font-size:.8rem;}
+.cart-item-price{color:var(--sale-red);font-weight:700;font-size:.85rem;}
+.cart-qty{display:flex;align-items:center;gap:6px;margin-top:4px;}
+.cart-qty button{width:24px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:12px;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.cart-qty button:hover{background:var(--gold);color:white;border-color:var(--gold);}
+.cart-footer{padding:12px 16px 20px;border-top:1px solid var(--border);}
+.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:12px;}
+.btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
+.btn-checkout:hover{background:var(--primary-bright);}
+#toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
+
+/* ===== WISHLIST MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-card{background:var(--white);border-radius:var(--radius);padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
+.modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;color:var(--primary);}
+.modal-card p{color:var(--muted);font-size:.8rem;margin-bottom:16px;}
+.wishlist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.wishlist-item img{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-xs);}
+.wishlist-item-info{flex:1;}
+.wishlist-item-name{font-weight:700;font-size:.8rem;}
+.wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.75rem;}
+.wishlist-atc{padding:4px 12px;background:var(--btn-green);color:#fff;border:none;border-radius:30px;font-size:.65rem;font-weight:600;cursor:pointer;}
+.wishlist-remove{background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:4px;}
+.wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
+.modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
+.wishlist-modal{display:none;}
+.wishlist-modal.open{display:flex;}
+
+@keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:768px){
+  .account-container{padding:0 3%;margin:12px auto 20px;}
+  .account-card{padding:20px 16px;}
+  .account-card h1{font-size:1.3rem;}
+  .account-card h1 i{font-size:26px;}
+  .user-greeting{flex-direction:column;text-align:center;}
+  .auth-tabs{flex-direction:column;}
+  .pin-input-group input{width:40px !important;height:48px !important;font-size:18px !important;}
+  .account-features-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .feature-card{padding:12px 10px;}
+  .feature-card i{font-size:22px;}
+  .feature-card .feature-label{font-size:.65rem;}
+  .feature-card .feature-desc{font-size:.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== OFFLINE BANNER ===== -->
+<div class="offline-banner" id="offlineBanner">You're offline. Please check your connection.</div>
+
+<!-- ===== WISHLIST MODAL ===== -->
+<div class="modal-overlay wishlist-modal" id="wishlistModal">
+  <div class="modal-card">
+    <h3>My Wishlist</h3>
+    <p>Save your favourites and add them to basket anytime.</p>
+    <div id="wishlistItems"></div>
+    <button class="modal-btn" style="background:var(--gold);color:white;margin-top:12px;padding:10px 20px;border-radius:50px;border:none;font-weight:600;cursor:pointer;" onclick="closeWishlistModal()">Close</button>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="main-header">
+  <a class="logo" href="index.html">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
+    <div class="logo-text">Liquor<span class="gold">Belle</span><small>Nairobi's Finest</small></div>
+  </a>
+  <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
+    <i class="ph ph-magnifying-glass"></i>
+    <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
+  </form>
+  <div class="header-icons">
+    <div class="header-user-badge" id="headerUserBadge" onclick="window.location.href='account.html'" title="My Account">
+      <span class="user-initial" id="userInitial">G</span>
+      <span class="user-dot guest" id="userDot"></span>
+    </div>
+    <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
+      <i class="ph ph-shopping-cart"></i>
+      <span class="header-cart-badge" id="headerCartCount">0</span>
+    </button>
+    <button class="header-icon-btn" onclick="openMobileMenu()" aria-label="Menu">
+      <i class="ph ph-list"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ===== MOBILE MENU ===== -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+<nav class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-head">
+    <span>Menu</span>
+    <button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="ph ph-x"></i></button>
+  </div>
+  <div class="mobile-search-inline">
+    <form onsubmit="return handleHeaderSearch(event)">
+      <i class="ph ph-magnifying-glass"></i>
+      <input id="mobileSearchInput" type="text" placeholder="Search products...">
+    </form>
+  </div>
+  <div id="mobileMenuAuth"></div>
+  <a href="index.html"><i class="ph ph-house"></i> Home</a>
+  <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
+  <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
+  <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
+  <a href="account.html"><i class="ph ph-user-circle"></i> My Account</a>
+  <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
+</nav>
+
+<!-- ===== ACCOUNT CONTENT ===== -->
+<div class="account-container">
+  <div class="account-card">
+    <h1><i class="ph ph-user-circle"></i> My Account</h1>
+    <p class="subtitle">Manage your profile, orders, and preferences</p>
+
+    <!-- AUTH STATUS -->
+    <div class="auth-status" id="authStatus"></div>
+
+    <!-- LOGGED IN STATE -->
+    <div class="logged-in-section" id="loggedInSection">
+      <div class="user-greeting">
+        <div>
+          <div class="greeting-text"><i class="ph ph-hand-waving"></i> Welcome back, <span id="userName">Customer</span>!</div>
+          <div class="greeting-phone" id="userPhone">📱 0712345678</div>
+          <div class="greeting-email" id="userEmail">✉️ you@example.com</div>
+        </div>
+        <button class="logout-btn" onclick="logoutUser()"><i class="ph ph-sign-out"></i> Logout</button>
+      </div>
+
+      <!-- ===== ACCOUNT FEATURES ===== -->
+      <div class="account-features-grid">
+        <a href="track-orders.html" class="feature-card card-green">
+          <i class="ph ph-package"></i>
+          <span class="feature-label">My Orders</span>
+          <span class="feature-desc">View order history</span>
+        </a>
+        <a href="https://wa.me/254748894443?text=Hi%20LiquorBelle%2C%20I%20have%20a%20question%20about%20my%20account" target="_blank" class="feature-card card-green">
+          <i class="ph ph-whatsapp-logo"></i>
+          <span class="feature-label">WhatsApp Support</span>
+          <span class="feature-desc">Chat with us 24/7</span>
+        </a>
+        <a href="#" onclick="showWholesaleForm()" class="feature-card card-gold">
+          <i class="ph ph-chart-bar"></i>
+          <span class="feature-label">Wholesale Quote</span>
+          <span class="feature-desc">Bulk pricing request</span>
+        </a>
+        <a href="https://wa.me/254748894443?text=I%20want%20to%20place%20an%20order" target="_blank" class="feature-card card-green">
+          <i class="ph ph-shopping-cart"></i>
+          <span class="feature-label">Order via WhatsApp</span>
+          <span class="feature-desc">Quick order placement</span>
+        </a>
+        <a href="mailto:timblax0@gmail.com" class="feature-card card-gold">
+          <i class="ph ph-envelope"></i>
+          <span class="feature-label">Contact Us</span>
+          <span class="feature-desc">Email support</span>
+        </a>
+        <a href="#" onclick="showSupportForm()" class="feature-card card-red">
+          <i class="ph ph-headset"></i>
+          <span class="feature-label">Support</span>
+          <span class="feature-desc">Get help &amp; FAQs</span>
+        </a>
+      </div>
+
+      <!-- ===== ORDERS SECTION ===== -->
+      <div class="orders-section">
+        <div class="section-title"><i class="ph ph-package"></i> My Orders</div>
+        <div class="section-subtitle">View all your past and current orders</div>
+        
+        <a href="track-orders.html" class="view-all-orders-link">
+          <i class="ph ph-arrow-right"></i> View All Orders
+        </a>
+        
+        <div id="ordersContainer"></div>
+      </div>
+    </div>
+
+    <!-- AUTH FORMS -->
+    <div id="authForms">
+      <div class="auth-tabs">
+        <button class="auth-tab auth-tab-login active" data-tab="login" onclick="switchTab('login')">
+          <i class="ph ph-sign-in"></i> Login
+        </button>
+        <button class="auth-tab auth-tab-register" data-tab="register" onclick="switchTab('register')">
+          <i class="ph ph-user-plus"></i> Register
+        </button>
+      </div>
+
+      <!-- ===== LOGIN FORM ===== -->
+      <div class="auth-form active" id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" oninput="validateLoginEmail(this)">
+          <div class="input-error" id="loginEmailError">Please enter a valid email</div>
+        </div>
+        <div class="form-group">
+          <label>4-Digit PIN</label>
+          <div class="pin-input-group" id="loginPinGroup">
+            <input type="password" id="loginPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            <input type="password" id="loginPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            <input type="password" id="loginPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            <input type="password" id="loginPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          </div>
+          <div class="input-error" id="loginPinError">Please enter a 4-digit PIN (numbers only)</div>
+          <div style="margin-top:6px;">
+            <button type="button" onclick="togglePinVisibility('login')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">Show PIN</button>
+          </div>
+        </div>
+        <div style="text-align:right;margin-bottom:12px;">
+          <a href="#" onclick="showForgotPin()" style="font-size:12px;color:var(--gold);text-decoration:none;cursor:pointer;">Forgot PIN?</a>
+        </div>
+        <button class="btn-primary" id="loginSubmitBtn" onclick="loginUser()"><i class="ph ph-sign-in"></i> Login</button>
+      </div>
+
+      <!-- ===== FORGOT PIN FORM ===== -->
+      <div class="auth-form" id="forgotPinForm" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h3 style="font-size:1.1rem;color:var(--primary);">Reset PIN</h3>
+          <button onclick="hideForgotPin()" style="background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
+        </div>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px;">Enter your email to receive an OTP to reset your PIN.</p>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="forgotEmail" placeholder="you@example.com">
+          <div class="input-error" id="forgotEmailError">Please enter a valid email</div>
+        </div>
+        <div class="form-group" id="forgotOtpGroup" style="display:none;">
+          <label>OTP Code (sent to your email)</label>
+          <div class="otp-row">
+            <input type="text" id="forgotOtp" placeholder="Enter 6-digit code" maxlength="6">
+            <button class="btn-sm" id="forgotOtpBtn" onclick="sendForgotOtp()">Send OTP</button>
+          </div>
+          <div class="input-error" id="forgotOtpError">Please enter a valid 6-digit OTP</div>
+          <span class="otp-timer" id="forgotOtpTimer"></span>
+        </div>
+        <div class="form-group" id="forgotPinGroup" style="display:none;">
+          <label>New 4-Digit PIN</label>
+          <div class="pin-input-group" id="forgotPinInputGroup">
+            <input type="password" id="forgotPin1" maxlength="1" pattern="[0-9]" inputmode="numeric">
+            <input type="password" id="forgotPin2" maxlength="1" pattern="[0-9]" inputmode="numeric">
+            <input type="password" id="forgotPin3" maxlength="1" pattern="[0-9]" inputmode="numeric">
+            <input type="password" id="forgotPin4" maxlength="1" pattern="[0-9]" inputmode="numeric">
+          </div>
+          <div class="input-error" id="forgotPinError">Please enter a 4-digit PIN (numbers only)</div>
+        </div>
+        <button class="btn-primary" id="resetPinBtn" onclick="resetPin()" disabled><i class="ph ph-check-circle"></i> Reset PIN</button>
+      </div>
+
+      <!-- ===== REGISTER FORM ===== -->
+      <div class="auth-form" id="registerForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="regName" placeholder="John Mwangi" autocomplete="name" oninput="validateNameInput(this)">
+            <div class="input-error" id="regNameError">Please enter a valid name (letters and spaces only)</div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="regPhone" placeholder="0712345678" maxlength="10" autocomplete="tel" oninput="validatePhoneInput(this)">
+            <div class="input-error" id="regPhoneError">Please enter a valid Kenyan phone number (e.g., 0712345678)</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address * (OTP sent here)</label>
+          <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" oninput="validateEmailInput(this)">
+          <div class="input-error" id="regEmailError">Please enter a valid email address</div>
+        </div>
+        <div class="form-group">
+          <label>4-Digit PIN *</label>
+          <div class="pin-input-group" id="regPinGroup">
+            <input type="password" id="regPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            <input type="password" id="regPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            <input type="password" id="regPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            <input type="password" id="regPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          </div>
+          <div class="input-error" id="regPinError">Please enter a 4-digit PIN (numbers only)</div>
+          <div style="margin-top:6px;">
+            <button type="button" onclick="togglePinVisibility('reg')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">Show PIN</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>OTP Code (sent to your email)</label>
+          <div class="otp-row">
+            <input type="text" id="regOtp" placeholder="Enter 6-digit code" maxlength="6" autocomplete="one-time-code" oninput="validateOtpInput(this)">
+            <button class="btn-sm" id="regOtpBtn" onclick="sendRegisterOtp()">Send OTP</button>
+          </div>
+          <div class="input-error" id="regOtpError">Please enter a valid 6-digit OTP</div>
+          <span class="otp-timer" id="regOtpTimer"></span>
+        </div>
+        <button class="btn-primary" id="registerSubmitBtn" onclick="registerUser()"><i class="ph ph-user-plus"></i> Create Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WHATSAPP FLOAT ===== -->
+<a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank">
+  <i class="ph ph-whatsapp-logo"></i>
+  <span class="tooltip">Chat with us</span>
+</a>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="account.html">My Account</a></div>
+    <div class="footer-col"><h4>Support</h4><p>+254 748 894 443</p><p>WhatsApp 24/7</p></div>
+    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly. M-PESA payments only.</p></div>
+</footer>
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></button>
+  <button class="nav-item" onclick="window.location.href='shop.html'">
+    <svg class="shop-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 9.5L4 4h16l1 5.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M3 9.5a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5 9.5V20h14V9.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M9.5 20v-5a2.5 2.5 0 0 1 5 0v5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>Shop</span>
+  </button>
+  <button class="nav-item" onclick="openCartDrawer()">
+    <i class="ph ph-shopping-cart"></i>
+    <span>Cart</span>
+    <span class="nav-badge" id="navCartCount">0</span>
+  </button>
+  <button class="nav-item active" onclick="window.location.href='account.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
+</nav>
+
+<!-- ===== CART DRAWER ===== -->
+<div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><span>Your Basket</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
+  <div class="cart-items" id="cartItemsList">
+    <div class="cart-container">
+      <div class="cart-icon-wrapper">
+        <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="9" cy="20" r="1.5" fill="#111111"/>
+          <circle cx="17" cy="20" r="1.5" fill="#111111"/>
+        </svg>
+        <span class="cart-badge" id="cartBadgeCount">0</span>
+      </div>
+      <h2 class="cart-message">Your cart is empty!</h2>
+      <a href="shop.html" class="shop-button">Start Shopping</a>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
+    <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- ===== WHOLESALE QUOTE MODAL ===== -->
+<div class="modal-overlay" id="wholesaleModal" style="display:none;">
+  <div class="modal-card">
+    <h3><i class="ph ph-chart-bar" style="color:var(--gold);"></i> Wholesale Quote</h3>
+    <p>Request bulk pricing for your bar, restaurant, or event.</p>
+    <form id="wholesaleForm" onsubmit="submitWholesale(event)">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Full Name *</label>
+        <input type="text" id="wholesaleName" required style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;">
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Phone Number *</label>
+        <input type="tel" id="wholesalePhone" required style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;">
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Business / Event Name</label>
+        <input type="text" id="wholesaleBusiness" style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;">
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Products & Quantities *</label>
+        <textarea id="wholesaleProducts" rows="3" placeholder="e.g. 10 cases of Guinness, 5 bottles of Jameson..." required style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button type="submit" style="flex:1;padding:10px;background:var(--gold);color:white;border:none;border-radius:50px;font-weight:700;cursor:pointer;">Send Request</button>
+        <button type="button" onclick="closeWholesaleModal()" style="padding:10px 20px;background:var(--bg2);border:none;border-radius:50px;font-weight:600;cursor:pointer;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== SUPPORT MODAL ===== -->
+<div class="modal-overlay" id="supportModal" style="display:none;">
+  <div class="modal-card">
+    <h3><i class="ph ph-headset" style="color:var(--btn-green);"></i> Support Center</h3>
+    <p>How can we help you today?</p>
+    <div style="display:grid;gap:10px;margin:12px 0;">
+      <a href="mailto:timblax0@gmail.com" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);text-decoration:none;color:var(--text);border:1px solid var(--border);">
+        <i class="ph ph-envelope" style="font-size:22px;color:var(--gold);"></i>
+        <div><strong style="display:block;font-size:.85rem;">Email Support</strong><span style="font-size:.7rem;color:var(--muted);">timblax0@gmail.com</span></div>
+      </a>
+      <a href="https://wa.me/254748894443?text=Hi%20LiquorBelle%2C%20I%20need%20support" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);text-decoration:none;color:var(--text);border:1px solid var(--border);">
+        <i class="ph ph-whatsapp-logo" style="font-size:22px;color:#25D366;"></i>
+        <div><strong style="display:block;font-size:.85rem;">WhatsApp Support</strong><span style="font-size:.7rem;color:var(--muted);">Chat with us 24/7</span></div>
+      </a>
+      <a href="tel:+254748894443" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);text-decoration:none;color:var(--text);border:1px solid var(--border);">
+        <i class="ph ph-phone" style="font-size:22px;color:var(--btn-green);"></i>
+        <div><strong style="display:block;font-size:.85rem;">Call Us</strong><span style="font-size:.7rem;color:var(--muted);">+254 748 894 443</span></div>
+      </a>
+      <div style="padding:12px 16px;background:var(--gold-bg);border-radius:var(--radius-sm);border:1px solid var(--gold);">
+        <strong style="font-size:.8rem;">📦 Need order help?</strong>
+        <p style="font-size:.7rem;color:var(--muted);margin-top:2px;">Use <a href="track-orders.html" style="color:var(--gold);font-weight:600;">Track Orders</a> to see your order status.</p>
+      </div>
+    </div>
+    <button onclick="closeSupportModal()" style="width:100%;padding:10px;background:var(--btn-green);color:white;border:none;border-radius:50px;font-weight:700;cursor:pointer;">Close</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const CART_KEY = 'liquorbelle_cart';
+
+// ============================================================
+// MODAL FUNCTIONS
+// ============================================================
+
+function showWholesaleForm() {
+  document.getElementById('wholesaleModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWholesaleModal() {
+  document.getElementById('wholesaleModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function showSupportForm() {
+  document.getElementById('supportModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSupportModal() {
+  document.getElementById('supportModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function submitWholesale(e) {
+  e.preventDefault();
+  const name = document.getElementById('wholesaleName').value.trim();
+  const phone = document.getElementById('wholesalePhone').value.trim();
+  const business = document.getElementById('wholesaleBusiness').value.trim();
+  const products = document.getElementById('wholesaleProducts').value.trim();
+
+  if (!name || !phone || !products) {
+    toast('Please fill in all required fields');
+    return;
+  }
+
+  const message = `🧾 *Wholesale Quote Request*\n\n` +
+    `*Name:* ${name}\n` +
+    `*Phone:* ${phone}\n` +
+    `*Business/Event:* ${business || 'N/A'}\n` +
+    `*Products & Quantities:*\n${products}`;
+
+  window.open(`https://wa.me/254748894443?text=${encodeURIComponent(message)}`, '_blank');
+  closeWholesaleModal();
+  toast('✅ Quote request sent via WhatsApp');
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let regOtpTimer = null;
+let forgotOtpTimer = null;
+let regOtpCountdown = 0;
+let forgotOtpCountdown = 0;
+let currentUser = null;
+let isForgotPinMode = false;
+
+// ============================================================
+// VALIDATION FUNCTIONS
+// ============================================================
+
+function validatePhoneNumber(phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  return cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'));
+}
+
+function validateName(name) {
+  return /^[a-zA-Z\s\-']+$/.test(name.trim()) && name.trim().length >= 2;
+}
+
+function validateEmail(email) {
+  return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim());
+}
+
+function validateOtp(otp) {
+  return /^\d{6}$/.test(otp.trim());
+}
+
+function validatePin(pin) {
+  return /^\d{4}$/.test(pin);
+}
+
+// ============================================================
+// PIN INPUT HELPERS
+// ============================================================
+
+function getPinValue(prefix) {
+  let pin = '';
+  for (let i = 1; i <= 4; i++) {
+    const input = document.getElementById(prefix + 'Pin' + i);
+    if (input) pin += input.value || '';
+  }
+  return pin;
+}
+
+function setPinValue(prefix, value) {
+  const digits = value.toString().split('');
+  for (let i = 1; i <= 4; i++) {
+    const input = document.getElementById(prefix + 'Pin' + i);
+    if (input) input.value = digits[i-1] || '';
+  }
+}
+
+function setupPinInputs(prefix) {
+  const inputs = [];
+  for (let i = 1; i <= 4; i++) {
+    inputs.push(document.getElementById(prefix + 'Pin' + i));
+  }
+
+  inputs.forEach((input, index) => {
+    if (!input) return;
+
+    input.addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '');
+      if (this.value.length === 1 && index < 3) {
+        inputs[index + 1].focus();
+      }
+      validatePinInput(prefix);
+    });
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && this.value === '' && index > 0) {
+        inputs[index - 1].focus();
+      }
+      if (e.key === 'ArrowLeft' && index > 0) inputs[index - 1].focus();
+      if (e.key === 'ArrowRight' && index < 3) inputs[index + 1].focus();
+    });
+
+    input.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text');
+      const digits = paste.replace(/\D/g, '').slice(0, 4);
+      for (let i = 0; i < digits.length && i < 4; i++) {
+        if (inputs[i]) inputs[i].value = digits[i];
+      }
+      if (digits.length > 0) {
+        const nextIndex = Math.min(digits.length, 3);
+        if (inputs[nextIndex]) inputs[nextIndex].focus();
+      }
+      validatePinInput(prefix);
+    });
+  });
+}
+
+function validatePinInput(prefix) {
+  const pin = getPinValue(prefix);
+  const errorEl = document.getElementById(prefix + 'PinError');
+  const inputs = [];
+  for (let i = 1; i <= 4; i++) {
+    inputs.push(document.getElementById(prefix + 'Pin' + i));
+  }
+
+  const allFilled = inputs.every(inp => inp && inp.value.length === 1);
+
+  if (allFilled && !validatePin(pin)) {
+    inputs.forEach(inp => { if (inp) { inp.classList.add('error'); inp.classList.remove('valid'); } });
+    if (errorEl) errorEl.classList.add('show');
+    return false;
+  } else if (allFilled && validatePin(pin)) {
+    inputs.forEach(inp => { if (inp) { inp.classList.remove('error'); inp.classList.add('valid'); } });
+    if (errorEl) errorEl.classList.remove('show');
+    return true;
+  } else {
+    inputs.forEach(inp => { if (inp) { inp.classList.remove('error', 'valid'); } });
+    if (errorEl) errorEl.classList.remove('show');
+    return false;
+  }
+}
+
+function togglePinVisibility(prefix) {
+  const inputs = [];
+  for (let i = 1; i <= 4; i++) {
+    inputs.push(document.getElementById(prefix + 'Pin' + i));
+  }
+  const isPassword = inputs[0]?.type === 'password';
+  inputs.forEach(inp => {
+    if (inp) inp.type = isPassword ? 'text' : 'password';
+  });
+}
+
+// ============================================================
+// INPUT VALIDATION (Real-time)
+// ============================================================
+
+function validatePhoneInput(input) {
+  const errorEl = input.parentElement.querySelector('.input-error');
+  input.value = input.value.replace(/\D/g, '');
+
+  if (input.value.length > 0 && !validatePhoneNumber(input.value)) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) errorEl.classList.add('show');
+  } else if (input.value.length > 0 && validatePhoneNumber(input.value)) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) errorEl.classList.remove('show');
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) errorEl.classList.remove('show');
+  }
+  updateSubmitButtons();
+}
+
+function validateNameInput(input) {
+  const errorEl = input.parentElement.querySelector('.input-error');
+  input.value = input.value.replace(/[^a-zA-Z\s\-']/g, '');
+
+  if (input.value.length > 0 && !validateName(input.value)) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) errorEl.classList.add('show');
+  } else if (input.value.length >= 2 && validateName(input.value)) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) errorEl.classList.remove('show');
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) errorEl.classList.remove('show');
+  }
+  updateSubmitButtons();
+}
+
+function validateEmailInput(input) {
+  const errorEl = input.parentElement.querySelector('.input-error');
+
+  if (input.value.length > 0 && !validateEmail(input.value)) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) errorEl.classList.add('show');
+  } else if (input.value.length > 0 && validateEmail(input.value)) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) errorEl.classList.remove('show');
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) errorEl.classList.remove('show');
+  }
+  updateSubmitButtons();
+}
+
+function validateLoginEmail(input) {
+  const errorEl = document.getElementById('loginEmailError');
+
+  if (input.value.length > 0 && !validateEmail(input.value)) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) errorEl.classList.add('show');
+  } else if (input.value.length > 0 && validateEmail(input.value)) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) errorEl.classList.remove('show');
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) errorEl.classList.remove('show');
+  }
+  updateSubmitButtons();
+}
+
+function validateOtpInput(input) {
+  const errorEl = input.parentElement.parentElement.querySelector('.input-error');
+  input.value = input.value.replace(/\D/g, '');
+
+  if (input.value.length === 6 && validateOtp(input.value)) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) errorEl.classList.remove('show');
+  } else if (input.value.length > 0 && input.value.length < 6) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) errorEl.classList.add('show');
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) errorEl.classList.remove('show');
+  }
+  updateSubmitButtons();
+}
+
+// ============================================================
+// SUBMIT BUTTON STATE
+// ============================================================
+
+function updateSubmitButtons() {
+  const loginEmail = document.getElementById('loginEmail');
+  const loginPin = getPinValue('login');
+  const loginBtn = document.getElementById('loginSubmitBtn');
+
+  const loginEmailValid = loginEmail && validateEmail(loginEmail.value);
+  const loginPinValid = loginPin.length === 4 && validatePin(loginPin);
+
+  if (loginBtn) loginBtn.disabled = !(loginEmailValid && loginPinValid);
+
+  const regName = document.getElementById('regName');
+  const regPhone = document.getElementById('regPhone');
+  const regEmail = document.getElementById('regEmail');
+  const regPin = getPinValue('reg');
+  const regOtp = document.getElementById('regOtp');
+  const regBtn = document.getElementById('registerSubmitBtn');
+
+  const regNameValid = regName && regName.value.length >= 2 && validateName(regName.value);
+  const regPhoneValid = regPhone && regPhone.value.length === 10 && validatePhoneNumber(regPhone.value);
+  const regEmailValid = regEmail && regEmail.value.length > 0 && validateEmail(regEmail.value);
+  const regPinValid = regPin.length === 4 && validatePin(regPin);
+  const regOtpValid = regOtp && regOtp.value.length === 6 && validateOtp(regOtp.value);
+
+  if (regBtn) regBtn.disabled = !(regNameValid && regPhoneValid && regEmailValid && regPinValid && regOtpValid);
+}
+
+// ============================================================
+// TOAST & STATUS
+// ============================================================
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.innerText = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('authStatus');
+  el.textContent = msg;
+  el.className = 'auth-status ' + type;
+}
+
+function hideStatus() {
+  const el = document.getElementById('authStatus');
+  el.className = 'auth-status';
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+
+function switchTab(tab) {
+  hideStatus();
+  if (isForgotPinMode) hideForgotPin();
+
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.auth-tab[data-tab="${tab}"]`).classList.add('active');
+
+  document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
+  if (tab === 'login') {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('forgotPinForm').style.display = 'none';
+  } else {
+    document.getElementById('registerForm').style.display = 'block';
+    document.getElementById('forgotPinForm').style.display = 'none';
+  }
+
+  setTimeout(updateSubmitButtons, 100);
+}
+
+// ============================================================
+// FORGOT PIN
+// ============================================================
+
+function showForgotPin() {
+  isForgotPinMode = true;
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('forgotPinForm').style.display = 'block';
+  document.getElementById('forgotOtpGroup').style.display = 'none';
+  document.getElementById('forgotPinGroup').style.display = 'none';
+  document.getElementById('resetPinBtn').disabled = true;
+  document.getElementById('forgotEmail').value = '';
+  document.getElementById('forgotOtp').value = '';
+  document.getElementById('forgotOtpTimer').textContent = '';
+  hideStatus();
+}
+
+function hideForgotPin() {
+  isForgotPinMode = false;
+  document.getElementById('forgotPinForm').style.display = 'none';
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+  clearInterval(forgotOtpTimer);
+}
+
+// ============================================================
+// SEND FORGOT PIN OTP
+// ============================================================
+
+function sendForgotOtp() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const errorEl = document.getElementById('forgotEmailError');
+
+  if (!email || !validateEmail(email)) {
+    errorEl.classList.add('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+
+  const btn = document.getElementById('forgotOtpBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sending...';
+
+  fetch(API_BASE + '/api/auth/forgot-pin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showStatus('OTP sent to your email', 'success');
+      document.getElementById('forgotOtpGroup').style.display = 'block';
+      document.getElementById('forgotPinGroup').style.display = 'block';
+      document.getElementById('resetPinBtn').disabled = false;
+      startForgotOtpTimer();
+    } else {
+      showStatus(data.message || 'Failed to send OTP', 'error');
+      btn.disabled = false;
+      btn.innerHTML = 'Send OTP';
+    }
+  })
+  .catch(() => {
+    showStatus('Network error. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Send OTP';
+  });
+}
+
+function startForgotOtpTimer() {
+  forgotOtpCountdown = 60;
+  const timerEl = document.getElementById('forgotOtpTimer');
+  const btn = document.getElementById('forgotOtpBtn');
+  timerEl.textContent = 'Resend in ' + forgotOtpCountdown + 's';
+  btn.disabled = true;
+
+  clearInterval(forgotOtpTimer);
+  forgotOtpTimer = setInterval(function() {
+    forgotOtpCountdown--;
+    if (forgotOtpCountdown <= 0) {
+      clearInterval(forgotOtpTimer);
+      timerEl.textContent = '';
+      btn.disabled = false;
+      btn.innerHTML = 'Send OTP';
+    } else {
+      timerEl.textContent = 'Resend in ' + forgotOtpCountdown + 's';
+    }
+  }, 1000);
+}
+
+// ============================================================
+// RESET PIN
+// ============================================================
+
+function resetPin() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const otp = document.getElementById('forgotOtp').value.trim();
+  const newPin = getPinValue('forgot');
+
+  const otpError = document.getElementById('forgotOtpError');
+  const pinError = document.getElementById('forgotPinError');
+
+  if (!otp || !validateOtp(otp)) {
+    otpError.classList.add('show');
+    return;
+  }
+  otpError.classList.remove('show');
+
+  if (!newPin || !validatePin(newPin)) {
+    pinError.classList.add('show');
+    return;
+  }
+  pinError.classList.remove('show');
+
+  const btn = document.getElementById('resetPinBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Resetting...';
+
+  fetch(API_BASE + '/api/auth/reset-pin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, otp, newPin })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showStatus('PIN reset successfully! Please login with your new PIN.', 'success');
+      setTimeout(() => {
+        hideForgotPin();
+        document.getElementById('loginEmail').value = email;
+        document.getElementById('loginEmail').classList.add('valid');
+        updateSubmitButtons();
+      }, 1500);
+    } else {
+      showStatus(data.message || 'Failed to reset PIN', 'error');
+    }
+  })
+  .catch(() => {
+    showStatus('Network error. Please try again.', 'error');
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph ph-check-circle"></i> Reset PIN';
+  });
+}
+
+// ============================================================
+// SEND REGISTER OTP
+// ============================================================
+
+function sendRegisterOtp() {
+  const email = document.getElementById('regEmail').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+
+  if (!email || !validateEmail(email)) {
+    showStatus('Please enter a valid email address', 'error');
+    return;
+  }
+
+  if (!phone || !validatePhoneNumber(phone)) {
+    showStatus('Please enter a valid phone number', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('regOtpBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sending...';
+
+  fetch(API_BASE + '/api/auth/send-email-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showStatus('OTP sent to ' + email, 'success');
+      startRegOtpTimer();
+    } else {
+      showStatus(data.message || 'Failed to send OTP', 'error');
+      btn.disabled = false;
+      btn.innerHTML = 'Send OTP';
+    }
+  })
+  .catch(() => {
+    showStatus('Network error. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Send OTP';
+  });
+}
+
+function startRegOtpTimer() {
+  regOtpCountdown = 60;
+  const timerEl = document.getElementById('regOtpTimer');
+  const btn = document.getElementById('regOtpBtn');
+  timerEl.textContent = 'Resend in ' + regOtpCountdown + 's';
+  btn.disabled = true;
+
+  clearInterval(regOtpTimer);
+  regOtpTimer = setInterval(function() {
+    regOtpCountdown--;
+    if (regOtpCountdown <= 0) {
+      clearInterval(regOtpTimer);
+      timerEl.textContent = '';
+      btn.disabled = false;
+      btn.innerHTML = 'Send OTP';
+    } else {
+      timerEl.textContent = 'Resend in ' + regOtpCountdown + 's';
+    }
+  }, 1000);
+}
+
+// ============================================================
+// REGISTER USER
+// ============================================================
+
+function registerUser() {
+  const name = document.getElementById('regName').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pin = getPinValue('reg');
+  const otp = document.getElementById('regOtp').value.trim();
+
+  if (!name || !validateName(name)) {
+    showStatus('Please enter a valid name', 'error');
+    return;
+  }
+
+  if (!phone || !validatePhoneNumber(phone)) {
+    showStatus('Please enter a valid phone number', 'error');
+    return;
+  }
+
+  if (!email || !validateEmail(email)) {
+    showStatus('Please enter a valid email address', 'error');
+    return;
+  }
+
+  if (!pin || !validatePin(pin)) {
+    showStatus('Please enter a 4-digit PIN', 'error');
+    return;
+  }
+
+  if (!otp || !validateOtp(otp)) {
+    showStatus('Please enter a valid 6-digit OTP', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('registerSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating Account...';
+
+  fetch(API_BASE + '/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, phone, email, pin, otp })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      const user = {
+        id: data.customer.id,
+        email: data.customer.email,
+        name: data.customer.name,
+        phone: data.customer.phone,
+        token: data.token,
+        loggedIn: true,
+        loginTime: Date.now()
+      };
+      localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+      localStorage.setItem('liquorbelle_token', data.token);
+      hideStatus();
+      showLoggedInState(user);
+      toast('Account created successfully! Welcome ' + name);
+    } else {
+      showStatus(data.message || 'Registration failed. Please try again.', 'error');
+    }
+  })
+  .catch(() => {
+    showStatus('Network error. Please try again.', 'error');
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
+  });
+}
+
+// ============================================================
+// LOGIN USER
+// ============================================================
+
+function loginUser() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pin = getPinValue('login');
+
+  if (!email || !validateEmail(email)) {
+    showStatus('Please enter a valid email address', 'error');
+    return;
+  }
+
+  if (!pin || !validatePin(pin)) {
+    showStatus('Please enter a valid 4-digit PIN', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('loginSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Logging in...';
+
+  fetch(API_BASE + '/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, pin })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      const user = {
+        id: data.customer.id,
+        email: data.customer.email,
+        name: data.customer.name,
+        phone: data.customer.phone,
+        token: data.token,
+        loggedIn: true,
+        loginTime: Date.now()
+      };
+      localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+      localStorage.setItem('liquorbelle_token', data.token);
+      hideStatus();
+      showLoggedInState(user);
+      toast('Welcome back, ' + user.name + '!');
+    } else {
+      showStatus(data.message || 'Invalid email or PIN', 'error');
+    }
+  })
+  .catch(() => {
+    showStatus('Network error. Please try again.', 'error');
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
+  });
+}
+
+// ============================================================
+// LOGOUT
+// ============================================================
+
+function logoutUser() {
+  localStorage.removeItem('liquorbelle_user');
+  localStorage.removeItem('liquorbelle_token');
+  currentUser = null;
+  document.getElementById('loggedInSection').classList.remove('active');
+  document.getElementById('authForms').style.display = 'block';
+  document.getElementById('ordersContainer').innerHTML = '';
+  document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
+  document.getElementById('loginForm').style.display = 'block';
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.auth-tab-login').classList.add('active');
+  toast('Logged out successfully');
+
+  updateUserBadge();
+}
+
+// ============================================================
+// SHOW LOGGED IN STATE
+// ============================================================
+
+function showLoggedInState(user) {
+  document.getElementById('loggedInSection').classList.add('active');
+  document.getElementById('authForms').style.display = 'none';
+  document.getElementById('userName').textContent = user.name || 'Customer';
+  document.getElementById('userPhone').textContent = '📱 ' + (user.phone || 'No phone');
+  document.getElementById('userEmail').textContent = '✉️ ' + (user.email || 'No email');
+  loadOrders();
+  updateUserBadge();
+}
+
+// ============================================================
+// LOAD ORDERS
+// ============================================================
+
+function loadOrders() {
+  const container = document.getElementById('ordersContainer');
+  const token = localStorage.getItem('liquorbelle_token');
+
+  if (!token) {
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-lock"></i><p>Please login to see your orders</p></div>';
+    return;
+  }
+
+  container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
+
+  fetch(API_BASE + '/api/customers/me/orders', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(res => {
+    if (res.status === 401 || res.status === 403) {
+      logoutUser();
+      throw new Error('Session expired');
+    }
+    return res.json();
+  })
+  .then(data => {
+    if (data.success && data.orders) {
+      renderOrders(data.orders);
+    } else {
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
+    }
+  })
+  .catch(err => {
+    console.error('Load orders error:', err);
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Could not load orders</p><small>Please check your connection and try again.</small></div>';
+  });
+}
+
+// ============================================================
+// RENDER ORDERS
+// ============================================================
+
+function renderOrders(orders) {
+  const container = document.getElementById('ordersContainer');
+
+  if (!orders || !orders.length) {
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
+    return;
+  }
+
+  let html = '<div class="orders-list">';
+  orders.forEach(o => {
+    const items = o.items || [];
+    const statusText = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : o.status === 'delivered' ? 'Delivered' : 'Unknown';
+    const statusClass = 'status-' + (o.status || 'pending');
+
+    let itemsHtml = '';
+    items.forEach(item => {
+      const name = item.product_name || item.name || 'Product';
+      const qty = item.quantity || item.qty || 1;
+      const price = item.price || 0;
+      itemsHtml += `
+        <div class="order-item">
+          <div>
+            <div class="order-item-name">${escapeHtml(name)}</div>
+            <div class="order-item-qty">Qty: ${qty}</div>
+          </div>
+          <div class="order-item-price">KES ${(price * qty).toLocaleString()}</div>
+        </div>
+      `;
+    });
+
+    const orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
+
+    html += `
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <div class="order-number">📦 Order #${orderNumber}</div>
+            <div class="order-date">${new Date(o.created_at).toLocaleDateString()} at ${new Date(o.created_at).toLocaleTimeString()}</div>
+          </div>
+          <span class="order-status ${statusClass}">${statusText}</span>
+        </div>
+        <div class="order-items">${itemsHtml}</div>
+        <div class="order-footer">
+          <div class="order-total-row"><span>Subtotal</span><span>KES ${(o.subtotal || 0).toLocaleString()}</span></div>
+          <div class="order-total-row"><span>Delivery</span><span>${o.delivery === 0 ? 'FREE' : 'KES ' + (o.delivery || 0).toLocaleString()}</span></div>
+          <div class="order-total-row"><span>Total</span><span>KES ${(o.total || 0).toLocaleString()}</span></div>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[m]);
+}
+
+// ============================================================
+// USER BADGE
+// ============================================================
+
+function updateUserBadge() {
+  const user = getCurrentUser();
+  const initialEl = document.getElementById('userInitial');
+  const dotEl = document.getElementById('userDot');
+  const menuAuth = document.getElementById('mobileMenuAuth');
+
+  if (user && user.name) {
+    const initial = user.name.charAt(0).toUpperCase();
+    if (initialEl) initialEl.textContent = initial;
+    if (dotEl) { dotEl.className = 'user-dot'; }
+
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <div style="font-weight:700;font-size:.85rem;color:var(--primary);">
+            <i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);">${escapeHtml(user.email || 'No email')}</div>
+          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;">
+            <i class="ph ph-sign-out"></i> Logout
+          </button>
+        </div>
+      `;
+    }
+  } else {
+    if (initialEl) initialEl.textContent = 'G';
+    if (dotEl) { dotEl.className = 'user-dot guest'; }
+
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <i class="ph ph-user-circle"></i> Login / Register
+        </a>
+      `;
+    }
+  }
+}
+
+// ============================================================
+// GET CURRENT USER
+// ============================================================
+
+function getCurrentUser() {
+  try {
+    const user = localStorage.getItem('liquorbelle_user');
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
+}
+
+// ============================================================
+// HEADER HELPERS
+// ============================================================
+
+function openMobileMenu() {
+  document.getElementById('mobileMenuOverlay').classList.add('open');
+  document.getElementById('mobileMenu').classList.add('open');
+}
+
+function closeMobileMenu() {
+  document.getElementById('mobileMenuOverlay').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+function handleHeaderSearch(e) {
+  e.preventDefault();
+  const q = document.getElementById('headerSearchInput').value.trim();
+  if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q);
+  return false;
+}
+
+function openCartDrawer() {
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartDrawer').classList.add('open');
+  renderCartDrawer();
+}
+
+function closeCartDrawer() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartDrawer').classList.remove('open');
+}
+
+function openWishlistModal() {
+  document.getElementById('wishlistModal').style.display = 'flex';
+}
+
+function closeWishlistModal() {
+  document.getElementById('wishlistModal').style.display = 'none';
+}
+
+function renderCartDrawer() {
+  const cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+  const items = Object.values(cart);
+  const container = document.getElementById('cartItemsList');
+  const footer = document.getElementById('cartFooter');
+  const totalEl = document.getElementById('cartTotalAmount');
+
+  if (!items.length) {
+    container.innerHTML = `
+      <div class="cart-container">
+        <div class="cart-icon-wrapper">
+          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
+            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
+          </svg>
+          <span class="cart-badge">0</span>
+        </div>
+        <h2 class="cart-message">Your cart is empty!</h2>
+        <a href="shop.html" class="shop-button">Start Shopping</a>
+      </div>
+    `;
+    footer.style.display = 'none';
+    return;
+  }
+
+  let html = '';
+  let total = 0;
+  let count = 0;
+  items.forEach(item => {
+    const subtotal = item.price * item.qty;
+    total += subtotal;
+    count += item.qty;
+    html += `
+      <div class="cart-item">
+        <div>
+          <div class="cart-item-name">${escapeHtml(item.name)}</div>
+        </div>
+        <div class="cart-item-price">KES ${subtotal.toLocaleString()}</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  totalEl.textContent = 'KES ' + total.toLocaleString();
+  footer.style.display = 'block';
+
+  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(el => {
+    if (el) el.textContent = count;
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+  setupPinInputs('login');
+  setupPinInputs('reg');
+  setupPinInputs('forgot');
+
+  renderCartDrawer();
+  updateSubmitButtons();
+  updateUserBadge();
+
+  try {
+    const saved = localStorage.getItem('liquorbelle_user');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      if (currentUser && currentUser.email) {
+        showLoggedInState(currentUser);
+      }
+    }
+  } catch(e) {}
+
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('forgotPinForm').style.display = 'none';
+
+  // Close modals on overlay click
+  document.getElementById('wholesaleModal').addEventListener('click', function(e) {
+    if (e.target === this) closeWholesaleModal();
+  });
+  document.getElementById('supportModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSupportModal();
+  });
+});
+
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'loginEmail' ||
+      e.target.id === 'regName' || e.target.id === 'regPhone' ||
+      e.target.id === 'regEmail' || e.target.id === 'regOtp') {
+    updateSubmitButtons();
+  }
+});
+
+document.addEventListener('input', function(e) {
+  if (e.target.id && e.target.id.match(/^(login|reg|forgot)Pin[1-4]$/)) {
+    const prefix = e.target.id.replace(/Pin[1-4]$/, '');
+    validatePinInput(prefix);
+    updateSubmitButtons();
+  }
+});
+
+window.addEventListener('storage', function(e) {
+  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
+    updateUserBadge();
+    if (e.key === 'liquorbelle_user') {
+      const user = getCurrentUser();
+      if (user && user.email) {
+        showLoggedInState(user);
+      }
+    }
+  }
+});
+
+console.log('✅ Account page loaded (PIN-based auth with orders)');
+</script>
+
+</body>
+</html>

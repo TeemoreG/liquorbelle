@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <meta name="theme-color" content="#800000">
-<!-- FIXED: Use mobile-web-app-capable instead of deprecated apple-mobile-web-app-capable -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Checkout — LiquorBelle</title>
 
-<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
+<!-- ===== PERFORMANCE: Preconnect ===== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com">
@@ -19,6 +18,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -48,7 +48,6 @@
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
-
 .shop-svg{width:20px;height:20px;color:currentColor;display:block;}
 
 /* Offline Banner */
@@ -118,7 +117,7 @@ a{color:inherit;text-decoration:none;}
 .header-search-form{flex:1;max-width:420px;display:flex;align-items:center;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0 6px 0 14px;height:38px;transition:.2s;}
 .header-search-form:focus-within{background:rgba(255,255,255,0.95);}
 .header-search-form i{color:rgba(255,255,255,0.8);font-size:16px;flex-shrink:0;}
-.header-search-form:focus-within i{color:var(--primary);}
+.header-search-form:focus-within i{color:var(--gold);}
 .header-search-input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.82rem;color:white;min-width:0;}
 .header-search-form:focus-within .header-search-input{color:var(--text);}
 .header-search-input::placeholder{color:rgba(255,255,255,0.75);}
@@ -139,6 +138,35 @@ a{color:inherit;text-decoration:none;}
   display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);
 }
 
+/* ===== HEADER USER BADGE ===== */
+.header-user-badge{
+  position:relative;
+  width:36px;height:36px;
+  border-radius:50%;
+  border:2px solid var(--gold);
+  background:rgba(255,255,255,0.08);
+  color:white;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;
+  font-size:16px;
+}
+.header-user-badge:hover{background:rgba(255,255,255,0.2);}
+.header-user-badge .user-initial{
+  font-weight:700;
+  font-size:14px;
+  text-transform:uppercase;
+}
+.header-user-badge .user-dot{
+  position:absolute;bottom:-2px;right:-2px;
+  width:12px;height:12px;
+  border-radius:50%;
+  background:var(--btn-green);
+  border:2px solid var(--primary);
+}
+.header-user-badge .user-dot.guest{
+  background:var(--muted);
+}
+
 .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
 .mobile-menu-overlay.open{opacity:1;pointer-events:auto;}
 .mobile-menu{
@@ -154,7 +182,7 @@ a{color:inherit;text-decoration:none;}
   display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;
   font-size:.9rem;text-decoration:none;width:100%;background:none;border:none;text-align:left;cursor:pointer;
 }
-.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--primary);width:20px;}
+.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--gold);width:20px;}
 .mobile-menu a:active, .mobile-menu button.mm-link:active{background:var(--bg2);}
 .mobile-search-inline{display:none;padding:0 20px 14px;}
 @media(max-width:560px){.mobile-search-inline{display:block;}}
@@ -169,16 +197,8 @@ a{color:inherit;text-decoration:none;}
   color:white;
   text-align:center;
 }
-.checkout-hero h1{
-  font-size:1.6rem;
-  font-weight:800;
-  letter-spacing:-.5px;
-}
-.checkout-hero p{
-  font-size:.85rem;
-  opacity:.85;
-  margin-top:4px;
-}
+.checkout-hero h1{font-size:1.6rem;font-weight:800;letter-spacing:-.5px;}
+.checkout-hero p{font-size:.85rem;opacity:.85;margin-top:4px;}
 
 .checkout-container{
   max-width:1200px;
@@ -197,7 +217,7 @@ a{color:inherit;text-decoration:none;}
   .checkout-hero h1{font-size:1.3rem;}
 }
 
-/* Order Summary */
+/* ===== ORDER SUMMARY ===== */
 .order-summary{
   background:var(--white);
   border-radius:var(--radius);
@@ -227,11 +247,14 @@ a{color:inherit;text-decoration:none;}
   max-height:280px;
   overflow-y:auto;
   margin-bottom:16px;
+  border-radius:var(--radius-xs);
+  background:var(--bg);
+  padding:4px 10px;
 }
 .cart-item-checkout{
   display:flex;
   justify-content:space-between;
-  padding:12px 0;
+  padding:10px 0;
   border-bottom:1px solid var(--border);
 }
 .cart-item-checkout:last-child{border-bottom:none;}
@@ -242,17 +265,20 @@ a{color:inherit;text-decoration:none;}
 .summary-calc{
   padding-top:12px;
   border-top:1px solid var(--border);
+  background:var(--bg);
+  border-radius:var(--radius-xs);
+  padding:12px 14px;
 }
 .summary-row{
   display:flex;
   justify-content:space-between;
-  padding:8px 0;
+  padding:6px 0;
   font-size:.85rem;
 }
 .summary-row.total{
   border-top:2px solid var(--primary);
-  margin-top:8px;
-  padding-top:14px;
+  margin-top:6px;
+  padding-top:12px;
   font-size:1.2rem;
   font-weight:800;
   color:var(--primary);
@@ -263,6 +289,20 @@ a{color:inherit;text-decoration:none;}
   text-align:right;
   margin-top:2px;
 }
+
+/* Delivery progress bar */
+.delivery-progress{
+  padding:8px 12px;
+  background:var(--bg2);
+  border-radius:var(--radius-xs);
+  margin-bottom:10px;
+  font-size:.65rem;
+  color:var(--text);
+  line-height:1.4;
+}
+.delivery-progress.unlocked{background:#EAF8EF;color:#1A6B35;}
+.delivery-progress-bar{height:4px;background:var(--border);border-radius:10px;margin-top:4px;overflow:hidden;}
+.delivery-progress-fill{height:100%;background:var(--btn-green);border-radius:10px;transition:width .3s;}
 
 /* Delivery Estimate */
 .delivery-estimate{
@@ -325,15 +365,10 @@ a{color:inherit;text-decoration:none;}
   box-shadow:0 0 0 3px rgba(128,0,0,0.08);
   background:var(--white);
 }
-.form-group .field-hint{
-  display:block;
-  margin-top:4px;
-  font-size:10px;
-  color:var(--muted);
-}
+.form-group .field-hint{display:block;margin-top:4px;font-size:10px;color:var(--muted);}
 .form-group .field-hint i{margin-right:4px;}
 
-/* Location PIN Button */
+/* Location PIN */
 .location-pin-row{
   display:flex;
   gap:10px;
@@ -367,7 +402,13 @@ a{color:inherit;text-decoration:none;}
 .location-helper{display:block;margin-top:4px;font-size:10px;color:var(--muted);}
 .location-helper i{margin-right:4px;}
 
-/* Payment Options - M-PESA ONLY */
+/* Delivery Area */
+.delivery-area-row{display:flex;gap:10px;align-items:center;}
+.delivery-area-row input{flex:1;}
+.area-hint{font-size:10px;color:var(--muted);margin-top:4px;display:block;}
+.area-hint i{margin-right:4px;}
+
+/* Payment */
 .payment-section-title{
   font-size:1.1rem;
   font-weight:800;
@@ -402,9 +443,8 @@ a{color:inherit;text-decoration:none;}
 }
 .payment-option:hover{transform:translateY(-2px);border-color:var(--primary);}
 .payment-option.selected{
-  border-color:#2ecc71;
-  background:rgba(46,204,113,0.06);
-  box-shadow:0 0 0 2px #2ecc71;
+  border-color:var(--btn-green);
+  background:rgba(34,197,94,0.04);
 }
 .payment-option i{font-size:32px;display:block;margin-bottom:8px;}
 .payment-option .label{font-weight:700;font-size:14px;margin-bottom:2px;color:var(--text);}
@@ -418,38 +458,37 @@ a{color:inherit;text-decoration:none;}
 }
 
 .mpesa-details{
-  background:rgba(46,204,113,0.05);
+  background:rgba(34,197,94,0.04);
   border-radius:var(--radius-sm);
   padding:16px 20px;
   margin-bottom:18px;
   text-align:center;
-  border:1px solid rgba(46,204,113,0.15);
+  border:1px solid rgba(34,197,94,0.1);
   display:flex;
   flex-direction:column;
   align-items:center;
 }
-.mpesa-details img{
-  width:40px;
-  height:40px;
-  margin:0 auto 8px;
-  object-fit:contain;
-  display:block;
+.mpesa-details img{width:40px;height:40px;margin:0 auto 8px;object-fit:contain;display:block;}
+.mpesa-details p{font-size:13px;margin-bottom:4px;color:var(--text);}
+.mpesa-details .phone-prompt{font-weight:800;color:var(--btn-green);font-size:15px;}
+.mpesa-details small{color:var(--muted);font-size:11px;margin-top:4px;}
+
+/* POD Info box – new */
+.pod-info{
+  background:rgba(240,165,0,0.04);
+  border-radius:var(--radius-sm);
+  padding:16px 20px;
+  margin-bottom:18px;
+  text-align:center;
+  border:1px solid rgba(240,165,0,0.2);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
-.mpesa-details p{
-  font-size:13px;
-  margin-bottom:4px;
-  color:var(--text);
-}
-.mpesa-details .phone-prompt{
-  font-weight:800;
-  color:#2ecc71;
-  font-size:15px;
-}
-.mpesa-details small{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:4px;
-}
+.pod-info i{font-size:36px;color:#f0a500;display:block;margin-bottom:8px;}
+.pod-info p{font-size:13px;margin-bottom:4px;color:var(--text);}
+.pod-info .pod-cash{font-weight:800;color:#f0a500;font-size:15px;}
+.pod-info small{color:var(--muted);font-size:11px;margin-top:4px;}
 
 .btn-place{
   width:100%;
@@ -468,11 +507,7 @@ a{color:inherit;text-decoration:none;}
   gap:8px;
   margin-top:4px;
 }
-.btn-place:hover{
-  background:var(--btn-green-hover);
-  transform:translateY(-2px);
-  box-shadow:0 10px 24px rgba(34,197,94,0.35);
-}
+.btn-place:hover{background:var(--btn-green-hover);transform:translateY(-2px);box-shadow:0 10px 24px rgba(34,197,94,0.35);}
 .btn-place:active{transform:scale(0.97);}
 .btn-place:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
 
@@ -506,14 +541,14 @@ a{color:inherit;text-decoration:none;}
 .success-icon{
   width:72px;
   height:72px;
-  background:rgba(46,204,113,0.1);
+  background:rgba(34,197,94,0.08);
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   margin:0 auto 20px;
 }
-.success-icon i{font-size:40px;color:#2ecc71;}
+.success-icon i{font-size:40px;color:var(--btn-green);}
 .success-content h3{font-size:24px;margin-bottom:8px;color:var(--primary);}
 .success-content p{color:var(--muted);margin-bottom:6px;font-size:.9rem;line-height:1.5;}
 .success-content .order-id-display{font-size:14px;font-weight:700;color:var(--primary);background:var(--bg2);padding:8px 16px;border-radius:8px;display:inline-block;margin-bottom:16px;font-family:monospace;}
@@ -575,14 +610,14 @@ a{color:inherit;text-decoration:none;}
 .footer-col a:hover{opacity:1;}
 .footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
 
-/* ====== CART DRAWER ====== */
-.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background-color:#ffffff;font-family:var(--font-body);text-align:center;}
+/* Cart Drawer */
+.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background:#fff;text-align:center;}
 .cart-icon-wrapper{position:relative;margin-bottom:25px;width:70px;height:60px;}
 .cart-svg{width:100%;height:100%;}
-.cart-badge{position:absolute;top:-4px;right:-4px;background-color:var(--primary);color:#ffffff;font-size:11px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;}
-.cart-message{color:#111111;font-size:22px;font-weight:600;margin:0 0 16px 0;letter-spacing:-0.5px;}
-.shop-button{display:inline-block;background-color:var(--primary);color:#ffffff;text-decoration:none;font-size:16px;font-weight:500;padding:10px 32px;border-radius:25px;transition:background-color 0.2s ease-in-out;border:none;cursor:pointer;}
-.shop-button:hover{background-color:var(--primary-bright);}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:var(--primary);color:#fff;font-size:11px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;}
+.cart-message{color:#111;font-size:22px;font-weight:600;margin:0 0 16px;letter-spacing:-.5px;}
+.shop-button{display:inline-block;background:var(--primary);color:#fff;padding:10px 32px;border-radius:25px;font-size:16px;font-weight:500;border:none;cursor:pointer;}
+.shop-button:hover{background:var(--primary-bright);}
 
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
 .overlay.open{opacity:1;pointer-events:auto;}
@@ -603,7 +638,7 @@ a{color:inherit;text-decoration:none;}
 .cart-qty{display:flex;align-items:center;gap:6px;margin-top:4px;}
 .cart-qty button{width:24px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:12px;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .cart-qty button:active{transform:scale(0.9);}
-.cart-qty button:hover{background:var(--primary);color:white;border-color:var(--primary);}
+.cart-qty button:hover{background:var(--gold);color:white;border-color:var(--gold);}
 .cart-footer{padding:12px 16px 20px;border-top:1px solid var(--border);}
 .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:12px;}
 .btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
@@ -669,13 +704,18 @@ a{color:inherit;text-decoration:none;}
 <header class="main-header">
   <a class="logo" href="index.html">
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
-    <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
+    <div class="logo-text">Liquor<span class="gold" style="color:var(--gold-light);">Belle</span><small>Nairobi's Finest</small></div>
   </a>
   <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
     <i class="ph ph-magnifying-glass"></i>
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
+    <!-- User Badge -->
+    <div class="header-user-badge" id="headerUserBadge" onclick="window.location.href='account.html'" title="My Account">
+      <span class="user-initial" id="userInitial">G</span>
+      <span class="user-dot guest" id="userDot"></span>
+    </div>
     <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
       <i class="ph ph-shopping-cart"></i>
       <span class="header-cart-badge" id="headerCartCount">0</span>
@@ -686,7 +726,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </header>
 
-<!-- Slide-in Menu -->
+<!-- Mobile Menu -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
@@ -699,18 +739,19 @@ a{color:inherit;text-decoration:none;}
       <input id="mobileSearchInput" type="text" placeholder="Search products...">
     </form>
   </div>
+  <div id="mobileMenuAuth"></div>
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
+  <a href="account.html"><i class="ph ph-user-circle"></i> My Account</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
 <!-- CHECKOUT HERO -->
 <div class="checkout-hero">
   <h1><i class="ph ph-wallet"></i> Secure Checkout</h1>
-  <p>Complete your order with confidence. Fast delivery 10-45 minutes. <strong>M-PESA Only</strong></p>
+  <p>Complete your order with confidence. Fast delivery 10-45 minutes. <strong>M-PESA or Pay on Delivery</strong></p>
 </div>
 
 <!-- CHECKOUT CONTENT -->
@@ -722,11 +763,14 @@ a{color:inherit;text-decoration:none;}
       <div class="cart-items-scroll" id="cartSummaryItems"></div>
       <div class="summary-calc">
         <div class="summary-row"><span>Subtotal</span><span id="subtotalAmount">KES 0</span></div>
-        <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 150</span></div>
+        <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 0</span></div>
         <div class="free-delivery-note" id="freeDeliveryNote"></div>
         <div class="summary-row total"><span>Total</span><span id="totalAmount">KES 0</span></div>
       </div>
       
+      <!-- Delivery Progress Bar -->
+      <div id="deliveryProgressContainer"></div>
+
       <div class="delivery-estimate">
         <i class="ph ph-truck"></i>
         <div class="delivery-estimate-content">
@@ -772,23 +816,42 @@ a{color:inherit;text-decoration:none;}
           </div>
         </div>
         <div class="location-status" id="locationStatus"></div>
-        <span class="location-helper"><i class="ph ph-crosshair"></i> Tap the PIN button to auto-fill your exact street address</span>
+        <span class="location-helper"><i class="ph ph-crosshair"></i> Tap the PIN button to auto‑fill your exact address</span>
       </div>
       
       <div class="form-group">
         <label>Building / Apartment Name</label>
         <input type="text" id="building" placeholder="e.g. Quickmart Plaza">
       </div>
+
+      <div class="form-group">
+        <label>Delivery Area (e.g. Dagoretti, Karen, Westlands) *</label>
+        <div class="delivery-area-row">
+          <input type="text" id="deliveryArea" placeholder="e.g. Dagoretti" value="Dagoretti">
+        </div>
+        <span class="area-hint"><i class="ph ph-map-pin"></i> Your area determines delivery fee • Auto‑detected via GPS</span>
+      </div>
       
       <div class="payment-section-title"><i class="ph ph-credit-card"></i> Payment Method</div>
       <div class="payment-options">
-        <div class="payment-option mpesa-option selected" id="mpesaOption">
+        <!-- M-PESA Option -->
+        <div class="payment-option mpesa-option selected" id="mpesaOption" onclick="selectPayment('mpesa')">
           <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781875182/Mpesa_bvcz8v.png" alt="M-PESA" class="mpesa-logo" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect width=%2248%22 height=%2248%22 fill=%22%232ecc71%22 rx=%228%22/%3E%3Ctext x=%2224%22 y=%2230%22 text-anchor=%22middle%22 font-size=%2212%22 fill=%22white%22 font-weight=%22bold%22 font-family=%22sans-serif%22%3EMPESA%3C/text%3E%3C/svg%3E'">
           <div class="label">M-PESA</div>
           <div class="sub">STK Push • Instant</div>
         </div>
+        <!-- Pay on Delivery Option -->
+        <div class="payment-option pod-option" id="podOption" onclick="selectPayment('pod')">
+          <i class="ph ph-hand-coins" style="font-size:32px;display:block;margin-bottom:8px;color:#f0a500;"></i>
+          <div class="label">Pay on Delivery</div>
+          <div class="sub">Cash • Upon Arrival</div>
+        </div>
       </div>
       
+      <!-- Hidden input to store selected payment method -->
+      <input type="hidden" id="selectedPaymentMethod" value="mpesa">
+      
+      <!-- M-PESA Details (visible by default) -->
       <div id="mpesaInfo">
         <div class="mpesa-details">
           <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781875182/Mpesa_bvcz8v.png" alt="M-PESA" loading="lazy" onerror="this.style.display='none'">
@@ -798,7 +861,17 @@ a{color:inherit;text-decoration:none;}
         </div>
       </div>
       
-      <button class="btn-place" onclick="placeOrder()"><i class="ph ph-check-circle"></i> Place Order</button>
+      <!-- POD Info (hidden by default) -->
+      <div id="podInfo" style="display:none;">
+        <div class="pod-info">
+          <i class="ph ph-hand-coins"></i>
+          <p class="pod-cash">Pay on Delivery</p>
+          <p>You will pay the full amount in cash when your order arrives.</p>
+          <small>Please have the exact amount ready.</small>
+        </div>
+      </div>
+      
+      <button class="btn-place" id="placeOrderBtn" onclick="placeOrder()"><i class="ph ph-check-circle"></i> Place Order</button>
     </div>
   </div>
 </div>
@@ -809,7 +882,7 @@ a{color:inherit;text-decoration:none;}
   <span class="tooltip">Chat with us</span>
 </a>
 
-<!-- Bottom Nav -->
+<!-- Bottom Nav (Orders removed — it's under Account) -->
 <nav class="bottom-nav">
   <button class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></button>
   <button class="nav-item" onclick="window.location.href='shop.html'">
@@ -826,7 +899,7 @@ a{color:inherit;text-decoration:none;}
     <span>Cart</span>
     <span class="nav-badge" id="navCartCount">0</span>
   </button>
-  <button class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clipboard-text"></i><span>Orders</span></button>
+  <button class="nav-item" onclick="window.location.href='account.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
 </nav>
 
 <!-- Cart Drawer -->
@@ -869,480 +942,439 @@ a{color:inherit;text-decoration:none;}
 
 <div class="snack" id="snack"></div>
 
+<!-- ============================================
+     SCRIPTS
+     ============================================ -->
 <script>
-// ==================== IMAGE OPTIMIZATION ====================
-function optimizeImage(url, width) {
-    if (!url) return '';
-    if (!url.includes('cloudinary.com')) return url;
-    var parts = url.split('/upload/');
-    if (parts.length !== 2) return url;
-    var w = width || 300;
-    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
+// ===== PAYMENT METHOD SELECTION =====
+function selectPayment(method) {
+  document.getElementById('selectedPaymentMethod').value = method;
+  document.getElementById('mpesaOption').classList.toggle('selected', method === 'mpesa');
+  document.getElementById('podOption').classList.toggle('selected', method === 'pod');
+  document.getElementById('mpesaInfo').style.display = method === 'mpesa' ? 'block' : 'none';
+  document.getElementById('podInfo').style.display = method === 'pod' ? 'block' : 'none';
 }
 
-// ==================== HEADER MENU & SEARCH ====================
-function openMobileMenu(){
-  document.getElementById('mobileMenu').classList.add('open');
-  document.getElementById('mobileMenuOverlay').classList.add('open');
-}
-function closeMobileMenu(){
-  document.getElementById('mobileMenu').classList.remove('open');
-  document.getElementById('mobileMenuOverlay').classList.remove('open');
-}
-function handleHeaderSearch(e){
-  e.preventDefault();
-  var val=(document.getElementById('headerSearchInput')?.value||document.getElementById('mobileSearchInput')?.value||'').trim();
-  if(val) window.location.href='shop.html?search='+encodeURIComponent(val);
-  return false;
+// ===== CART HELPERS =====
+function getCart() {
+  try {
+    return JSON.parse(localStorage.getItem('cart') || '[]');
+  } catch { return []; }
 }
 
-// ==================== CONFIG ====================
-var API_BASE_URL = 'https://liquorbelle-mpesa-backend.onrender.com';
-var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
-var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
-var selectedPayment = 'mpesa';
-
-// ==================== TOAST ====================
-function toast(msg, isError) {
-  isError = isError || false;
-  var t = document.getElementById('snack');
-  t.innerText = msg;
-  t.className = 'snack show' + (isError ? ' error' : '');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function() {
-    t.className = 'snack';
-  }, 5000);
-}
-
-// ==================== CART FUNCTIONS ====================
-function updateCartUI(){
-  var items = Object.values(cart);
-  var count = 0;
-  for (var i = 0; i < items.length; i++) {
-    count = count + items[i].qty;
-  }
-  var navCount = document.getElementById('navCartCount');
-  if(navCount) navCount.innerText = count;
-  var headerCount = document.getElementById('headerCartCount');
-  if(headerCount) headerCount.innerText = count;
-  var cartBadge = document.getElementById('cartBadgeCount');
-  if(cartBadge) cartBadge.innerText = count;
-  renderCartSummary();
-}
-
-function openCartDrawer(){
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.add('open');
-  if(overlay) overlay.classList.add('open');
-}
-function closeCartDrawer(){
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.remove('open');
-  if(overlay) overlay.classList.remove('open');
-}
-
-// ==================== CHECKOUT FUNCTIONS ====================
-function loadDeliverySettings() {
-  fetch(API_BASE_URL + '/api/delivery-settings')
-    .then(function(res){ return res.json(); })
-    .then(function(data){
-      if (data.success && data.settings) {
-        deliverySettings = data.settings;
-        renderCartSummary();
-      }
-    })
-    .catch(function(){});
-}
-
-function getAddressFromCoords(lat, lng) {
-  return fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=18&addressdetails=1&accept-language=en')
-    .then(function(res){ return res.json(); })
-    .then(function(data){
-      if (data && data.address) {
-        var parts = [];
-        if (data.address.road) parts.push(data.address.road);
-        if (data.address.suburb) parts.push(data.address.suburb);
-        if (data.address.village) parts.push(data.address.village);
-        if (data.address.town) parts.push(data.address.town);
-        if (data.address.city) parts.push(data.address.city);
-        if (parts.length > 0) return parts.join(', ');
-      }
-      return null;
-    })
-    .catch(function(){ return null; });
-}
-
-document.getElementById('getLocationBtn').addEventListener('click', function() {
-  var statusDiv = document.getElementById('locationStatus');
-  statusDiv.innerHTML = '<span class="spinner"></span> Getting your exact location...';
-  statusDiv.style.color = '#666';
-  
-  if (!navigator.geolocation) { 
-    statusDiv.innerHTML = '❌ Geolocation not supported'; 
-    statusDiv.style.color = '#e03131';
-    return; 
-  }
-  
-  navigator.geolocation.getCurrentPosition(function(position) {
-    var lat = position.coords.latitude;
-    var lng = position.coords.longitude;
-    statusDiv.innerHTML = '<span class="spinner"></span> Finding your street address...';
-    
-    getAddressFromCoords(lat, lng).then(function(streetName) {
-      if (streetName) {
-        document.getElementById('street').value = streetName;
-        statusDiv.innerHTML = '✅ Location found: ' + streetName.substring(0, 50);
-        statusDiv.style.color = '#2ecc71';
-        setTimeout(function(){ statusDiv.innerHTML = ''; }, 4000);
-      } else {
-        statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
-        statusDiv.style.color = '#e03131';
-      }
-    });
-  }, function(error) { 
-    var errorMsg = '❌ Location access denied. Please enter address manually.';
-    if (error.code === 1) errorMsg = '❌ Please allow location access to use this feature';
-    else if (error.code === 2) errorMsg = '❌ Location unavailable. Please enter manually.';
-    else if (error.code === 3) errorMsg = '❌ Location request timed out. Please enter manually.';
-    statusDiv.innerHTML = errorMsg;
-    statusDiv.style.color = '#e03131';
-    setTimeout(function(){ statusDiv.innerHTML = ''; }, 5000);
+function getCartTotal(cart) {
+  let subtotal = 0;
+  cart.forEach(item => {
+    const price = parseFloat(item.price) || 0;
+    const qty = parseInt(item.quantity) || 1;
+    subtotal += price * qty;
   });
-});
-
-function validatePhone(phone) {
-  var cleaned = phone.replace(/\D/g, '');
-  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
-  if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
-  return false;
+  return subtotal;
 }
 
-function formatPhoneForAPI(phone) {
-  var cleaned = phone.replace(/\D/g, '');
-  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) {
-    return '254' + cleaned.slice(1);
-  }
-  if (cleaned.length === 12 && cleaned.startsWith('254')) {
-    return cleaned;
-  }
-  return cleaned;
+// ===== USER BADGE =====
+function getCurrentUser() {
+  try {
+    const user = localStorage.getItem('liquorbelle_user');
+    return user ? JSON.parse(user) : null;
+  } catch { return null; }
 }
 
-function formatPhoneForDisplay(phone) {
-  var cleaned = phone.replace(/\D/g, '');
-  if (cleaned.length === 12 && cleaned.startsWith('254')) {
-    return '0' + cleaned.slice(3);
-  }
-  return phone;
-}
+function updateUserBadge() {
+  const user = getCurrentUser();
+  const initialEl = document.getElementById('userInitial');
+  const dotEl = document.getElementById('userDot');
+  const menuAuth = document.getElementById('mobileMenuAuth');
 
-function calculateTotals() {
-  var items = Object.values(cart);
-  var subtotal = 0;
-  for (var i = 0; i < items.length; i++) {
-    subtotal = subtotal + items[i].price * items[i].qty;
-  }
-  var delivery = 0;
-  var isFreeDelivery = false;
-  if (deliverySettings.delivery_enabled && subtotal < deliverySettings.free_delivery_threshold) {
-    delivery = deliverySettings.delivery_fee;
-  } else if (subtotal >= deliverySettings.free_delivery_threshold) {
-    isFreeDelivery = true;
-  }
-  return { subtotal: subtotal, delivery: delivery, total: subtotal + delivery, isFreeDelivery: isFreeDelivery };
-}
-
-function getFullAddress() { 
-  var street = document.getElementById('street').value.trim(); 
-  var building = document.getElementById('building').value.trim(); 
-  var parts = []; 
-  if (building) parts.push(building); 
-  if (street) parts.push(street); 
-  return parts.join(', ') || 'Address not specified'; 
-}
-
-function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]; }); }
-
-function renderCartSummary() {
-  var items = Object.values(cart);
-  var container = document.getElementById('cartSummaryItems');
-  if (items.length === 0) { 
-    container.innerHTML = '<div class="empty-cart"><i class="ph ph-shopping-bag-open"></i><p>Your cart is empty</p><a href="shop.html" style="color:var(--primary);font-weight:700;">Continue Shopping →</a></div>'; 
-    document.getElementById('subtotalAmount').innerText = 'KES 0'; 
-    document.getElementById('totalAmount').innerText = 'KES 0';
-    document.getElementById('freeDeliveryNote').innerHTML = '';
-    return; 
-  }
-  var html = '';
-  for (var i = 0; i < items.length; i++) {
-    var item = items[i];
-    html += '<div class="cart-item-checkout"><span class="item-name">' + escapeHtml(item.name) + ' <small>x' + item.qty + '</small></span><span class="item-price">KES ' + (item.price * item.qty).toLocaleString() + '</span></div>';
-  }
-  container.innerHTML = html;
-  
-  var totals = calculateTotals();
-  document.getElementById('subtotalAmount').innerText = 'KES ' + totals.subtotal.toLocaleString();
-  var deliveryText = deliverySettings.delivery_enabled ? (totals.delivery === 0 ? 'FREE' : 'KES ' + totals.delivery) : 'FREE';
-  document.getElementById('deliveryFee').innerText = deliveryText;
-  document.getElementById('totalAmount').innerText = 'KES ' + totals.total.toLocaleString();
-  
-  if (deliverySettings.delivery_enabled && !totals.isFreeDelivery && totals.subtotal > 0) {
-    var remaining = deliverySettings.free_delivery_threshold - totals.subtotal;
-    document.getElementById('freeDeliveryNote').innerHTML = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
-  } else if (totals.isFreeDelivery && totals.subtotal > 0) {
-    document.getElementById('freeDeliveryNote').innerHTML = '🎉 FREE Delivery applied!';
+  if (user && user.name) {
+    const initial = user.name.charAt(0).toUpperCase();
+    if (initialEl) initialEl.textContent = initial;
+    if (dotEl) { dotEl.className = 'user-dot'; }
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <div style="font-weight:700;font-size:.85rem;color:var(--primary);">
+            <i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);">${escapeHtml(user.email || 'No email')}</div>
+          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;">
+            <i class="ph ph-sign-out"></i> Logout
+          </button>
+        </div>
+      `;
+    }
   } else {
-    document.getElementById('freeDeliveryNote').innerHTML = '';
+    if (initialEl) initialEl.textContent = 'G';
+    if (dotEl) { dotEl.className = 'user-dot guest'; }
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <i class="ph ph-user-circle"></i> Login / Register
+        </a>
+      `;
+    }
   }
 }
 
-function saveOrderToDatabase(orderId, email, fullName, phone, address, items, subtotal, delivery, total, paymentMethod, timestamp, status) {
-  try {
-    var orderData = {
-      orderNumber: orderId, userId: null, customerName: fullName, customerEmail: email,
-      phone: phone, address: address, notes: '', subtotal: subtotal, delivery: delivery, total: total, paymentMethod: paymentMethod, status: status,
-      items: items.map(function(i){ return { productId: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size || '' }; })
-    };
-    return fetch(API_BASE_URL + '/api/db/orders', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(orderData) 
-    });
-  } catch(e) { console.error('Database save error:', e); }
+function logoutUser() {
+  localStorage.removeItem('liquorbelle_user');
+  localStorage.removeItem('liquorbelle_token');
+  updateUserBadge();
+  toast('Logged out successfully');
 }
 
-function sendOrderConfirmationEmail(orderId, email, fullName, phone, address, items, subtotal, delivery, total, timestamp, paymentMethod) {
-  if (!email) return;
-  try {
-    return fetch(API_BASE_URL + '/api/send-order-email', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        email: email, orderId: orderId, customerName: fullName, phone: phone, 
-        items: items.map(function(i){ return { name: i.name, qty: i.qty, price: i.price, size: i.size || '' }; }), 
-        subtotal: subtotal, delivery: delivery, total: total, address: address, timestamp: timestamp, paymentMethod: paymentMethod 
-      })
-    });
-  } catch (err) { console.error('Email error:', err); }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.innerText = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
 }
 
-function showSuccessModal(orderId, message) {
-  var modal = document.getElementById('successModal');
-  document.getElementById('successOrderId').textContent = orderId;
-  document.getElementById('successMessage').textContent = message;
-  modal.classList.add('active');
+// ===== DELIVERY SETTINGS =====
+let deliveryFee = 150;
+let freeDeliveryThreshold = 3000;
+async function loadDeliverySettings() {
+  try {
+    const res = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/delivery-settings');
+    const data = await res.json();
+    if (data.success && data.settings) {
+      deliveryFee = data.settings.delivery_fee || 150;
+      freeDeliveryThreshold = data.settings.free_delivery_threshold || 3000;
+    }
+  } catch (e) {}
+}
+
+// ===== RENDER ORDER SUMMARY =====
+function renderSummary() {
+  const cart = getCart();
+  const summaryItems = document.getElementById('cartSummaryItems');
+  const subtotalEl = document.getElementById('subtotalAmount');
+  const deliveryEl = document.getElementById('deliveryFee');
+  const totalEl = document.getElementById('totalAmount');
+  const freeNote = document.getElementById('freeDeliveryNote');
+
+  if (cart.length === 0) {
+    summaryItems.innerHTML = '<div class="empty-cart"><i class="ph ph-shopping-cart"></i>Your cart is empty</div>';
+    subtotalEl.textContent = 'KES 0';
+    deliveryEl.textContent = 'KES 0';
+    totalEl.textContent = 'KES 0';
+    freeNote.textContent = '';
+    return;
+  }
+
+  let html = '';
+  cart.forEach(item => {
+    const name = item.name || 'Product';
+    const qty = parseInt(item.quantity) || 1;
+    const price = parseFloat(item.price) || 0;
+    const size = item.size || '750ml';
+    html += `
+      <div class="cart-item-checkout">
+        <div class="item-name">${escapeHtml(name)} <small>${escapeHtml(size)}</small></div>
+        <div class="item-price">KES ${(price * qty).toLocaleString()}</div>
+      </div>
+    `;
+  });
+  summaryItems.innerHTML = html;
+
+  const subtotal = getCartTotal(cart);
+  const delivery = (subtotal >= freeDeliveryThreshold) ? 0 : deliveryFee;
+  const total = subtotal + delivery;
+
+  subtotalEl.textContent = `KES ${subtotal.toLocaleString()}`;
+  deliveryEl.textContent = `KES ${delivery.toLocaleString()}`;
+  totalEl.textContent = `KES ${total.toLocaleString()}`;
+
+  if (delivery === 0 && subtotal > 0) {
+    freeNote.textContent = '🎉 Free delivery applied!';
+  } else {
+    freeNote.textContent = '';
+  }
+
+  const progressContainer = document.getElementById('deliveryProgressContainer');
+  if (subtotal > 0) {
+    const progress = Math.min((subtotal / freeDeliveryThreshold) * 100, 100);
+    const isUnlocked = progress >= 100;
+    progressContainer.innerHTML = `
+      <div class="delivery-progress ${isUnlocked ? 'unlocked' : ''}">
+        ${isUnlocked ? '✅ Free Delivery Unlocked!' : `Add KES ${(freeDeliveryThreshold - subtotal).toLocaleString()} more for free delivery`}
+        <div class="delivery-progress-bar">
+          <div class="delivery-progress-fill" style="width:${Math.min(progress, 100)}%;"></div>
+        </div>
+      </div>
+    `;
+  } else {
+    progressContainer.innerHTML = '';
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[m]);
+}
+
+// ===== PLACE ORDER =====
+async function placeOrder() {
+  const btn = document.getElementById('placeOrderBtn');
+  if (btn.disabled) return;
+  
+  const cart = getCart();
+  if (cart.length === 0) {
+    showSnack('Your cart is empty', true);
+    return;
+  }
+
+  const email = document.getElementById('customerEmail').value.trim();
+  const name = document.getElementById('fullName').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const street = document.getElementById('street').value.trim();
+  const building = document.getElementById('building').value.trim();
+  const area = document.getElementById('deliveryArea').value.trim();
+
+  if (!email || !isValidEmail(email)) {
+    showSnack('Please enter a valid email address', true);
+    return;
+  }
+  if (!name) {
+    showSnack('Please enter your full name', true);
+    return;
+  }
+  if (!phone) {
+    showSnack('Please enter your phone number', true);
+    return;
+  }
+  if (!street) {
+    showSnack('Please enter your street / estate', true);
+    return;
+  }
+  if (!area) {
+    showSnack('Please enter your delivery area', true);
+    return;
+  }
+
+  const subtotal = getCartTotal(cart);
+  const delivery = (subtotal >= freeDeliveryThreshold) ? 0 : deliveryFee;
+  const total = subtotal + delivery;
+
+  const items = cart.map(item => ({
+    name: item.name || 'Product',
+    quantity: parseInt(item.quantity) || 1,
+    price: parseFloat(item.price) || 0,
+    size: item.size || '750ml'
+  }));
+
+  const address = [street, building, area].filter(Boolean).join(', ');
+  const orderNumber = 'LB-' + Date.now().toString(36).toUpperCase();
+  const paymentMethod = document.getElementById('selectedPaymentMethod').value;
+
+  const payload = {
+    orderNumber,
+    customerName: name,
+    customerEmail: email,
+    phone,
+    address,
+    notes: '',
+    subtotal,
+    delivery,
+    total,
+    items
+  };
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Processing...';
+
+  try {
+    let endpoint;
+    if (paymentMethod === 'pod') {
+      endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/orders/pod';
+    } else {
+      endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/stkpush';
+    }
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      localStorage.removeItem('cart');
+      document.getElementById('successOrderId').textContent = orderNumber;
+      if (paymentMethod === 'pod') {
+        document.getElementById('successMessage').textContent = 'Your order has been confirmed. Please have cash ready upon delivery.';
+      } else {
+        document.getElementById('successMessage').textContent = 'Check your phone for the M-PESA STK push prompt.';
+      }
+      document.getElementById('successModal').classList.add('active');
+      updateCartBadges();
+      renderSummary();
+    } else {
+      showSnack(data.message || 'Order failed. Please try again.', true);
+    }
+  } catch (err) {
+    showSnack('Network error. Please check your connection.', true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph ph-check-circle"></i> Place Order';
+  }
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email);
+}
+
+function showSnack(msg, isError = false) {
+  const snack = document.getElementById('snack');
+  snack.textContent = msg;
+  snack.className = 'snack show' + (isError ? ' error' : '');
+  clearTimeout(snack._timeout);
+  snack._timeout = setTimeout(() => snack.classList.remove('show'), 4000);
+}
+
+function updateCartBadges() {
+  const cart = getCart();
+  const count = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+  document.getElementById('headerCartCount').textContent = count;
+  document.getElementById('navCartCount').textContent = count;
+  document.getElementById('cartBadgeCount').textContent = count;
 }
 
 function closeSuccessModal() {
   document.getElementById('successModal').classList.remove('active');
-  window.location.href = 'track-orders.html';
+  window.location.href = 'account.html';
 }
 
-var paymentInterval = null;
-var paymentTimeout = null;
-var statusCheckCount = 0;
-var MAX_STATUS_CHECKS = 12;
-
-function resetPlaceOrderButton(btn, originalHTML) {
-  if (paymentInterval) { clearInterval(paymentInterval); paymentInterval = null; }
-  if (paymentTimeout) { clearTimeout(paymentTimeout); paymentTimeout = null; }
-  statusCheckCount = 0;
-  btn.innerHTML = originalHTML;
-  btn.disabled = false;
+function openCartDrawer() {
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartDrawer').classList.add('open');
+  renderCartDrawer();
 }
 
-function placeOrder() {
-  var items = Object.values(cart);
-  if (items.length === 0) { toast('Your cart is empty'); return; }
-  
-  var email = document.getElementById('customerEmail').value.trim();
-  var fullName = document.getElementById('fullName').value.trim();
-  var phone = document.getElementById('phone').value.trim();
-  var street = document.getElementById('street').value.trim();
-  var building = document.getElementById('building').value.trim();
-  
-  if (!email || email.indexOf('@') === -1) { toast('Please enter a valid email address'); return; }
-  if (!fullName) { toast('Please enter your full name'); return; }
-  if (!phone) { toast('Please enter your phone number'); return; }
-  if (!validatePhone(phone)) { toast('Please enter a valid Kenyan phone number (e.g., 0712345678)'); return; }
-  if (!street && !building) { toast('Please enter at least Street OR Building name'); return; }
-  
-  var displayPhone = formatPhoneForDisplay(phone);
-  var apiPhone = formatPhoneForAPI(phone);
-  var address = getFullAddress();
-  var totals = calculateTotals();
-  var subtotal = totals.subtotal;
-  var delivery = totals.delivery;
-  var total = totals.total;
-  var orderId = 'LB-' + Date.now().toString().slice(-8);
-  var timestamp = new Date().toLocaleString('en-KE', { hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
-  
-  var btn = document.querySelector('.btn-place');
-  var originalHTML = btn.innerHTML;
-  btn.innerHTML = '<div class="spinner"></div> Processing...';
-  btn.disabled = true;
-  
-  try {
-    var requestData = { 
-      phone: apiPhone, 
-      amount: total, 
-      orderId: orderId, 
-      customerName: fullName, 
-      address: address, 
-      items: items, 
-      subtotal: subtotal, 
-      delivery: delivery, 
-      total: total, 
-      paymentMethod: 'mpesa', 
-      customerEmail: email 
-    };
-    
-    fetch(API_BASE_URL + '/api/stkpush', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(requestData) 
-    })
-    .then(function(res){ return res.json(); })
-    .then(function(data) {
-      if (!data.success) throw new Error(data.message || 'STK push failed');
-      
-      toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay. You have 35 seconds to complete payment.');
-      
-      var paymentCompleted = false;
-      statusCheckCount = 0;
-      
-      paymentTimeout = setTimeout(function() {
-        if (!paymentCompleted) {
-          if (paymentInterval) clearInterval(paymentInterval);
-          paymentInterval = null;
-          resetPlaceOrderButton(btn, originalHTML);
-          toast('❌ Payment timeout. You did not complete the payment in time. Please try again.', true);
-        }
-      }, 35000);
-      
-      paymentInterval = setInterval(function() {
-        if (paymentCompleted) {
-          clearInterval(paymentInterval);
-          paymentInterval = null;
-          return;
-        }
-        statusCheckCount++;
-        if (statusCheckCount > MAX_STATUS_CHECKS) {
-          clearInterval(paymentInterval);
-          paymentInterval = null;
-          if (!paymentCompleted) {
-            resetPlaceOrderButton(btn, originalHTML);
-            toast('❌ Payment confirmation timeout. Please check your M-PESA and contact support.', true);
-          }
-          return;
-        }
-        
-        fetch(API_BASE_URL + '/api/status/' + orderId)
-          .then(function(res){ return res.json(); })
-          .then(function(statusData) {
-            if (statusData.status === 'paid') {
-              paymentCompleted = true;
-              clearInterval(paymentInterval);
-              clearTimeout(paymentTimeout);
-              paymentInterval = null;
-              paymentTimeout = null;
-              
-              saveOrderToDatabase(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, 'M-PESA', timestamp, 'paid')
-                .then(function() {
-                  sendOrderConfirmationEmail(orderId, email, fullName, displayPhone, address, items, subtotal, delivery, total, timestamp, 'mpesa');
-                  cart = {};
-                  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-                  renderCartSummary();
-                  updateCartUI();
-                  resetPlaceOrderButton(btn, originalHTML);
-                  showSuccessModal(orderId, '✅ Payment confirmed! Check your email for order details.');
-                })
-                .catch(function() {
-                  resetPlaceOrderButton(btn, originalHTML);
-                  toast('❌ Order saved but email failed. Please contact support.', true);
-                });
-            } else if (statusData.status === 'failed') {
-              clearInterval(paymentInterval);
-              clearTimeout(paymentTimeout);
-              paymentInterval = null;
-              paymentTimeout = null;
-              resetPlaceOrderButton(btn, originalHTML);
-              toast('❌ Payment failed. Please try again.', true);
-            }
-          })
-          .catch(function(e){ 
-            console.error('Status check error:', e);
-          });
-      }, 3000);
-    })
-    .catch(function(err) {
-      resetPlaceOrderButton(btn, originalHTML);
-      toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
-    });
-    
-  } catch (err) {
-    resetPlaceOrderButton(btn, originalHTML);
-    toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
+function closeCartDrawer() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartDrawer').classList.remove('open');
+}
+
+function renderCartDrawer() {
+  const cart = getCart();
+  const container = document.getElementById('cartItemsList');
+  const footer = document.getElementById('cartFooter');
+  const totalEl = document.getElementById('cartTotalAmount');
+
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div class="cart-container">
+        <div class="cart-icon-wrapper">
+          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
+            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
+          </svg>
+          <span class="cart-badge">0</span>
+        </div>
+        <h2 class="cart-message">Your cart is empty!</h2>
+        <a href="shop.html" class="shop-button">Start Shopping</a>
+      </div>
+    `;
+    footer.style.display = 'none';
+    return;
   }
+
+  let html = '';
+  cart.forEach((item, index) => {
+    const name = item.name || 'Product';
+    const qty = parseInt(item.quantity) || 1;
+    const price = parseFloat(item.price) || 0;
+    html += `
+      <div class="cart-item">
+        <div>
+          <div class="cart-item-name">${escapeHtml(name)}</div>
+          <div class="cart-qty">
+            <button onclick="updateQty(${index}, -1)">−</button>
+            <span>${qty}</span>
+            <button onclick="updateQty(${index}, 1)">+</button>
+          </div>
+        </div>
+        <div class="cart-item-price">KES ${(price * qty).toLocaleString()}</div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+
+  const subtotal = getCartTotal(cart);
+  const delivery = (subtotal >= freeDeliveryThreshold) ? 0 : deliveryFee;
+  const total = subtotal + delivery;
+  totalEl.textContent = `KES ${total.toLocaleString()}`;
+  footer.style.display = 'block';
+  updateCartBadges();
 }
 
-// ==================== WISHLIST MODAL ====================
-function openWishlistModal(){
-  var container = document.getElementById('wishlistItems');
-  if(!container) return;
-  var wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
-  if(!wishlist.length){
-    container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
-  }else{
-    var html = '';
-    for(var i = 0; i < wishlist.length; i++){
-      var w = wishlist[i];
-      var imgSrc = w.image ? optimizeImage(w.image, 100) : 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png';
-      html += '<div class="wishlist-item"><img src="' + imgSrc + '" onerror="this.src=\'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png\'" loading="lazy"><div class="wishlist-item-info"><div class="wishlist-item-name">' + escapeHtml(w.name) + '</div><div class="wishlist-item-price">KES ' + w.price.toLocaleString() + '</div></div><button class="wishlist-atc" onclick="addToCart(\'' + w.id + '\',\'' + escapeHtml(w.name).replace(/'/g, "\\'") + '\',' + w.price + ',\'' + (w.capacity || '') + '\');closeWishlistModal();">Add</button></div>';
-    }
-    container.innerHTML = html;
-  }
+function updateQty(index, delta) {
+  const cart = getCart();
+  if (!cart[index]) return;
+  let newQty = (parseInt(cart[index].quantity) || 1) + delta;
+  if (newQty < 1) newQty = 1;
+  cart[index].quantity = newQty;
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCartDrawer();
+  renderSummary();
+  updateCartBadges();
+}
+
+function openMobileMenu() {
+  document.getElementById('mobileMenuOverlay').classList.add('open');
+  document.getElementById('mobileMenu').classList.add('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenuOverlay').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+function handleHeaderSearch(e) {
+  e.preventDefault();
+  const q = document.getElementById('headerSearchInput').value.trim();
+  if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q);
+  return false;
+}
+function openWishlistModal() {
   document.getElementById('wishlistModal').style.display = 'flex';
 }
-
-function closeWishlistModal(){
+function closeWishlistModal() {
   document.getElementById('wishlistModal').style.display = 'none';
 }
 
-document.getElementById('wishlistModal')?.addEventListener('click', function(e){ if(e.target === this) closeWishlistModal(); });
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadDeliverySettings();
+  renderSummary();
+  updateCartBadges();
+  updateUserBadge();
+  selectPayment('mpesa');
+  document.getElementById('successModal').classList.remove('active');
+});
 
-// ==================== ADD TO CART (for wishlist) ====================
-function addToCart(id, name, price, capacity){
-  if(cart[id]){
-    cart[id].qty += 1;
-  }else{
-    cart[id] = {id:id, name:name, price:price, qty:1, capacity:capacity};
+window.addEventListener('storage', (e) => {
+  if (e.key === 'cart') {
+    renderSummary();
+    updateCartBadges();
   }
-  localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-  updateCartUI();
-  toast(name + ' added');
-}
-
-// ==================== OFFLINE DETECTION ====================
-window.addEventListener('online', function(){
-  var banner = document.getElementById('offlineBanner');
-  if(banner) banner.classList.remove('show');
+  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
+    updateUserBadge();
+  }
 });
-window.addEventListener('offline', function(){
-  var banner = document.getElementById('offlineBanner');
-  if(banner) banner.classList.add('show');
-});
-
-// ==================== INIT ====================
-loadDeliverySettings();
-renderCartSummary();
-setInterval(updateCartUI, 3000);
-
-if(!navigator.onLine){
-  var banner = document.getElementById('offlineBanner');
-  if(banner) banner.classList.add('show');
-}
 </script>
+
+<!-- ============================================
+     JAVASCRIPT - Split into 3 files
+     ============================================ -->
+<script src="js/utils.js"></script>
+<script src="js/cart-wishlist.js"></script>
+<script src="js/pages.js"></script>
+
 </body>
 </html>

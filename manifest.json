@@ -1,0 +1,24 @@
+{
+  "name": "LiquorBelle",
+  "short_name": "LiquorBelle",
+  "description": "Nairobi's Finest Alcohol Delivery",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#F9F6F2",
+  "theme_color": "#800000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_192,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_512,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -17,6 +17,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -31,6 +32,9 @@
   --text:#1A1A1A;
   --muted:#7A7368;
   --gold:#B8860B;
+  --gold-light:#D4A853;
+  --btn-green:#22C55E;
+  --btn-green-hover:#16A34A;
   --radius:16px;
   --radius-sm:12px;
   --radius-xs:8px;
@@ -38,18 +42,18 @@
   --shadow-lg:0 8px 30px rgba(0,0,0,0.10);
   --shadow-xl:0 16px 48px rgba(0,0,0,0.12);
   --font-body:'Inter',-apple-system,sans-serif;
-  --btn-green:#22C55E;
-  --btn-green-hover:#16A34A;
   --bottom-nav-height:70px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
-
 .shop-svg{width:22px;height:22px;color:currentColor;display:block;}
 
-/* Loading Skeleton */
+/* ===== GOLD - ONLY ON "BELLE" ===== */
+.gold-text{color:var(--gold);}
+
+/* ===== Loading Skeleton ===== */
 .skeleton-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);padding:12px;}
 .skeleton-img{width:100%;padding-top:100%;background:var(--bg2);border-radius:var(--radius-xs);animation:skeleton-loading 1.5s ease-in-out infinite;background:linear-gradient(90deg,var(--bg2) 25%,var(--border) 50%,var(--bg2) 75%);background-size:200% 100%;}
 .skeleton-text{height:14px;background:var(--bg2);border-radius:6px;margin-top:10px;width:70%;}
@@ -57,18 +61,18 @@ a{color:inherit;text-decoration:none;}
 .skeleton-btn{height:36px;background:var(--bg2);border-radius:60px;margin-top:12px;}
 @keyframes skeleton-loading{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
-/* Offline Banner */
+/* ===== Offline Banner ===== */
 .offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
 .offline-banner.show{display:block;}
 
-/* Announcement Bar */
+/* ===== Announcement Bar ===== */
 .announce-bar{background:var(--primary-dark);color:#fff;text-align:center;padding:9px 36px;font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;}
 .announce-bar #announceText{display:flex;align-items:center;gap:6px;transition:opacity .25s;}
 .announce-bar #announceText i{font-size:14px;}
 .announce-close{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:14px;padding:4px;}
 .announce-close:hover{color:#fff;}
 
-/* WhatsApp Float */
+/* ===== WhatsApp Float ===== */
 .whatsapp-float{
   position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;
   width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -85,7 +89,7 @@ a{color:inherit;text-decoration:none;}
 .whatsapp-float:hover .tooltip{opacity:1;right:62px;}
 @media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:20px;right:24px;}}
 
-/* Bottom Navigation */
+/* ===== Bottom Navigation ===== */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;height:calc(var(--bottom-nav-height) + var(--safe-bottom));
   background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
@@ -111,7 +115,7 @@ a{color:inherit;text-decoration:none;}
 }
 .nav-item:active{transform:scale(0.92);}
 
-/* Header */
+/* ===== Header ===== */
 .main-header{
   background:var(--primary);
   padding:10px 4%;
@@ -127,6 +131,7 @@ a{color:inherit;text-decoration:none;}
 .logo-img{height:40px;width:40px;object-fit:cover;border-radius:12px;background:white;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
 .logo-text{font-size:1.2rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;}
 .logo-text small{display:block;font-size:8px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:1px;text-transform:uppercase;}
+.logo-text .gold{color:var(--gold-light);}
 
 .header-search-form{flex:1;max-width:420px;display:flex;align-items:center;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0 6px 0 14px;height:38px;transition:.2s;}
 .header-search-form:focus-within{background:rgba(255,255,255,0.95);}
@@ -143,7 +148,23 @@ a{color:inherit;text-decoration:none;}
 .header-icon-btn i{font-size:22px;}
 .header-icon-btn:hover{background:rgba(255,255,255,0.15);}
 .header-icon-btn:active{transform:scale(0.92);}
-.header-cart-badge{position:absolute;top:0;right:0;background:var(--white);color:var(--primary);font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);}
+.header-cart-badge{
+  position:absolute;
+  top:0;
+  right:0;
+  background:var(--gold);
+  color:white;
+  font-size:10px;
+  font-weight:800;
+  min-width:17px;
+  height:17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 3px;
+  border:2px solid var(--primary);
+}
 
 .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
 .mobile-menu-overlay.open{opacity:1;pointer-events:auto;}
@@ -161,118 +182,238 @@ a{color:inherit;text-decoration:none;}
 .mobile-search-inline i{color:var(--muted);font-size:16px;}
 .mobile-search-inline input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.85rem;color:var(--text);}
 
-/* SHOP PAGE SPECIFIC - MOBILE FIRST */
-.shop-titlebar{padding:18px 4% 4px;}
-.shop-breadcrumb{font-size:.7rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+/* ===== SHOP TITLE BAR ===== */
+.shop-titlebar{
+  padding:20px 4% 12px;
+  background:var(--white);
+  border-bottom:2px solid var(--border);
+  margin-bottom:4px;
+}
+.shop-breadcrumb{
+  font-size:.7rem;
+  color:var(--muted);
+  margin-bottom:4px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex-wrap:wrap;
+}
 .shop-breadcrumb a{color:var(--muted);}
 .shop-breadcrumb a:hover{color:var(--primary);}
 .shop-breadcrumb i{font-size:10px;}
 .shop-breadcrumb span{color:var(--primary);font-weight:600;}
-.shop-title{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:2px;}
+.shop-title{
+  font-size:1.6rem;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:2px;
+  letter-spacing:-0.5px;
+}
+@media(max-width:560px){
+  .shop-titlebar{padding:16px 4% 10px;}
+  .shop-title{font-size:1.3rem;}
+}
 
-/* ===== BRANDED CARD ===== */
-.brand-card{
-  margin:4px 4% 16px;
-  background:linear-gradient(135deg, var(--primary), var(--primary-dark));
+/* ===== AD POSTER ===== */
+.ad-poster{
+  margin:4px 4% 12px;
   border-radius:var(--radius);
-  padding:20px 20px;
+  overflow:hidden;
+  background:#ffffff;
+  border:2px solid var(--btn-green);
+  box-shadow:0 2px 12px rgba(34,197,94,0.12);
+  position:relative;
+}
+.ad-poster-inner{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:16px;
+  padding:14px 20px;
+  gap:14px;
   flex-wrap:wrap;
-  box-shadow:0 4px 20px rgba(128,0,0,0.2);
-  border:1px solid rgba(255,255,255,0.08);
+  transition:opacity .3s;
 }
-.brand-card-left{flex:1;min-width:160px;}
-.brand-card-badge{
-  display:inline-block;
-  background:rgba(255,255,255,0.15);
-  color:#fff;
-  font-size:.55rem;
-  font-weight:800;
-  padding:3px 12px;
-  border-radius:30px;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-  margin-bottom:4px;
-  border:1px solid rgba(255,255,255,0.1);
-}
-.brand-card-title{
-  font-size:1.1rem;
-  font-weight:800;
-  color:#fff;
-  margin:0 0 2px;
-  letter-spacing:-.3px;
-}
-.brand-card-desc{
-  font-size:.7rem;
-  color:rgba(255,255,255,0.8);
-  margin:0;
-}
-.brand-card-right{display:flex;gap:8px;flex-wrap:wrap;}
-.brand-card-stat{
-  background:rgba(255,255,255,0.08);
-  border-radius:var(--radius-xs);
-  padding:8px 12px;
-  text-align:center;
-  min-width:60px;
-  border:1px solid rgba(255,255,255,0.06);
-}
-.brand-card-stat strong{
-  display:block;
-  font-size:1rem;
-  font-weight:800;
-  color:#fff;
-}
-.brand-card-stat small{
-  font-size:.5rem;
-  color:rgba(255,255,255,0.7);
-  font-weight:600;
-  text-transform:uppercase;
-}
-@media(max-width:500px){
-  .brand-card{padding:16px 16px;flex-direction:column;text-align:center;}
-  .brand-card-title{font-size:.95rem;}
-  .brand-card-desc{font-size:.6rem;}
-  .brand-card-stat{min-width:50px;padding:6px 10px;}
-  .brand-card-stat strong{font-size:.85rem;}
-}
-@media(min-width:768px){
-  .brand-card{padding:24px 28px;}
-  .brand-card-title{font-size:1.2rem;}
-  .brand-card-stat{min-width:70px;padding:10px 16px;}
-  .brand-card-stat strong{font-size:1.2rem;}
-}
-
-/* Info Banner */
-.info-banner{
-  margin:8px 4% 4px;
-  padding:10px 14px;
-  background:var(--bg2);
-  border-radius:var(--radius-xs);
-  border-left:4px solid var(--primary);
-  font-size:.7rem;
-  color:var(--muted);
+.ad-poster-icon{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:var(--btn-green);
   display:flex;
   align-items:center;
-  gap:8px;
+  justify-content:center;
+  font-size:22px;
+  color:white;
+  flex-shrink:0;
 }
-.info-banner i{font-size:16px;color:var(--primary);flex-shrink:0;}
-.info-banner strong{color:var(--text);}
+.ad-poster-text{flex:1;min-width:120px;}
+.ad-poster-text h3{
+  font-size:.95rem;
+  font-weight:800;
+  color:var(--primary);
+  margin-bottom:1px;
+  letter-spacing:-0.3px;
+}
+.ad-poster-text p{
+  font-size:.7rem;
+  color:var(--muted);
+  line-height:1.3;
+}
+.ad-poster-badge{
+  background:var(--btn-green);
+  color:white;
+  padding:4px 14px;
+  border-radius:30px;
+  font-size:.6rem;
+  font-weight:700;
+  flex-shrink:0;
+}
+.ad-dots{
+  display:flex;
+  gap:5px;
+  justify-content:center;
+  padding:4px 0 10px;
+}
+.ad-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:rgba(34,197,94,0.2);
+  cursor:pointer;
+  transition:all .3s;
+}
+.ad-dot.active{
+  background:var(--btn-green);
+  transform:scale(1.2);
+}
+@media(max-width:500px){
+  .ad-poster-inner{padding:12px 14px;flex-direction:column;text-align:center;}
+  .ad-poster-icon{width:36px;height:36px;font-size:18px;}
+  .ad-poster-text h3{font-size:.8rem;}
+  .ad-poster-text p{font-size:.6rem;}
+  .ad-poster-badge{font-size:.5rem;padding:3px 10px;}
+}
+@media(min-width:768px){
+  .ad-poster{margin:6px 5% 16px;}
+  .ad-poster-inner{padding:16px 28px;}
+  .ad-poster-text h3{font-size:1.05rem;}
+}
 
-/* Category Chips - SCROLLABLE */
-.cat-chips-wrap{padding:12px 0;margin:4px 0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+/* ===== BANNER IMAGE ===== */
+.banner-image-wrap{
+  margin:0 4% 16px;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  position:relative;
+}
+.banner-image-wrap img{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:cover;
+  max-height:280px;
+  transition:transform .4s ease;
+}
+.banner-image-wrap:hover img{
+  transform:scale(1.02);
+}
+@media(min-width:768px){
+  .banner-image-wrap{
+    margin:0 5% 20px;
+  }
+  .banner-image-wrap img{
+    max-height:320px;
+  }
+}
+@media(max-width:400px){
+  .banner-image-wrap{
+    margin:0 3% 12px;
+  }
+  .banner-image-wrap img{
+    max-height:180px;
+  }
+}
+
+/* ===== SEARCH BAR ===== */
+.search-section{
+  padding:0 4% 12px;
+}
+.search-section .search-box{
+  display:flex;
+  align-items:center;
+  background:var(--white);
+  border:2px solid var(--border);
+  border-radius:50px;
+  padding:0 6px 0 18px;
+  height:48px;
+  box-shadow:var(--shadow);
+  transition:border-color .2s, box-shadow .2s;
+}
+.search-section .search-box:focus-within{
+  border-color:var(--primary);
+  box-shadow:0 4px 16px rgba(128,0,0,0.12);
+}
+.search-section .search-box i{
+  color:var(--muted);
+  font-size:18px;
+  margin-right:8px;
+  flex-shrink:0;
+}
+.search-section .search-box input{
+  flex:1;
+  border:none;
+  background:transparent;
+  outline:none;
+  font-family:var(--font-body);
+  font-size:.95rem;
+  padding:10px 0;
+  color:var(--text);
+  min-width:0;
+}
+.search-section .search-box input::placeholder{
+  color:var(--muted);
+  opacity:.7;
+}
+.search-section .search-box .clear-btn{
+  background:none;
+  border:none;
+  padding:6px 10px;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:16px;
+  display:none;
+  transition:color .2s;
+}
+.search-section .search-box .clear-btn.visible{
+  display:block;
+}
+.search-section .search-box .clear-btn:hover{
+  color:var(--primary);
+}
+@media(min-width:1024px){
+  .search-section{
+    padding:0 5% 16px;
+  }
+  .search-section .search-box{
+    height:52px;
+  }
+  .search-section .search-box input{
+    font-size:1rem;
+  }
+}
+
+/* ===== Category Chips ===== */
+.cat-chips-wrap{padding:10px 0;margin:2px 0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .cat-chips-wrap::-webkit-scrollbar{display:none;}
 .cat-chips{display:flex;gap:8px;padding:0 4%;width:max-content;}
-.cat-chip{padding:8px 16px;background:var(--white);border:2px solid var(--border);border-radius:50px;font-size:.78rem;font-weight:600;color:var(--text);cursor:pointer;transition:.2s;white-space:nowrap;flex-shrink:0;}
+.cat-chip{padding:7px 14px;background:var(--white);border:2px solid var(--border);border-radius:50px;font-size:.75rem;font-weight:600;color:var(--text);cursor:pointer;transition:.2s;white-space:nowrap;flex-shrink:0;}
 .cat-chip:hover{border-color:var(--primary);transform:translateY(-2px);}
 .cat-chip:active{transform:scale(0.95);}
 .cat-chip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
 
-/* Featured Sections - MOBILE FIRST */
+/* ===== Featured Sections ===== */
 .featured-sections{
-  padding:0 4% 20px;
+  padding:0 4% 16px;
   display:grid;
   grid-template-columns:1fr;
   gap:16px;
@@ -282,7 +423,7 @@ a{color:inherit;text-decoration:none;}
   border-radius:var(--radius-sm);
   border:1px solid var(--border);
   overflow:hidden;
-  padding:14px;
+  padding:12px;
 }
 .featured-block h3{
   font-size:.8rem;
@@ -291,55 +432,112 @@ a{color:inherit;text-decoration:none;}
   margin-bottom:10px;
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:8px;
 }
 .featured-block h3 i{font-size:16px;}
 .featured-block h3 .trend-icon{color:#FF6B35;}
 .featured-block h3 .new-icon{color:#22C55E;}
-.featured-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;}
-.featured-scroll::-webkit-scrollbar{height:3px;}
-.featured-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-.featured-item{flex:0 0 120px;background:var(--bg);border-radius:var(--radius-xs);overflow:hidden;cursor:pointer;transition:all .2s;border:1px solid var(--border);}
-.featured-item:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--primary);}
-.featured-img-wrap{width:100%;height:80px;overflow:hidden;background:var(--bg);display:flex;align-items:center;justify-content:center;}
-.featured-img{width:100%;height:100%;object-fit:cover;display:block;}
-.featured-info{padding:6px 8px;}
-.featured-name{font-weight:700;font-size:.65rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;}
-.featured-price{font-weight:800;font-size:.7rem;color:var(--sale-red);margin-top:2px;}
+.featured-scroll{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+  gap:12px;
+}
+.featured-item{
+  background:var(--white);
+  border-radius:var(--radius-xs);
+  overflow:hidden;
+  cursor:pointer;
+  transition:all .2s;
+  border:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  box-shadow:var(--shadow);
+}
+.featured-item:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-lg);
+  border-color:var(--primary);
+}
+.featured-img-wrap{
+  position:relative;
+  overflow:hidden;
+  background:var(--bg);
+  padding-top:100%;
+  width:100%;
+}
+.featured-img{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.featured-info{padding:8px 10px 10px;flex:1;display:flex;flex-direction:column;}
+.featured-name{
+  font-weight:700;
+  font-size:.7rem;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  line-height:1.3;
+  min-height:36px;
+}
+.featured-price{
+  font-weight:800;
+  font-size:.8rem;
+  color:var(--sale-red);
+  margin-top:2px;
+}
+.featured-vol{
+  display:inline-block;
+  background:var(--bg2);
+  padding:2px 6px;
+  border-radius:30px;
+  font-size:.45rem;
+  font-weight:600;
+  color:var(--gold);
+  margin-bottom:3px;
+  align-self:flex-start;
+}
 @media(min-width:600px){
   .featured-sections{grid-template-columns:1fr 1fr;}
-  .featured-item{flex:0 0 140px;}
-  .featured-img-wrap{height:100px;}
+  .featured-scroll{grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));}
 }
-@media(min-width:1024px){.featured-sections{padding:0 5% 28px;}}
-@media(min-width:1400px){.featured-sections{padding:0 8% 32px;}}
+@media(max-width:400px){
+  .featured-scroll{grid-template-columns:repeat(2, 1fr);}
+  .featured-item .featured-name{font-size:.6rem;min-height:30px;}
+  .featured-item .featured-price{font-size:.7rem;}
+}
 
-/* Shop Body Layout */
+/* ===== Shop Body Layout ===== */
 .shop-body-grid{display:block;}
 
-/* Shop Toolbar */
-.shop-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 4% 10px;flex-wrap:wrap;}
-.filter-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:50px;font-size:.75rem;font-weight:700;color:var(--text);cursor:pointer;transition:.2s;}
+/* ===== Shop Toolbar ===== */
+.shop-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 4% 8px;flex-wrap:wrap;}
+.filter-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:50px;font-size:.7rem;font-weight:700;color:var(--text);cursor:pointer;transition:.2s;}
 .filter-btn:hover{border-color:var(--primary);}
 .filter-btn:active{transform:scale(0.96);}
-.filter-btn i{font-size:14px;}
-.filter-count{background:var(--primary);color:#fff;font-size:.6rem;font-weight:800;min-width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 4px;}
-.sort-select{padding:8px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:50px;font-size:.75rem;font-weight:600;color:var(--text);font-family:var(--font-body);cursor:pointer;outline:none;}
+.filter-btn i{font-size:13px;}
+.filter-count{background:var(--primary);color:#fff;font-size:.55rem;font-weight:800;min-width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+.sort-select{padding:7px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:50px;font-size:.7rem;font-weight:600;color:var(--text);font-family:var(--font-body);cursor:pointer;outline:none;}
 .sort-select:focus{border-color:var(--primary);}
 
-.active-filters{display:flex;flex-wrap:wrap;gap:6px;padding:0 4% 10px;}
+.active-filters{display:flex;flex-wrap:wrap;gap:5px;padding:0 4% 8px;}
 .active-filters:empty{display:none;}
-.filter-pill{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);padding:4px 6px 4px 10px;border-radius:50px;font-size:.65rem;font-weight:600;color:var(--text);}
-.filter-pill button{border:none;background:var(--white);width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px;color:var(--muted);}
+.filter-pill{display:flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--border);padding:3px 5px 3px 8px;border-radius:50px;font-size:.6rem;font-weight:600;color:var(--text);}
+.filter-pill button{border:none;background:var(--white);width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:8px;color:var(--muted);}
 .filter-pill button:hover{background:var(--primary);color:#fff;}
 
-/* PRODUCT GRID - MOBILE FIRST */
+/* ===== PRODUCT GRID ===== */
 .shop-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:10px;
   padding:0 4%;
-  margin-bottom:16px;
+  margin-bottom:12px;
 }
 @media(min-width:500px){
   .shop-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
@@ -354,11 +552,12 @@ a{color:inherit;text-decoration:none;}
   .shop-grid{grid-template-columns:repeat(4,1fr);gap:24px;padding:0 8%;}
 }
 
-/* Star Rating - VISIBLE ON MOBILE */
-.pc-rating{display:flex;align-items:center;gap:2px;margin-bottom:4px;}
-.pc-rating i{font-size:11px;color:#FBBF24;}
-.pc-rating span{font-size:.6rem;color:var(--muted);font-weight:600;margin-left:3px;}
+/* ===== Star Rating ===== */
+.pc-rating{display:flex;align-items:center;gap:2px;margin-bottom:3px;}
+.pc-rating i{font-size:10px;color:#FBBF24;}
+.pc-rating span{font-size:.55rem;color:var(--muted);font-weight:600;margin-left:2px;}
 
+/* ===== Product Card ===== */
 .prod-card{
   background:var(--white);
   border-radius:var(--radius-sm);
@@ -392,34 +591,33 @@ a{color:inherit;text-decoration:none;}
 }
 .prod-card:hover .pc-img{transform:scale(1.05);}
 .discount-circle{
-  position:absolute;top:6px;left:6px;width:34px;height:34px;
+  position:absolute;top:6px;left:6px;width:32px;height:32px;
   background:var(--sale-red);color:#fff;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:800;z-index:10;box-shadow:0 2px 8px rgba(213,0,0,0.3);
+  font-size:9px;font-weight:800;z-index:10;box-shadow:0 2px 8px rgba(213,0,0,0.3);
 }
 .badge-new{
   position:absolute;top:6px;left:6px;background:var(--sale-red);
-  color:#fff;font-size:7px;font-weight:700;padding:2px 8px;border-radius:30px;z-index:10;
+  color:#fff;font-size:6px;font-weight:700;padding:2px 8px;border-radius:30px;z-index:10;
 }
 .badge-bestseller{
   position:absolute;top:6px;left:6px;background:var(--gold);color:#fff;
-  font-size:7px;font-weight:700;padding:2px 8px;border-radius:30px;z-index:10;
+  font-size:6px;font-weight:700;padding:2px 8px;border-radius:30px;z-index:10;
   display:flex;align-items:center;gap:2px;
 }
 
-/* WISHLIST - Clean heart only, no circle outline */
 .pc-wishlist{
-  position:absolute;top:6px;right:6px;width:28px;height:28px;
+  position:absolute;top:6px;right:6px;width:26px;height:26px;
   border-radius:50%;background:transparent;border:none;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;z-index:20;transition:all .25s cubic-bezier(0.4,0,0.2,1);
-  font-size:16px;
+  font-size:15px;
   box-shadow:none;
 }
 .pc-wishlist i{
   color:var(--muted);
   transition:all .25s cubic-bezier(0.4,0,0.2,1);
-  font-size:16px;
+  font-size:15px;
 }
 .pc-wishlist.wishlisted i{
   color:var(--primary);
@@ -434,10 +632,10 @@ a{color:inherit;text-decoration:none;}
   transform:scale(1.2);
 }
 
-.pc-body{padding:10px;flex:1;display:flex;flex-direction:column;}
+.pc-body{padding:8px;flex:1;display:flex;flex-direction:column;}
 .pc-name{
   font-weight:700;
-  font-size:.75rem;
+  font-size:.7rem;
   margin-bottom:2px;
   line-height:1.3;
   display:-webkit-box;
@@ -450,54 +648,54 @@ a{color:inherit;text-decoration:none;}
   background:var(--bg2);
   padding:2px 6px;
   border-radius:30px;
-  font-size:.5rem;
+  font-size:.45rem;
   font-weight:600;
   color:var(--gold);
-  margin-bottom:4px;
+  margin-bottom:3px;
   align-self:flex-start;
 }
 .pc-price-wrap{
   display:flex;
   align-items:center;
   gap:4px;
-  margin:3px 0 6px;
+  margin:2px 0 4px;
   flex-wrap:wrap;
 }
 .pc-price-old{
-  font-size:.6rem;
+  font-size:.55rem;
   color:var(--muted);
   text-decoration:line-through;
 }
 .pc-price-new{
   font-weight:900;
-  font-size:1rem;
+  font-size:.9rem;
   color:var(--sale-red);
 }
 @media(min-width:500px){
-  .pc-body{padding:12px;}
-  .pc-name{font-size:.8rem;}
-  .pc-price-new{font-size:1.1rem;}
-  .pc-wishlist{width:30px;height:30px;font-size:18px;}
-  .pc-wishlist i{font-size:18px;}
-  .discount-circle{width:38px;height:38px;font-size:11px;}
+  .pc-body{padding:10px;}
+  .pc-name{font-size:.75rem;}
+  .pc-price-new{font-size:1rem;}
+  .pc-wishlist{width:28px;height:28px;font-size:17px;}
+  .pc-wishlist i{font-size:17px;}
+  .discount-circle{width:34px;height:34px;font-size:10px;}
 }
 @media(min-width:1024px){
-  .pc-body{padding:14px;}
-  .pc-name{font-size:.85rem;}
+  .pc-body{padding:12px;}
+  .pc-name{font-size:.8rem;}
 }
 
-/* Variant Dropdown */
+/* ===== Variant Dropdown ===== */
 .variant-select-wrap{
   position:relative;
-  margin-bottom:6px;
+  margin-bottom:4px;
 }
 .variant-select-wrap select{
   width:100%;
-  padding:6px 28px 6px 10px;
+  padding:5px 24px 5px 8px;
   background:var(--bg);
   border:1.5px solid var(--border);
   border-radius:6px;
-  font-size:.6rem;
+  font-size:.55rem;
   font-weight:600;
   font-family:var(--font-body);
   color:var(--text);
@@ -517,7 +715,7 @@ a{color:inherit;text-decoration:none;}
 .variant-select-wrap::after{
   content:'';
   position:absolute;
-  right:10px;
+  right:8px;
   top:50%;
   transform:translateY(-50%);
   width:0;
@@ -528,48 +726,84 @@ a{color:inherit;text-decoration:none;}
   pointer-events:none;
 }
 .variant-select-wrap select option{
-  padding:6px;
+  padding:4px;
   background:var(--white);
   color:var(--text);
 }
 @media(min-width:500px){
-  .variant-select-wrap select{font-size:.65rem;padding:7px 32px 7px 12px;}
+  .variant-select-wrap select{font-size:.6rem;padding:6px 28px 6px 10px;}
 }
 
 .atc-btn{
   width:100%;
-  padding:6px;
+  padding:5px;
   background:var(--btn-green);
   color:#fff;
   border:none;
   border-radius:60px;
   font-weight:700;
-  font-size:.65rem;
+  font-size:.6rem;
   cursor:pointer;
   transition:all .2s;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:4px;
+  gap:3px;
   margin-top:auto;
 }
 .atc-btn:active{transform:scale(0.95);}
 .atc-btn:hover{background:var(--btn-green-hover);}
 @media(min-width:500px){
-  .atc-btn{padding:8px;font-size:.7rem;}
+  .atc-btn{padding:7px;font-size:.65rem;}
 }
 
-.click-hint{font-size:.5rem;color:var(--muted);text-align:center;margin-top:3px;opacity:0.7;}
+.click-hint{font-size:.45rem;color:var(--muted);text-align:center;margin-top:2px;opacity:0.6;}
 
-/* Pagination */
-.pagination-wrap{display:flex;justify-content:center;padding:8px 4% 28px;gap:6px;flex-wrap:wrap;}
-.page-btn{min-width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.75rem;font-weight:600;cursor:pointer;background:var(--white);color:var(--text);transition:all .2s;padding:0 10px;}
+/* ===== Pagination ===== */
+.pagination-wrap{display:flex;justify-content:center;padding:6px 4% 12px;gap:5px;flex-wrap:wrap;}
+.page-btn{min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.7rem;font-weight:600;cursor:pointer;background:var(--white);color:var(--text);transition:all .2s;padding:0 8px;}
 .page-btn:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);}
 .page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
 .page-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 .page-ellipsis{display:flex;align-items:center;padding:0 4px;color:var(--muted);}
 
-/* Filter Drawer */
+/* ===== Quick Shortcuts ===== */
+.quick-shortcuts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:0 4%;
+  margin:12px 0 16px;
+}
+.shortcut-card{
+  background:var(--white);
+  border-radius:var(--radius-sm);
+  padding:12px 8px;
+  text-align:center;
+  border:1px solid var(--border);
+  transition:all .3s;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+}
+.shortcut-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-lg);
+  border-color:var(--primary);
+}
+.shortcut-card i{font-size:20px;color:var(--primary);display:block;margin-bottom:3px;}
+.shortcut-card span{display:block;font-weight:700;font-size:.65rem;color:var(--text);}
+.shortcut-card small{display:block;font-size:.5rem;color:var(--muted);margin-top:1px;}
+@media(min-width:600px){
+  .quick-shortcuts{grid-template-columns:repeat(5,1fr);gap:12px;}
+}
+@media(max-width:400px){
+  .quick-shortcuts{grid-template-columns:repeat(2,1fr);gap:6px;}
+  .shortcut-card{padding:8px 6px;}
+  .shortcut-card i{font-size:16px;}
+  .shortcut-card span{font-size:.55rem;}
+}
+
+/* ===== Filter Drawer ===== */
 .filter-drawer{
   position:fixed;
   bottom:-100%;
@@ -585,30 +819,30 @@ a{color:inherit;text-decoration:none;}
 }
 .filter-drawer.open{bottom:0;}
 .filter-body{padding:8px 16px 4px;}
-.filter-group{padding:14px 0;border-bottom:1px solid var(--border);}
+.filter-group{padding:12px 0;border-bottom:1px solid var(--border);}
 .filter-group:last-child{border-bottom:none;}
-.filter-group h4{font-size:.8rem;font-weight:800;margin-bottom:10px;}
+.filter-group h4{font-size:.75rem;font-weight:800;margin-bottom:8px;}
 .price-range-inputs{display:flex;align-items:center;gap:8px;}
-.price-range-inputs input{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-family:var(--font-body);font-size:.78rem;outline:none;}
+.price-range-inputs input{flex:1;padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-family:var(--font-body);font-size:.7rem;outline:none;}
 .price-range-inputs input:focus{border-color:var(--primary);}
-.price-range-inputs span{color:var(--muted);font-size:.75rem;}
-.filter-check-row{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;cursor:pointer;padding:4px 0;}
-.filter-check-row input{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
-.filter-footer{display:flex;gap:8px;padding:12px 16px 18px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--white);}
-.filter-clear-btn{flex:1;padding:10px;background:var(--bg2);color:var(--text);border:none;border-radius:60px;font-weight:700;font-size:.8rem;cursor:pointer;}
+.price-range-inputs span{color:var(--muted);font-size:.7rem;}
+.filter-check-row{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;cursor:pointer;padding:4px 0;}
+.filter-check-row input{width:14px;height:14px;accent-color:var(--primary);cursor:pointer;}
+.filter-footer{display:flex;gap:8px;padding:10px 16px 14px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--white);}
+.filter-clear-btn{flex:1;padding:8px;background:var(--bg2);color:var(--text);border:none;border-radius:60px;font-weight:700;font-size:.7rem;cursor:pointer;}
 .filter-clear-btn:active{transform:scale(0.96);}
-.filter-apply-btn{flex:2;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;font-size:.8rem;cursor:pointer;}
+.filter-apply-btn{flex:2;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;font-size:.7rem;cursor:pointer;}
 .filter-apply-btn:hover{background:var(--primary-bright);}
 .filter-apply-btn:active{transform:scale(0.97);}
 
 .empty-state{text-align:center;padding:40px 16px;color:var(--muted);grid-column:1/-1;}
 .empty-state i{font-size:36px;display:block;margin-bottom:10px;color:var(--border);}
-.empty-state p{margin-bottom:12px;font-size:.8rem;line-height:1.6;}
-.empty-state button{padding:8px 24px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;font-size:.75rem;cursor:pointer;}
+.empty-state p{margin-bottom:12px;font-size:.75rem;line-height:1.5;}
+.empty-state button{padding:8px 20px;background:var(--primary);color:#fff;border:none;border-radius:50px;font-weight:700;font-size:.7rem;cursor:pointer;}
 
-/* Desktop sidebar layout */
+/* ===== Desktop Sidebar ===== */
 @media(min-width:1024px){
-  .shop-body-grid{display:grid;grid-template-columns:260px 1fr;gap:24px;padding:0 5%;align-items:start;}
+  .shop-body-grid{display:grid;grid-template-columns:240px 1fr;gap:20px;padding:0 5%;align-items:start;}
   .shop-main-col .shop-toolbar,.shop-main-col .active-filters,.shop-main-col .shop-grid,.shop-main-col .pagination-wrap{padding-left:0;padding-right:0;}
   #filterDrawer{position:sticky;top:90px;bottom:auto;left:auto;right:auto;border-radius:var(--radius-sm);max-height:calc(100vh - 110px);overflow-y:auto;box-shadow:var(--shadow);border:1px solid var(--border);transition:none;}
   #filterOverlay{display:none !important;}
@@ -617,42 +851,39 @@ a{color:inherit;text-decoration:none;}
 }
 @media(min-width:1400px){.shop-body-grid{padding:0 8%;}}
 
-/* Trust & Payment Card */
+/* ===== Trust Card ===== */
 .trust-card{
-  margin:20px 4% 28px;
+  margin:16px 4% 24px;
   background:var(--white);
   border-radius:var(--radius);
-  padding:20px 16px;
+  padding:16px 14px;
   border:1px solid var(--border);
   box-shadow:var(--shadow);
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:16px;
+  gap:12px;
   text-align:center;
 }
-.trust-item{display:flex;flex-direction:column;align-items:center;gap:4px;}
-.trust-item i{font-size:24px;color:var(--primary);}
-.trust-item strong{font-size:.75rem;font-weight:800;color:var(--text);}
-.trust-item small{font-size:.6rem;color:var(--muted);line-height:1.3;}
+.trust-item{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.trust-item i{font-size:22px;color:var(--primary);}
+.trust-item strong{font-size:.7rem;font-weight:800;color:var(--text);}
+.trust-item small{font-size:.55rem;color:var(--muted);line-height:1.2;}
 @media(min-width:600px){
-  .trust-card{grid-template-columns:repeat(4,1fr);padding:24px 20px;}
-  .trust-item i{font-size:28px;}
+  .trust-card{grid-template-columns:repeat(4,1fr);padding:20px 18px;}
+  .trust-item i{font-size:24px;}
 }
 @media(min-width:1024px){
-  .trust-card{padding:28px 40px;margin:24px 5% 36px;}
-}
-@media(min-width:1400px){
-  .trust-card{padding:32px 48px;margin:28px 8% 40px;}
+  .trust-card{padding:24px 32px;margin:20px 5% 32px;}
 }
 
-/* Shared Components */
-.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 16px;background-color:#ffffff;font-family:var(--font-body);text-align:center;}
+/* ===== Shared Components ===== */
+.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 16px;background:#fff;text-align:center;}
 .cart-icon-wrapper{position:relative;margin-bottom:20px;width:70px;height:60px;}
 .cart-svg{width:100%;height:100%;}
-.cart-badge{position:absolute;top:-2px;right:2px;background-color:var(--primary);color:#ffffff;font-size:11px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.cart-message{color:#111111;font-size:20px;font-weight:600;margin:0 0 16px 0;letter-spacing:-0.5px;}
-.shop-button{display:inline-block;background-color:var(--primary);color:#ffffff;text-decoration:none;font-size:15px;font-weight:500;padding:8px 32px;border-radius:25px;transition:background-color 0.2s ease-in-out;border:none;cursor:pointer;}
-.shop-button:hover{background-color:var(--primary-bright);}
+.cart-badge{position:absolute;top:-2px;right:2px;background:var(--primary);color:#fff;font-size:11px;font-weight:bold;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.cart-message{color:#111;font-size:20px;font-weight:600;margin:0 0 16px;letter-spacing:-.5px;}
+.shop-button{display:inline-block;background:var(--primary);color:#fff;padding:8px 32px;border-radius:25px;font-size:15px;font-weight:500;border:none;cursor:pointer;transition:.2s;}
+.shop-button:hover{background:var(--primary-bright);}
 
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
 .overlay.open{opacity:1;pointer-events:auto;}
@@ -676,36 +907,26 @@ a{color:inherit;text-decoration:none;}
 .cart-qty button:hover{background:var(--primary);color:white;border-color:var(--primary);}
 .cart-footer{padding:10px 14px 16px;border-top:1px solid var(--border);}
 .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:.95rem;margin-bottom:10px;}
+.cart-delivery-note{font-size:.7rem;color:var(--muted);text-align:right;margin-bottom:10px;}
 .btn-checkout{width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.85rem;}
 .btn-checkout:active{transform:scale(0.97);}
 .btn-checkout:hover{background:var(--primary-bright);}
 #toast{
-  position:fixed;
-  bottom:calc(var(--bottom-nav-height) + 20px);
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--text);
-  color:#fff;
-  padding:8px 16px;
-  border-radius:60px;
-  font-size:.7rem;
-  opacity:0;
-  transition:opacity .2s;
-  z-index:600;
-  pointer-events:none;
-  box-shadow:0 4px 20px rgba(0,0,0,0.2);
-  max-width:90%;
-  text-align:center;
+  position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;padding:8px 16px;border-radius:60px;
+  font-size:.7rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;
 }
 .cart-remove-btn{background:#dc3545!important;color:white!important;border:none!important;border-radius:4px!important;padding:2px 8px!important;font-size:.55rem!important;cursor:pointer!important;margin-left:4px!important;font-weight:600!important;width:auto!important;height:auto!important;}
 .cart-remove-btn:active{transform:scale(0.9);}
 
+/* Delivery progress */
 .delivery-progress{padding:8px 12px;background:var(--bg2);border-radius:var(--radius-xs);margin-bottom:10px;font-size:.65rem;color:var(--text);line-height:1.4;}
 .delivery-progress.unlocked{background:#EAF8EF;color:#1A6B35;}
 .delivery-progress-bar{height:4px;background:var(--border);border-radius:10px;margin-top:4px;overflow:hidden;}
 .delivery-progress-fill{height:100%;background:var(--btn-green);border-radius:10px;transition:width .3s;}
 
-/* Wishlist Modal */
+/* ===== Wishlist Modal ===== */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;
   display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);
@@ -730,9 +951,6 @@ a{color:inherit;text-decoration:none;}
 .modal-btn{padding:6px 14px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
 .modal-btn:active{transform:scale(0.95);}
 
-@keyframes popIn{0%{transform:scale(0.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
-.pop-in{animation:popIn .3s ease;}
-
 .scroll-top{
   position:fixed;bottom:calc(var(--bottom-nav-height) + 80px);right:16px;
   width:40px;height:40px;border-radius:50%;background:var(--primary);
@@ -753,15 +971,15 @@ a{color:inherit;text-decoration:none;}
 @media(min-width:600px){.footer-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;}}
 @media(min-width:1024px){.footer{padding:32px 5% 24px;}}
 
-/* ===== RECENTLY VIEWED ===== */
-.recently-viewed-section{padding:8px 4% 24px;}
-.recently-viewed-section h3{font-size:.85rem;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px;color:var(--text);}
-.recently-viewed-section h3 i{color:var(--primary);font-size:16px;}
-.recently-viewed-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;}
+/* ===== Recently Viewed ===== */
+.recently-viewed-section{padding:6px 4% 20px;}
+.recently-viewed-section h3{font-size:.8rem;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;color:var(--text);}
+.recently-viewed-section h3 i{color:var(--primary);font-size:14px;}
+.recently-viewed-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;}
 .recently-viewed-scroll::-webkit-scrollbar{height:3px;}
 .recently-viewed-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
 .recently-item{
-  flex:0 0 100px;
+  flex:0 0 90px;
   background:var(--white);
   border-radius:var(--radius-xs);
   overflow:hidden;
@@ -770,32 +988,30 @@ a{color:inherit;text-decoration:none;}
   transition:all .2s;
 }
 .recently-item:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--primary);}
-.recently-img-wrap{width:100%;height:70px;overflow:hidden;background:var(--bg);}
+.recently-img-wrap{width:100%;height:65px;overflow:hidden;background:var(--bg);}
 .recently-img{width:100%;height:100%;object-fit:cover;display:block;}
 .recently-info{padding:4px 6px 6px;}
-.recently-name{font-weight:700;font-size:.55rem;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;color:var(--text);}
-.recently-price{font-weight:800;font-size:.6rem;color:var(--sale-red);}
+.recently-name{font-weight:700;font-size:.5rem;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;color:var(--text);}
+.recently-price{font-weight:800;font-size:.55rem;color:var(--sale-red);}
 @media(min-width:600px){
-  .recently-viewed-section{padding:8px 4% 28px;}
-  .recently-item{flex:0 0 120px;}
-  .recently-img-wrap{height:80px;}
+  .recently-viewed-section{padding:6px 4% 24px;}
+  .recently-item{flex:0 0 110px;}
+  .recently-img-wrap{height:75px;}
 }
-@media(min-width:1024px){.recently-viewed-section{padding:8px 5% 32px;}}
-@media(min-width:1400px){.recently-viewed-section{padding:8px 8% 32px;}}
 </style>
 </head>
 <body>
 
-<!-- Announcement Bar -->
+<!-- ===== ANNOUNCEMENT BAR ===== -->
 <div class="announce-bar" id="announceBar">
   <span id="announceText"><i class="ph ph-lightning"></i> 10–45 minute delivery across Nairobi</span>
   <button class="announce-close" onclick="dismissAnnounceBar()" aria-label="Dismiss"><i class="ph ph-x"></i></button>
 </div>
 
-<!-- Offline Banner -->
+<!-- ===== OFFLINE BANNER ===== -->
 <div class="offline-banner" id="offlineBanner">You're offline. Please check your connection.</div>
 
-<!-- Wishlist Modal -->
+<!-- ===== WISHLIST MODAL ===== -->
 <div class="modal-overlay wishlist-modal" id="wishlistModal" style="display:none;">
   <div class="modal-card">
     <h3>My Wishlist</h3>
@@ -805,11 +1021,11 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Header -->
+<!-- ===== HEADER ===== -->
 <header class="main-header">
   <a class="logo" href="index.html">
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
-    <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
+    <div class="logo-text">Liquor<span class="gold">Belle</span><small>Nairobi's Finest</small></div>
   </a>
   <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
     <i class="ph ph-magnifying-glass"></i>
@@ -826,7 +1042,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </header>
 
-<!-- Slide-in Menu -->
+<!-- ===== MOBILE MENU ===== -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
@@ -847,7 +1063,7 @@ a{color:inherit;text-decoration:none;}
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
-<!-- SHOP CONTENT -->
+<!-- ===== SHOP CONTENT ===== -->
 <div class="shop-titlebar">
   <div class="shop-breadcrumb">
     <a href="index.html">Home</a> <i class="ph ph-caret-right"></i>
@@ -856,41 +1072,39 @@ a{color:inherit;text-decoration:none;}
   <h1 class="shop-title" id="shopTitle">All Products</h1>
 </div>
 
-<!-- ===== BRANDED CARD ===== -->
-<div class="brand-card">
-  <div class="brand-card-left">
-    <span class="brand-card-badge">✦ Premium Collection</span>
-    <h3 class="brand-card-title">Explore Our Full Range</h3>
-    <p class="brand-card-desc">Whisky • Cognac • Vodka • Gin • Rum • Wine • Beer</p>
+<!-- ===== AD POSTER ===== -->
+<div class="ad-poster" id="adPoster">
+  <div class="ad-poster-inner" id="adPosterInner">
+    <div class="ad-poster-icon" id="adIcon"><i class="ph ph-shield-check"></i></div>
+    <div class="ad-poster-text">
+      <h3 id="adTitle">100% Authentic Products</h3>
+      <p id="adDesc">Official distributors • Genuine brands • Quality guaranteed</p>
+    </div>
+    <span class="ad-poster-badge" id="adBadge">Trusted</span>
   </div>
-  <div class="brand-card-right">
-    <div class="brand-card-stat">
-      <strong>100+</strong>
-      <small>Brands</small>
-    </div>
-    <div class="brand-card-stat">
-      <strong>24/7</strong>
-      <small>Delivery</small>
-    </div>
-    <div class="brand-card-stat">
-      <strong>✅</strong>
-      <small>Authentic</small>
-    </div>
+  <div class="ad-dots" id="adDots"></div>
+</div>
+
+<!-- ===== BANNER IMAGE ===== -->
+<div class="banner-image-wrap">
+  <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782462538/af530399-7256-422f-97b7-71496c648bc1_osqga6.png" alt="LiquorBelle Premium Selection" loading="lazy" fetchpriority="high">
+</div>
+
+<!-- ===== SEARCH BAR ===== -->
+<div class="search-section">
+  <div class="search-box">
+    <i class="ph ph-magnifying-glass"></i>
+    <input type="text" id="mainSearchInput" placeholder="Search for whisky, vodka, gin, beer...">
+    <button class="clear-btn" id="mainSearchClear" onclick="clearMainSearch()"><i class="ph ph-x-circle"></i></button>
   </div>
 </div>
 
-<!-- Info Banner -->
-<div class="info-banner">
-  <i class="ph ph-info"></i>
-  <span><strong>Click any product</strong> for details, sizes, and pricing. <strong>Pay with M-PESA</strong> only.</span>
-</div>
-
-<!-- Category Chips -->
+<!-- ===== CATEGORY CHIPS ===== -->
 <div class="cat-chips-wrap">
   <div class="cat-chips" id="catChips"></div>
 </div>
 
-<!-- Featured Sections -->
+<!-- ===== FEATURED SECTIONS ===== -->
 <div class="featured-sections" id="featuredSections">
   <div class="featured-block">
     <h3><i class="ph ph-fire trend-icon"></i> Trending Deals</h3>
@@ -902,9 +1116,9 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Shop Body -->
+<!-- ===== SHOP BODY ===== -->
 <div class="shop-body-grid">
-  <!-- Filters -->
+  <!-- Filter Drawer -->
   <div class="overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
   <div class="filter-drawer" id="filterDrawer">
     <div class="cart-head"><span>Filters</span><button class="cart-close" onclick="closeFilterDrawer()"><i class="ph ph-x"></i></button></div>
@@ -952,13 +1166,42 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Recently Viewed -->
+<!-- ===== QUICK BUY SHORTCUTS ===== -->
+<div class="quick-shortcuts">
+  <div class="shortcut-card" onclick="window.location.href='shop.html?cat=liqueur'">
+    <i class="ph ph-wine"></i>
+    <span>Liqueur</span>
+    <small>Drambuie, Bols</small>
+  </div>
+  <div class="shortcut-card" onclick="window.location.href='shop.html?cat=accessory'">
+    <i class="ph ph-key"></i>
+    <span>Accessories</span>
+    <small>Lighters, tumblers</small>
+  </div>
+  <div class="shortcut-card" onclick="window.location.href='shop.html?cat=juice'">
+    <i class="ph ph-lemon"></i>
+    <span>Juice</span>
+    <small>Mixers & refreshments</small>
+  </div>
+  <div class="shortcut-card" onclick="window.location.href='shop.html?cat=water'">
+    <i class="ph ph-drop"></i>
+    <span>Water</span>
+    <small>Still & sparkling</small>
+  </div>
+  <div class="shortcut-card" onclick="window.location.href='shop.html?cat=soda'">
+    <i class="ph ph-bottle"></i>
+    <span>Soda</span>
+    <small>Fizzy drinks</small>
+  </div>
+</div>
+
+<!-- ===== RECENTLY VIEWED ===== -->
 <div class="recently-viewed-section" id="recentlyViewedSection" style="display:none;">
   <h3><i class="ph ph-clock-counter-clockwise"></i> Recently Viewed</h3>
   <div class="recently-viewed-scroll" id="recentlyViewedScroll"></div>
 </div>
 
-<!-- Trust Card -->
+<!-- ===== TRUST CARD ===== -->
 <div class="trust-card">
   <div class="trust-item">
     <i class="ph ph-lock-simple"></i>
@@ -982,7 +1225,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Footer -->
+<!-- ===== FOOTER ===== -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col">
@@ -1015,16 +1258,16 @@ a{color:inherit;text-decoration:none;}
   </div>
 </footer>
 
-<!-- Scroll to Top -->
+<!-- ===== SCROLL TO TOP ===== -->
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="ph ph-arrow-up"></i></button>
 
-<!-- WhatsApp Float -->
+<!-- ===== WHATSAPP FLOAT ===== -->
 <a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank">
   <i class="ph ph-whatsapp-logo"></i>
   <span class="tooltip">Chat with us</span>
 </a>
 
-<!-- Bottom Nav -->
+<!-- ===== BOTTOM NAV ===== -->
 <nav class="bottom-nav">
   <button class="nav-item" onclick="window.location.href='index.html'"><i class="ph ph-house"></i><span>Home</span></button>
   <button class="nav-item active" onclick="window.location.href='shop.html'">
@@ -1044,14 +1287,14 @@ a{color:inherit;text-decoration:none;}
   <button class="nav-item" onclick="window.location.href='track-orders.html'"><i class="ph ph-clipboard-text"></i><span>Orders</span></button>
 </nav>
 
-<!-- Cart Drawer -->
+<!-- ===== CART DRAWER ===== -->
 <div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
   <div class="cart-head"><span>Your Basket</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
   <div class="cart-items" id="cartItemsList">
     <div class="cart-container">
       <div class="cart-icon-wrapper">
-        <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
           <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="9" cy="20" r="1.5" fill="#111111"/>
           <circle cx="17" cy="20" r="1.5" fill="#111111"/>
@@ -1064,826 +1307,18 @@ a{color:inherit;text-decoration:none;}
   </div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
     <div class="delivery-progress" id="deliveryProgress"></div>
-    <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
+    <div class="cart-total"><span>Subtotal</span><span id="cartTotalAmount">KES 0</span></div>
+    <div class="cart-delivery-note">Delivery fee calculated at checkout</div>
     <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
   </div>
 </div>
+
 <div id="toast"></div>
 
-<script>
-// ==================== IMAGE OPTIMIZATION ====================
-function optimizeImage(url, width) {
-    if (!url) return '';
-    if (!url.includes('cloudinary.com')) return url;
-    var parts = url.split('/upload/');
-    if (parts.length !== 2) return url;
-    var w = width || 300;
-    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
-}
+<!-- ============================================================
+     JAVASCRIPT - Using master app.js
+     ============================================================ -->
+<script src="app.js"></script>
 
-// ==================== CACHING ====================
-var CACHE_KEY = 'liquorbelle_products_cache';
-var CACHE_DURATION = 300000;
-
-function getCachedProducts() {
-    try {
-        var cached = localStorage.getItem(CACHE_KEY);
-        if (!cached) return null;
-        var data = JSON.parse(cached);
-        if (Date.now() - data.timestamp > CACHE_DURATION) {
-            localStorage.removeItem(CACHE_KEY);
-            return null;
-        }
-        return data.products;
-    } catch (e) { return null; }
-}
-
-function setCachedProducts(products) {
-    try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-            products: products,
-            timestamp: Date.now()
-        }));
-    } catch (e) {}
-}
-
-// ==================== ANNOUNCEMENT BAR ====================
-var announceMessages = [
-  '<i class="ph ph-lightning"></i> 10–45 minute delivery across Nairobi',
-  '<i class="ph ph-wallet"></i> Pay safely with M-PESA STK Push',
-  '<i class="ph ph-seal-check"></i> 100% authentic — official distributors only',
-  '<i class="ph ph-clock"></i> Open 24/7 — we never close'
-];
-var announceIdx = 0;
-
-function rotateAnnounce() {
-    var el = document.getElementById('announceText');
-    if (!el) return;
-    announceIdx = (announceIdx + 1) % announceMessages.length;
-    el.style.opacity = 0;
-    setTimeout(function() {
-        el.innerHTML = announceMessages[announceIdx];
-        el.style.opacity = 1;
-    }, 250);
-}
-
-function dismissAnnounceBar() {
-    var bar = document.getElementById('announceBar');
-    if (bar) bar.style.display = 'none';
-    try { sessionStorage.setItem('lb_announce_dismissed', '1'); } catch(e) {}
-}
-
-(function initAnnounceBar() {
-    var dismissed = false;
-    try { dismissed = sessionStorage.getItem('lb_announce_dismissed') === '1'; } catch(e) {}
-    if (dismissed) {
-        document.addEventListener('DOMContentLoaded', function() {
-            var bar = document.getElementById('announceBar');
-            if (bar) bar.style.display = 'none';
-        });
-    } else {
-        setInterval(rotateAnnounce, 4500);
-    }
-})();
-
-// ==================== HEADER ====================
-function openMobileMenu() {
-    document.getElementById('mobileMenu').classList.add('open');
-    document.getElementById('mobileMenuOverlay').classList.add('open');
-}
-function closeMobileMenu() {
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.getElementById('mobileMenuOverlay').classList.remove('open');
-}
-function handleHeaderSearch(e) {
-    e.preventDefault();
-    var val = (document.getElementById('headerSearchInput')?.value || document.getElementById('mobileSearchInput')?.value || '').trim();
-    currentFilters.search = val;
-    if (document.getElementById('headerSearchInput')) document.getElementById('headerSearchInput').value = val;
-    if (document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = val;
-    closeMobileMenu();
-    currentPage = 1;
-    applyFilters();
-    document.querySelector('.shop-titlebar').scrollIntoView({behavior:'smooth',block:'start'});
-    return false;
-}
-
-// ==================== CONFIG ====================
-var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_300,c_fit/v1781119164/liqbb_goc41e.png';
-var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
-var wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
-var ALL_PRODUCTS = [];
-var filteredProducts = [];
-var currentPage = 1;
-var PAGE_SIZE = 12;
-var isLoading = true;
-var currentSort = 'featured';
-var currentFilters = { category: 'all', search: '', priceMin: null, priceMax: null, onSale: false };
-
-// ==================== BACKUP PRODUCTS ====================
-function getSampleProducts() {
-    return [
-        { _id: "h1", name: "Jameson Irish Whisky", capacity: "750ml", price: 3200, originalPrice: 3200, discountPercent: 0, category: "whisky", badge: "", image: "https://i.postimg.cc/qRxcssz3/jameson.jpg", isTrending: false, isNew: false, rating: 4.0 },
-        { _id: "h2", name: "Johnnie Walker Black Label", capacity: "750ml", price: 3500, originalPrice: 3500, discountPercent: 0, category: "whisky", badge: "", image: "https://i.postimg.cc/0yzhN3FK/Johnie-walker-black-label.jpg", isTrending: false, isNew: false, rating: 4.5 },
-        { _id: "h3", name: "Hennessy XO", capacity: "750ml", price: 5500, originalPrice: 5500, discountPercent: 0, category: "cognac", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273428/2205500339_1_b_rawi81.jpg", isTrending: true, isNew: true, rating: 4.5 },
-        { _id: "h4", name: "Remy Martin VSOP", capacity: "750ml", price: 7800, originalPrice: 7800, discountPercent: 0, category: "cognac", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781272437/remy-martin-vsop-300-year-anniversary-cognac_RoyalBatch_Fo5YMCyCqg6F_zmgdrq.jpg", isTrending: true, isNew: true, rating: 5.0 },
-        { _id: "h5", name: "Smirnoff Red Vodka", capacity: "750ml", price: 1100, originalPrice: 1100, discountPercent: 0, category: "vodka", badge: "", image: "https://i.postimg.cc/VLrnYR6K/Greenspoon-Kenya-Smirnoff-Vodka-2-1400x933.webp", isTrending: false, isNew: false, rating: 4.0 },
-        { _id: "h6", name: "Absolut Vodka", capacity: "750ml", price: 2200, originalPrice: 2200, discountPercent: 0, category: "vodka", badge: "", image: "https://i.postimg.cc/1twFB9db/absolut-vodka.jpg", isTrending: true, isNew: true, rating: 5.0 },
-        { _id: "h7", name: "Chrome Gin", capacity: "750ml", price: 750, originalPrice: 750, discountPercent: 0, category: "gin", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781273803/chrome-gin-750ml_pjpgi8.jpg", isTrending: false, isNew: false, rating: 4.0 },
-        { _id: "h8", name: "Gilbeys Gin", capacity: "750ml", price: 1400, originalPrice: 1400, discountPercent: 0, category: "gin", badge: "", image: "https://i.postimg.cc/4nkJX9Qn/Greenspoon-Kenya-Gilbeys-Gin-750ml-4.jpg", isTrending: false, isNew: false, rating: 4.5 },
-        { _id: "h9", name: "Kenya Cane Ginger", capacity: "750ml", price: 700, originalPrice: 700, discountPercent: 0, category: "rum", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1780401818/cane-1_izoutd.jpg", isTrending: true, isNew: false, rating: 4.0 },
-        { _id: "h10", name: "Tusker Lager", capacity: "500ml", price: 350, originalPrice: 350, discountPercent: 0, category: "beer", badge: "", image: "https://i.postimg.cc/9XNRvg3g/TUSKERLAGERBOTTLE500ML.webp", isTrending: false, isNew: false, rating: 4.0 },
-        { _id: "h11", name: "Heineken Lager", capacity: "500ml", price: 320, originalPrice: 320, discountPercent: 0, category: "beer", badge: "", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1781259773/000974__56124.1651683990.1280.1280_pu6xow.jpg", isTrending: true, isNew: false, rating: 5.0 }
-    ];
-}
-
-// ==================== UTILITIES ====================
-function escapeHtml(str) { return str ? String(str).replace(/[&<>"']/g, function(m) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]; }) : ''; }
-
-function toast(msg) {
-    var t = document.getElementById('toast');
-    if (!t) return;
-    t.innerText = msg;
-    t.style.opacity = '1';
-    setTimeout(function() { t.style.opacity = '0'; }, 2200);
-}
-
-function getQueryParam(name) {
-    var params = new URLSearchParams(window.location.search);
-    return params.get(name);
-}
-
-// ==================== OFFLINE ====================
-window.addEventListener('online', function() {
-    var banner = document.getElementById('offlineBanner');
-    if (banner) banner.classList.remove('show');
-    if (isLoading) loadProducts();
-});
-window.addEventListener('offline', function() {
-    var banner = document.getElementById('offlineBanner');
-    if (banner) banner.classList.add('show');
-});
-
-// ==================== SCROLL TO TOP ====================
-window.addEventListener('scroll', function() {
-    var btn = document.getElementById('scrollTopBtn');
-    if (!btn) return;
-    if (window.scrollY > 300) { btn.classList.add('show'); } else { btn.classList.remove('show'); }
-});
-
-// ==================== CART ====================
-function updateCartUI() {
-    var items = Object.values(cart);
-    var count = items.reduce(function(s, i) { return s + i.qty; }, 0);
-
-    var navCount = document.getElementById('navCartCount');
-    if (navCount) navCount.innerText = count;
-    var cartBadge = document.getElementById('cartBadgeCount');
-    if (cartBadge) cartBadge.innerText = count;
-    var headerCount = document.getElementById('headerCartCount');
-    if (headerCount) headerCount.innerText = count;
-
-    var container = document.getElementById('cartItemsList');
-    var footer = document.getElementById('cartFooter');
-    if (!container || !footer) return;
-
-    if (!items.length) {
-        container.innerHTML = `
-      <div class="cart-container">
-        <div class="cart-icon-wrapper">
-          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
-            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
-          </svg>
-          <span class="cart-badge">0</span>
-        </div>
-        <h2 class="cart-message">Your cart is empty!</h2>
-        <a href="shop.html" class="shop-button">Start Shopping</a>
-      </div>
-    `;
-        footer.style.display = 'none';
-        return;
-    }
-    footer.style.display = 'block';
-    var subtotal = items.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
-    var hasBig = items.some(function(i) { return ['750ml', '1L', '1.5L'].includes(i.capacity); });
-    var delivery = hasBig ? 0 : 150;
-    var totalEl = document.getElementById('cartTotalAmount');
-    if (totalEl) totalEl.innerHTML = 'KES ' + (subtotal + delivery).toLocaleString();
-
-    var dp = document.getElementById('deliveryProgress');
-    if (dp) {
-        if (hasBig) {
-            dp.className = 'delivery-progress unlocked';
-            dp.innerHTML = '<strong>🎉 Free delivery unlocked!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div>';
-        } else {
-            dp.className = 'delivery-progress';
-            dp.innerHTML = '🚚 Add any 750ml/1L bottle to unlock <strong>FREE delivery</strong> (save KES 150)<div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:25%;"></div></div>';
-        }
-    }
-
-    container.innerHTML = items.map(function(item) {
-        return '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + ' <span style="color:var(--primary);">x' + item.qty + '</span></div><div class="cart-item-price">KES ' + (item.price * item.qty).toLocaleString() + '</div><div class="cart-qty"><button onclick="updateQty(\'' + item.id + '\',-1)">−</button><span>' + item.qty + '</span><button onclick="updateQty(\'' + item.id + '\',1)">+</button><button onclick="removeCartItem(\'' + item.id + '\')" class="cart-remove-btn">Remove</button></div></div></div>';
-    }).join('');
-}
-
-function removeCartItem(id) {
-    if (cart[id]) {
-        delete cart[id];
-        localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-        updateCartUI();
-        toast('Item removed');
-    }
-}
-function updateQty(id, delta) {
-    if (cart[id]) {
-        cart[id].qty += delta;
-        if (cart[id].qty <= 0) delete cart[id];
-        localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-        updateCartUI();
-    }
-}
-function openCartDrawer() {
-    var drawer = document.getElementById('cartDrawer');
-    var overlay = document.getElementById('cartOverlay');
-    if (drawer) drawer.classList.add('open');
-    if (overlay) overlay.classList.add('open');
-}
-function closeCartDrawer() {
-    var drawer = document.getElementById('cartDrawer');
-    var overlay = document.getElementById('cartOverlay');
-    if (drawer) drawer.classList.remove('open');
-    if (overlay) overlay.classList.remove('open');
-}
-function addToCart(id, name, price, capacity) {
-    if (cart[id]) {
-        cart[id].qty += 1;
-    } else {
-        cart[id] = { id: id, name: name, price: price, qty: 1, capacity: capacity };
-    }
-    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    updateCartUI();
-    toast(name + ' added');
-}
-
-// ==================== RECENTLY VIEWED ====================
-function trackRecentlyViewed(id, name, price, image, capacity) {
-    try {
-        var list = JSON.parse(localStorage.getItem('liquorbelle_recently_viewed') || '[]');
-        list = list.filter(function(item) { return item.id !== id; });
-        list.unshift({ id: id, name: name, price: price, image: image, capacity: capacity });
-        if (list.length > 10) list = list.slice(0, 10);
-        localStorage.setItem('liquorbelle_recently_viewed', JSON.stringify(list));
-    } catch (e) {}
-}
-
-function renderRecentlyViewed() {
-    var section = document.getElementById('recentlyViewedSection');
-    var scroll = document.getElementById('recentlyViewedScroll');
-    if (!section || !scroll) return;
-    var list = [];
-    try { list = JSON.parse(localStorage.getItem('liquorbelle_recently_viewed') || '[]'); } catch (e) {}
-    if (!list.length) { section.style.display = 'none'; return; }
-    section.style.display = 'block';
-    scroll.innerHTML = list.map(function(p) {
-        var imgSrc = p.image ? optimizeImage(p.image, 200) : FALLBACK_IMG;
-        return '<div class="recently-item" onclick="goToProduct(\'' + p.id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')">' +
-            '<div class="recently-img-wrap"><img class="recently-img" src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy" alt="' + escapeHtml(p.name) + '"></div>' +
-            '<div class="recently-info"><div class="recently-name">' + escapeHtml(p.name) + '</div><div class="recently-price">KES ' + p.price.toLocaleString() + '</div></div>' +
-            '</div>';
-    }).join('');
-}
-
-function goToProduct(id, name, price, image, capacity) {
-    trackRecentlyViewed(id, name, price, image, capacity);
-    window.location.href = 'product-details.html?id=' + id;
-}
-
-// ==================== WISHLIST ====================
-function toggleWishlist(id, name, price, image, capacity, btnElement) {
-    var idx = wishlist.findIndex(function(w) { return w.id == id; });
-    if (idx > -1) {
-        wishlist.splice(idx, 1);
-        toast('Removed from wishlist');
-        if (btnElement) {
-            btnElement.classList.remove('wishlisted');
-            var icon = btnElement.querySelector('i');
-            if (icon) icon.className = 'ph ph-heart';
-        }
-    } else {
-        wishlist.push({ id: id, name: name, price: price, image: image, capacity: capacity });
-        toast(name + ' added to wishlist ❤️');
-        if (btnElement) {
-            btnElement.classList.add('wishlisted');
-            var icon = btnElement.querySelector('i');
-            if (icon) icon.className = 'ph-fill ph-heart';
-        }
-    }
-    localStorage.setItem('liquorbelle_wishlist', JSON.stringify(wishlist));
-    renderShopGrid();
-    renderFeaturedSections();
-}
-
-function openWishlistModal() {
-    var container = document.getElementById('wishlistItems');
-    if (!container) return;
-    if (!wishlist.length) {
-        container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
-    } else {
-        container.innerHTML = wishlist.map(function(w) {
-            var imgSrc = w.image ? optimizeImage(w.image, 100) : FALLBACK_IMG;
-            return '<div class="wishlist-item"><img src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy"><div class="wishlist-item-info"><div class="wishlist-item-name">' + escapeHtml(w.name) + '</div><div class="wishlist-item-price">KES ' + w.price.toLocaleString() + '</div></div><button class="wishlist-atc" onclick="addToCart(\'' + w.id + '\',\'' + escapeHtml(w.name).replace(/'/g, "\\'") + '\',' + w.price + ',\'' + (w.capacity || '') + '\');closeWishlistModal();">Add</button><button class="wishlist-remove" onclick="toggleWishlist(\'' + w.id + '\',\'' + escapeHtml(w.name).replace(/'/g, "\\'") + '\',' + w.price + ',\'' + (w.image || '') + '\',\'' + (w.capacity || '') + '\');openWishlistModal();"><i class="ph ph-trash"></i></button></div>';
-        }).join('');
-    }
-    var modal = document.getElementById('wishlistModal');
-    if (modal) modal.style.display = 'flex';
-}
-
-function closeWishlistModal() {
-    var modal = document.getElementById('wishlistModal');
-    if (modal) modal.style.display = 'none';
-}
-
-// ==================== CATEGORIES ====================
-var categories = [
-    { name: "All", cat: "all" },
-    { name: "Whisky", cat: "whisky" },
-    { name: "Cognac", cat: "cognac" },
-    { name: "Vodka", cat: "vodka" },
-    { name: "Gin", cat: "gin" },
-    { name: "Rum", cat: "rum" },
-    { name: "Wine", cat: "wine" },
-    { name: "Beer", cat: "beer" }
-];
-
-function renderCatChips() {
-    var container = document.getElementById('catChips');
-    if (!container) return;
-    container.innerHTML = categories.map(function(cat) {
-        var active = currentFilters.category === cat.cat ? 'active' : '';
-        return '<button class="cat-chip ' + active + '" data-cat="' + cat.cat + '" onclick="selectCategory(\'' + cat.cat + '\')">' + cat.name + '</button>';
-    }).join('');
-}
-
-function selectCategory(cat) {
-    currentFilters.category = cat;
-    currentPage = 1;
-    var url = new URL(window.location);
-    if (cat === 'all') { url.searchParams.delete('cat'); } else { url.searchParams.set('cat', cat); }
-    window.history.replaceState({}, '', url);
-    renderCatChips();
-    applyFilters();
-    document.querySelector('.shop-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ==================== FILTERS ====================
-function openFilterDrawer() {
-    document.getElementById('priceMinInput').value = currentFilters.priceMin ?? '';
-    document.getElementById('priceMaxInput').value = currentFilters.priceMax ?? '';
-    document.getElementById('filterOnSale').checked = currentFilters.onSale;
-    document.getElementById('filterDrawer').classList.add('open');
-    document.getElementById('filterOverlay').classList.add('open');
-}
-
-function closeFilterDrawer() {
-    document.getElementById('filterDrawer').classList.remove('open');
-    document.getElementById('filterOverlay').classList.remove('open');
-}
-
-function applyFiltersFromDrawer() {
-    var min = document.getElementById('priceMinInput').value;
-    var max = document.getElementById('priceMaxInput').value;
-    currentFilters.priceMin = min !== '' ? Number(min) : null;
-    currentFilters.priceMax = max !== '' ? Number(max) : null;
-    currentFilters.onSale = document.getElementById('filterOnSale').checked;
-    currentPage = 1;
-    closeFilterDrawer();
-    applyFilters();
-}
-
-function clearFilters() {
-    currentFilters.priceMin = null;
-    currentFilters.priceMax = null;
-    currentFilters.onSale = false;
-    currentFilters.category = 'all';
-    document.getElementById('priceMinInput').value = '';
-    document.getElementById('priceMaxInput').value = '';
-    document.getElementById('filterOnSale').checked = false;
-    var url = new URL(window.location);
-    url.searchParams.delete('cat');
-    window.history.replaceState({}, '', url);
-    renderCatChips();
-    closeFilterDrawer();
-    applyFilters();
-}
-
-function updateFilterCount() {
-    var n = 0;
-    if (currentFilters.priceMin != null) n++;
-    if (currentFilters.priceMax != null) n++;
-    if (currentFilters.onSale) n++;
-    var badge = document.getElementById('filterCount');
-    if (n > 0) { badge.style.display = 'flex';
-        badge.innerText = n; } else { badge.style.display = 'none'; }
-}
-
-function renderActiveFilterPills() {
-    var wrap = document.getElementById('activeFilters');
-    if (!wrap) return;
-    var pills = [];
-    if (currentFilters.category !== 'all') {
-        var catName = (categories.find(function(c) { return c.cat === currentFilters.category; }) || {}).name || currentFilters.category;
-        pills.push('<div class="filter-pill">' + catName + '<button onclick="selectCategory(\'all\')"><i class="ph ph-x"></i></button></div>');
-    }
-    if (currentFilters.search) {
-        pills.push('<div class="filter-pill">"' + escapeHtml(currentFilters.search) + '"<button onclick="clearSearchPill()"><i class="ph ph-x"></i></button></div>');
-    }
-    if (currentFilters.priceMin != null || currentFilters.priceMax != null) {
-        var label = 'KES ' + (currentFilters.priceMin ?? 0) + ' – ' + (currentFilters.priceMax ?? '∞');
-        pills.push('<div class="filter-pill">' + label + '<button onclick="clearPricePill()"><i class="ph ph-x"></i></button></div>');
-    }
-    if (currentFilters.onSale) {
-        pills.push('<div class="filter-pill">On Sale<button onclick="clearSalePill()"><i class="ph ph-x"></i></button></div>');
-    }
-    wrap.innerHTML = pills.join('');
-}
-
-function clearSearchPill() {
-    currentFilters.search = '';
-    var h = document.getElementById('headerSearchInput');
-    if (h) h.value = '';
-    var m = document.getElementById('mobileSearchInput');
-    if (m) m.value = '';
-    currentPage = 1;
-    applyFilters();
-}
-
-function clearPricePill() {
-    currentFilters.priceMin = null;
-    currentFilters.priceMax = null;
-    currentPage = 1;
-    applyFilters();
-}
-
-function clearSalePill() {
-    currentFilters.onSale = false;
-    currentPage = 1;
-    applyFilters();
-}
-
-// ==================== STARS ====================
-function renderStars(rating) {
-    rating = rating || 0;
-    var full = Math.round(rating);
-    var html = '<div class="pc-rating">';
-    for (var i = 1; i <= 5; i++) {
-        html += '<i class="ph' + (i <= full ? '-fill' : '') + ' ph-star"></i>';
-    }
-    html += '<span>' + rating.toFixed(1) + '</span></div>';
-    return html;
-}
-
-// ==================== FEATURED SECTIONS ====================
-function renderFeaturedSections() {
-    var selectedCategory = currentFilters.category;
-    var isAll = selectedCategory === 'all';
-
-    var trendingItems = ALL_PRODUCTS.filter(function(p) {
-        return p.isTrending === true && (isAll || p.category === selectedCategory);
-    }).slice(0, 8);
-
-    var newItems = ALL_PRODUCTS.filter(function(p) {
-        return p.isNew === true && (isAll || p.category === selectedCategory);
-    }).slice(0, 8);
-
-    var trendingScroll = document.getElementById('trendingScroll');
-    var newScroll = document.getElementById('newArrivalsScroll');
-
-    function buildItem(p) {
-        var price = p.discountPercent > 0 ? Math.round(p.originalPrice * (100 - p.discountPercent) / 100) : p.price;
-        var savePercent = p.discountPercent || 0;
-        var imgSrc = p.image ? optimizeImage(p.image, 200) : FALLBACK_IMG;
-        return '<div class="featured-item" onclick="goToProduct(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')">' +
-            '<div class="featured-img-wrap">' +
-            '<img class="featured-img" src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy" alt="' + escapeHtml(p.name) + '">' +
-            '</div>' +
-            '<div class="featured-info">' +
-            '<div class="featured-name">' + escapeHtml(p.name) + '</div>' +
-            '<div class="featured-price">' + (savePercent > 0 ? '<span style="text-decoration:line-through;font-size:.6rem;color:var(--muted);margin-right:4px;">KES ' + p.originalPrice.toLocaleString() + '</span>' : '') + 'KES ' + price.toLocaleString() + '</div>' +
-            '</div>' +
-            '</div>';
-    }
-
-    if (trendingItems.length) {
-        trendingScroll.innerHTML = trendingItems.map(buildItem).join('');
-    } else {
-        trendingScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No trending products' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
-    }
-
-    if (newItems.length) {
-        newScroll.innerHTML = newItems.map(buildItem).join('');
-    } else {
-        newScroll.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:.75rem;">No new arrivals' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
-    }
-}
-
-// ==================== PRODUCT LOADING ====================
-function renderSkeletons(count, containerId) {
-    var container = document.getElementById(containerId);
-    if (!container) return;
-    var skeletons = '';
-    for (var i = 0; i < count; i++) {
-        skeletons += '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
-    }
-    container.innerHTML = skeletons;
-}
-
-function mapDbProducts(rawProducts) {
-    return rawProducts.map(function(p) {
-        var variants = p.variants || [];
-        var sizeOrderMap = { '250ml': 1, '350ml': 2, '500ml': 3, '750ml': 4, '1L': 5, '1.5L': 6 };
-        var sortedVariants = [...variants].sort(function(a, b) { return (sizeOrderMap[a.size] || 99) - (sizeOrderMap[b.size] || 99); });
-        var cheapestVariant = sortedVariants[0] || null;
-
-        var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
-        var discountPercent = cheapestVariant?.discount || 0;
-        var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
-
-        return {
-            _id: p._id,
-            id: p._id,
-            name: p.name,
-            capacity: cheapestVariant?.size || '750ml',
-            price: discountedPrice,
-            originalPrice: originalPrice,
-            discountPercent: discountPercent,
-            category: p.category || '',
-            badge: p.badge || (discountPercent > 10 ? 'hot' : ''),
-            image: p.image || '',
-            description: p.description || '',
-            isTrending: p.isTrending || false,
-            isNew: p.isNew || false,
-            rating: p.rating || 4,
-            variants: variants
-        };
-    });
-}
-
-async function loadProducts() {
-    isLoading = true;
-    renderSkeletons(10, 'shopGrid');
-    var titleEl = document.getElementById('shopTitle');
-    if (titleEl) titleEl.textContent = 'Loading…';
-
-    var cached = getCachedProducts();
-    if (cached) {
-        ALL_PRODUCTS = cached;
-        isLoading = false;
-        renderFeaturedSections();
-        applyFilters();
-        renderRecentlyViewed();
-        fetchFreshProducts();
-        return;
-    }
-
-    try {
-        var res = await fetch(API_BASE + '/api/db/products');
-        if (!res.ok) throw new Error('Network response was not ok');
-        var data = await res.json();
-        if (data.success && data.products && data.products.length > 0) {
-            ALL_PRODUCTS = mapDbProducts(data.products);
-            setCachedProducts(ALL_PRODUCTS);
-            renderFeaturedSections();
-        } else {
-            ALL_PRODUCTS = getSampleProducts();
-            toast('Showing backup products');
-            renderFeaturedSections();
-        }
-    } catch (e) {
-        console.error('Error loading products:', e);
-        ALL_PRODUCTS = getSampleProducts();
-        toast('Could not connect. Showing backup products.');
-        renderFeaturedSections();
-    }
-    isLoading = false;
-    applyFilters();
-    renderRecentlyViewed();
-}
-
-function fetchFreshProducts() {
-    fetch(API_BASE + '/api/db/products')
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            if (data.success && data.products && data.products.length > 0) {
-                ALL_PRODUCTS = mapDbProducts(data.products);
-                setCachedProducts(ALL_PRODUCTS);
-                renderFeaturedSections();
-                applyFilters();
-            }
-        })
-        .catch(function(e) { console.error('Background refresh failed:', e); });
-}
-
-function applyFilters() {
-    var f = currentFilters;
-    var list = ALL_PRODUCTS.filter(function(p) {
-        if (f.category !== 'all' && (p.category || '').toLowerCase() !== f.category) return false;
-        if (f.search) {
-            var q = f.search.toLowerCase();
-            var haystack = ((p.name || '') + ' ' + (p.category || '')).toLowerCase();
-            if (haystack.indexOf(q) === -1) return false;
-        }
-        if (f.priceMin != null && p.price < f.priceMin) return false;
-        if (f.priceMax != null && p.price > f.priceMax) return false;
-        if (f.onSale && !(p.discountPercent > 0)) return false;
-        return true;
-    });
-
-    switch (currentSort) {
-        case 'price-asc':
-            list.sort(function(a, b) { return a.price - b.price; });
-            break;
-        case 'price-desc':
-            list.sort(function(a, b) { return b.price - a.price; });
-            break;
-        case 'name-asc':
-            list.sort(function(a, b) { return a.name.localeCompare(b.name); });
-            break;
-        case 'newest':
-            list.sort(function(a, b) { return (b.isNew === true) - (a.isNew === true); });
-            break;
-        default:
-            break;
-    }
-
-    filteredProducts = list;
-    if (currentPage < 1) currentPage = 1;
-    var totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
-    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-
-    renderFeaturedSections();
-    updateTitleBar();
-    updateFilterCount();
-    renderActiveFilterPills();
-    renderShopGrid();
-    renderPagination();
-}
-
-function updateTitleBar() {
-    var titleEl = document.getElementById('shopTitle');
-    var breadcrumbEl = document.getElementById('shopBreadcrumbCat');
-    var catName = 'All Products';
-    if (currentFilters.category !== 'all') {
-        catName = (categories.find(function(c) { return c.cat === currentFilters.category; }) || {}).name || currentFilters.category;
-    }
-    if (currentFilters.search) {
-        titleEl.textContent = 'Search: "' + currentFilters.search + '"';
-        breadcrumbEl.textContent = 'Search Results';
-    } else {
-        titleEl.textContent = catName;
-        breadcrumbEl.textContent = catName;
-    }
-}
-
-function goToPage(page) {
-    var totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
-    if (page < 1 || page > totalPages) return;
-    currentPage = page;
-    renderShopGrid();
-    renderPagination();
-    document.querySelector('.shop-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function renderPagination() {
-    var wrap = document.getElementById('paginationWrap');
-    if (!wrap) return;
-    var totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
-    if (totalPages <= 1) { wrap.innerHTML = ''; return; }
-
-    var html = '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '><i class="ph ph-caret-left"></i></button>';
-
-    var startPage = Math.max(1, currentPage - 2);
-    var endPage = Math.min(totalPages, currentPage + 2);
-
-    if (startPage > 1) {
-        html += '<button class="page-btn" onclick="goToPage(1)">1</button>';
-        if (startPage > 2) html += '<span class="page-ellipsis">…</span>';
-    }
-
-    for (var i = startPage; i <= endPage; i++) {
-        html += '<button class="page-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
-    }
-
-    if (endPage < totalPages) {
-        if (endPage < totalPages - 1) html += '<span class="page-ellipsis">…</span>';
-        html += '<button class="page-btn" onclick="goToPage(' + totalPages + ')">' + totalPages + '</button>';
-    }
-
-    html += '<button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '><i class="ph ph-caret-right"></i></button>';
-    wrap.innerHTML = html;
-}
-
-// ==================== RENDER PRODUCT GRID ====================
-function renderShopGrid() {
-    var grid = document.getElementById('shopGrid');
-    if (!grid) return;
-
-    if (!filteredProducts.length) {
-        grid.innerHTML = '<div class="empty-state"><i class="ph ph-wine"></i><p>No products match your filters.<br>Try adjusting your search or filters.</p><button onclick="clearFilters();clearSearchPill();">Clear Filters</button></div>';
-        return;
-    }
-
-    var start = (currentPage - 1) * PAGE_SIZE;
-    var visible = filteredProducts.slice(start, start + PAGE_SIZE);
-    grid.innerHTML = visible.map(function(p) { return renderProductCard(p); }).join('');
-}
-
-function renderProductCard(p) {
-    var original = p.originalPrice || p.price;
-    var savePercent = p.discountPercent || 0;
-    var isWishlisted = wishlist.some(function(w) { return w.id == p._id; });
-
-    var topBadge = '';
-    if (savePercent > 0) {
-        topBadge = '<div class="discount-circle">-' + savePercent + '%</div>';
-    } else if (p.isNew) {
-        topBadge = '<div class="badge-new">NEW</div>';
-    } else if (p.isTrending) {
-        topBadge = '<div class="badge-bestseller"><i class="ph-fill ph-flame" style="font-size:9px;"></i> BESTSELLER</div>';
-    }
-
-    // WISHLIST: Clean heart only, no circle
-    var heartIcon = isWishlisted ? 'ph-fill ph-heart' : 'ph ph-heart';
-    var wishlistBtn = '<button class="pc-wishlist ' + (isWishlisted ? 'wishlisted' : '') + '" onclick="event.stopPropagation();toggleWishlist(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\', this)"><i class="' + heartIcon + '"></i></button>';
-
-    var variantHtml = '';
-    if (p.variants && p.variants.length > 1) {
-        variantHtml = '<div class="variant-select-wrap">' +
-            '<select onchange="updateVariantPrice(this, \'' + p._id + '\')">' +
-            p.variants.map(function(v) {
-                var selected = (v.size === p.capacity) ? 'selected' : '';
-                return '<option value="' + v.size + '" data-price="' + v.price + '" ' + selected + '>' + v.size + ' — KES ' + v.price.toLocaleString() + '</option>';
-            }).join('') +
-            '</select></div>';
-    }
-
-    var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
-    var escapedName = escapeHtml(p.name).replace(/'/g, "\\'");
-
-    return '<div class="prod-card" onclick="goToProduct(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')"><div class="pc-img-wrap"><img class="pc-img" src="' + imgSrc + '" alt="' + escapeHtml(p.name) + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy">' + topBadge + wishlistBtn + '</div><div class="pc-body"><div class="pc-name">' + escapeHtml(p.name) + '</div>' + renderStars(p.rating) + (p.capacity ? '<div class="pc-vol">' + escapeHtml(p.capacity) + '</div>' : '') + '<div class="pc-price-wrap">' + (savePercent > 0 ? '<span class="pc-price-old">KES ' + original.toLocaleString() + '</span>' : '') + '<span class="pc-price-new">KES ' + p.price.toLocaleString() + '</span></div>' + variantHtml + '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.capacity || '') + '\')"><i class="ph ph-plus"></i> Add</button><div class="click-hint">Click for details →</div></div></div>';
-}
-
-function updateVariantPrice(select, productId) {
-    var price = parseFloat(select.options[select.selectedIndex].dataset.price);
-    var size = select.options[select.selectedIndex].value;
-    var product = ALL_PRODUCTS.find(function(p) { return p._id === productId; });
-    if (!product) return;
-    product.price = price;
-    product.capacity = size;
-    var card = select.closest('.prod-card');
-    if (!card) return;
-    var priceNew = card.querySelector('.pc-price-new');
-    if (priceNew) priceNew.textContent = 'KES ' + price.toLocaleString();
-    var atcBtn = card.querySelector('.atc-btn');
-    if (atcBtn) {
-        atcBtn.setAttribute('onclick', "event.stopPropagation();addToCart('" + productId + "','" + escapeHtml(product.name).replace(/'/g, "\\'") + "'," + price + ",'" + size + "')");
-    }
-    var cardOnclick = card.getAttribute('onclick');
-    if (cardOnclick) {
-        card.setAttribute('onclick', cardOnclick.replace(/goToProduct\('[^']+','[^']+',\d+/, "goToProduct('" + productId + "','" + escapeHtml(product.name).replace(/'/g, "\\'") + "'," + price));
-    }
-}
-
-// ==================== INIT ====================
-var wishlistModal = document.getElementById('wishlistModal');
-if (wishlistModal) {
-    wishlistModal.addEventListener('click', function(e) { if (e.target === this) closeWishlistModal(); });
-}
-
-(function initFromQuery() {
-    var catParam = getQueryParam('cat');
-    var searchParam = getQueryParam('search');
-    if (catParam) currentFilters.category = catParam.toLowerCase();
-    if (searchParam) {
-        currentFilters.search = searchParam;
-        document.addEventListener('DOMContentLoaded', function() {
-            var h = document.getElementById('headerSearchInput');
-            if (h) h.value = searchParam;
-        });
-    }
-})();
-
-renderCatChips();
-loadProducts();
-updateCartUI();
-setInterval(updateCartUI, 3000);
-
-if (!navigator.onLine) {
-    var banner = document.getElementById('offlineBanner');
-    if (banner) banner.classList.add('show');
-}
-</script>
 </body>
 </html>

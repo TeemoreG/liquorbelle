@@ -6,9 +6,8 @@
 <meta name="theme-color" content="#800000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>LiquorBelle — Track Your Orders</title>
+<title>My Orders — LiquorBelle</title>
 
-<!-- ===== PERFORMANCE: Preconnect to external resources ===== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com">
@@ -18,6 +17,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -32,6 +32,10 @@
   --text:#1A1A1A;
   --muted:#7A7368;
   --gold:#B8860B;
+  --gold-light:#d4a017;
+  --gold-bg:#fdf6e3;
+  --btn-green:#22C55E;
+  --btn-green-hover:#16A34A;
   --radius:24px;
   --radius-sm:14px;
   --radius-xs:10px;
@@ -39,16 +43,19 @@
   --shadow-lg:0 20px 50px rgba(0,0,0,0.10);
   --shadow-xl:0 30px 80px rgba(0,0,0,0.12);
   --font-body:'Inter',-apple-system,sans-serif;
-  --btn-green:#22C55E;
-  --btn-green-hover:#16A34A;
   --bottom-nav-height:70px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
-
 .shop-svg{width:22px;height:22px;color:currentColor;display:block;}
+
+/* ===== GOLD ACCENTS ===== */
+.gold-text{color:var(--gold);}
+.gold-border{border-color:var(--gold);}
+.gold-bg{background:var(--gold-bg);}
+.gold-gradient{background:linear-gradient(135deg, var(--gold), var(--gold-light));}
 
 /* Offline Banner */
 .offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
@@ -105,19 +112,20 @@ a{color:inherit;text-decoration:none;}
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  border-bottom:1px solid rgba(255,255,255,0.15);
+  border-bottom:2px solid var(--btn-green);
   position:sticky;top:0;z-index:200;
   box-shadow:0 2px 16px rgba(0,0,0,0.15);
 }
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
 .logo-img{height:40px;width:40px;object-fit:cover;border-radius:12px;background:white;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
 .logo-text{font-size:1.2rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;}
+.logo-text .gold{color:var(--gold-light);}
 .logo-text small{display:block;font-size:8px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:1px;text-transform:uppercase;}
 
 .header-search-form{flex:1;max-width:420px;display:flex;align-items:center;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0 6px 0 14px;height:38px;transition:.2s;}
 .header-search-form:focus-within{background:rgba(255,255,255,0.95);}
 .header-search-form i{color:rgba(255,255,255,0.8);font-size:16px;flex-shrink:0;}
-.header-search-form:focus-within i{color:var(--primary);}
+.header-search-form:focus-within i{color:var(--gold);}
 .header-search-input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.82rem;color:white;min-width:0;}
 .header-search-form:focus-within .header-search-input{color:var(--text);}
 .header-search-input::placeholder{color:rgba(255,255,255,0.75);}
@@ -125,35 +133,63 @@ a{color:inherit;text-decoration:none;}
 @media(max-width:560px){.header-search-form{display:none;}}
 
 .header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+
+/* ===== HEADER USER BADGE ===== */
+.header-user-badge{
+  position:relative;
+  width:36px;height:36px;
+  border-radius:50%;
+  border:2px solid var(--btn-green);
+  background:rgba(255,255,255,0.08);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+  font-size:16px;
+}
+.header-user-badge:hover{background:rgba(255,255,255,0.2);}
+.header-user-badge .user-initial{
+  font-weight:700;
+  font-size:14px;
+  text-transform:uppercase;
+}
+.header-user-badge .user-dot{
+  position:absolute;bottom:-2px;right:-2px;
+  width:12px;height:12px;
+  border-radius:50%;
+  background:var(--btn-green);
+  border:2px solid var(--primary);
+}
+.header-user-badge .user-dot.guest{
+  background:var(--muted);
+}
+
 .header-icon-btn{
-  position:relative;width:40px;height:40px;border-radius:50%;border:none;background:transparent;
-  color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;
+  position:relative;width:40px;height:40px;border-radius:50%;border:none;
+  background:transparent;color:white;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;
 }
 .header-icon-btn i{font-size:22px;}
-.header-icon-btn:hover{background:rgba(255,255,255,0.15);}
+.header-icon-btn:hover{background:rgba(34,197,94,0.15);}
 .header-icon-btn:active{transform:scale(0.92);}
 .header-cart-badge{
-  position:absolute;top:0;right:0;background:var(--white);color:var(--primary);
-  font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);
+  position:absolute;top:0;right:0;background:var(--gold);color:white;
+  font-size:10px;font-weight:800;min-width:17px;height:17px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);
 }
 
 .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
 .mobile-menu-overlay.open{opacity:1;pointer-events:auto;}
-.mobile-menu{
-  position:fixed;top:0;right:-280px;width:260px;height:100%;background:var(--white);
-  z-index:400;box-shadow:-8px 0 30px rgba(0,0,0,0.15);transition:right .3s cubic-bezier(0.4,0,0.2,1);
-  padding:20px 0;overflow-y:auto;
-}
+.mobile-menu{position:fixed;top:0;right:-280px;width:260px;height:100%;background:var(--white);z-index:400;box-shadow:-8px 0 30px rgba(0,0,0,0.15);transition:right .3s cubic-bezier(0.4,0,0.2,1);padding:20px 0;overflow-y:auto;}
 .mobile-menu.open{right:0;}
 .mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:0 20px 16px;border-bottom:1px solid var(--border);margin-bottom:8px;}
 .mobile-menu-head span{font-weight:800;font-size:1rem;color:var(--primary);}
 .mobile-menu-close{border:none;background:var(--bg2);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
-.mobile-menu a, .mobile-menu button.mm-link{
-  display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;
-  font-size:.9rem;text-decoration:none;width:100%;background:none;border:none;text-align:left;cursor:pointer;
-}
-.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--primary);width:20px;}
+.mobile-menu a, .mobile-menu button.mm-link{display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;width:100%;background:none;border:none;text-align:left;cursor:pointer;}
+.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--btn-green);width:20px;}
 .mobile-menu a:active, .mobile-menu button.mm-link:active{background:var(--bg2);}
 .mobile-search-inline{display:none;padding:0 20px 14px;}
 @media(max-width:560px){.mobile-search-inline{display:block;}}
@@ -161,10 +197,10 @@ a{color:inherit;text-decoration:none;}
 .mobile-search-inline i{color:var(--muted);font-size:16px;}
 .mobile-search-inline input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.85rem;color:var(--text);}
 
-/* ==================== TRACK PAGE SPECIFIC ==================== */
+/* ===== TRACK PAGE SPECIFIC ===== */
 .track-container{
-  max-width: 800px;
-  margin: 24px auto 32px;
+  max-width: 900px;
+  margin: 20px auto 32px;
   padding: 0 4%;
 }
 .track-card{
@@ -174,6 +210,7 @@ a{color:inherit;text-decoration:none;}
   padding: 32px;
   box-shadow:var(--shadow);
   text-align: center;
+  border-top:4px solid var(--gold);
 }
 .track-card h1{
   font-size: 1.6rem;
@@ -185,185 +222,123 @@ a{color:inherit;text-decoration:none;}
   justify-content:center;
   gap:12px;
 }
-.track-card h1 i{font-size:32px;color:var(--primary);}
+.track-card h1 i{font-size:32px;color:var(--gold);}
 .track-card p{
   color:var(--muted);
   margin-bottom: 24px;
   font-size: .9rem;
 }
 
-/* Dual track options */
-.track-options{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:8px;
-}
-@media(max-width:600px){
-  .track-options{grid-template-columns:1fr;gap:12px;}
-}
-.track-option{
-  background:var(--bg2);
+/* Login Required */
+.login-required{
+  background:var(--gold-bg);
   border-radius:var(--radius-sm);
-  padding:16px;
-  border:2px solid var(--border);
-  transition:all .2s;
+  padding: 32px 20px;
+  margin: 16px 0;
+  border:2px dashed var(--gold);
 }
-.track-option:hover{border-color:var(--primary);}
-.track-option h4{
-  font-size:.85rem;
-  font-weight:700;
+.login-required i{
+  font-size:48px;
+  color:var(--gold);
+  display:block;
+  margin-bottom:12px;
+}
+.login-required h3{
+  font-size:1.1rem;
+  font-weight:800;
   color:var(--text);
-  margin-bottom:8px;
-  display:flex;
-  align-items:center;
-  gap:6px;
+  margin-bottom:4px;
 }
-.track-option h4 i{color:var(--primary);}
-.track-option .track-input{
-  width:100%;
-  padding:10px 14px;
-  border:1.5px solid var(--border);
-  border-radius:50px;
-  font-size:.9rem;
-  font-family:var(--font-body);
-  background:var(--white);
-  transition:all .2s;
-  margin-bottom:8px;
+.login-required p{
+  font-size:.85rem;
+  color:var(--muted);
+  margin-bottom:16px;
 }
-.track-option .track-input:focus{
-  outline:none;
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(128,0,0,0.06);
-}
-.track-option .track-btn-sm{
-  width:100%;
-  padding:10px;
-  background:var(--primary);
+.login-required .btn-login{
+  display:inline-block;
+  padding:10px 32px;
+  background:var(--gold);
   color:white;
   border:none;
   border-radius:50px;
   font-weight:700;
-  font-size:.85rem;
+  font-size:.9rem;
   cursor:pointer;
+  text-decoration:none;
   transition:all .2s;
+}
+.login-required .btn-login:hover{
+  background:var(--gold-light);
+  transform:translateY(-2px);
+}
+
+/* Status Steps */
+.order-status-steps{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:20px 0 10px;
+  padding:0 4px;
+  position:relative;
+}
+.order-status-steps::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:10%;
+  right:10%;
+  height:3px;
+  background:var(--border);
+  transform:translateY(-50%);
+  z-index:0;
+}
+.step-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  z-index:1;
+  flex:1;
+}
+.step-dot{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:var(--border);
+  border:3px solid var(--white);
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:6px;
-}
-.track-option .track-btn-sm:hover{
-  background:var(--primary-bright);
-  transform:translateY(-2px);
-}
-.track-option .track-btn-sm:active{transform:scale(0.97);}
-
-.guest-hint{
-  font-size:.65rem;
+  font-size:14px;
   color:var(--muted);
-  margin-top:6px;
-  display:block;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  transition:all .3s;
 }
-
-/* Quick guest order card */
-.guest-order-card{
-  margin-top:16px;
-  background:var(--white);
-  border-radius:var(--radius-sm);
-  border:2px solid var(--btn-green);
-  padding:16px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  box-shadow:0 0 0 4px rgba(34,197,94,0.08);
-}
-.guest-order-card .guest-label{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:700;
-  font-size:.85rem;
-  color:var(--btn-green);
-}
-.guest-order-card .guest-label i{font-size:20px;}
-.guest-order-card .guest-id{
-  font-family:monospace;
-  font-weight:700;
-  font-size:.9rem;
-  color:var(--text);
-  background:var(--bg);
-  padding:4px 12px;
-  border-radius:20px;
-}
-.guest-order-card .guest-total{
-  font-weight:800;
-  color:var(--primary);
-  font-size:1rem;
-}
-.guest-order-card .guest-btn{
-  padding:6px 18px;
-  background:var(--primary);
+.step-dot.active{
+  background:var(--gold);
   color:white;
-  border:none;
-  border-radius:30px;
-  font-weight:600;
-  font-size:.75rem;
-  cursor:pointer;
-  transition:all .2s;
+  border-color:var(--gold);
 }
-.guest-order-card .guest-btn:hover{background:var(--primary-bright);transform:scale(1.02);}
-
-/* My Account Section */
-.my-account-section{
-  margin-top: 24px;
-  background:var(--white);
-  border-radius:var(--radius);
-  border:1px solid var(--border);
-  padding: 24px 28px;
-  box-shadow:var(--shadow);
+.step-dot.done{
+  background:var(--gold);
+  color:white;
+  border-color:var(--gold);
+  opacity:0.7;
 }
-.my-account-section h3{
-  font-size:1.1rem;
-  font-weight:800;
-  color:var(--primary);
-  margin-bottom:16px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.my-account-section h3 i{font-size:24px;}
-.account-info-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-.account-info-item{
-  background:var(--bg);
-  border-radius:var(--radius-xs);
-  padding:12px 16px;
-}
-.account-info-item .label{
-  font-size:10px;
+.step-label{
+  font-size:.55rem;
   font-weight:600;
   color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.3px;
-  display:block;
-  margin-bottom:3px;
+  text-align:center;
+  max-width:60px;
 }
-.account-info-item .value{
-  font-weight:700;
-  font-size:.95rem;
-  color:var(--text);
-}
-.account-info-item .value.empty{color:var(--muted);font-weight:400;font-size:.8rem;}
-@media(max-width:560px){
-  .account-info-grid{grid-template-columns:1fr;}
-  .my-account-section{padding:18px 16px;}
+.step-label.active{color:var(--primary);}
+@media(max-width:500px){
+  .step-label{font-size:.45rem;max-width:40px;}
+  .step-dot{width:24px;height:24px;font-size:10px;}
 }
 
+/* Orders List */
 .orders-list{
   margin-top: 28px;
   display: flex;
@@ -376,9 +351,11 @@ a{color:inherit;text-decoration:none;}
   border: 1px solid var(--border);
   overflow: hidden;
   box-shadow:var(--shadow);
+  transition:all .2s;
 }
+.order-card:hover{box-shadow:var(--shadow-lg);border-color:var(--gold);}
 .order-header{
-  background: var(--bg2);
+  background: var(--gold-bg);
   padding: 14px 18px;
   display: flex;
   justify-content: space-between;
@@ -478,25 +455,24 @@ a{color:inherit;text-decoration:none;}
   font-size:.9rem;
   transition:all .2s;
 }
-.back-link:hover{color:var(--primary-bright);gap:12px;}
+.back-link:hover{color:var(--gold);gap:12px;}
 
 /* Footer */
-.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:32px 4% 24px;margin-top:32px;}
+.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:32px 4% 24px;margin-top:32px;border-top:3px solid var(--gold);}
 .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;margin-bottom:24px;}
 .footer-col h4{font-size:.8rem;font-weight:700;margin-bottom:12px;color:#fff;opacity:.9;}
 .footer-col p,.footer-col a{display:block;font-size:.7rem;margin-bottom:6px;opacity:.7;color:#fff;text-decoration:none;}
-.footer-col a:hover{opacity:1;}
+.footer-col a:hover{opacity:1;color:var(--gold);}
 .footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
 
-/* ====== CART DRAWER ====== */
-.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background-color:#ffffff;font-family:var(--font-body);text-align:center;}
+/* Cart */
+.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background:#fff;text-align:center;}
 .cart-icon-wrapper{position:relative;margin-bottom:25px;width:90px;height:80px;}
 .cart-svg{width:100%;height:100%;}
-.cart-badge{position:absolute;top:-2px;right:2px;background-color:var(--primary);color:#ffffff;font-size:13px;font-weight:bold;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.cart-message{color:#111111;font-size:24px;font-weight:600;margin:0 0 20px 0;letter-spacing:-0.5px;}
-.shop-button{display:inline-block;background-color:var(--primary);color:#ffffff;text-decoration:none;font-size:18px;font-weight:500;padding:10px 42px;border-radius:25px;transition:background-color 0.2s ease-in-out;border:none;cursor:pointer;}
-.shop-button:hover{background-color:var(--primary-bright);}
-
+.cart-badge{position:absolute;top:-2px;right:2px;background:var(--primary);color:#fff;font-size:13px;font-weight:bold;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.cart-message{color:#111;font-size:24px;font-weight:600;margin:0 0 20px;letter-spacing:-.5px;}
+.shop-button{display:inline-block;background:var(--primary);color:#fff;padding:10px 42px;border-radius:25px;font-size:18px;font-weight:500;border:none;cursor:pointer;transition:.2s;}
+.shop-button:hover{background:var(--primary-bright);}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
 .overlay.open{opacity:1;pointer-events:auto;}
 .cart-drawer{
@@ -508,7 +484,6 @@ a{color:inherit;text-decoration:none;}
 .cart-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1;}
 .cart-head span{font-weight:800;font-size:1rem;}
 .cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px;}
-.cart-close:active{transform:scale(0.9);}
 .cart-items{padding:12px 16px;}
 .cart-item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
 .cart-item-name{font-weight:700;font-size:.8rem;}
@@ -516,7 +491,7 @@ a{color:inherit;text-decoration:none;}
 .cart-qty{display:flex;align-items:center;gap:6px;margin-top:4px;}
 .cart-qty button{width:24px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:12px;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .cart-qty button:active{transform:scale(0.9);}
-.cart-qty button:hover{background:var(--primary);color:white;border-color:var(--primary);}
+.cart-qty button:hover{background:var(--gold);color:white;border-color:var(--gold);}
 .cart-footer{padding:12px 16px 20px;border-top:1px solid var(--border);}
 .cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:12px;}
 .btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
@@ -524,13 +499,13 @@ a{color:inherit;text-decoration:none;}
 .btn-checkout:hover{background:var(--primary-bright);}
 #toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
 .cart-remove-btn{background:#dc3545!important;color:white!important;border:none!important;border-radius:4px!important;padding:2px 10px!important;font-size:.6rem!important;cursor:pointer!important;margin-left:6px!important;font-weight:600!important;width:auto!important;height:auto!important;}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(128,0,0,0.3);border-radius:50%;border-top-color:var(--primary);animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(184,134,11,0.2);border-radius:50%;border-top-color:var(--gold);animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* Wishlist Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-card{background:var(--white);border-radius:var(--radius);padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
-.modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+.modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;color:var(--primary);}
 .modal-card p{color:var(--muted);font-size:.8rem;margin-bottom:16px;}
 .wishlist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
 .wishlist-item img{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-xs);}
@@ -540,7 +515,6 @@ a{color:inherit;text-decoration:none;}
 .wishlist-atc{padding:4px 12px;background:var(--btn-green);color:#fff;border:none;border-radius:30px;font-size:.65rem;font-weight:600;cursor:pointer;}
 .wishlist-atc:active{transform:scale(0.9);}
 .wishlist-remove{background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:4px;}
-.wishlist-remove:active{transform:scale(0.9);}
 .wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
 .modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
 .modal-btn:active{transform:scale(0.95);}
@@ -548,12 +522,14 @@ a{color:inherit;text-decoration:none;}
 .wishlist-modal.open{display:flex;}
 
 @media(max-width:768px){
-  .track-container{padding:0 3%;margin:16px auto 24px;}
+  .track-container{padding:0 3%;margin:12px auto 20px;}
   .track-card{padding:20px 16px;}
   .track-card h1{font-size:1.3rem;}
   .track-card h1 i{font-size:26px;}
   .order-header{flex-direction:column;align-items:flex-start;}
-  .my-account-section{padding:16px;}
+  .login-required{padding:24px 16px;}
+  .order-status-steps{padding:0;}
+  .order-status-steps::before{left:5%;right:5%;}
 }
 </style>
 </head>
@@ -568,7 +544,7 @@ a{color:inherit;text-decoration:none;}
     <h3>My Wishlist</h3>
     <p>Save your favourites and add them to basket anytime.</p>
     <div id="wishlistItems"></div>
-    <button class="modal-btn" style="background:var(--bg2);color:var(--text);margin-top:12px;padding:10px 20px;border-radius:50px;border:none;font-weight:600;cursor:pointer;" onclick="closeWishlistModal()">Close</button>
+    <button class="modal-btn" style="background:var(--gold);color:white;margin-top:12px;padding:10px 20px;border-radius:50px;border:none;font-weight:600;cursor:pointer;" onclick="closeWishlistModal()">Close</button>
   </div>
 </div>
 
@@ -576,13 +552,18 @@ a{color:inherit;text-decoration:none;}
 <header class="main-header">
   <a class="logo" href="index.html">
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
-    <div class="logo-text">LiquorBelle<small>Nairobi's Finest</small></div>
+    <div class="logo-text">Liquor<span class="gold">Belle</span><small>Nairobi's Finest</small></div>
   </a>
   <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
     <i class="ph ph-magnifying-glass"></i>
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
+    <!-- User Badge -->
+    <div class="header-user-badge" id="headerUserBadge" onclick="window.location.href='account.html'" title="My Account">
+      <span class="user-initial" id="userInitial">G</span>
+      <span class="user-dot guest" id="userDot"></span>
+    </div>
     <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
       <i class="ph ph-shopping-cart"></i>
       <span class="header-cart-badge" id="headerCartCount">0</span>
@@ -606,68 +587,26 @@ a{color:inherit;text-decoration:none;}
       <input id="mobileSearchInput" type="text" placeholder="Search products...">
     </form>
   </div>
+  <div id="mobileMenuAuth"></div>
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
+  <a href="account.html"><i class="ph ph-user-circle"></i> My Account</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
 <!-- TRACK CONTENT -->
 <div class="track-container">
-  <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Home</a>
+  <a href="account.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Account</a>
   
   <div class="track-card">
-    <h1><i class="ph ph-magnifying-glass"></i> Track Your Order</h1>
-    <p>Find your order — choose how you want to track</p>
-    
-    <div class="track-options">
-      <!-- Option 1: Track by Email -->
-      <div class="track-option">
-        <h4><i class="ph ph-envelope"></i> By Email</h4>
-        <input type="email" id="trackEmail" class="track-input" placeholder="Your email address" autocomplete="email">
-        <button class="track-btn-sm" onclick="trackByEmail()"><i class="ph ph-magnifying-glass"></i> Search</button>
-        <span class="guest-hint">All orders placed with this email</span>
-      </div>
-      
-      <!-- Option 2: Track by Order ID -->
-      <div class="track-option">
-        <h4><i class="ph ph-hash"></i> By Order ID</h4>
-        <input type="text" id="trackOrderId" class="track-input" placeholder="e.g. LB-12345678" autocomplete="off">
-        <button class="track-btn-sm" onclick="trackByOrderId()"><i class="ph ph-magnifying-glass"></i> Search</button>
-        <span class="guest-hint">Found in your order confirmation email</span>
-      </div>
-    </div>
-    
-    <!-- Quick Guest Order (from localStorage) -->
-    <div id="guestOrderCard"></div>
-  </div>
+    <h1><i class="ph ph-package"></i> My Orders</h1>
+    <p>View all your past and current orders</p>
 
-  <!-- My Account Section - Fetched from Database -->
-  <div class="my-account-section" id="myAccountSection" style="display:none;">
-    <h3><i class="ph ph-user-circle"></i> My Account</h3>
-    <div class="account-info-grid" id="accountInfoGrid">
-      <div class="account-info-item">
-        <span class="label">Full Name</span>
-        <span class="value" id="accountName">—</span>
-      </div>
-      <div class="account-info-item">
-        <span class="label">Email</span>
-        <span class="value" id="accountEmail">—</span>
-      </div>
-      <div class="account-info-item">
-        <span class="label">Phone</span>
-        <span class="value" id="accountPhone">—</span>
-      </div>
-      <div class="account-info-item">
-        <span class="label">Total Orders</span>
-        <span class="value" id="accountOrderCount">0</span>
-      </div>
-    </div>
+    <!-- Check if logged in -->
+    <div id="ordersContainer"></div>
   </div>
-  
-  <div id="ordersContainer"></div>
 </div>
 
 <!-- WhatsApp Float -->
@@ -675,6 +614,17 @@ a{color:inherit;text-decoration:none;}
   <i class="ph ph-whatsapp-logo"></i>
   <span class="tooltip">Chat with us</span>
 </a>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="account.html">My Account</a></div>
+    <div class="footer-col"><h4>Support</h4><p>+254 748 894 443</p><p>WhatsApp 24/7</p></div>
+    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly. M-PESA payments only.</p></div>
+</footer>
 
 <!-- Bottom Nav -->
 <nav class="bottom-nav">
@@ -693,7 +643,7 @@ a{color:inherit;text-decoration:none;}
     <span>Cart</span>
     <span class="nav-badge" id="navCartCount">0</span>
   </button>
-  <button class="nav-item active" onclick="window.location.href='track-orders.html'"><i class="ph ph-clipboard-text"></i><span>Orders</span></button>
+  <button class="nav-item active" onclick="window.location.href='account.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
 </nav>
 
 <!-- Cart Drawer -->
@@ -721,370 +671,10 @@ a{color:inherit;text-decoration:none;}
 </div>
 <div id="toast"></div>
 
-<script>
-// ==================== IMAGE OPTIMIZATION ====================
-function optimizeImage(url, width) {
-    if (!url) return '';
-    if (!url.includes('cloudinary.com')) return url;
-    var parts = url.split('/upload/');
-    if (parts.length !== 2) return url;
-    var w = width || 300;
-    return parts[0] + '/upload/f_auto,q_auto,w_' + w + ',c_fit/' + parts[1];
-}
+<!-- ============================================
+     SINGLE EXTERNAL SCRIPT — all logic in app.js
+     ============================================ -->
+<script src="app.js"></script>
 
-// ==================== HEADER MENU & SEARCH ====================
-function openMobileMenu(){
-  document.getElementById('mobileMenu').classList.add('open');
-  document.getElementById('mobileMenuOverlay').classList.add('open');
-}
-function closeMobileMenu(){
-  document.getElementById('mobileMenu').classList.remove('open');
-  document.getElementById('mobileMenuOverlay').classList.remove('open');
-}
-function handleHeaderSearch(e){
-  e.preventDefault();
-  var val=(document.getElementById('headerSearchInput')?.value||document.getElementById('mobileSearchInput')?.value||'').trim();
-  if(val) window.location.href='shop.html?search='+encodeURIComponent(val);
-  return false;
-}
-
-// ==================== CONFIG ====================
-var API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-var FALLBACK_IMG = 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png';
-var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
-var wishlist = JSON.parse(localStorage.getItem('liquorbelle_wishlist') || '[]');
-
-function escapeHtml(str){return str?String(str).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}):'';}
-
-function toast(msg){
-  var t=document.getElementById('toast');
-  if(!t) return;
-  t.innerText=msg;
-  t.style.opacity='1';
-  setTimeout(function(){t.style.opacity='0';},2500);
-}
-
-// ==================== OFFLINE DETECTION ====================
-window.addEventListener('online', function(){
-  var banner=document.getElementById('offlineBanner');
-  if(banner) banner.classList.remove('show');
-});
-window.addEventListener('offline', function(){
-  var banner=document.getElementById('offlineBanner');
-  if(banner) banner.classList.add('show');
-});
-
-// ==================== WISHLIST MODAL ====================
-function openWishlistModal(){
-  var container=document.getElementById('wishlistItems');
-  if(!container) return;
-  if(!wishlist.length){
-    container.innerHTML='<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
-  }else{
-    container.innerHTML=wishlist.map(function(w){
-      var imgSrc = w.image ? optimizeImage(w.image, 100) : FALLBACK_IMG;
-      return '<div class="wishlist-item"><img src="'+imgSrc+'" onerror="this.src=\''+FALLBACK_IMG+'\'" loading="lazy"><div class="wishlist-item-info"><div class="wishlist-item-name">'+escapeHtml(w.name)+'</div><div class="wishlist-item-price">KES '+w.price.toLocaleString()+'</div></div><button class="wishlist-atc" onclick="addToCart(\''+w.id+'\',\''+escapeHtml(w.name).replace(/'/g,"\\'")+'\','+w.price+',\''+(w.capacity||'')+'\');closeWishlistModal();">Add</button></div>';
-    }).join('');
-  }
-  var modal=document.getElementById('wishlistModal');
-  if(modal) modal.style.display='flex';
-}
-function closeWishlistModal(){
-  var modal=document.getElementById('wishlistModal');
-  if(modal) modal.style.display='none';
-}
-document.getElementById('wishlistModal')?.addEventListener('click',function(e){ if(e.target===this) closeWishlistModal(); });
-
-// ==================== ADD TO CART ====================
-function addToCart(id,name,price,capacity){
-  if(cart[id]){
-    cart[id].qty+=1;
-  }else{
-    cart[id]={id:id,name:name,price:price,qty:1,capacity:capacity};
-  }
-  localStorage.setItem('liquorbelle_cart',JSON.stringify(cart));
-  updateCartUI();
-  toast(name+' added');
-}
-
-// ==================== GUEST ORDER CARD (from localStorage) ====================
-function showGuestOrderCard() {
-  var container = document.getElementById('guestOrderCard');
-  var lastOrder = localStorage.getItem('liquorbelle_last_order');
-  if (lastOrder) {
-    try {
-      var order = JSON.parse(lastOrder);
-      // Only show if it's recent (within 7 days)
-      var orderDate = new Date(order.timestamp || Date.now());
-      var daysAgo = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
-      if (daysAgo > 7) {
-        container.innerHTML = '';
-        return;
-      }
-      container.innerHTML = `
-        <div class="guest-order-card">
-          <div class="guest-label">
-            <i class="ph ph-clock-counter-clockwise"></i>
-            <span>Recent Order</span>
-          </div>
-          <span class="guest-id">${escapeHtml(order.orderId || 'LB-??????')}</span>
-          <span class="guest-total">KES ${(order.total || 0).toLocaleString()}</span>
-          <button class="guest-btn" onclick="quickTrackOrder('${escapeHtml(order.orderId || '')}')">
-            <i class="ph ph-magnifying-glass"></i> View
-          </button>
-        </div>
-      `;
-    } catch(e) {
-      container.innerHTML = '';
-    }
-  } else {
-    container.innerHTML = '';
-  }
-}
-
-function quickTrackOrder(orderId) {
-  if (!orderId) return;
-  document.getElementById('trackOrderId').value = orderId;
-  trackByOrderId();
-}
-
-// ==================== GET URL PARAMS ====================
-var urlParams = new URLSearchParams(window.location.search);
-var emailParam = urlParams.get('email') || '';
-var orderIdParam = urlParams.get('orderId') || '';
-
-// ==================== TRACK BY EMAIL ====================
-async function trackByEmail(){
-  var email = document.getElementById('trackEmail').value.trim();
-  if(!email){
-    toast('Please enter your email address');
-    return;
-  }
-  if(!email.includes('@')){
-    toast('Please enter a valid email');
-    return;
-  }
-  await fetchOrders('email', email);
-}
-
-// ==================== TRACK BY ORDER ID ====================
-async function trackByOrderId(){
-  var orderId = document.getElementById('trackOrderId').value.trim();
-  if(!orderId){
-    toast('Please enter your Order ID (e.g. LB-12345678)');
-    return;
-  }
-  await fetchOrders('orderId', orderId);
-}
-
-// ==================== FETCH ORDERS FROM DATABASE ====================
-async function fetchOrders(method, value){
-  var container = document.getElementById('ordersContainer');
-  container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
-  
-  // Hide account section initially
-  document.getElementById('myAccountSection').style.display = 'none';
-  
-  try{
-    var url;
-    if (method === 'email') {
-      url = API_BASE + '/api/orders/track?email=' + encodeURIComponent(value);
-    } else {
-      // Track by order ID - we need to get all orders and filter
-      url = API_BASE + '/api/admin/all-orders?limit=100';
-    }
-    
-    var res = await fetch(url);
-    var data = await res.json();
-    
-    if(data.success && data.orders){
-      var userOrders = [];
-      
-      if (method === 'email') {
-        userOrders = data.orders;
-      } else {
-        // Filter by order ID (case insensitive, partial match)
-        var searchId = value.toUpperCase().trim();
-        userOrders = data.orders.filter(function(o) {
-          var orderNumber = (o.order_number || '').toUpperCase();
-          var id = (o._id || '').toUpperCase();
-          return orderNumber.includes(searchId) || id.includes(searchId);
-        });
-      }
-      
-      // Show My Account section only for email search with results
-      if (method === 'email' && userOrders.length > 0) {
-        var accountSection = document.getElementById('myAccountSection');
-        accountSection.style.display = 'block';
-        
-        var firstOrder = userOrders[0];
-        document.getElementById('accountName').textContent = firstOrder.customer_name || '—';
-        document.getElementById('accountEmail').textContent = firstOrder.customer_email || value;
-        document.getElementById('accountPhone').textContent = firstOrder.phone || '—';
-        document.getElementById('accountOrderCount').textContent = userOrders.length;
-      }
-      
-      if(userOrders.length > 0){
-        userOrders.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
-        renderOrders(userOrders, method);
-      } else {
-        container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Try checking your email or Order ID again</small></div>';
-      }
-    } else {
-      container.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>Unable to fetch orders. Please try again.</p></div>';
-    }
-  } catch(e){
-    console.error('Error tracking orders:', e);
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Error loading orders. Please check your connection and try again.</p></div>';
-  }
-}
-
-function renderOrders(orders, method){
-  var container = document.getElementById('ordersContainer');
-  var html = '<div class="orders-list">';
-  for(var i = 0; i < orders.length; i++){
-    var o = orders[i];
-    var items = o.items;
-    if(typeof items === 'string'){ try{ items = JSON.parse(items); }catch(e){ items = []; } }
-    if(!items || !items.length) items = [];
-    
-    var statusText = o.status === 'pending' ? '⏳ Pending' : (o.status === 'paid' ? '✅ Paid' : (o.status === 'delivered' ? '🚚 Delivered' : '❌ Cancelled'));
-    var statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'paid' ? 'status-paid' : (o.status === 'delivered' ? 'status-delivered' : 'status-cancelled'));
-    
-    var deliveryFee = o.delivery || 0;
-    var subtotal = o.subtotal || (o.total - deliveryFee);
-    var deliveryDisplay = deliveryFee === 0 ? '<span style="color:#1A8A3E;">FREE</span>' : 'KES ' + deliveryFee.toLocaleString();
-    
-    var orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
-    
-    html += '<div class="order-card">';
-    html += '<div class="order-header">';
-    html += '<div><div class="order-number">📦 Order #' + orderNumber + '</div>';
-    html += '<div class="order-date">📅 ' + new Date(o.created_at).toLocaleDateString() + ' at ' + new Date(o.created_at).toLocaleTimeString() + '</div>';
-    html += '<div class="order-breakdown"><i class="ph ph-credit-card"></i> ' + (o.payment_method || 'M-PESA') + '</div></div>';
-    html += '<span class="order-status ' + statusClass + '">' + statusText + '</span>';
-    html += '</div>';
-    html += '<div class="order-items">';
-    for(var j = 0; j < items.length; j++){
-      var item = items[j];
-      var itemName = item.product_name || item.name || 'Product';
-      var itemQty = item.quantity || item.qty || 1;
-      var itemPrice = item.price || 0;
-      html += '<div class="order-item"><div><div class="order-item-name">' + escapeHtml(itemName) + (item.size ? ' (' + item.size + ')' : '') + '</div><div class="order-item-qty">Quantity: ' + itemQty + '</div></div><div class="order-item-price">KES ' + (itemPrice * itemQty).toLocaleString() + '</div></div>';
-    }
-    html += '</div>';
-    html += '<div class="order-footer">';
-    html += '<div class="order-total-row"><span>Subtotal</span><span>KES ' + (subtotal || 0).toLocaleString() + '</span></div>';
-    html += '<div class="order-total-row"><span>Delivery Fee</span><span>' + deliveryDisplay + '</span></div>';
-    html += '<div class="order-total-row"><span>Total</span><span>KES ' + (o.total || 0).toLocaleString() + '</span></div>';
-    html += '</div>';
-    html += '</div>';
-  }
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-// ==================== AUTO-TRACK FROM URL PARAMS ====================
-if(emailParam){
-  document.getElementById('trackEmail').value = emailParam;
-  setTimeout(function(){ trackByEmail(); }, 500);
-} else if(orderIdParam){
-  document.getElementById('trackOrderId').value = orderIdParam;
-  setTimeout(function(){ trackByOrderId(); }, 500);
-}
-
-// ==================== CART FUNCTIONS ====================
-function updateCartUI(){
-  var items = Object.values(cart);
-  var count = items.reduce(function(s,i){ return s + i.qty; }, 0);
-
-  var navCount = document.getElementById('navCartCount');
-  if(navCount) navCount.innerText = count;
-  var cartBadge = document.getElementById('cartBadgeCount');
-  if(cartBadge) cartBadge.innerText = count;
-  var headerCount = document.getElementById('headerCartCount');
-  if(headerCount) headerCount.innerText = count;
-
-  var container = document.getElementById('cartItemsList');
-  var footer = document.getElementById('cartFooter');
-  if(!container || !footer) return;
-
-  if(!items.length){
-    container.innerHTML = `
-      <div class="cart-container">
-        <div class="cart-icon-wrapper">
-          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
-            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
-          </svg>
-          <span class="cart-badge">0</span>
-        </div>
-        <h2 class="cart-message">Your cart is empty!</h2>
-        <a href="shop.html" class="shop-button">Start Shopping</a>
-      </div>
-    `;
-    footer.style.display = 'none';
-    return;
-  }
-  footer.style.display = 'block';
-  var subtotal = items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
-  var hasBig = items.some(function(i){ return ['750ml','1L','1.5L'].indexOf(i.capacity) > -1; });
-  var delivery = hasBig ? 0 : 150;
-  var totalEl = document.getElementById('cartTotalAmount');
-  if(totalEl) totalEl.innerHTML = 'KES ' + (subtotal + delivery).toLocaleString();
-
-  container.innerHTML = items.map(function(item){
-    return '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + ' <span style="color:var(--primary);">x' + item.qty + '</span></div><div class="cart-item-price">KES ' + (item.price * item.qty).toLocaleString() + '</div><div class="cart-qty"><button onclick="updateQty(\'' + item.id + '\',-1)">−</button><span>' + item.qty + '</span><button onclick="updateQty(\'' + item.id + '\',1)">+</button><button onclick="removeCartItem(\'' + item.id + '\')" class="cart-remove-btn">Remove</button></div></div></div>';
-  }).join('');
-}
-
-function removeCartItem(id){
-  if(cart[id]){
-    delete cart[id];
-    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    updateCartUI();
-    toast('Item removed');
-  }
-}
-function updateQty(id,delta){
-  if(cart[id]){
-    cart[id].qty += delta;
-    if(cart[id].qty <= 0) delete cart[id];
-    localStorage.setItem('liquorbelle_cart', JSON.stringify(cart));
-    updateCartUI();
-  }
-}
-function openCartDrawer(){
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.add('open');
-  if(overlay) overlay.classList.add('open');
-}
-function closeCartDrawer(){
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.remove('open');
-  if(overlay) overlay.classList.remove('open');
-}
-
-// ==================== ENTER KEY HANDLERS ====================
-document.getElementById('trackEmail').addEventListener('keypress', function(e){
-  if(e.key === 'Enter') trackByEmail();
-});
-document.getElementById('trackOrderId').addEventListener('keypress', function(e){
-  if(e.key === 'Enter') trackByOrderId();
-});
-
-// ==================== INIT ====================
-updateCartUI();
-setInterval(updateCartUI, 3000);
-showGuestOrderCard();
-
-if(!navigator.onLine){
-  var banner = document.getElementById('offlineBanner');
-  if(banner) banner.classList.add('show');
-}
-</script>
 </body>
 </html>
