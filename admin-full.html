@@ -1368,10 +1368,10 @@ textarea { resize: vertical; }
     <span class="logo-text">Liquor<span class="gold">Belle</span> Admin</span>
   </div>
   <div class="tabs">
-    <button class="tab active" data-tab="products"><i class="ph ph-package"></i> Products</button>
-    <button class="tab" data-tab="orders"><i class="ph ph-clipboard-text"></i> Orders</button>
-    <button class="tab" data-tab="analytics"><i class="ph ph-chart-bar"></i> Analytics</button>
-    <button class="tab" data-tab="settings"><i class="ph ph-gear"></i> Settings</button>
+    <button class="tab active" data-tab="products" onclick="switchTab('products')"><i class="ph ph-package"></i> Products</button>
+    <button class="tab" data-tab="orders" onclick="switchTab('orders')"><i class="ph ph-clipboard-text"></i> Orders</button>
+    <button class="tab" data-tab="analytics" onclick="switchTab('analytics')"><i class="ph ph-chart-bar"></i> Analytics</button>
+    <button class="tab" data-tab="settings" onclick="switchTab('settings')"><i class="ph ph-gear"></i> Settings</button>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <span class="session-indicator" id="sessionIndicator">● Active</span>
@@ -1531,7 +1531,7 @@ textarea { resize: vertical; }
 
     <!-- Search & Sort -->
     <div class="search-bar">
-      <div class="search-input-wrap"><i class="ph ph-magnifying-glass"></i><input type="text" id="productSearch" class="search-input" placeholder="Search products..."></div>
+      <div class="search-input-wrap"><i class="ph ph-magnifying-glass"></i><input type="text" id="productSearch" class="search-input" placeholder="Search products..." oninput="filterProducts()"></div>
       <select id="sortSelect" class="sort-select" onchange="applySort()">
         <option value="newest">🕐 Newest First</option>
         <option value="oldest">🕐 Oldest First</option>
@@ -1541,6 +1541,7 @@ textarea { resize: vertical; }
         <option value="name-desc">📝 Name: Z to A</option>
       </select>
       <button class="btn btn-outline" onclick="clearProductSearch()"><i class="ph ph-x"></i> Clear</button>
+      <button class="btn btn-green" onclick="refreshProducts()"><i class="ph ph-arrows-clockwise"></i> Refresh</button>
     </div>
 
     <div class="table-container">
@@ -1565,8 +1566,10 @@ textarea { resize: vertical; }
         <option value="all">📋 All Orders</option>
         <option value="paid">✅ Paid</option>
         <option value="delivered">🚚 Delivered</option>
+        <option value="pending">⏳ Pending</option>
       </select>
       <span class="filter-stats" id="orderCountDisplay"></span>
+      <button class="btn btn-green" onclick="refreshOrders()"><i class="ph ph-arrows-clockwise"></i> Refresh</button>
     </div>
     <div class="help-text"><i class="ph ph-info"></i> M-PESA payments auto-confirmed. Use <strong>Mark Delivered</strong> when handed over.</div>
     <div id="ordersList" class="orders-list"></div>
@@ -1591,12 +1594,20 @@ textarea { resize: vertical; }
     <!-- Password Management -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-lock-key"></i> Password Management</div>
+      <p class="help-text"><i class="ph ph-info"></i> Update admin and cashier passwords. These are saved to the database immediately.</p>
       <form id="passwordForm" onsubmit="event.preventDefault(); updatePasswords();">
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Admin Password</label><input type="password" id="newAdminPassword" placeholder="New admin password"></div>
-          <div class="form-group"><label class="form-label">Cashier Password</label><input type="password" id="newCashierPassword" placeholder="New cashier password"></div>
+          <div class="form-group">
+            <label class="form-label">New Admin Password</label>
+            <input type="password" id="newAdminPassword" placeholder="Enter new admin password" minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Cashier Password</label>
+            <input type="password" id="newCashierPassword" placeholder="Enter new cashier password" minlength="6">
+          </div>
         </div>
         <button type="submit" class="btn" id="updatePasswordsBtn"><i class="ph ph-floppy-disk"></i> Save Passwords</button>
+        <div id="passwordMessage" style="margin-top:12px;font-size:13px;"></div>
       </form>
     </div>
 
@@ -1605,14 +1616,15 @@ textarea { resize: vertical; }
       <div class="form-card-title"><i class="ph ph-truck"></i> Delivery Settings</div>
       <form id="deliveryForm" onsubmit="event.preventDefault(); saveDeliverySettings();">
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Default Delivery Fee (KES)</label><input type="number" id="deliveryFee" value="100" step="5"></div>
+          <div class="form-group"><label class="form-label">Default Delivery Fee (KES)</label><input type="number" id="deliveryFee" value="150" step="5"></div>
           <div class="form-group"><label class="form-label">Free Delivery Threshold (KES)</label><input type="number" id="freeThreshold" value="3000"></div>
-          <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+          <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;padding-top:18px;">
             <label class="form-label" style="margin:0;">Delivery Enabled</label>
-            <input type="checkbox" id="deliveryEnabled" checked style="width:auto;">
+            <input type="checkbox" id="deliveryEnabled" checked style="width:auto;transform:scale(1.2);">
           </div>
         </div>
         <button type="submit" class="btn"><i class="ph ph-floppy-disk"></i> Save Settings</button>
+        <div id="deliveryMessage" style="margin-top:12px;font-size:13px;"></div>
       </form>
     </div>
 
@@ -1638,12 +1650,13 @@ textarea { resize: vertical; }
         <button class="btn btn-outline" onclick="addDeliveryZone()"><i class="ph ph-plus"></i> Add Zone</button>
         <button class="btn btn-gold" onclick="saveDeliveryZones()"><i class="ph ph-floppy-disk"></i> Save All Zones</button>
       </div>
+      <div id="zoneMessage" style="margin-top:12px;font-size:13px;"></div>
     </div>
 
     <!-- Manage Categories -->
     <div class="form-card">
       <div class="form-card-title"><i class="ph ph-tag"></i> Manage Categories</div>
-      <div class="help-text"><i class="ph ph-info"></i> Add new product categories. Categories are saved to the database and appear in dropdowns.</div>
+      <div class="help-text"><i class="ph ph-info"></i> Add new product categories. Categories are saved to the database and appear in dropdowns. You can also delete custom categories (preset ones cannot be deleted).</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Category Name</label>
@@ -1659,6 +1672,7 @@ textarea { resize: vertical; }
         </div>
       </div>
       <div id="categoryList" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <div id="categoryMessage" style="margin-top:12px;font-size:13px;"></div>
     </div>
   </div>
 
@@ -1722,9 +1736,1504 @@ textarea { resize: vertical; }
 </div>
 
 <!-- ============================================
-     SINGLE EXTERNAL SCRIPT — all logic in app.js
+     ALL JAVASCRIPT - Complete admin functionality
      ============================================ -->
-<script src="app.js"></script>
+<script>
+// ============================================================
+// LIQUORBELLE ADMIN — COMPLETE JAVASCRIPT
+// ============================================================
+
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const ADMIN_TOKEN_KEY = 'liquorbelle_admin_token';
+
+// ==================== TOAST SYSTEM ====================
+function showToast(message, type) {
+  const toast = document.getElementById('toast');
+  const msgEl = document.getElementById('toastMessage');
+  if (!toast || !msgEl) return;
+  
+  toast.className = 'toast';
+  if (type === 'error') toast.classList.add('error');
+  if (type === 'success') toast.classList.add('success');
+  
+  msgEl.textContent = message;
+  toast.classList.add('show');
+  
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(hideToast, 4000);
+}
+
+function hideToast() {
+  const toast = document.getElementById('toast');
+  if (toast) toast.classList.remove('show');
+}
+
+// ==================== AUTH HELPERS ====================
+function getAdminToken() {
+  return localStorage.getItem(ADMIN_TOKEN_KEY);
+}
+
+function setAdminToken(token) {
+  localStorage.setItem(ADMIN_TOKEN_KEY, token);
+}
+
+function removeAdminToken() {
+  localStorage.removeItem(ADMIN_TOKEN_KEY);
+}
+
+function adminFetch(url, options = {}) {
+  const token = getAdminToken();
+  if (!token) {
+    return Promise.reject(new Error('Not authenticated'));
+  }
+  options.headers = options.headers || {};
+  options.headers['Authorization'] = `Bearer ${token}`;
+  options.headers['Content-Type'] = 'application/json';
+  return fetch(url, options);
+}
+
+// ==================== LOGIN ====================
+window.adminLogin = async function(password) {
+  try {
+    const res = await fetch(API_BASE + '/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (data.success && data.token) {
+      setAdminToken(data.token);
+      return true;
+    }
+    return false;
+  } catch(e) {
+    console.error('Admin login error:', e);
+    return false;
+  }
+};
+
+window.toggleAdminPasswordVisibility = function() {
+  const input = document.getElementById('adminPassword');
+  const icon = document.getElementById('toggleAdminPasswordIcon');
+  if (!input || !icon) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'ph ph-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'ph ph-eye';
+  }
+};
+
+window.submitAdminLogin = function() {
+  const password = document.getElementById('adminPassword');
+  const errorDiv = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  
+  if (!password || !password.value) {
+    if (errorDiv) errorDiv.innerText = 'Please enter your password.';
+    return;
+  }
+  
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
+  }
+  
+  window.adminLogin(password.value)
+    .then(success => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = 'Login';
+      }
+      if (success) {
+        document.getElementById('adminLoginModal').style.display = 'none';
+        showToast('✅ Login successful!', 'success');
+        initializeAdmin();
+      } else {
+        if (errorDiv) errorDiv.innerText = 'Invalid admin password. Try again.';
+        if (password) password.value = '';
+        if (password) password.focus();
+        showToast('❌ Invalid password', 'error');
+      }
+    })
+    .catch(() => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = 'Login';
+      }
+      if (errorDiv) errorDiv.innerText = 'Network error. Please try again.';
+      showToast('❌ Network error', 'error');
+    });
+};
+
+// ==================== LOGOUT ====================
+window.logout = function() {
+  removeAdminToken();
+  document.getElementById('adminLoginModal').style.display = 'flex';
+  document.getElementById('productsTab').style.display = 'none';
+  document.getElementById('ordersTab').style.display = 'none';
+  document.getElementById('analyticsTab').style.display = 'none';
+  document.getElementById('settingsTab').style.display = 'none';
+  showToast('Logged out', '');
+};
+
+// ==================== TAB SWITCHING ====================
+window.switchTab = function(tab) {
+  // Update tab buttons
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`)?.classList.add('active');
+  
+  // Show/hide tabs
+  document.getElementById('productsTab').style.display = tab === 'products' ? 'block' : 'none';
+  document.getElementById('ordersTab').style.display = tab === 'orders' ? 'block' : 'none';
+  document.getElementById('analyticsTab').style.display = tab === 'analytics' ? 'block' : 'none';
+  document.getElementById('settingsTab').style.display = tab === 'settings' ? 'block' : 'none';
+  
+  // Load data for tab
+  if (tab === 'products') loadProducts();
+  if (tab === 'orders') loadOrders();
+  if (tab === 'analytics') loadAnalytics();
+  if (tab === 'settings') loadSettings();
+};
+
+// ==================== INITIALIZE ADMIN ====================
+function initializeAdmin() {
+  const token = getAdminToken();
+  if (!token) {
+    document.getElementById('adminLoginModal').style.display = 'flex';
+    return;
+  }
+  
+  document.getElementById('adminLoginModal').style.display = 'none';
+  document.getElementById('productsTab').style.display = 'block';
+  
+  // Load initial data
+  loadProducts();
+  loadSettings();
+}
+
+// ==================== LOAD PRODUCTS ====================
+let allProducts = [];
+let filteredProducts = [];
+let currentSort = 'newest';
+
+async function loadProducts() {
+  const list = document.getElementById('productsList');
+  if (!list) return;
+  
+  list.innerHTML = '<div class="empty-state"><i class="ph ph-spinner"></i><p>Loading products...</p></div>';
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/db/products`);
+    const data = await response.json();
+    
+    if (data.success && data.products) {
+      allProducts = data.products;
+      filteredProducts = [...allProducts];
+      applySort();
+      renderProducts();
+      updateProductStats();
+    } else {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>No products found</p></div>';
+    }
+  } catch (error) {
+    console.error('Error loading products:', error);
+    list.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Failed to load products. <button class="btn btn-sm" onclick="loadProducts()">Retry</button></p></div>';
+  }
+}
+
+function renderProducts() {
+  const list = document.getElementById('productsList');
+  if (!list) return;
+  
+  if (!filteredProducts || filteredProducts.length === 0) {
+    list.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products match your search.</p></div>';
+    return;
+  }
+  
+  list.innerHTML = filteredProducts.map(p => {
+    const variants = p.variants || [];
+    const firstPrice = variants.length > 0 ? variants[0].price : 0;
+    const hasDiscount = variants.some(v => v.discount && v.discount > 0);
+    const isTrending = p.isTrending || false;
+    const isNew = p.isNew || false;
+    const rating = p.rating || 4.0;
+    
+    const stars = '⭐'.repeat(Math.round(rating));
+    
+    const variantBadges = variants.map(v => {
+      const discountText = v.discount ? ` -${v.discount}%` : '';
+      const flavourText = v.flavour ? ` ${v.flavour}` : '';
+      return `<span class="variant-badge">${v.size}${flavourText} • KES ${v.price}${discountText}</span>`;
+    }).join('');
+    
+    return `
+      <div class="product-row">
+        <div><img class="product-img" src="${p.image || 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png'}" alt="${p.name}" loading="lazy" onerror="this.src='https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png'"></div>
+        <div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-cat">${p.category || 'Uncategorized'}</div>
+        </div>
+        <div>${variantBadges || '<span class="variant-badge">No variants</span>'}</div>
+        <div>
+          ${isTrending ? '<span class="trending-badge">🔥 Trending</span>' : ''}
+          ${isNew ? '<span class="new-badge">✨ New</span>' : ''}
+          ${hasDiscount ? '<span class="discount-badge">🔄 On Sale</span>' : ''}
+        </div>
+        <div><span class="star-badge">${stars} ${rating.toFixed(1)}</span></div>
+        <div>
+          <button class="edit-btn" onclick="openEditModal('${p._id}')" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+          <button class="delete-btn" onclick="deleteProduct('${p._id}')" title="Delete"><i class="ph ph-trash"></i></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateProductStats() {
+  const stats = document.getElementById('productStats');
+  if (!stats) return;
+  
+  const total = allProducts.length;
+  const withVariants = allProducts.filter(p => p.variants && p.variants.length > 0).length;
+  const trending = allProducts.filter(p => p.isTrending).length;
+  
+  stats.innerHTML = `
+    <div class="stat-card"><h4>Total Products</h4><div class="value">${total}</div><div class="sub">In catalogue</div><div class="icon">🍾</div></div>
+    <div class="stat-card"><h4>With Variants</h4><div class="value">${withVariants}</div><div class="sub">${total > 0 ? Math.round(withVariants/total*100) : 0}% have variants</div><div class="icon">📦</div></div>
+    <div class="stat-card"><h4>Trending</h4><div class="value">${trending}</div><div class="sub">🔥 Hot items</div><div class="icon">🔥</div></div>
+  `;
+}
+
+// ==================== FILTER & SORT ====================
+window.filterProducts = function() {
+  const search = document.getElementById('productSearch').value.toLowerCase().trim();
+  
+  if (!search) {
+    filteredProducts = [...allProducts];
+  } else {
+    filteredProducts = allProducts.filter(p => 
+      p.name.toLowerCase().includes(search) || 
+      (p.category && p.category.toLowerCase().includes(search))
+    );
+  }
+  applySort();
+  renderProducts();
+};
+
+window.applySort = function() {
+  const sort = document.getElementById('sortSelect').value;
+  currentSort = sort;
+  
+  switch(sort) {
+    case 'newest':
+      filteredProducts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      break;
+    case 'oldest':
+      filteredProducts.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      break;
+    case 'price-low': {
+      const getPrice = p => (p.variants && p.variants.length > 0) ? p.variants[0].price : 0;
+      filteredProducts.sort((a, b) => getPrice(a) - getPrice(b));
+      break;
+    }
+    case 'price-high': {
+      const getPrice = p => (p.variants && p.variants.length > 0) ? p.variants[0].price : 0;
+      filteredProducts.sort((a, b) => getPrice(b) - getPrice(a));
+      break;
+    }
+    case 'name-asc':
+      filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+    case 'name-desc':
+      filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+      break;
+    default:
+      break;
+  }
+  renderProducts();
+};
+
+window.clearProductSearch = function() {
+  document.getElementById('productSearch').value = '';
+  filterProducts();
+};
+
+window.refreshProducts = function() {
+  loadProducts();
+  showToast('🔄 Refreshing products...', '');
+};
+
+// ==================== ADD PRODUCT ====================
+window.addProduct = async function() {
+  const name = document.getElementById('prodName').value.trim();
+  const category = document.getElementById('prodCategory').value;
+  const badge = document.getElementById('prodBadge').value;
+  const image = document.getElementById('prodImage').value.trim();
+  const description = document.getElementById('prodDesc').value.trim();
+  const isTrending = document.getElementById('prodTrending').checked;
+  const isNew = document.getElementById('prodNew').checked;
+  const rating = parseFloat(document.getElementById('prodRating').value);
+  
+  if (!name) {
+    showToast('❌ Please enter a product name', 'error');
+    return;
+  }
+  
+  const variantRows = document.querySelectorAll('#variantsBody .variant-row');
+  const variants = [];
+  
+  variantRows.forEach(row => {
+    const sizeSelect = row.querySelector('.variant-size');
+    const sizeOther = row.querySelector('.variant-size-other');
+    const price = parseFloat(row.querySelector('.variant-price').value);
+    const discount = parseInt(row.querySelector('.variant-discount').value) || 0;
+    const flavour = row.querySelector('.variant-flavour').value.trim();
+    
+    let size = sizeSelect.value;
+    if (size === 'OTHER') {
+      size = sizeOther ? sizeOther.value.trim() : '';
+    }
+    
+    if (size && price && price > 0) {
+      variants.push({ size, price, discount, flavour });
+    }
+  });
+  
+  if (variants.length === 0) {
+    showToast('❌ Please add at least one valid variant', 'error');
+    return;
+  }
+  
+  const productData = {
+    name,
+    category,
+    badge: badge || '',
+    image: image || '',
+    description: description || '',
+    isTrending,
+    isNew,
+    rating,
+    variants
+  };
+  
+  const btn = document.getElementById('addProductBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/db/products`, {
+      method: 'POST',
+      body: JSON.stringify(productData)
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Product added successfully!', 'success');
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodImage').value = '';
+      document.getElementById('prodDesc').value = '';
+      document.getElementById('prodTrending').checked = false;
+      document.getElementById('prodNew').checked = false;
+      document.getElementById('variantsBody').innerHTML = `
+        <tr class="variant-row">
+          <td>
+            <select class="variant-size" onchange="toggleVariantOther(this)">
+              <optgroup label="🍺 Beer">
+                <option value="200ml">200ml</option>
+                <option value="250ml">250ml</option>
+                <option value="300ml">300ml</option>
+                <option value="330ml">330ml</option>
+                <option value="350ml">350ml</option>
+                <option value="500ml">500ml</option>
+                <option value="700ml">700ml</option>
+                <option value="750ml" selected>750ml</option>
+                <option value="1L">1L</option>
+                <option value="1.5L">1.5L</option>
+                <option value="2L">2L</option>
+                <option value="5L">5L</option>
+                <option value="Can">🥫 Can</option>
+                <option value="Bottle">🍾 Bottle</option>
+                <option value="12pack">📦 12 Pack</option>
+                <option value="24pack">📦 24 Pack</option>
+              </optgroup>
+              <optgroup label="🥃 Spirits & Brandy">
+                <option value="250ml">250ml</option>
+                <option value="350ml">350ml</option>
+                <option value="500ml">500ml</option>
+                <option value="700ml">700ml</option>
+                <option value="750ml">750ml</option>
+                <option value="1L">1L</option>
+                <option value="1.5L">1.5L</option>
+              </optgroup>
+              <optgroup label="🧃 Juice & Soda">
+                <option value="250ml">250ml</option>
+                <option value="330ml">330ml</option>
+                <option value="350ml">350ml</option>
+                <option value="400ml">400ml</option>
+                <option value="500ml">500ml</option>
+                <option value="700ml">700ml</option>
+                <option value="1L">1L</option>
+                <option value="1.25L">1.25L</option>
+                <option value="1.5L">1.5L</option>
+                <option value="2L">2L</option>
+              </optgroup>
+              <optgroup label="🚬 Cigar & Accessory">
+                <option value="Unit">📐 Unit</option>
+                <option value="Packet">📦 Packet</option>
+                <option value="Box">📦 Box</option>
+                <option value="Set">🎯 Set</option>
+                <option value="Carton">📦 Carton</option>
+              </optgroup>
+              <option value="OTHER">✏️ Other (Type custom)</option>
+            </select>
+            <input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">
+          </td>
+          <td><input type="number" class="variant-price" placeholder="Price" step="1"></td>
+          <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
+          <td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
+          <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
+        </tr>
+      `;
+      loadProducts();
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to add product'), 'error');
+    }
+  } catch (error) {
+    console.error('Error adding product:', error);
+    showToast('❌ Network error. Please try again.', 'error');
+  }
+  
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ph ph-floppy-disk"></i> Save Product';
+};
+
+// ==================== VARIANT HELPERS ====================
+window.toggleVariantOther = function(select) {
+  const otherInput = select.closest('td').querySelector('.variant-size-other');
+  if (select.value === 'OTHER') {
+    otherInput.style.display = 'block';
+    otherInput.focus();
+  } else {
+    otherInput.style.display = 'none';
+  }
+};
+
+window.addVariantRow = function() {
+  const tbody = document.getElementById('variantsBody');
+  const row = tbody.querySelector('.variant-row');
+  const newRow = row.cloneNode(true);
+  newRow.querySelectorAll('input').forEach(inp => inp.value = '');
+  newRow.querySelector('.variant-size').value = '750ml';
+  newRow.querySelector('.variant-size-other').style.display = 'none';
+  tbody.appendChild(newRow);
+};
+
+window.removeVariantRow = function(btn) {
+  const rows = document.querySelectorAll('#variantsBody .variant-row');
+  if (rows.length > 1) {
+    btn.closest('.variant-row').remove();
+  } else {
+    showToast('❌ You need at least one variant', 'error');
+  }
+};
+
+// ==================== EDIT PRODUCT ====================
+let editProductId = null;
+
+window.openEditModal = async function(productId) {
+  editProductId = productId;
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/db/products/${productId}`);
+    const data = await response.json();
+    
+    if (!data.success || !data.product) {
+      showToast('❌ Failed to load product', 'error');
+      return;
+    }
+    
+    const p = data.product;
+    document.getElementById('editProductId').value = p._id;
+    document.getElementById('editName').value = p.name || '';
+    document.getElementById('editCategory').value = p.category || 'beer';
+    document.getElementById('editBadge').value = p.badge || '';
+    document.getElementById('editImage').value = p.image || '';
+    document.getElementById('editDesc').value = p.description || '';
+    document.getElementById('editTrending').checked = p.isTrending || false;
+    document.getElementById('editNew').checked = p.isNew || false;
+    document.getElementById('editRating').value = p.rating || 4;
+    
+    const variants = p.variants || [];
+    const tbody = document.getElementById('editVariantsBody');
+    tbody.innerHTML = '';
+    
+    if (variants.length === 0) {
+      addEditVariantRow();
+    } else {
+      variants.forEach(v => {
+        const row = document.createElement('tr');
+        row.className = 'variant-row';
+        row.innerHTML = `
+          <td>
+            <select class="variant-size-edit" onchange="toggleEditVariantOther(this)">
+              <optgroup label="🍺 Beer">
+                <option value="200ml">200ml</option>
+                <option value="250ml">250ml</option>
+                <option value="300ml">300ml</option>
+                <option value="330ml">330ml</option>
+                <option value="350ml">350ml</option>
+                <option value="500ml">500ml</option>
+                <option value="700ml">700ml</option>
+                <option value="750ml">750ml</option>
+                <option value="1L">1L</option>
+                <option value="1.5L">1.5L</option>
+                <option value="2L">2L</option>
+                <option value="5L">5L</option>
+                <option value="Can">🥫 Can</option>
+                <option value="Bottle">🍾 Bottle</option>
+                <option value="12pack">📦 12 Pack</option>
+                <option value="24pack">📦 24 Pack</option>
+              </optgroup>
+              <optgroup label="🥃 Spirits & Brandy">
+                <option value="250ml">250ml</option>
+                <option value="350ml">350ml</option>
+                <option value="500ml">500ml</option>
+                <option value="700ml">700ml</option>
+                <option value="750ml">750ml</option>
+                <option value="1L">1L</option>
+                <option value="1.5L">1.5L</option>
+              </optgroup>
+              <optgroup label="🧃 Juice & Soda">
+                <option value="250ml">250ml</option>
+                <option value="330ml">330ml</option>
+                <option value="350ml">350ml</option>
+                <option value="400ml">400ml</option>
+                <option value="500ml">500ml</option>
+                <option value="700ml">700ml</option>
+                <option value="1L">1L</option>
+                <option value="1.25L">1.25L</option>
+                <option value="1.5L">1.5L</option>
+                <option value="2L">2L</option>
+              </optgroup>
+              <optgroup label="🚬 Cigar & Accessory">
+                <option value="Unit">📐 Unit</option>
+                <option value="Packet">📦 Packet</option>
+                <option value="Box">📦 Box</option>
+                <option value="Set">🎯 Set</option>
+                <option value="Carton">📦 Carton</option>
+              </optgroup>
+              <option value="OTHER">✏️ Other (Type custom)</option>
+            </select>
+            <input type="text" class="variant-size-other-edit" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">
+          </td>
+          <td><input type="number" class="variant-price-edit" placeholder="Price" step="1" value="${v.price || 0}"></td>
+          <td><input type="number" class="variant-discount-edit" placeholder="0" min="0" max="100" value="${v.discount || 0}" step="1"></td>
+          <td><input type="text" class="variant-flavour-edit" placeholder="e.g. Orange, Original..." value="${v.flavour || ''}" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
+          <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>
+        `;
+        tbody.appendChild(row);
+        const select = row.querySelector('.variant-size-edit');
+        const sizeOptions = select.querySelectorAll('option');
+        let found = false;
+        sizeOptions.forEach(opt => {
+          if (opt.value === v.size) {
+            select.value = v.size;
+            found = true;
+          }
+        });
+        if (!found) {
+          select.value = 'OTHER';
+          const otherInput = row.querySelector('.variant-size-other-edit');
+          otherInput.value = v.size;
+          otherInput.style.display = 'block';
+        }
+      });
+    }
+    
+    document.getElementById('editModal').classList.add('active');
+  } catch (error) {
+    console.error('Error loading product for edit:', error);
+    showToast('❌ Failed to load product', 'error');
+  }
+};
+
+window.closeEditModal = function() {
+  document.getElementById('editModal').classList.remove('active');
+  editProductId = null;
+};
+
+window.toggleEditVariantOther = function(select) {
+  const otherInput = select.closest('td').querySelector('.variant-size-other-edit');
+  if (select.value === 'OTHER') {
+    otherInput.style.display = 'block';
+    otherInput.focus();
+  } else {
+    otherInput.style.display = 'none';
+    otherInput.value = '';
+  }
+};
+
+window.addEditVariantRow = function() {
+  const tbody = document.getElementById('editVariantsBody');
+  const row = document.createElement('tr');
+  row.className = 'variant-row';
+  row.innerHTML = `
+    <td>
+      <select class="variant-size-edit" onchange="toggleEditVariantOther(this)">
+        <optgroup label="🍺 Beer">
+          <option value="200ml">200ml</option>
+          <option value="250ml">250ml</option>
+          <option value="300ml">300ml</option>
+          <option value="330ml">330ml</option>
+          <option value="350ml">350ml</option>
+          <option value="500ml">500ml</option>
+          <option value="700ml">700ml</option>
+          <option value="750ml">750ml</option>
+          <option value="1L">1L</option>
+          <option value="1.5L">1.5L</option>
+          <option value="2L">2L</option>
+          <option value="5L">5L</option>
+          <option value="Can">🥫 Can</option>
+          <option value="Bottle">🍾 Bottle</option>
+          <option value="12pack">📦 12 Pack</option>
+          <option value="24pack">📦 24 Pack</option>
+        </optgroup>
+        <optgroup label="🥃 Spirits & Brandy">
+          <option value="250ml">250ml</option>
+          <option value="350ml">350ml</option>
+          <option value="500ml">500ml</option>
+          <option value="700ml">700ml</option>
+          <option value="750ml">750ml</option>
+          <option value="1L">1L</option>
+          <option value="1.5L">1.5L</option>
+        </optgroup>
+        <optgroup label="🧃 Juice & Soda">
+          <option value="250ml">250ml</option>
+          <option value="330ml">330ml</option>
+          <option value="350ml">350ml</option>
+          <option value="400ml">400ml</option>
+          <option value="500ml">500ml</option>
+          <option value="700ml">700ml</option>
+          <option value="1L">1L</option>
+          <option value="1.25L">1.25L</option>
+          <option value="1.5L">1.5L</option>
+          <option value="2L">2L</option>
+        </optgroup>
+        <optgroup label="🚬 Cigar & Accessory">
+          <option value="Unit">📐 Unit</option>
+          <option value="Packet">📦 Packet</option>
+          <option value="Box">📦 Box</option>
+          <option value="Set">🎯 Set</option>
+          <option value="Carton">📦 Carton</option>
+        </optgroup>
+        <option value="OTHER">✏️ Other (Type custom)</option>
+      </select>
+      <input type="text" class="variant-size-other-edit" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">
+    </td>
+    <td><input type="number" class="variant-price-edit" placeholder="Price" step="1"></td>
+    <td><input type="number" class="variant-discount-edit" placeholder="0" min="0" max="100" value="0" step="1"></td>
+    <td><input type="text" class="variant-flavour-edit" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
+    <td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>
+  `;
+  tbody.appendChild(row);
+};
+
+window.removeEditVariantRow = function(btn) {
+  const rows = document.querySelectorAll('#editVariantsBody .variant-row');
+  if (rows.length > 1) {
+    btn.closest('.variant-row').remove();
+  } else {
+    showToast('❌ You need at least one variant', 'error');
+  }
+};
+
+window.saveProductEdit = async function() {
+  const id = document.getElementById('editProductId').value;
+  const name = document.getElementById('editName').value.trim();
+  const category = document.getElementById('editCategory').value;
+  const badge = document.getElementById('editBadge').value;
+  const image = document.getElementById('editImage').value.trim();
+  const description = document.getElementById('editDesc').value.trim();
+  const isTrending = document.getElementById('editTrending').checked;
+  const isNew = document.getElementById('editNew').checked;
+  const rating = parseFloat(document.getElementById('editRating').value);
+  
+  if (!name) {
+    showToast('❌ Please enter a product name', 'error');
+    return;
+  }
+  
+  const rows = document.querySelectorAll('#editVariantsBody .variant-row');
+  const variants = [];
+  
+  rows.forEach(row => {
+    const sizeSelect = row.querySelector('.variant-size-edit');
+    const sizeOther = row.querySelector('.variant-size-other-edit');
+    const price = parseFloat(row.querySelector('.variant-price-edit').value);
+    const discount = parseInt(row.querySelector('.variant-discount-edit').value) || 0;
+    const flavour = row.querySelector('.variant-flavour-edit').value.trim();
+    
+    let size = sizeSelect.value;
+    if (size === 'OTHER') {
+      size = sizeOther ? sizeOther.value.trim() : '';
+    }
+    
+    if (size && price && price > 0) {
+      variants.push({ size, price, discount, flavour });
+    }
+  });
+  
+  if (variants.length === 0) {
+    showToast('❌ Please add at least one valid variant', 'error');
+    return;
+  }
+  
+  const productData = {
+    name,
+    category,
+    badge: badge || '',
+    image: image || '',
+    description: description || '',
+    isTrending,
+    isNew,
+    rating,
+    variants
+  };
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/db/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(productData)
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Product updated successfully!', 'success');
+      closeEditModal();
+      loadProducts();
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to update product'), 'error');
+    }
+  } catch (error) {
+    console.error('Error updating product:', error);
+    showToast('❌ Network error. Please try again.', 'error');
+  }
+};
+
+// ==================== DELETE PRODUCT ====================
+window.deleteProduct = async function(productId) {
+  if (!confirm('Are you sure you want to delete this product? This cannot be undone.')) return;
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/db/products/${productId}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Product deleted successfully!', 'success');
+      loadProducts();
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to delete product'), 'error');
+    }
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    showToast('❌ Network error. Please try again.', 'error');
+  }
+};
+
+// ==================== LOAD ORDERS ====================
+let allOrders = [];
+
+async function loadOrders() {
+  const list = document.getElementById('ordersList');
+  if (!list) return;
+  
+  list.innerHTML = '<div class="empty-state"><i class="ph ph-spinner"></i><p>Loading orders...</p></div>';
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/db/orders`);
+    const data = await response.json();
+    
+    if (data.success && data.orders) {
+      allOrders = data.orders;
+      applyFilters();
+    } else {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>';
+    }
+  } catch (error) {
+    console.error('Error loading orders:', error);
+    list.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Failed to load orders. <button class="btn btn-sm" onclick="loadOrders()">Retry</button></p></div>';
+  }
+}
+
+window.applyFilters = function() {
+  const dateFilter = document.getElementById('dateFilter').value;
+  const statusFilter = document.getElementById('statusFilter').value;
+  
+  let filtered = [...allOrders];
+  
+  if (dateFilter !== 'all') {
+    const now = new Date();
+    const days = parseInt(dateFilter);
+    const cutoff = new Date(now);
+    if (dateFilter === '24h') cutoff.setHours(now.getHours() - 24);
+    else if (dateFilter === '7d') cutoff.setDate(now.getDate() - 7);
+    else if (dateFilter === '30d') cutoff.setDate(now.getDate() - 30);
+    else if (dateFilter === '90d') cutoff.setDate(now.getDate() - 90);
+    else if (dateFilter === '1y') cutoff.setFullYear(now.getFullYear() - 1);
+    
+    filtered = filtered.filter(o => new Date(o.created_at) >= cutoff);
+  }
+  
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter(o => o.status === statusFilter);
+  }
+  
+  filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  
+  renderOrders(filtered);
+};
+
+function renderOrders(orders) {
+  const list = document.getElementById('ordersList');
+  const countDisplay = document.getElementById('orderCountDisplay');
+  
+  if (!list) return;
+  
+  if (!orders || orders.length === 0) {
+    list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders match your filters</p></div>';
+    if (countDisplay) countDisplay.textContent = '0 orders';
+    return;
+  }
+  
+  if (countDisplay) countDisplay.textContent = `${orders.length} orders`;
+  
+  list.innerHTML = orders.map(o => {
+    const items = o.items || [];
+    const statusClass = o.status === 'pending' ? 'status-pending' : 
+                        o.status === 'paid' ? 'status-paid' : 
+                        o.status === 'delivered' ? 'status-delivered' : '';
+    const statusText = o.status === 'pending' ? '⏳ Pending' :
+                       o.status === 'paid' ? '✅ Paid' :
+                       o.status === 'delivered' ? '🚚 Delivered' : o.status || 'Unknown';
+    
+    return `
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <div class="order-id">#${o.order_number || o._id}</div>
+            <div class="order-customer">${o.customer_name || 'Guest'}</div>
+            <div class="order-meta-row">
+              <span class="order-meta-chip"><i class="ph ph-phone"></i> ${o.phone || 'N/A'}</span>
+              <span class="order-meta-chip"><i class="ph ph-envelope"></i> ${o.customer_email || 'N/A'}</span>
+              <span class="order-meta-chip"><i class="ph ph-calendar"></i> ${new Date(o.created_at).toLocaleDateString()} ${new Date(o.created_at).toLocaleTimeString()}</span>
+            </div>
+          </div>
+          <div class="order-header-right">
+            <span class="order-status ${statusClass}">${statusText}</span>
+            <div class="contact-buttons">
+              ${o.phone ? `<a href="tel:${o.phone}" class="btn btn-xs btn-call"><i class="ph ph-phone"></i> Call</a>` : ''}
+              ${o.phone ? `<a href="https://wa.me/254${o.phone.replace(/\D/g, '')}" target="_blank" class="btn btn-xs btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="order-items">
+          ${items.map(item => `
+            <div class="order-item">
+              <div class="order-item-details">
+                <div class="order-item-name">${item.product_name || item.name || 'Product'}</div>
+                ${item.size ? `<div class="order-item-size">${item.size}</div>` : ''}
+                <div class="order-item-qty">Qty: ${item.quantity || item.qty || 1}</div>
+              </div>
+              <div class="order-item-price">KES ${(item.price || 0).toLocaleString()}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="order-footer">
+          <div class="order-total">KES ${(o.total || 0).toLocaleString()}</div>
+          <div class="order-actions">
+            ${o.status !== 'delivered' ? `
+              <button class="btn btn-green btn-sm" onclick="markDelivered('${o._id}')"><i class="ph ph-check-circle"></i> Mark Delivered</button>
+            ` : `
+              <span class="completed-chip"><i class="ph ph-check-circle"></i> Completed</span>
+            `}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.markDelivered = async function(orderId) {
+  if (!confirm('Mark this order as delivered?')) return;
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/db/orders/${orderId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: 'delivered' })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Order marked as delivered!', 'success');
+      loadOrders();
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to update order'), 'error');
+    }
+  } catch (error) {
+    console.error('Error updating order:', error);
+    showToast('❌ Network error. Please try again.', 'error');
+  }
+};
+
+window.refreshOrders = function() {
+  loadOrders();
+  showToast('🔄 Refreshing orders...', '');
+};
+
+// ==================== LOAD ANALYTICS ====================
+async function loadAnalytics() {
+  try {
+    const productsRes = await adminFetch(`${API_BASE}/api/db/products`);
+    const productsData = await productsRes.json();
+    
+    const ordersRes = await adminFetch(`${API_BASE}/api/db/orders`);
+    const ordersData = await ordersRes.json();
+    
+    const products = productsData.success ? productsData.products : [];
+    const orders = ordersData.success ? ordersData.orders : [];
+    
+    const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+    const totalOrders = orders.length;
+    const totalProducts = products.length;
+    const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+    
+    document.getElementById('totalRevenue').textContent = `KES ${totalRevenue.toLocaleString()}`;
+    document.getElementById('totalOrders').textContent = totalOrders;
+    document.getElementById('totalProducts').textContent = totalProducts;
+    document.getElementById('avgOrder').textContent = `KES ${Math.round(avgOrder).toLocaleString()}`;
+    
+    const categoryCount = {};
+    products.forEach(p => {
+      const cat = p.category || 'Uncategorized';
+      categoryCount[cat] = (categoryCount[cat] || 0) + 1;
+    });
+    
+    const breakdown = document.getElementById('categoryBreakdown');
+    if (breakdown) {
+      breakdown.innerHTML = Object.entries(categoryCount)
+        .sort((a, b) => b[1] - a[1])
+        .map(([cat, count]) => `
+          <div class="stat-card">
+            <h4>${cat}</h4>
+            <div class="value">${count}</div>
+            <div class="sub">${Math.round(count/totalProducts*100)}% of products</div>
+          </div>
+        `).join('');
+    }
+  } catch (error) {
+    console.error('Error loading analytics:', error);
+  }
+}
+
+// ==================== SETTINGS ====================
+async function loadSettings() {
+  try {
+    const settingsRes = await adminFetch(`${API_BASE}/api/delivery-settings`);
+    const settingsData = await settingsRes.json();
+    
+    if (settingsData.success && settingsData.settings) {
+      const s = settingsData.settings;
+      document.getElementById('deliveryFee').value = s.delivery_fee || 150;
+      document.getElementById('freeThreshold').value = s.free_delivery_threshold || 3000;
+      document.getElementById('deliveryEnabled').checked = s.delivery_enabled !== false;
+    }
+    
+    await loadDeliveryZones();
+    await loadCategories();
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+}
+
+// ==================== PASSWORD MANAGEMENT ====================
+window.updatePasswords = async function() {
+  const adminPass = document.getElementById('newAdminPassword').value.trim();
+  const cashierPass = document.getElementById('newCashierPassword').value.trim();
+  const messageEl = document.getElementById('passwordMessage');
+  
+  if (!adminPass && !cashierPass) {
+    messageEl.innerHTML = '❌ Please enter at least one password to update';
+    messageEl.style.color = 'red';
+    return;
+  }
+  
+  if (adminPass && adminPass.length < 6) {
+    messageEl.innerHTML = '❌ Admin password must be at least 6 characters';
+    messageEl.style.color = 'red';
+    return;
+  }
+  
+  if (cashierPass && cashierPass.length < 6) {
+    messageEl.innerHTML = '❌ Cashier password must be at least 6 characters';
+    messageEl.style.color = 'red';
+    return;
+  }
+  
+  const btn = document.getElementById('updatePasswordsBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Updating...';
+  messageEl.innerHTML = '';
+  
+  try {
+    const payload = {};
+    if (adminPass) payload.adminPassword = adminPass;
+    if (cashierPass) payload.cashierPassword = cashierPass;
+    
+    const response = await adminFetch(`${API_BASE}/api/admin/update-passwords`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      messageEl.innerHTML = '✅ Passwords updated successfully!';
+      messageEl.style.color = 'green';
+      document.getElementById('newAdminPassword').value = '';
+      document.getElementById('newCashierPassword').value = '';
+      showToast('✅ Passwords updated!', 'success');
+    } else {
+      messageEl.innerHTML = '❌ ' + (data.message || 'Failed to update passwords');
+      messageEl.style.color = 'red';
+    }
+  } catch (error) {
+    console.error('Error updating passwords:', error);
+    messageEl.innerHTML = '❌ Network error. Please try again.';
+    messageEl.style.color = 'red';
+  }
+  
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ph ph-floppy-disk"></i> Save Passwords';
+};
+
+// ==================== DELIVERY SETTINGS ====================
+window.saveDeliverySettings = async function() {
+  const deliveryFee = parseInt(document.getElementById('deliveryFee').value) || 150;
+  const freeThreshold = parseInt(document.getElementById('freeThreshold').value) || 3000;
+  const deliveryEnabled = document.getElementById('deliveryEnabled').checked;
+  const messageEl = document.getElementById('deliveryMessage');
+  
+  messageEl.innerHTML = '<span class="loading-spinner"></span> Saving...';
+  messageEl.style.color = 'var(--muted)';
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/delivery-settings`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        delivery_fee: deliveryFee,
+        free_delivery_threshold: freeThreshold,
+        delivery_enabled: deliveryEnabled
+      })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      messageEl.innerHTML = '✅ Delivery settings saved successfully!';
+      messageEl.style.color = 'green';
+      showToast('✅ Delivery settings saved!', 'success');
+    } else {
+      messageEl.innerHTML = '❌ ' + (data.message || 'Failed to save settings');
+      messageEl.style.color = 'red';
+    }
+  } catch (error) {
+    console.error('Error saving delivery settings:', error);
+    messageEl.innerHTML = '❌ Network error. Please try again.';
+    messageEl.style.color = 'red';
+  }
+};
+
+// ==================== DELIVERY ZONES ====================
+let zones = [];
+
+async function loadDeliveryZones() {
+  try {
+    const response = await adminFetch(`${API_BASE}/api/delivery-zones`);
+    const data = await response.json();
+    
+    if (data.success && data.zones) {
+      zones = data.zones;
+    } else {
+      zones = [
+        { name: 'Dagoretti', fee: 0 },
+        { name: 'Karen', fee: 50 },
+        { name: 'Westlands', fee: 100 },
+        { name: 'CBD', fee: 80 },
+        { name: 'Upperhill', fee: 70 },
+        { name: 'Kilimani', fee: 60 },
+        { name: 'Lavington', fee: 80 },
+        { name: 'Kileleshwa', fee: 70 },
+        { name: 'Rongai', fee: 120 },
+        { name: 'Ngong', fee: 150 },
+        { name: 'South B', fee: 100 },
+        { name: 'Langata', fee: 130 },
+        { name: 'Waithaka', fee: 140 },
+        { name: 'Kikuyu', fee: 160 },
+        { name: 'Runda', fee: 180 }
+      ];
+    }
+    renderDeliveryZones();
+  } catch (error) {
+    console.error('Error loading delivery zones:', error);
+    zones = [
+      { name: 'Dagoretti', fee: 0 },
+      { name: 'Karen', fee: 50 },
+      { name: 'Westlands', fee: 100 },
+      { name: 'CBD', fee: 80 }
+    ];
+    renderDeliveryZones();
+  }
+}
+
+function renderDeliveryZones() {
+  const tbody = document.getElementById('deliveryZonesBody');
+  if (!tbody) return;
+  
+  tbody.innerHTML = zones.map((z, i) => `
+    <tr class="zone-row">
+      <td><input type="text" class="zone-name" value="${z.name}" placeholder="Area name"></td>
+      <td><input type="number" class="zone-fee" value="${z.fee}" placeholder="Fee" step="5"></td>
+      <td><button class="zone-remove-btn" onclick="removeZoneRow(${i})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+window.addDeliveryZone = function() {
+  zones.push({ name: '', fee: 0 });
+  renderDeliveryZones();
+};
+
+window.removeZoneRow = function(index) {
+  zones.splice(index, 1);
+  renderDeliveryZones();
+};
+
+window.saveDeliveryZones = async function() {
+  const rows = document.querySelectorAll('#deliveryZonesBody .zone-row');
+  const newZones = [];
+  
+  rows.forEach(row => {
+    const name = row.querySelector('.zone-name').value.trim();
+    const fee = parseInt(row.querySelector('.zone-fee').value) || 0;
+    if (name) {
+      newZones.push({ name, fee });
+    }
+  });
+  
+  if (newZones.length === 0) {
+    showToast('❌ Please add at least one zone', 'error');
+    return;
+  }
+  
+  const messageEl = document.getElementById('zoneMessage');
+  messageEl.innerHTML = '<span class="loading-spinner"></span> Saving zones...';
+  messageEl.style.color = 'var(--muted)';
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/delivery-zones`, {
+      method: 'PUT',
+      body: JSON.stringify({ zones: newZones })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      zones = newZones;
+      messageEl.innerHTML = '✅ Delivery zones saved successfully!';
+      messageEl.style.color = 'green';
+      showToast('✅ Zones saved!', 'success');
+      renderDeliveryZones();
+    } else {
+      messageEl.innerHTML = '❌ ' + (data.message || 'Failed to save zones');
+      messageEl.style.color = 'red';
+    }
+  } catch (error) {
+    console.error('Error saving delivery zones:', error);
+    messageEl.innerHTML = '❌ Network error. Please try again.';
+    messageEl.style.color = 'red';
+  }
+};
+
+// ==================== CATEGORY MANAGEMENT ====================
+let categories = ['beer', 'brandy', 'bourbon', 'rum', 'spirits', 'liqueur', 'juice', 'soda', 'water', 'energy', 'cigar', 'accessory'];
+let customCategories = [];
+
+async function loadCategories() {
+  try {
+    const response = await adminFetch(`${API_BASE}/api/categories`);
+    const data = await response.json();
+    
+    if (data.success && data.categories) {
+      const allCats = data.categories;
+      categories = allCats.filter(c => !c.isCustom).map(c => c.key);
+      customCategories = allCats.filter(c => c.isCustom);
+      renderCategories();
+    } else {
+      renderCategories();
+    }
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    renderCategories();
+  }
+}
+
+function renderCategories() {
+  const list = document.getElementById('categoryList');
+  if (!list) return;
+  
+  const presetCats = categories.map(c => ({
+    key: c,
+    label: c.charAt(0).toUpperCase() + c.slice(1),
+    isPreset: true
+  }));
+  
+  const customCats = customCategories.map(c => ({
+    key: c,
+    label: c.charAt(0).toUpperCase() + c.slice(1),
+    isPreset: false
+  }));
+  
+  const allCats = [...presetCats, ...customCats];
+  
+  list.innerHTML = allCats.map(c => `
+    <span class="category-badge cat-${c.key}" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:50px;font-size:12px;font-weight:600;">
+      ${c.label}
+      ${!c.isPreset ? `<button onclick="deleteCategory('${c.key}')" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:12px;padding:0;margin-left:4px;">✕</button>` : ''}
+    </span>
+  `).join('');
+}
+
+window.addCategory = async function() {
+  const name = document.getElementById('newCategoryName').value.trim();
+  let key = document.getElementById('newCategoryKey').value.trim().toLowerCase();
+  const messageEl = document.getElementById('categoryMessage');
+  
+  if (!name) {
+    messageEl.innerHTML = '❌ Please enter a category name';
+    messageEl.style.color = 'red';
+    return;
+  }
+  
+  if (!key) {
+    key = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  }
+  
+  if (categories.includes(key) || customCategories.includes(key)) {
+    messageEl.innerHTML = '❌ Category already exists';
+    messageEl.style.color = 'red';
+    return;
+  }
+  
+  messageEl.innerHTML = '<span class="loading-spinner"></span> Adding category...';
+  messageEl.style.color = 'var(--muted)';
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/categories`, {
+      method: 'POST',
+      body: JSON.stringify({ key, name: key })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      customCategories.push(key);
+      document.getElementById('newCategoryName').value = '';
+      document.getElementById('newCategoryKey').value = '';
+      messageEl.innerHTML = '✅ Category added successfully!';
+      messageEl.style.color = 'green';
+      renderCategories();
+      showToast('✅ Category added!', 'success');
+    } else {
+      messageEl.innerHTML = '❌ ' + (data.message || 'Failed to add category');
+      messageEl.style.color = 'red';
+    }
+  } catch (error) {
+    console.error('Error adding category:', error);
+    messageEl.innerHTML = '❌ Network error. Please try again.';
+    messageEl.style.color = 'red';
+  }
+};
+
+window.deleteCategory = async function(key) {
+  if (!confirm(`Delete category "${key}"? This will not delete products in this category.`)) return;
+  
+  try {
+    const response = await adminFetch(`${API_BASE}/api/categories/${key}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      customCategories = customCategories.filter(c => c !== key);
+      renderCategories();
+      showToast('✅ Category deleted!', 'success');
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to delete category'), 'error');
+    }
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    showToast('❌ Network error. Please try again.', 'error');
+  }
+};
+
+// ==================== BULK IMPORT ====================
+window.bulkImport = async function() {
+  const text = document.getElementById('bulkCsvInput').value.trim();
+  if (!text) {
+    showToast('❌ Please paste CSV data', 'error');
+    return;
+  }
+  
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines.length < 2) {
+    showToast('❌ CSV needs at least a header row and one data row', 'error');
+    return;
+  }
+  
+  const progress = document.getElementById('bulkProgress');
+  progress.style.display = 'block';
+  progress.innerHTML = '📊 Processing...';
+  
+  try {
+    const headers = lines[0].split(',').map(h => h.trim());
+    const dataRows = lines.slice(1);
+    const products = [];
+    
+    dataRows.forEach((row, idx) => {
+      const cols = row.split(',').map(c => c.trim());
+      const product = {};
+      headers.forEach((h, i) => {
+        product[h] = cols[i] || '';
+      });
+      products.push(product);
+    });
+    
+    progress.innerHTML = `📊 Found ${products.length} products. Importing...`;
+    
+    let imported = 0;
+    let failed = 0;
+    
+    for (const p of products) {
+      try {
+        const variants = [];
+        let i = 1;
+        while (p[`Flavour${i}`] || p[`Size${i}`] || p[`Price${i}`]) {
+          const flavour = p[`Flavour${i}`] || '';
+          const size = p[`Size${i}`] || '';
+          const price = parseFloat(p[`Price${i}`]) || 0;
+          const discount = parseInt(p[`Discount${i}`]) || 0;
+          if (size && price > 0) {
+            variants.push({ size, price, discount, flavour });
+          }
+          i++;
+        }
+        
+        if (variants.length === 0) {
+          const flavour = p.Flavour || '';
+          const size = p.Size || '';
+          const price = parseFloat(p.Price) || 0;
+          const discount = parseInt(p.Discount) || 0;
+          if (size && price > 0) {
+            variants.push({ size, price, discount, flavour });
+          }
+        }
+        
+        if (variants.length === 0) {
+          failed++;
+          continue;
+        }
+        
+        const productData = {
+          name: p.Name || p.name || 'Unnamed Product',
+          category: p.Category || p.category || 'beer',
+          badge: p.Badge || p.badge || '',
+          image: p.Image || p.image || '',
+          description: p.Description || p.description || '',
+          isTrending: (p.IsTrending || p.isTrending || '').toLowerCase() === 'true',
+          isNew: (p.IsNew || p.isNew || '').toLowerCase() === 'true',
+          rating: parseFloat(p.Rating || p.rating || 4),
+          variants: variants
+        };
+        
+        const response = await adminFetch(`${API_BASE}/api/db/products`, {
+          method: 'POST',
+          body: JSON.stringify(productData)
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          imported++;
+        } else {
+          failed++;
+        }
+      } catch (err) {
+        failed++;
+      }
+      
+      progress.innerHTML = `📊 Imported ${imported + failed}/${products.length}... (${imported} success, ${failed} failed)`;
+    }
+    
+    progress.innerHTML = `✅ Import complete! ${imported} imported, ${failed} failed.`;
+    if (imported > 0) {
+      showToast(`✅ Imported ${imported} products!`, 'success');
+      loadProducts();
+    } else {
+      showToast('❌ No products were imported. Check your CSV format.', 'error');
+    }
+  } catch (error) {
+    console.error('Bulk import error:', error);
+    progress.innerHTML = '❌ Import failed. Check your CSV format.';
+    showToast('❌ Import failed', 'error');
+  }
+};
+
+window.loadCsvFile = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('bulkCsvInput').value = e.target.result;
+    showToast('✅ CSV loaded! Review and click Import.', 'success');
+  };
+  reader.readAsText(file);
+};
+
+// ==================== INITIALIZE ON LOAD ====================
+document.addEventListener('DOMContentLoaded', function() {
+  const token = getAdminToken();
+  if (token) {
+    initializeAdmin();
+  } else {
+    document.getElementById('adminLoginModal').style.display = 'flex';
+    document.getElementById('productsTab').style.display = 'none';
+    document.getElementById('ordersTab').style.display = 'none';
+    document.getElementById('analyticsTab').style.display = 'none';
+    document.getElementById('settingsTab').style.display = 'none';
+  }
+});
+
+// ==================== KEYBOARD SHORTCUTS ====================
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeEditModal();
+    hideToast();
+  }
+});
+
+console.log('🍾 LiquorBelle Admin — Fully Loaded');
+console.log('🔑 API Base:', API_BASE);
+</script>
 
 </body>
 </html>
