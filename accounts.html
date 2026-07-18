@@ -791,20 +791,10 @@ a{color:inherit;text-decoration:none;}
           <span class="feature-label">My Orders</span>
           <span class="feature-desc">View order history</span>
         </a>
-        <a href="https://wa.me/254748894443?text=Hi%20LiquorBelle%2C%20I%20have%20a%20question%20about%20my%20account" target="_blank" class="feature-card card-green">
+        <a href="https://wa.me/254748894443?text=Hi%20LiquorBelle%2C%20I%20have%20a%20question" target="_blank" class="feature-card card-green">
           <i class="ph ph-whatsapp-logo"></i>
           <span class="feature-label">WhatsApp Support</span>
           <span class="feature-desc">Chat with us 24/7</span>
-        </a>
-        <a href="#" onclick="showWholesaleForm()" class="feature-card card-gold">
-          <i class="ph ph-chart-bar"></i>
-          <span class="feature-label">Wholesale Quote</span>
-          <span class="feature-desc">Bulk pricing request</span>
-        </a>
-        <a href="https://wa.me/254748894443?text=I%20want%20to%20place%20an%20order" target="_blank" class="feature-card card-green">
-          <i class="ph ph-shopping-cart"></i>
-          <span class="feature-label">Order via WhatsApp</span>
-          <span class="feature-desc">Quick order placement</span>
         </a>
         <a href="mailto:timblax0@gmail.com" class="feature-card card-gold">
           <i class="ph ph-envelope"></i>
@@ -1011,36 +1001,6 @@ a{color:inherit;text-decoration:none;}
 </div>
 <div id="toast"></div>
 
-<!-- ===== WHOLESALE QUOTE MODAL ===== -->
-<div class="modal-overlay" id="wholesaleModal" style="display:none;">
-  <div class="modal-card">
-    <h3><i class="ph ph-chart-bar" style="color:var(--gold);"></i> Wholesale Quote</h3>
-    <p>Request bulk pricing for your bar, restaurant, or event.</p>
-    <form id="wholesaleForm" onsubmit="submitWholesale(event)">
-      <div class="form-group" style="margin-bottom:12px;">
-        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Full Name *</label>
-        <input type="text" id="wholesaleName" required style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;">
-      </div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Phone Number *</label>
-        <input type="tel" id="wholesalePhone" required style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;">
-      </div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Business / Event Name</label>
-        <input type="text" id="wholesaleBusiness" style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;">
-      </div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Products & Quantities *</label>
-        <textarea id="wholesaleProducts" rows="3" placeholder="e.g. 10 cases of Guinness, 5 bottles of Jameson..." required style="width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;"></textarea>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:8px;">
-        <button type="submit" style="flex:1;padding:10px;background:var(--gold);color:white;border:none;border-radius:50px;font-weight:700;cursor:pointer;">Send Request</button>
-        <button type="button" onclick="closeWholesaleModal()" style="padding:10px 20px;background:var(--bg2);border:none;border-radius:50px;font-weight:600;cursor:pointer;">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <!-- ===== SUPPORT MODAL ===== -->
 <div class="modal-overlay" id="supportModal" style="display:none;">
   <div class="modal-card">
@@ -1069,7 +1029,7 @@ a{color:inherit;text-decoration:none;}
 </div>
 
 <!-- ============================================================
-     JAVASCRIPT
+     JAVASCRIPT - ACCOUNT PAGE (DYNAMIC & FAST)
      ============================================================ -->
 <script>
 // ============================================================
@@ -1077,93 +1037,100 @@ a{color:inherit;text-decoration:none;}
 // ============================================================
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const CART_KEY = 'liquorbelle_cart';
-
-// ============================================================
-// MODAL FUNCTIONS
-// ============================================================
-
-function showWholesaleForm() {
-  document.getElementById('wholesaleModal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeWholesaleModal() {
-  document.getElementById('wholesaleModal').style.display = 'none';
-  document.body.style.overflow = '';
-}
-
-function showSupportForm() {
-  document.getElementById('supportModal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeSupportModal() {
-  document.getElementById('supportModal').style.display = 'none';
-  document.body.style.overflow = '';
-}
-
-function submitWholesale(e) {
-  e.preventDefault();
-  const name = document.getElementById('wholesaleName').value.trim();
-  const phone = document.getElementById('wholesalePhone').value.trim();
-  const business = document.getElementById('wholesaleBusiness').value.trim();
-  const products = document.getElementById('wholesaleProducts').value.trim();
-
-  if (!name || !phone || !products) {
-    toast('Please fill in all required fields');
-    return;
-  }
-
-  const message = `🧾 *Wholesale Quote Request*\n\n` +
-    `*Name:* ${name}\n` +
-    `*Phone:* ${phone}\n` +
-    `*Business/Event:* ${business || 'N/A'}\n` +
-    `*Products & Quantities:*\n${products}`;
-
-  window.open(`https://wa.me/254748894443?text=${encodeURIComponent(message)}`, '_blank');
-  closeWholesaleModal();
-  toast('✅ Quote request sent via WhatsApp');
-}
+const TOAST_DURATION = 3000;
 
 // ============================================================
 // STATE
 // ============================================================
-let regOtpTimer = null;
-let forgotOtpTimer = null;
-let regOtpCountdown = 0;
-let forgotOtpCountdown = 0;
-let currentUser = null;
-let isForgotPinMode = false;
+let state = {
+  regOtpTimer: null,
+  forgotOtpTimer: null,
+  regOtpCountdown: 0,
+  forgotOtpCountdown: 0,
+  currentUser: null,
+  isForgotPinMode: false,
+  isLoading: false
+};
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// ============================================================
+// TOAST SYSTEM
+// ============================================================
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = 'toast';
+  if (type === 'error') t.classList.add('error');
+  if (type === 'success') t.classList.add('success');
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, TOAST_DURATION);
+}
+
+// ============================================================
+// STATUS SYSTEM
+// ============================================================
+function showStatus(msg, type) {
+  const el = document.getElementById('authStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'auth-status ' + (type || 'info');
+  el.style.display = 'block';
+}
+
+function hideStatus() {
+  const el = document.getElementById('authStatus');
+  if (el) { el.className = 'auth-status'; el.style.display = 'none'; }
+}
+
+// ============================================================
+// LOADING STATE
+// ============================================================
+function setLoading(btn, loading) {
+  if (!btn) return;
+  if (loading) {
+    btn.disabled = true;
+    btn._originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span> ' + (btn.dataset.loadingText || 'Processing...');
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = btn._originalText || btn.innerHTML;
+  }
+}
 
 // ============================================================
 // VALIDATION FUNCTIONS
 // ============================================================
-
-function validatePhoneNumber(phone) {
-  const cleaned = phone.replace(/\D/g, '');
-  return cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'));
-}
-
-function validateName(name) {
-  return /^[a-zA-Z\s\-']+$/.test(name.trim()) && name.trim().length >= 2;
-}
-
-function validateEmail(email) {
-  return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim());
-}
-
-function validateOtp(otp) {
-  return /^\d{6}$/.test(otp.trim());
-}
-
-function validatePin(pin) {
-  return /^\d{4}$/.test(pin);
-}
+const validators = {
+  phone: (phone) => {
+    const cleaned = phone.replace(/\D/g, '');
+    return cleaned.length >= 10 && cleaned.length <= 15;
+  },
+  name: (name) => /^[a-zA-Z\s\-']+$/.test(name.trim()) && name.trim().length >= 2,
+  email: (email) => /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim()),
+  otp: (otp) => /^\d{6}$/.test(otp.trim()),
+  pin: (pin) => /^\d{4}$/.test(pin)
+};
 
 // ============================================================
 // PIN INPUT HELPERS
 // ============================================================
-
 function getPinValue(prefix) {
   let pin = '';
   for (let i = 1; i <= 4; i++) {
@@ -1171,14 +1138,6 @@ function getPinValue(prefix) {
     if (input) pin += input.value || '';
   }
   return pin;
-}
-
-function setPinValue(prefix, value) {
-  const digits = value.toString().split('');
-  for (let i = 1; i <= 4; i++) {
-    const input = document.getElementById(prefix + 'Pin' + i);
-    if (input) input.value = digits[i-1] || '';
-  }
 }
 
 function setupPinInputs(prefix) {
@@ -1190,23 +1149,23 @@ function setupPinInputs(prefix) {
   inputs.forEach((input, index) => {
     if (!input) return;
 
-    input.addEventListener('input', function(e) {
-      this.value = this.value.replace(/\D/g, '');
-      if (this.value.length === 1 && index < 3) {
-        inputs[index + 1].focus();
+    const handleInput = () => {
+      input.value = input.value.replace(/\D/g, '');
+      if (input.value.length === 1 && index < 3) {
+        inputs[index + 1]?.focus();
       }
       validatePinInput(prefix);
-    });
+    };
 
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Backspace' && this.value === '' && index > 0) {
-        inputs[index - 1].focus();
+    const handleKeydown = (e) => {
+      if (e.key === 'Backspace' && input.value === '' && index > 0) {
+        inputs[index - 1]?.focus();
       }
-      if (e.key === 'ArrowLeft' && index > 0) inputs[index - 1].focus();
-      if (e.key === 'ArrowRight' && index < 3) inputs[index + 1].focus();
-    });
+      if (e.key === 'ArrowLeft' && index > 0) inputs[index - 1]?.focus();
+      if (e.key === 'ArrowRight' && index < 3) inputs[index + 1]?.focus();
+    };
 
-    input.addEventListener('paste', function(e) {
+    const handlePaste = (e) => {
       e.preventDefault();
       const paste = (e.clipboardData || window.clipboardData).getData('text');
       const digits = paste.replace(/\D/g, '').slice(0, 4);
@@ -1215,10 +1174,14 @@ function setupPinInputs(prefix) {
       }
       if (digits.length > 0) {
         const nextIndex = Math.min(digits.length, 3);
-        if (inputs[nextIndex]) inputs[nextIndex].focus();
+        inputs[nextIndex]?.focus();
       }
       validatePinInput(prefix);
-    });
+    };
+
+    input.addEventListener('input', handleInput);
+    input.addEventListener('keydown', handleKeydown);
+    input.addEventListener('paste', handlePaste);
   });
 }
 
@@ -1232,16 +1195,20 @@ function validatePinInput(prefix) {
 
   const allFilled = inputs.every(inp => inp && inp.value.length === 1);
 
-  if (allFilled && !validatePin(pin)) {
-    inputs.forEach(inp => { if (inp) { inp.classList.add('error'); inp.classList.remove('valid'); } });
+  inputs.forEach(inp => {
+    if (!inp) return;
+    inp.classList.remove('error', 'valid');
+  });
+
+  if (allFilled && !validators.pin(pin)) {
+    inputs.forEach(inp => inp?.classList.add('error'));
     if (errorEl) errorEl.classList.add('show');
     return false;
-  } else if (allFilled && validatePin(pin)) {
-    inputs.forEach(inp => { if (inp) { inp.classList.remove('error'); inp.classList.add('valid'); } });
+  } else if (allFilled && validators.pin(pin)) {
+    inputs.forEach(inp => inp?.classList.add('valid'));
     if (errorEl) errorEl.classList.remove('show');
     return true;
   } else {
-    inputs.forEach(inp => { if (inp) { inp.classList.remove('error', 'valid'); } });
     if (errorEl) errorEl.classList.remove('show');
     return false;
   }
@@ -1259,166 +1226,93 @@ function togglePinVisibility(prefix) {
 }
 
 // ============================================================
-// INPUT VALIDATION (Real-time)
+// REAL-TIME INPUT VALIDATION
 // ============================================================
-
-function validatePhoneInput(input) {
-  const errorEl = input.parentElement.querySelector('.input-error');
-  input.value = input.value.replace(/\D/g, '');
-
-  if (input.value.length > 0 && !validatePhoneNumber(input.value)) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
-  } else if (input.value.length > 0 && validatePhoneNumber(input.value)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
+const validateField = {
+  phone: (input) => {
+    const errorEl = input.parentElement.querySelector('.input-error');
+    input.value = input.value.replace(/\D/g, '');
+    const isValid = input.value.length > 0 && validators.phone(input.value);
+    input.classList.toggle('error', input.value.length > 0 && !isValid);
+    input.classList.toggle('valid', isValid);
+    if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
+    updateSubmitButtons();
+  },
+  name: (input) => {
+    const errorEl = input.parentElement.querySelector('.input-error');
+    input.value = input.value.replace(/[^a-zA-Z\s\-']/g, '');
+    const isValid = input.value.length >= 2 && validators.name(input.value);
+    input.classList.toggle('error', input.value.length > 0 && !isValid);
+    input.classList.toggle('valid', isValid);
+    if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
+    updateSubmitButtons();
+  },
+  email: (input) => {
+    const errorEl = input.parentElement.querySelector('.input-error');
+    const isValid = input.value.length > 0 && validators.email(input.value);
+    input.classList.toggle('error', input.value.length > 0 && !isValid);
+    input.classList.toggle('valid', isValid);
+    if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
+    updateSubmitButtons();
+  },
+  loginEmail: (input) => {
+    const errorEl = document.getElementById('loginEmailError');
+    const isValid = input.value.length > 0 && validators.email(input.value);
+    input.classList.toggle('error', input.value.length > 0 && !isValid);
+    input.classList.toggle('valid', isValid);
+    if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
+    updateSubmitButtons();
+  },
+  otp: (input) => {
+    const errorEl = input.parentElement.parentElement.querySelector('.input-error');
+    input.value = input.value.replace(/\D/g, '');
+    const isValid = input.value.length === 6 && validators.otp(input.value);
+    input.classList.toggle('error', input.value.length > 0 && input.value.length < 6);
+    input.classList.toggle('valid', isValid);
+    if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && input.value.length < 6);
+    updateSubmitButtons();
   }
-  updateSubmitButtons();
-}
-
-function validateNameInput(input) {
-  const errorEl = input.parentElement.querySelector('.input-error');
-  input.value = input.value.replace(/[^a-zA-Z\s\-']/g, '');
-
-  if (input.value.length > 0 && !validateName(input.value)) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
-  } else if (input.value.length >= 2 && validateName(input.value)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
-  }
-  updateSubmitButtons();
-}
-
-function validateEmailInput(input) {
-  const errorEl = input.parentElement.querySelector('.input-error');
-
-  if (input.value.length > 0 && !validateEmail(input.value)) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
-  } else if (input.value.length > 0 && validateEmail(input.value)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
-  }
-  updateSubmitButtons();
-}
-
-function validateLoginEmail(input) {
-  const errorEl = document.getElementById('loginEmailError');
-
-  if (input.value.length > 0 && !validateEmail(input.value)) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
-  } else if (input.value.length > 0 && validateEmail(input.value)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
-  }
-  updateSubmitButtons();
-}
-
-function validateOtpInput(input) {
-  const errorEl = input.parentElement.parentElement.querySelector('.input-error');
-  input.value = input.value.replace(/\D/g, '');
-
-  if (input.value.length === 6 && validateOtp(input.value)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
-  } else if (input.value.length > 0 && input.value.length < 6) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
-  }
-  updateSubmitButtons();
-}
+};
 
 // ============================================================
 // SUBMIT BUTTON STATE
 // ============================================================
-
 function updateSubmitButtons() {
+  // Login button
   const loginEmail = document.getElementById('loginEmail');
   const loginPin = getPinValue('login');
   const loginBtn = document.getElementById('loginSubmitBtn');
+  if (loginBtn) {
+    loginBtn.disabled = !(loginEmail && validators.email(loginEmail.value) && loginPin.length === 4 && validators.pin(loginPin));
+  }
 
-  const loginEmailValid = loginEmail && validateEmail(loginEmail.value);
-  const loginPinValid = loginPin.length === 4 && validatePin(loginPin);
-
-  if (loginBtn) loginBtn.disabled = !(loginEmailValid && loginPinValid);
-
+  // Register button
   const regName = document.getElementById('regName');
   const regPhone = document.getElementById('regPhone');
   const regEmail = document.getElementById('regEmail');
   const regPin = getPinValue('reg');
   const regOtp = document.getElementById('regOtp');
   const regBtn = document.getElementById('registerSubmitBtn');
-
-  const regNameValid = regName && regName.value.length >= 2 && validateName(regName.value);
-  const regPhoneValid = regPhone && regPhone.value.length === 10 && validatePhoneNumber(regPhone.value);
-  const regEmailValid = regEmail && regEmail.value.length > 0 && validateEmail(regEmail.value);
-  const regPinValid = regPin.length === 4 && validatePin(regPin);
-  const regOtpValid = regOtp && regOtp.value.length === 6 && validateOtp(regOtp.value);
-
-  if (regBtn) regBtn.disabled = !(regNameValid && regPhoneValid && regEmailValid && regPinValid && regOtpValid);
-}
-
-// ============================================================
-// TOAST & STATUS
-// ============================================================
-
-function toast(msg) {
-  const t = document.getElementById('toast');
-  if (!t) return;
-  t.innerText = msg;
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
-}
-
-function showStatus(msg, type) {
-  const el = document.getElementById('authStatus');
-  el.textContent = msg;
-  el.className = 'auth-status ' + type;
-}
-
-function hideStatus() {
-  const el = document.getElementById('authStatus');
-  el.className = 'auth-status';
+  if (regBtn) {
+    regBtn.disabled = !(
+      regName && regName.value.length >= 2 && validators.name(regName.value) &&
+      regPhone && regPhone.value.length === 10 && validators.phone(regPhone.value) &&
+      regEmail && regEmail.value.length > 0 && validators.email(regEmail.value) &&
+      regPin.length === 4 && validators.pin(regPin) &&
+      regOtp && regOtp.value.length === 6 && validators.otp(regOtp.value)
+    );
+  }
 }
 
 // ============================================================
 // TAB SWITCHING
 // ============================================================
-
 function switchTab(tab) {
   hideStatus();
-  if (isForgotPinMode) hideForgotPin();
+  if (state.isForgotPinMode) hideForgotPin();
 
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.auth-tab[data-tab="${tab}"]`).classList.add('active');
+  document.querySelector(`.auth-tab[data-tab="${tab}"]`)?.classList.add('active');
 
   document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
   if (tab === 'login') {
@@ -1428,16 +1322,14 @@ function switchTab(tab) {
     document.getElementById('registerForm').style.display = 'block';
     document.getElementById('forgotPinForm').style.display = 'none';
   }
-
   setTimeout(updateSubmitButtons, 100);
 }
 
 // ============================================================
 // FORGOT PIN
 // ============================================================
-
 function showForgotPin() {
-  isForgotPinMode = true;
+  state.isForgotPinMode = true;
   document.getElementById('loginForm').style.display = 'none';
   document.getElementById('registerForm').style.display = 'none';
   document.getElementById('forgotPinForm').style.display = 'block';
@@ -1451,74 +1343,80 @@ function showForgotPin() {
 }
 
 function hideForgotPin() {
-  isForgotPinMode = false;
+  state.isForgotPinMode = false;
   document.getElementById('forgotPinForm').style.display = 'none';
   document.getElementById('loginForm').style.display = 'block';
   document.getElementById('registerForm').style.display = 'none';
-  clearInterval(forgotOtpTimer);
+  clearInterval(state.forgotOtpTimer);
+}
+
+// ============================================================
+// API CALLS
+// ============================================================
+async function apiCall(endpoint, data, method = 'POST') {
+  try {
+    const response = await fetch(API_BASE + endpoint, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Request failed');
+    return result;
+  } catch (error) {
+    throw new Error(error.message || 'Network error. Please try again.');
+  }
 }
 
 // ============================================================
 // SEND FORGOT PIN OTP
 // ============================================================
-
-function sendForgotOtp() {
+async function sendForgotOtp() {
   const email = document.getElementById('forgotEmail').value.trim();
   const errorEl = document.getElementById('forgotEmailError');
 
-  if (!email || !validateEmail(email)) {
+  if (!email || !validators.email(email)) {
     errorEl.classList.add('show');
     return;
   }
   errorEl.classList.remove('show');
 
   const btn = document.getElementById('forgotOtpBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Sending...';
+  setLoading(btn, true);
+  btn.dataset.loadingText = 'Sending...';
 
-  fetch(API_BASE + '/api/auth/forgot-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      showStatus('OTP sent to your email', 'success');
-      document.getElementById('forgotOtpGroup').style.display = 'block';
-      document.getElementById('forgotPinGroup').style.display = 'block';
-      document.getElementById('resetPinBtn').disabled = false;
-      startForgotOtpTimer();
-    } else {
-      showStatus(data.message || 'Failed to send OTP', 'error');
-      btn.disabled = false;
-      btn.innerHTML = 'Send OTP';
-    }
-  })
-  .catch(() => {
-    showStatus('Network error. Please try again.', 'error');
-    btn.disabled = false;
+  try {
+    const data = await apiCall('/api/auth/forgot-pin', { email });
+    showStatus('OTP sent to your email', 'success');
+    document.getElementById('forgotOtpGroup').style.display = 'block';
+    document.getElementById('forgotPinGroup').style.display = 'block';
+    document.getElementById('resetPinBtn').disabled = false;
+    startForgotOtpTimer();
+  } catch (error) {
+    showStatus(error.message, 'error');
+  } finally {
+    setLoading(btn, false);
     btn.innerHTML = 'Send OTP';
-  });
+  }
 }
 
 function startForgotOtpTimer() {
-  forgotOtpCountdown = 60;
+  state.forgotOtpCountdown = 60;
   const timerEl = document.getElementById('forgotOtpTimer');
   const btn = document.getElementById('forgotOtpBtn');
-  timerEl.textContent = 'Resend in ' + forgotOtpCountdown + 's';
+  timerEl.textContent = 'Resend in ' + state.forgotOtpCountdown + 's';
   btn.disabled = true;
 
-  clearInterval(forgotOtpTimer);
-  forgotOtpTimer = setInterval(function() {
-    forgotOtpCountdown--;
-    if (forgotOtpCountdown <= 0) {
-      clearInterval(forgotOtpTimer);
+  clearInterval(state.forgotOtpTimer);
+  state.forgotOtpTimer = setInterval(() => {
+    state.forgotOtpCountdown--;
+    if (state.forgotOtpCountdown <= 0) {
+      clearInterval(state.forgotOtpTimer);
       timerEl.textContent = '';
       btn.disabled = false;
       btn.innerHTML = 'Send OTP';
     } else {
-      timerEl.textContent = 'Resend in ' + forgotOtpCountdown + 's';
+      timerEl.textContent = 'Resend in ' + state.forgotOtpCountdown + 's';
     }
   }, 1000);
 }
@@ -1526,8 +1424,7 @@ function startForgotOtpTimer() {
 // ============================================================
 // RESET PIN
 // ============================================================
-
-function resetPin() {
+async function resetPin() {
   const email = document.getElementById('forgotEmail').value.trim();
   const otp = document.getElementById('forgotOtp').value.trim();
   const newPin = getPinValue('forgot');
@@ -1535,112 +1432,89 @@ function resetPin() {
   const otpError = document.getElementById('forgotOtpError');
   const pinError = document.getElementById('forgotPinError');
 
-  if (!otp || !validateOtp(otp)) {
+  if (!otp || !validators.otp(otp)) {
     otpError.classList.add('show');
     return;
   }
   otpError.classList.remove('show');
 
-  if (!newPin || !validatePin(newPin)) {
+  if (!newPin || !validators.pin(newPin)) {
     pinError.classList.add('show');
     return;
   }
   pinError.classList.remove('show');
 
   const btn = document.getElementById('resetPinBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Resetting...';
+  setLoading(btn, true);
+  btn.dataset.loadingText = 'Resetting...';
 
-  fetch(API_BASE + '/api/auth/reset-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, otp, newPin })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      showStatus('PIN reset successfully! Please login with your new PIN.', 'success');
-      setTimeout(() => {
-        hideForgotPin();
-        document.getElementById('loginEmail').value = email;
-        document.getElementById('loginEmail').classList.add('valid');
-        updateSubmitButtons();
-      }, 1500);
-    } else {
-      showStatus(data.message || 'Failed to reset PIN', 'error');
-    }
-  })
-  .catch(() => {
-    showStatus('Network error. Please try again.', 'error');
-  })
-  .finally(() => {
-    btn.disabled = false;
+  try {
+    await apiCall('/api/auth/reset-pin', { email, otp, newPin });
+    showStatus('PIN reset successfully! Please login with your new PIN.', 'success');
+    setTimeout(() => {
+      hideForgotPin();
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginEmail').classList.add('valid');
+      updateSubmitButtons();
+    }, 1500);
+  } catch (error) {
+    showStatus(error.message, 'error');
+  } finally {
+    setLoading(btn, false);
     btn.innerHTML = '<i class="ph ph-check-circle"></i> Reset PIN';
-  });
+  }
 }
 
 // ============================================================
 // SEND REGISTER OTP
 // ============================================================
-
-function sendRegisterOtp() {
+async function sendRegisterOtp() {
   const email = document.getElementById('regEmail').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
 
-  if (!email || !validateEmail(email)) {
+  if (!email || !validators.email(email)) {
     showStatus('Please enter a valid email address', 'error');
     return;
   }
 
-  if (!phone || !validatePhoneNumber(phone)) {
+  if (!phone || !validators.phone(phone)) {
     showStatus('Please enter a valid phone number', 'error');
     return;
   }
 
   const btn = document.getElementById('regOtpBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Sending...';
+  setLoading(btn, true);
+  btn.dataset.loadingText = 'Sending...';
 
-  fetch(API_BASE + '/api/auth/send-email-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      showStatus('OTP sent to ' + email, 'success');
-      startRegOtpTimer();
-    } else {
-      showStatus(data.message || 'Failed to send OTP', 'error');
-      btn.disabled = false;
-      btn.innerHTML = 'Send OTP';
-    }
-  })
-  .catch(() => {
-    showStatus('Network error. Please try again.', 'error');
-    btn.disabled = false;
+  try {
+    await apiCall('/api/auth/send-email-otp', { email });
+    showStatus('OTP sent to ' + email, 'success');
+    startRegOtpTimer();
+  } catch (error) {
+    showStatus(error.message, 'error');
+  } finally {
+    setLoading(btn, false);
     btn.innerHTML = 'Send OTP';
-  });
+  }
 }
 
 function startRegOtpTimer() {
-  regOtpCountdown = 60;
+  state.regOtpCountdown = 60;
   const timerEl = document.getElementById('regOtpTimer');
   const btn = document.getElementById('regOtpBtn');
-  timerEl.textContent = 'Resend in ' + regOtpCountdown + 's';
+  timerEl.textContent = 'Resend in ' + state.regOtpCountdown + 's';
   btn.disabled = true;
 
-  clearInterval(regOtpTimer);
-  regOtpTimer = setInterval(function() {
-    regOtpCountdown--;
-    if (regOtpCountdown <= 0) {
-      clearInterval(regOtpTimer);
+  clearInterval(state.regOtpTimer);
+  state.regOtpTimer = setInterval(() => {
+    state.regOtpCountdown--;
+    if (state.regOtpCountdown <= 0) {
+      clearInterval(state.regOtpTimer);
       timerEl.textContent = '';
       btn.disabled = false;
       btn.innerHTML = 'Send OTP';
     } else {
-      timerEl.textContent = 'Resend in ' + regOtpCountdown + 's';
+      timerEl.textContent = 'Resend in ' + state.regOtpCountdown + 's';
     }
   }, 1000);
 }
@@ -1648,159 +1522,128 @@ function startRegOtpTimer() {
 // ============================================================
 // REGISTER USER
 // ============================================================
-
-function registerUser() {
+async function registerUser() {
   const name = document.getElementById('regName').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
   const email = document.getElementById('regEmail').value.trim();
   const pin = getPinValue('reg');
   const otp = document.getElementById('regOtp').value.trim();
 
-  if (!name || !validateName(name)) {
+  // Validation
+  if (!name || !validators.name(name)) {
     showStatus('Please enter a valid name', 'error');
     return;
   }
-
-  if (!phone || !validatePhoneNumber(phone)) {
+  if (!phone || !validators.phone(phone)) {
     showStatus('Please enter a valid phone number', 'error');
     return;
   }
-
-  if (!email || !validateEmail(email)) {
+  if (!email || !validators.email(email)) {
     showStatus('Please enter a valid email address', 'error');
     return;
   }
-
-  if (!pin || !validatePin(pin)) {
+  if (!pin || !validators.pin(pin)) {
     showStatus('Please enter a 4-digit PIN', 'error');
     return;
   }
-
-  if (!otp || !validateOtp(otp)) {
+  if (!otp || !validators.otp(otp)) {
     showStatus('Please enter a valid 6-digit OTP', 'error');
     return;
   }
 
   const btn = document.getElementById('registerSubmitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Creating Account...';
+  setLoading(btn, true);
+  btn.dataset.loadingText = 'Creating Account...';
 
-  fetch(API_BASE + '/api/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, phone, email, pin, otp })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      const user = {
-        id: data.customer.id,
-        email: data.customer.email,
-        name: data.customer.name,
-        phone: data.customer.phone,
-        token: data.token,
-        loggedIn: true,
-        loginTime: Date.now()
-      };
-      localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-      localStorage.setItem('liquorbelle_token', data.token);
-      hideStatus();
-      showLoggedInState(user);
-      toast('Account created successfully! Welcome ' + name);
-    } else {
-      showStatus(data.message || 'Registration failed. Please try again.', 'error');
-    }
-  })
-  .catch(() => {
-    showStatus('Network error. Please try again.', 'error');
-  })
-  .finally(() => {
-    btn.disabled = false;
+  try {
+    const data = await apiCall('/api/auth/register', { name, phone, email, pin, otp });
+    const user = {
+      id: data.customer.id,
+      email: data.customer.email,
+      name: data.customer.name,
+      phone: data.customer.phone,
+      token: data.token,
+      loggedIn: true,
+      loginTime: Date.now()
+    };
+    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+    localStorage.setItem('liquorbelle_token', data.token);
+    hideStatus();
+    showLoggedInState(user);
+    toast('Account created successfully! Welcome ' + name, 'success');
+  } catch (error) {
+    showStatus(error.message, 'error');
+  } finally {
+    setLoading(btn, false);
     btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-  });
+  }
 }
 
 // ============================================================
 // LOGIN USER
 // ============================================================
-
-function loginUser() {
+async function loginUser() {
   const email = document.getElementById('loginEmail').value.trim();
   const pin = getPinValue('login');
 
-  if (!email || !validateEmail(email)) {
+  if (!email || !validators.email(email)) {
     showStatus('Please enter a valid email address', 'error');
     return;
   }
-
-  if (!pin || !validatePin(pin)) {
+  if (!pin || !validators.pin(pin)) {
     showStatus('Please enter a valid 4-digit PIN', 'error');
     return;
   }
 
   const btn = document.getElementById('loginSubmitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Logging in...';
+  setLoading(btn, true);
+  btn.dataset.loadingText = 'Logging in...';
 
-  fetch(API_BASE + '/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, pin })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      const user = {
-        id: data.customer.id,
-        email: data.customer.email,
-        name: data.customer.name,
-        phone: data.customer.phone,
-        token: data.token,
-        loggedIn: true,
-        loginTime: Date.now()
-      };
-      localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-      localStorage.setItem('liquorbelle_token', data.token);
-      hideStatus();
-      showLoggedInState(user);
-      toast('Welcome back, ' + user.name + '!');
-    } else {
-      showStatus(data.message || 'Invalid email or PIN', 'error');
-    }
-  })
-  .catch(() => {
-    showStatus('Network error. Please try again.', 'error');
-  })
-  .finally(() => {
-    btn.disabled = false;
+  try {
+    const data = await apiCall('/api/auth/login', { email, pin });
+    const user = {
+      id: data.customer.id,
+      email: data.customer.email,
+      name: data.customer.name,
+      phone: data.customer.phone,
+      token: data.token,
+      loggedIn: true,
+      loginTime: Date.now()
+    };
+    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+    localStorage.setItem('liquorbelle_token', data.token);
+    hideStatus();
+    showLoggedInState(user);
+    toast('Welcome back, ' + user.name + '!', 'success');
+  } catch (error) {
+    showStatus(error.message, 'error');
+  } finally {
+    setLoading(btn, false);
     btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
-  });
+  }
 }
 
 // ============================================================
 // LOGOUT
 // ============================================================
-
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
-  currentUser = null;
+  state.currentUser = null;
   document.getElementById('loggedInSection').classList.remove('active');
   document.getElementById('authForms').style.display = 'block';
   document.getElementById('ordersContainer').innerHTML = '';
   document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
   document.getElementById('loginForm').style.display = 'block';
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.auth-tab-login').classList.add('active');
-  toast('Logged out successfully');
-
+  document.querySelector('.auth-tab-login')?.classList.add('active');
+  toast('Logged out successfully', 'success');
   updateUserBadge();
 }
 
 // ============================================================
 // SHOW LOGGED IN STATE
 // ============================================================
-
 function showLoggedInState(user) {
   document.getElementById('loggedInSection').classList.add('active');
   document.getElementById('authForms').style.display = 'none';
@@ -1814,8 +1657,7 @@ function showLoggedInState(user) {
 // ============================================================
 // LOAD ORDERS
 // ============================================================
-
-function loadOrders() {
+async function loadOrders() {
   const container = document.getElementById('ordersContainer');
   const token = localStorage.getItem('liquorbelle_token');
 
@@ -1826,33 +1668,31 @@ function loadOrders() {
 
   container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
 
-  fetch(API_BASE + '/api/customers/me/orders', {
-    headers: { 'Authorization': 'Bearer ' + token }
-  })
-  .then(res => {
-    if (res.status === 401 || res.status === 403) {
+  try {
+    const response = await fetch(API_BASE + '/api/customers/me/orders', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (response.status === 401 || response.status === 403) {
       logoutUser();
       throw new Error('Session expired');
     }
-    return res.json();
-  })
-  .then(data => {
-    if (data.success && data.orders) {
+
+    const data = await response.json();
+    if (data.success && data.orders && data.orders.length > 0) {
       renderOrders(data.orders);
     } else {
       container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
     }
-  })
-  .catch(err => {
-    console.error('Load orders error:', err);
+  } catch (error) {
+    console.error('Load orders error:', error);
     container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Could not load orders</p><small>Please check your connection and try again.</small></div>';
-  });
+  }
 }
 
 // ============================================================
 // RENDER ORDERS
 // ============================================================
-
 function renderOrders(orders) {
   const container = document.getElementById('ordersContainer');
 
@@ -1908,20 +1748,8 @@ function renderOrders(orders) {
 }
 
 // ============================================================
-// ESCAPE HTML
-// ============================================================
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/[&<>"']/g, m => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[m]);
-}
-
-// ============================================================
 // USER BADGE
 // ============================================================
-
 function updateUserBadge() {
   const user = getCurrentUser();
   const initialEl = document.getElementById('userInitial');
@@ -1931,7 +1759,7 @@ function updateUserBadge() {
   if (user && user.name) {
     const initial = user.name.charAt(0).toUpperCase();
     if (initialEl) initialEl.textContent = initial;
-    if (dotEl) { dotEl.className = 'user-dot'; }
+    if (dotEl) dotEl.className = 'user-dot';
 
     if (menuAuth) {
       menuAuth.innerHTML = `
@@ -1948,7 +1776,7 @@ function updateUserBadge() {
     }
   } else {
     if (initialEl) initialEl.textContent = 'G';
-    if (dotEl) { dotEl.className = 'user-dot guest'; }
+    if (dotEl) dotEl.className = 'user-dot guest';
 
     if (menuAuth) {
       menuAuth.innerHTML = `
@@ -1963,7 +1791,6 @@ function updateUserBadge() {
 // ============================================================
 // GET CURRENT USER
 // ============================================================
-
 function getCurrentUser() {
   try {
     const user = localStorage.getItem('liquorbelle_user');
@@ -1976,7 +1803,6 @@ function getCurrentUser() {
 // ============================================================
 // HEADER HELPERS
 // ============================================================
-
 function openMobileMenu() {
   document.getElementById('mobileMenuOverlay').classList.add('open');
   document.getElementById('mobileMenu').classList.add('open');
@@ -2066,57 +1892,72 @@ function renderCartDrawer() {
 }
 
 // ============================================================
+// MODAL FUNCTIONS
+// ============================================================
+function showSupportForm() {
+  document.getElementById('supportModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSupportModal() {
+  document.getElementById('supportModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ============================================================
 // INIT
 // ============================================================
-
 document.addEventListener('DOMContentLoaded', function() {
+  // Setup PIN inputs
   setupPinInputs('login');
   setupPinInputs('reg');
   setupPinInputs('forgot');
 
+  // Render cart
   renderCartDrawer();
   updateSubmitButtons();
   updateUserBadge();
 
+  // Check if user is logged in
   try {
     const saved = localStorage.getItem('liquorbelle_user');
     if (saved) {
-      currentUser = JSON.parse(saved);
-      if (currentUser && currentUser.email) {
-        showLoggedInState(currentUser);
+      state.currentUser = JSON.parse(saved);
+      if (state.currentUser && state.currentUser.email) {
+        showLoggedInState(state.currentUser);
       }
     }
-  } catch(e) {}
+  } catch(e) {
+    console.warn('Failed to parse user data:', e);
+  }
 
+  // Show login form by default
   document.getElementById('loginForm').style.display = 'block';
   document.getElementById('registerForm').style.display = 'none';
   document.getElementById('forgotPinForm').style.display = 'none';
 
   // Close modals on overlay click
-  document.getElementById('wholesaleModal').addEventListener('click', function(e) {
-    if (e.target === this) closeWholesaleModal();
-  });
-  document.getElementById('supportModal').addEventListener('click', function(e) {
+  document.getElementById('supportModal')?.addEventListener('click', function(e) {
     if (e.target === this) closeSupportModal();
   });
 });
 
+// Real-time input validation
 document.addEventListener('input', function(e) {
-  if (e.target.id === 'loginEmail' ||
-      e.target.id === 'regName' || e.target.id === 'regPhone' ||
-      e.target.id === 'regEmail' || e.target.id === 'regOtp') {
-    updateSubmitButtons();
-  }
-});
-
-document.addEventListener('input', function(e) {
-  if (e.target.id && e.target.id.match(/^(login|reg|forgot)Pin[1-4]$/)) {
-    const prefix = e.target.id.replace(/Pin[1-4]$/, '');
+  const id = e.target.id;
+  if (id === 'loginEmail') validateField.loginEmail(e.target);
+  else if (id === 'regName') validateField.name(e.target);
+  else if (id === 'regPhone') validateField.phone(e.target);
+  else if (id === 'regEmail') validateField.email(e.target);
+  else if (id === 'regOtp') validateField.otp(e.target);
+  else if (id && id.match(/^(login|reg|forgot)Pin[1-4]$/)) {
+    const prefix = id.replace(/Pin[1-4]$/, '');
     validatePinInput(prefix);
     updateSubmitButtons();
   }
 });
 
+// Storage event listener for cross-tab updates
 window.addEventListener('storage', function(e) {
   if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
     updateUserBadge();
@@ -2131,6 +1972,5 @@ window.addEventListener('storage', function(e) {
 
 console.log('✅ Account page loaded (PIN-based auth with orders)');
 </script>
-
 </body>
 </html>

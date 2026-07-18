@@ -22,13 +22,15 @@ function escapeHtml(str) {
   });
 }
 
-function toast(msg) {
+function toast(msg, isError) {
   var t = document.getElementById('toast');
   if (!t) return;
   t.innerText = msg;
+  t.className = 'toast';
+  if (isError) t.classList.add('error');
   t.style.opacity = '1';
   clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.style.opacity = '0'; }, 2500);
+  t._timer = setTimeout(function() { t.style.opacity = '0'; }, 3000);
 }
 
 function getQueryParam(name) {
@@ -71,40 +73,56 @@ function renderStars(rating) {
 }
 
 // ============================================================
+// STOCK STATUS HELPER
+// ============================================================
+function getStockStatus(variants) {
+  if (!variants || variants.length === 0) {
+    return { status: 'unknown', label: 'Check stock', color: '#6B7280', icon: 'ph-question' };
+  }
+  
+  // Check if any variant is in stock
+  var hasInStock = variants.some(function(v) {
+    return v.stock === 'inStock' || (!v.stock && v.stockQuantity > 0) || (!v.stock && v.stockQuantity === undefined);
+  });
+  
+  // Check if all variants are out of stock
+  var allOutOfStock = variants.every(function(v) {
+    return v.stock === 'outOfStock' || (v.stockQuantity !== undefined && v.stockQuantity <= 0);
+  });
+  
+  if (allOutOfStock || !hasInStock) {
+    return { status: 'out-of-stock', label: 'Out of Stock', color: '#DC2626', icon: 'ph-x-circle' };
+  }
+  
+  // Check if low stock (some variants with quantity < 5)
+  var lowStock = variants.some(function(v) {
+    return v.stockQuantity !== undefined && v.stockQuantity > 0 && v.stockQuantity < 5;
+  });
+  if (lowStock) {
+    return { status: 'low-stock', label: 'Low Stock', color: '#F59E0B', icon: 'ph-warning' };
+  }
+  
+  return { status: 'in-stock', label: 'In Stock', color: '#22C55E', icon: 'ph-check-circle' };
+}
+
+// ============================================================
 // PIN & AUTH HELPERS
 // ============================================================
 
-/**
- * Validate a 4-digit PIN
- * @param {string} pin - The PIN to validate
- * @returns {boolean} True if valid 4-digit PIN
- */
 function validatePin(pin) {
   return /^\d{4}$/.test(pin);
 }
 
-/**
- * Get the stored authentication token
- * @returns {string|null} JWT token or null
- */
 function getAuthToken() {
   return localStorage.getItem('liquorbelle_token') || null;
 }
 
-/**
- * Check if user is currently logged in
- * @returns {boolean} True if logged in
- */
 function isLoggedIn() {
   var token = getAuthToken();
   var user = localStorage.getItem('liquorbelle_user');
   return !!(token && user);
 }
 
-/**
- * Get current user data from localStorage
- * @returns {object|null} User object or null
- */
 function getCurrentUser() {
   try {
     var user = localStorage.getItem('liquorbelle_user');
@@ -114,13 +132,9 @@ function getCurrentUser() {
   }
 }
 
-/**
- * Log out current user — clears session and redirects
- */
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
-  // Redirect to account page if not already there
   if (window.location.pathname.indexOf('account.html') === -1) {
     window.location.href = 'account.html';
   } else {
@@ -128,31 +142,18 @@ function logoutUser() {
   }
 }
 
-/**
- * Make an authenticated API request
- * @param {string} url - The API endpoint
- * @param {object} options - Fetch options
- * @returns {Promise} Fetch promise
- */
 function fetchWithAuth(url, options) {
   var token = getAuthToken();
   if (!token) {
     return Promise.reject(new Error('Not authenticated'));
   }
-
   options = options || {};
   options.headers = options.headers || {};
   options.headers['Content-Type'] = 'application/json';
   options.headers['Authorization'] = 'Bearer ' + token;
-
   return fetch(url, options);
 }
 
-/**
- * Check if token is expired (basic check — looks at expiration in JWT)
- * @param {string} token - JWT token
- * @returns {boolean} True if token appears expired
- */
 function isTokenExpired(token) {
   if (!token) return true;
   try {
@@ -164,11 +165,6 @@ function isTokenExpired(token) {
   }
 }
 
-/**
- * Refresh the authentication token
- * @param {string} token - Current token
- * @returns {Promise} New token response
- */
 function refreshAuthToken(token) {
   return fetch(API_BASE + '/api/auth/refresh-token', {
     method: 'POST',
@@ -179,7 +175,6 @@ function refreshAuthToken(token) {
   .then(function(data) {
     if (data.success && data.token) {
       localStorage.setItem('liquorbelle_token', data.token);
-      // Update user data if provided
       if (data.customer) {
         var user = getCurrentUser() || {};
         user.name = data.customer.name || user.name;

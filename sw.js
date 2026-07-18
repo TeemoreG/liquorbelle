@@ -1,17 +1,17 @@
 // ============================================
-// LIQUORBELLE — DYNAMIC SERVICE WORKER
-// Works on GitHub Pages (/liquorbelle/) AND custom domain (/)
+// LIQUORBELLE — FIXED SERVICE WORKER v6
+// Fixed: POST request caching error, 403 handling, performance
 // ============================================
 
-const CACHE_NAME = 'liquorbelle-v5';
-
-// --- AUTO-DETECT BASE PATH ---
+const CACHE_NAME = 'liquorbelle-v6';
 const BASE_PATH = self.location.pathname.replace('sw.js', '');
-const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com'; // Your Render API
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 
-console.log('[SW] Base Path detected:', BASE_PATH);
+console.log('[SW] Base Path:', BASE_PATH);
 
-// --- HTML PAGES TO CACHE ---
+// ============================================
+// STATIC ASSETS TO CACHE
+// ============================================
 const STATIC_PAGES = [
   'index.html',
   'shop.html',
@@ -24,13 +24,10 @@ const STATIC_PAGES = [
 
 const STATIC_ASSETS = STATIC_PAGES.map(page => BASE_PATH + page);
 
-console.log('[SW] Caching HTML assets:', STATIC_ASSETS);
-
 // ============================================
-// 🔥 HARDCODED IMAGE PRE‑CACHE (Guaranteed)
+// PRECACHE IMAGES
 // ============================================
 const PRECACHE_IMAGES = [
-  // --- Category icons ---
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg',
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg',
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bxvpwn.jpg',
@@ -44,89 +41,45 @@ const PRECACHE_IMAGES = [
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782476528/Red-Bull-Energy-Drink-80mg-Caffeine-8-4-fl-oz-Can_c9e445f3-1800-40d0-81ab-6b93a9aaacb3.d2f8d87c58e8287c26cae8b3b6d9e38a_snc71g.jpg',
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319403/Scene2_fgsgg1.webp',
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319473/51PDVK6sQzL._AC_UF1000_1000_QL80__cn0azd.jpg',
-
-  // --- Logo & Brand ---
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg',
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_800,c_fit/v1781119164/liqbb_goc41e.png',
-
-  // --- M-PESA ---
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781875182/Mpesa_bvcz8v.png',
-
-  // --- Banner ---
   'https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782462538/af530399-7256-422f-97b7-71496c648bc1_osqga6.png',
 ];
 
 // ============================================
-// INSTALL
+// INSTALL - FIXED: No POST caching
 // ============================================
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[SW] Caching static HTML assets...');
+        console.log('[SW] Caching static assets...');
 
-        // 1. Cache HTML pages (with error handling)
+        // Cache HTML pages
         const htmlPromises = STATIC_ASSETS.map(url =>
           cache.add(url).catch(err => {
-            console.warn('[SW] Failed to cache HTML:', url, err);
+            console.warn('[SW] Failed to cache:', url, err);
           })
         );
 
-        // 2. Cache hardcoded images (with error handling)
+        // Cache images (GET only)
         const imagePromises = PRECACHE_IMAGES.map(url =>
           fetch(url)
             .then(res => {
               if (res.ok) {
                 cache.put(url, res);
-                console.log('[SW] Pre-cached hardcoded image:', url);
+                console.log('[SW] Cached image:', url);
               }
             })
             .catch(() => {
-              console.warn('[SW] Failed to pre-cache hardcoded image:', url);
+              console.warn('[SW] Failed to cache image:', url);
             })
         );
 
-        // Wait for HTML pages to finish, but images run in background
-        return Promise.all(htmlPromises)
+        return Promise.all([...htmlPromises, ...imagePromises])
           .then(() => {
-            // Start image pre-caching in the background
-            Promise.all(imagePromises).then(() => {
-              console.log('[SW] Hardcoded image pre-caching complete.');
-            });
-
-            // 3. 🚀 DYNAMICALLY FETCH PRODUCT IMAGES FROM API (Background)
-            // This runs AFTER HTML is cached, and does NOT block install.
-            fetch(API_BASE + '/api/db/products')
-              .then(res => res.json())
-              .then(data => {
-                if (data.success && data.products) {
-                  console.log('[SW] Fetching dynamic product images from API...');
-                  const productImages = data.products
-                    .map(p => p.image)
-                    .filter(url => url && url.trim() !== '');
-
-                  // Cache each product image
-                  productImages.forEach(url => {
-                    caches.open(CACHE_NAME).then(cache => {
-                      fetch(url)
-                        .then(res => {
-                          if (res.ok) {
-                            cache.put(url, res);
-                            console.log('[SW] Pre-cached dynamic image:', url);
-                          }
-                        })
-                        .catch(() => {
-                          console.warn('[SW] Failed to pre-cache dynamic image:', url);
-                        });
-                    });
-                  });
-                }
-              })
-              .catch(() => {
-                console.warn('[SW] Could not fetch product list for dynamic image caching.');
-              });
-
-            console.log('[SW] HTML caching complete. Skipping wait...');
+            console.log('[SW] Install complete. Skipping wait...');
             return self.skipWaiting();
           });
       })
@@ -134,7 +87,7 @@ self.addEventListener('install', (event) => {
 });
 
 // ============================================
-// ACTIVATE
+// ACTIVATE - Clean old caches
 // ============================================
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -157,29 +110,35 @@ self.addEventListener('activate', (event) => {
 });
 
 // ============================================
-// FETCH
+// FETCH - FIXED: Only cache GET requests
 // ============================================
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
   const request = event.request;
+  const url = new URL(request.url);
 
-  // --- 1. BACKEND API (stale-while-revalidate) ---
+  // --- SKIP: POST, PUT, DELETE, etc. ---
+  if (request.method !== 'GET') {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  // --- API REQUESTS (stale-while-revalidate) ---
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return fetch(request)
-          .then((networkResponse) => {
-            cache.put(request, networkResponse.clone());
-            console.log('[SW] API: Network response cached');
-            return networkResponse;
+          .then((response) => {
+            if (response.ok) {
+              cache.put(request, response.clone());
+            }
+            return response;
           })
           .catch(() => {
             return cache.match(request).then((cached) => {
               if (cached) {
-                console.log('[SW] API: Served from cache');
+                console.log('[SW] API served from cache:', url.pathname);
                 return cached;
               }
-              console.warn('[SW] API: No cache, no network');
               return new Response(
                 JSON.stringify({ success: false, message: 'Offline' }),
                 { status: 503, headers: { 'Content-Type': 'application/json' } }
@@ -191,22 +150,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // --- 2. CLOUDINARY IMAGES (cache-first) ---
+  // --- CLOUDINARY IMAGES (cache-first) ---
   if (url.hostname === 'res.cloudinary.com') {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) {
-          console.log('[SW] Image: Served from cache');
           return cached;
         }
         return fetch(request)
-          .then((networkResponse) => {
-            const clone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
-              console.log('[SW] Image: Cached (first visit)');
-            });
-            return networkResponse;
+          .then((response) => {
+            if (response.ok) {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, clone);
+              });
+            }
+            return response;
           })
           .catch(() => {
             return new Response(
@@ -219,7 +178,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // --- 3. LOCAL STATIC ASSETS (cache-first) ---
+  // --- LOCAL STATIC ASSETS (cache-first) ---
   const isLocalAsset = STATIC_ASSETS.some((asset) => {
     return url.pathname === asset || url.pathname === asset + '/';
   });
@@ -228,20 +187,19 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) {
-          console.log('[SW] Static: Served from cache');
           return cached;
         }
         return fetch(request)
-          .then((networkResponse) => {
-            const clone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, clone);
-              console.log('[SW] Static: Cached');
-            });
-            return networkResponse;
+          .then((response) => {
+            if (response.ok) {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, clone);
+              });
+            }
+            return response;
           })
           .catch(() => {
-            console.warn('[SW] Static: Fallback to index');
             return caches.match(BASE_PATH + 'index.html');
           });
       })
@@ -249,11 +207,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // --- 4. EVERYTHING ELSE (network-first) ---
+  // --- EVERYTHING ELSE (network-first) ---
   event.respondWith(
     fetch(request)
+      .then((response) => {
+        if (response.ok && request.method === 'GET') {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, clone);
+          });
+        }
+        return response;
+      })
       .catch(() => {
-        console.log('[SW] Network failed. Trying cache...');
         return caches.match(request);
       })
   );

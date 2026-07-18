@@ -1,5 +1,5 @@
 // ============================================================
-// LIQUORBELLE — MASTER APP.JS (UPDATED)
+// LIQUORBELLE — MASTER APP.JS (ENHANCED)
 // All functions exposed to global scope for inline event handlers
 // ============================================================
 
@@ -23,13 +23,15 @@ function escapeHtml(str) {
   });
 }
 
-function toast(msg) {
+function toast(msg, isError) {
   var t = document.getElementById('toast');
   if (!t) return;
   t.innerText = msg;
+  t.className = 'toast';
+  if (isError) t.classList.add('error');
   t.style.opacity = '1';
   clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.style.opacity = '0'; }, 2500);
+  t._timer = setTimeout(function() { t.style.opacity = '0'; }, 3000);
 }
 
 function getQueryParam(name) {
@@ -69,6 +71,52 @@ function renderStars(rating) {
   }
   html += '<span>' + rating.toFixed(1) + '</span></div>';
   return html;
+}
+
+// ============================================================
+// STOCK STATUS HELPER
+// ============================================================
+function getStockStatus(variants) {
+    if (!variants || variants.length === 0) {
+        return { status: 'unknown', label: 'Check stock', color: '#6B7280', icon: 'ph-question' };
+    }
+    
+    // Check if any variant is in stock
+    const inStock = variants.some(v => {
+        return v.stock === 'inStock' || (!v.stock && v.stockQuantity > 0) || (!v.stock && v.stockQuantity === undefined);
+    });
+    
+    // Check if all variants are out of stock
+    const allOutOfStock = variants.every(v => v.stock === 'outOfStock' || (v.stockQuantity !== undefined && v.stockQuantity <= 0));
+    
+    if (allOutOfStock || !inStock) {
+        return { status: 'out-of-stock', label: 'Out of Stock', color: '#DC2626', icon: 'ph-x-circle' };
+    }
+    
+    // Check if low stock (some variants with quantity < 5)
+    const lowStock = variants.some(v => v.stockQuantity !== undefined && v.stockQuantity > 0 && v.stockQuantity < 5);
+    if (lowStock) {
+        return { status: 'low-stock', label: 'Low Stock', color: '#F59E0B', icon: 'ph-warning' };
+    }
+    
+    return { status: 'in-stock', label: 'In Stock', color: '#22C55E', icon: 'ph-check-circle' };
+}
+
+// ============================================================
+// DEBOUNCE HELPER
+// ============================================================
+function debounce(func, wait) {
+  var timeout;
+  return function executedFunction() {
+    var context = this;
+    var args = arguments;
+    var later = function() {
+      timeout = null;
+      func.apply(context, args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }
 
 // ============================================================
@@ -155,6 +203,175 @@ function refreshAuthToken(token) {
 }
 
 // ============================================================
+// LOGIN & REGISTER FUNCTIONS
+// ============================================================
+
+/**
+ * Register a new user
+ * @param {string} name - Full name
+ * @param {string} email - Email address
+ * @param {string} phone - Phone number
+ * @param {string} pin - 4-digit PIN
+ * @param {string} otp - 6-digit OTP
+ * @returns {Promise} Registration response
+ */
+function registerUser(name, email, phone, pin, otp) {
+  return fetch(API_BASE + '/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      phone: phone,
+      pin: pin,
+      otp: otp
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.success) {
+      // Auto-login after registration
+      if (data.token) {
+        localStorage.setItem('liquorbelle_token', data.token);
+        localStorage.setItem('liquorbelle_user', JSON.stringify({
+          id: data.customer.id,
+          email: data.customer.email,
+          name: data.customer.name,
+          phone: data.customer.phone
+        }));
+      }
+      return data;
+    }
+    throw new Error(data.message || 'Registration failed');
+  });
+}
+
+/**
+ * Login existing user
+ * @param {string} email - Email address
+ * @param {string} pin - 4-digit PIN
+ * @returns {Promise} Login response
+ */
+function loginUser(email, pin) {
+  return fetch(API_BASE + '/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email,
+      pin: pin
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.success) {
+      localStorage.setItem('liquorbelle_token', data.token);
+      localStorage.setItem('liquorbelle_user', JSON.stringify({
+        id: data.customer.id,
+        email: data.customer.email,
+        name: data.customer.name,
+        phone: data.customer.phone
+      }));
+      return data;
+    }
+    throw new Error(data.message || 'Login failed');
+  });
+}
+
+/**
+ * Send OTP to email for registration
+ * @param {string} email - Email address
+ * @returns {Promise} OTP response
+ */
+function sendRegisterOtp(email) {
+  return fetch(API_BASE + '/api/auth/send-email-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to send OTP');
+    }
+    return data;
+  });
+}
+
+/**
+ * Send OTP for forgot PIN
+ * @param {string} email - Email address
+ * @returns {Promise} OTP response
+ */
+function sendForgotPinOtp(email) {
+  return fetch(API_BASE + '/api/auth/forgot-pin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to send OTP');
+    }
+    return data;
+  });
+}
+
+/**
+ * Reset PIN using OTP
+ * @param {string} email - Email address
+ * @param {string} otp - 6-digit OTP
+ * @param {string} newPin - New 4-digit PIN
+ * @returns {Promise} Reset response
+ */
+function resetPin(email, otp, newPin) {
+  return fetch(API_BASE + '/api/auth/reset-pin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email,
+      otp: otp,
+      newPin: newPin
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to reset PIN');
+    }
+    return data;
+  });
+}
+
+/**
+ * Validate current session token
+ * @returns {Promise} Validation response
+ */
+function validateSession() {
+  var token = getAuthToken();
+  if (!token) {
+    return Promise.resolve({ valid: false });
+  }
+  
+  return fetch(API_BASE + '/api/auth/validate', {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + token
+    }
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (!data.valid) {
+      localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_user');
+    }
+    return data;
+  })
+  .catch(function() {
+    return { valid: false };
+  });
+}
+// ============================================================
 // HEADER MENU & SEARCH (Shared) - EXPOSED GLOBALLY
 // ============================================================
 window.openMobileMenu = function() {
@@ -205,7 +422,7 @@ window.updateUserBadge = function() {
       `;
     }
   } else {
-    if (initialEl) initialEl.textContent = 'G';
+    if (initialEl) initialEl.textContent = '';
     if (dotEl) { dotEl.className = 'user-dot guest'; }
     if (menuAuth) {
       menuAuth.innerHTML = `
@@ -418,8 +635,17 @@ if (document.getElementById('categoryGrid')) {
     }
   })();
 
+  // ===== CATEGORIES - ALL 18 =====
   var categories = [
     { name: "All", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+    // ===== NEW CATEGORIES (ADDED) =====
+    { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+    { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+    { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+    { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+    { name: "Cognac", cat: "cognac", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
+    { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
+    // ===== EXISTING CATEGORIES =====
     { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
     { name: "Brandy", cat: "brandy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
     { name: "Bourbon", cat: "bourbon", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318444/a72b554e-5c0b-4ac3-8a66-bdbbf931453c.3c0dcb1f945848aa6629090c307ae781_ksa4md.jpg" },
@@ -446,6 +672,9 @@ if (document.getElementById('categoryGrid')) {
     var select = document.getElementById(selectId);
     if (!select) return;
     var dropdownCats = [
+      { id: 'whisky', label: 'Whisky' }, { id: 'wine', label: 'Wine' },
+      { id: 'vodka', label: 'Vodka' }, { id: 'gin', label: 'Gin' },
+      { id: 'cognac', label: 'Cognac' }, { id: 'cream', label: 'Creams' },
       { id: 'beer', label: 'Beer' }, { id: 'brandy', label: 'Brandy' },
       { id: 'bourbon', label: 'Bourbon' }, { id: 'rum', label: 'Rum' },
       { id: 'spirits', label: 'Spirits' }, { id: 'liqueur', label: 'Liqueur' },
@@ -463,6 +692,40 @@ if (document.getElementById('categoryGrid')) {
 
   var allProductsCache = [];
 
+  // ============================================================
+  // USER GREETING ON INDEX PAGE
+  // ============================================================
+  (function showUserGreeting() {
+    var user = getCurrentUser();
+    if (user && user.name) {
+      var heroOverlay = document.querySelector('.hero-overlay');
+      if (heroOverlay) {
+        var greetingEl = document.createElement('div');
+        greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
+        greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+        heroOverlay.prepend(greetingEl);
+      }
+    }
+  })();
+
+  // ============================================================
+  // SESSION CHECK
+  // ============================================================
+  (function checkSession() {
+    var user = getCurrentUser();
+    var token = getAuthToken();
+    if (user && token) {
+      if (typeof updateUserBadge === 'function') updateUserBadge();
+    } else {
+      localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_user');
+      if (typeof updateUserBadge === 'function') updateUserBadge();
+    }
+  })();
+
+  // ============================================================
+  // renderProductCard WITH STOCK STATUS
+  // ============================================================
   function renderProductCard(p, index) {
     var imgData = getResponsiveImage(p.image);
     var price = p.variants && p.variants.length ? p.variants[0].price : 0;
@@ -471,17 +734,28 @@ if (document.getElementById('categoryGrid')) {
     var loadingAttr = index < 12 ? 'loading="eager"' : 'loading="lazy"';
     var fetchPriority = index < 8 ? 'fetchpriority="high"' : '';
 
+    // ===== STOCK STATUS =====
+    var stockInfo = getStockStatus(p.variants);
+    var isInStock = stockInfo.status === 'in-stock' || stockInfo.status === 'low-stock';
+    var stockBadge = '<div class="stock-badge ' + stockInfo.status + '"><i class="ph ' + stockInfo.icon + '"></i> ' + stockInfo.label + '</div>';
+
+    // ===== ADD TO CART BUTTON =====
+    var atcHtml = isInStock ? 
+      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + price + ',\'' + escapeHtml(capacity) + '\')"><i class="ph ph-plus"></i> Add</button>' :
+      '<button class="atc-btn out-of-stock" disabled><i class="ph ph-x-circle"></i> Out of Stock</button>';
+
     return '<div class="prod-card" data-product-id="' + String(p._id) + '">' +
       '<div class="pc-img-wrap">' +
       (imgData.src ? '<img class="pc-img" src="' + imgData.src + '" srcset="' + imgData.srcset + '" sizes="' + imgData.sizes + '" alt="' + escapeHtml(p.name) + '" ' + loadingAttr + ' ' + fetchPriority + ' decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'">' : '') +
-      (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '') +
+      (p.isTrending ? '<span class="badge-new"> Trending</span>' : '') +
+      stockBadge +
       '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-name">' + escapeHtml(p.name) + '</div>' +
       (capacity ? '<div class="pc-vol">' + escapeHtml(capacity) + '</div>' : '') +
       ratingHtml +
-      '<div class="pc-price-wrap"><span class="pc-price-regular">KES ' + price.toLocaleString() + '</span></div>' +
-      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + price + ',\'' + escapeHtml(capacity) + '\')"><i class="ph ph-plus"></i> Add</button>' +
+      '<div class="pc-price-wrap"><span class="pc-price-new">KES ' + price.toLocaleString() + '</span></div>' +
+      atcHtml +
       '</div></div>';
   }
 
@@ -550,7 +824,9 @@ if (document.getElementById('categoryGrid')) {
       });
   };
 
-  // Quick View
+  // ============================================================
+  // QUICK VIEW
+  // ============================================================
   var qvProduct = null;
   var qvSelectedVariant = null;
   var qvQuantity = 1;
@@ -722,6 +998,9 @@ if (document.getElementById('categoryGrid')) {
     }
   });
 
+  // ============================================================
+  // ZONES, SEARCH, WISHLIST
+  // ============================================================
   window.renderZones = function() {
     var zonesGrid = document.getElementById('zonesGrid');
     if (!zonesGrid) return;
@@ -772,10 +1051,382 @@ if (document.getElementById('categoryGrid')) {
       if (e.target === this) closeWishlistModal();
     });
   }
-}
+} // <-- THIS CLOSES THE INDEX.HTML BLOCK
+
+  // ============================================================
+  // QUICK VIEW
+  // ============================================================
+  var qvProduct = null;
+  var qvSelectedVariant = null;
+  var qvQuantity = 1;
+
+  window.quickViewById = function(id) {
+    var idStr = String(id);
+    var product = allProductsCache.find(function(p) { return String(p._id) === idStr; });
+    if (product) {
+      qvShowProduct(product);
+      return;
+    }
+
+    var overlay = document.getElementById('quickviewOverlay');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('qvName').innerText = 'Loading...';
+    document.getElementById('qvCategory').innerText = '';
+    document.getElementById('qvImage').src = '';
+    document.getElementById('qvPrice').innerHTML = 'Loading...';
+    document.getElementById('qvStars').innerHTML = '';
+    document.getElementById('qvRatingText').innerText = '';
+    document.getElementById('qvVariants').innerHTML = '';
+    document.getElementById('qvOldPrice').style.display = 'none';
+    document.getElementById('qvDiscount').style.display = 'none';
+
+    fetch(API_BASE + '/api/db/products/' + idStr)
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.success && data.product) {
+          allProductsCache.push(data.product);
+          qvShowProduct(data.product);
+        } else {
+          toast('Product not found');
+          closeQuickView();
+        }
+      })
+      .catch(function() {
+        toast('Error loading product');
+        closeQuickView();
+      });
+  };
+
+  function qvShowProduct(product) {
+    qvProduct = product;
+    qvQuantity = 1;
+    document.getElementById('qvQty').innerText = '1';
+    document.getElementById('qvName').innerText = product.name;
+    document.getElementById('qvCategory').innerText = product.category || '';
+
+    var imgUrl = product.image ? optimizeImage(product.image, 600) : '';
+    var imgEl = document.getElementById('qvImage');
+    if (imgUrl) {
+      imgEl.src = imgUrl;
+      imgEl.style.display = 'block';
+      imgEl.setAttribute('fetchpriority', 'high');
+    } else {
+      imgEl.src = '';
+      imgEl.style.display = 'none';
+    }
+
+    var rating = product.rating || 4.0;
+    var fullStars = Math.floor(rating);
+    var hasHalf = rating - fullStars >= 0.5;
+    var starsHtml = '';
+    for (var i = 0; i < fullStars; i++) starsHtml += '<i class="ph ph-star-fill star-filled" style="color:#F59E0B;font-size:13px;"></i>';
+    if (hasHalf) starsHtml += '<i class="ph ph-star-half star-filled" style="color:#F59E0B;font-size:13px;"></i>';
+    var empty = 5 - Math.ceil(rating);
+    for (var i = 0; i < empty; i++) starsHtml += '<i class="ph ph-star star-empty" style="color:#d1d5db;font-size:13px;"></i>';
+    document.getElementById('qvStars').innerHTML = starsHtml;
+    document.getElementById('qvRatingText').innerText = rating.toFixed(1) + ' out of 5 stars';
+
+    document.getElementById('qvOldPrice').style.display = 'none';
+    document.getElementById('qvDiscount').style.display = 'none';
+
+    var variants = product.variants || [];
+    variants.sort(function(a, b) {
+      if (a.flavour && b.flavour) return a.flavour.localeCompare(b.flavour);
+      if (a.flavour) return -1;
+      if (b.flavour) return 1;
+      return 0;
+    });
+    var container = document.getElementById('qvVariants');
+    container.innerHTML = '';
+    if (!variants.length) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:.75rem;">No variants available</p>';
+      qvSelectedVariant = null;
+      document.getElementById('qvPrice').innerHTML = 'KES 0';
+      return;
+    }
+    variants.forEach(function(v) {
+      var btn = document.createElement('button');
+      btn.className = 'quickview-variant-btn';
+      var flavour = v.flavour || 'Original';
+      var size = v.size || '';
+      var price = v.price || 0;
+      var discount = v.discount || 0;
+      btn.innerHTML = '<span class="flavour">' + escapeHtml(flavour) + '</span><span class="size">' + escapeHtml(size) + '</span>';
+      btn.dataset.flavour = flavour;
+      btn.dataset.size = size;
+      btn.dataset.price = price;
+      btn.dataset.discount = discount;
+      btn.onclick = function() {
+        qvSelectVariant(flavour, size, price, discount);
+      };
+      container.appendChild(btn);
+    });
+    var first = variants[0];
+    qvSelectVariant(first.flavour || 'Original', first.size || '', first.price, first.discount || 0);
+
+    var overlay = document.getElementById('quickviewOverlay');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  window.qvSelectVariant = function(flavour, size, price, discount) {
+    qvSelectedVariant = { flavour: flavour, size: size, price: price, discount: discount };
+    var btns = document.querySelectorAll('.quickview-variant-btn');
+    btns.forEach(function(btn) {
+      var isSelected = (btn.dataset.flavour === flavour && btn.dataset.size === size);
+      btn.classList.toggle('selected', isSelected);
+    });
+    var hasDiscount = discount > 0;
+    var discountedPrice = hasDiscount ? Math.round(price * (100 - discount) / 100) : price;
+    document.getElementById('qvPrice').innerHTML = 'KES ' + discountedPrice.toLocaleString();
+    document.getElementById('qvOldPrice').style.display = 'none';
+    document.getElementById('qvDiscount').style.display = 'none';
+  };
+
+  window.qvChangeQty = function(delta) {
+    qvQuantity += delta;
+    if (qvQuantity < 1) qvQuantity = 1;
+    if (qvQuantity > 10) qvQuantity = 10;
+    document.getElementById('qvQty').innerText = qvQuantity;
+  };
+
+  window.qvAddToCart = function() {
+    if (!qvProduct || !qvSelectedVariant) { toast('Select a variant first'); return; }
+    var id = qvProduct._id;
+    var priceToAdd = qvSelectedVariant.discount > 0 ? Math.round(qvSelectedVariant.price * (100 - qvSelectedVariant.discount) / 100) : qvSelectedVariant.price;
+    var variantLabel = qvSelectedVariant.flavour + ' ' + qvSelectedVariant.size;
+    if (cart[id]) { cart[id].qty += qvQuantity; } else { cart[id] = { id: id, name: qvProduct.name, price: priceToAdd, qty: qvQuantity, capacity: qvSelectedVariant.size, size: qvSelectedVariant.size, flavour: qvSelectedVariant.flavour }; }
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    updateCartUI();
+    toast(qvQuantity + '× ' + qvProduct.name + ' (' + variantLabel + ') added ✓');
+    closeQuickView();
+  };
+
+  window.qvBuyNow = function() {
+    if (!qvProduct || !qvSelectedVariant) { toast('Select a variant first'); return; }
+    var id = qvProduct._id;
+    var priceToAdd = qvSelectedVariant.discount > 0 ? Math.round(qvSelectedVariant.price * (100 - qvSelectedVariant.discount) / 100) : qvSelectedVariant.price;
+    if (cart[id]) { cart[id].qty += qvQuantity; } else { cart[id] = { id: id, name: qvProduct.name, price: priceToAdd, qty: qvQuantity, capacity: qvSelectedVariant.size, size: qvSelectedVariant.size, flavour: qvSelectedVariant.flavour }; }
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    window.location.href = 'checkout.html';
+  };
+
+  window.closeQuickView = function(e) {
+    if (e && e.target !== e.currentTarget) return;
+    var overlay = document.getElementById('quickviewOverlay');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('.prod-card');
+    if (card && card.dataset.productId) {
+      e.preventDefault();
+      quickViewById(card.dataset.productId);
+    }
+  });
+
+    // ============================================================
+  // ZONES, SEARCH, WISHLIST - ENHANCED
+  // ============================================================
+
+  /**
+   * Render delivery zones with dynamic styling
+   */
+  window.renderZones = function() {
+    var zonesGrid = document.getElementById('zonesGrid');
+    if (!zonesGrid) return;
+    
+    var zones = [
+      { name: 'Dagoretti', fee: 0, icon: 'ph-house' },
+      { name: 'Karen', fee: 50, icon: 'ph-tree' },
+      { name: 'Kilimani', fee: 60, icon: 'ph-buildings' },
+      { name: 'Westlands', fee: 100, icon: 'ph-office-building' },
+      { name: 'CBD', fee: 80, icon: 'ph-city' },
+      { name: 'Upperhill', fee: 70, icon: 'ph-skyscraper' },
+      { name: 'Lavington', fee: 80, icon: 'ph-tree' },
+      { name: 'Kileleshwa', fee: 70, icon: 'ph-buildings' },
+      { name: 'Rongai', fee: 120, icon: 'ph-road' },
+      { name: 'Ngong', fee: 150, icon: 'ph-tree' },
+      { name: 'South B', fee: 100, icon: 'ph-buildings' },
+      { name: 'Langata', fee: 130, icon: 'ph-tree' },
+      { name: 'Waithaka', fee: 140, icon: 'ph-road' },
+      { name: 'Kikuyu', fee: 160, icon: 'ph-tree' },
+      { name: 'Runda', fee: 180, icon: 'ph-tree' }
+    ];
+    
+    zonesGrid.innerHTML = zones.map(function(z) {
+      var feeText = z.fee === 0 ? 'FREE' : 'KES ' + z.fee;
+      return '<div class="zone-tag" title="Delivery fee: ' + feeText + '" style="cursor:default;">' +
+        '<i class="ph ' + z.icon + '" style="font-size:10px;color:var(--gold);"></i>' +
+        '<span>' + z.name + '</span>' +
+        '<span style="font-size:8px;color:var(--muted);margin-left:2px;">(' + feeText + ')</span>' +
+        '</div>';
+    }).join('');
+  };
+
+  /**
+   * Enhanced main search with autocomplete and suggestions
+   */
+  (function initMainSearch() {
+    var input = document.getElementById('mainSearchInput');
+    var clearBtn = document.getElementById('mainSearchClear');
+    var form = input ? input.closest('.search-box') : null;
+    
+    if (!input) return;
+
+    // Create suggestions container
+    var suggestionsContainer = document.createElement('div');
+    suggestionsContainer.id = 'searchSuggestions';
+    suggestionsContainer.style.cssText = 'position:absolute;top:100%;left:0;right:0;background:white;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);border:1px solid var(--border);display:none;z-index:100;max-height:300px;overflow-y:auto;margin-top:4px;';
+    
+    if (form) {
+      form.style.position = 'relative';
+      form.appendChild(suggestionsContainer);
+    }
+
+    // Search function with debounce
+    var searchTimeout;
+
+    function performSearch(query) {
+      var val = query.trim();
+      if (clearBtn) clearBtn.style.display = val.length > 0 ? 'block' : 'none';
+      
+      // Sync with header search
+      var hi = document.getElementById('headerSearchInput');
+      if (hi) hi.value = val;
+      var mi = document.getElementById('mobileSearchInput');
+      if (mi) mi.value = val;
+
+      // Show suggestions if we have cached products
+      if (val.length > 0 && allProductsCache && allProductsCache.length > 0) {
+        var suggestions = allProductsCache.filter(function(p) {
+          return p.name.toLowerCase().includes(val.toLowerCase()) || 
+                 (p.category && p.category.toLowerCase().includes(val.toLowerCase()));
+        }).slice(0, 6);
+
+        if (suggestions.length > 0) {
+          suggestionsContainer.innerHTML = suggestions.map(function(p) {
+            var price = p.variants && p.variants.length ? p.variants[0].price : 0;
+            var img = p.image ? optimizeImage(p.image, 50) : FALLBACK_IMG;
+            return '<div class="search-suggestion" data-id="' + p._id + '" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid var(--border-light);">' +
+              '<img src="' + img + '" style="width:32px;height:32px;object-fit:cover;border-radius:6px;background:var(--bg2);" onerror="this.src=\'' + FALLBACK_IMG + '\'">' +
+              '<div style="flex:1;"><div style="font-weight:600;font-size:.8rem;">' + escapeHtml(p.name) + '</div>' +
+              '<div style="font-size:.6rem;color:var(--muted);">' + (p.category || '') + '</div></div>' +
+              '<div style="font-weight:700;font-size:.75rem;color:var(--sale-red);">KES ' + price.toLocaleString() + '</div>' +
+              '</div>';
+          }).join('') +
+          '<div style="padding:8px 14px;text-align:center;border-top:1px solid var(--border-light);">' +
+          '<a href="shop.html?search=' + encodeURIComponent(val) + '" style="color:var(--gold);font-weight:600;font-size:.75rem;text-decoration:none;">View all results →</a>' +
+          '</div>';
+          
+          suggestionsContainer.style.display = 'block';
+        } else {
+          suggestionsContainer.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:.8rem;">No products found for "' + escapeHtml(val) + '"</div>';
+          suggestionsContainer.style.display = 'block';
+        }
+      } else {
+        suggestionsContainer.style.display = 'none';
+      }
+    }
+
+    input.addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      var val = this.value;
+      searchTimeout = setTimeout(function() {
+        performSearch(val);
+      }, 250);
+    });
+
+    input.addEventListener('focus', function() {
+      if (this.value.trim().length > 0) {
+        performSearch(this.value);
+      }
+    });
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var val = this.value.trim();
+        if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
+        suggestionsContainer.style.display = 'none';
+      }
+      if (e.key === 'Escape') {
+        suggestionsContainer.style.display = 'none';
+        this.blur();
+      }
+    });
+
+    // Close suggestions on click outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.search-box')) {
+        suggestionsContainer.style.display = 'none';
+      }
+    });
+
+    // Click on suggestion
+    suggestionsContainer.addEventListener('click', function(e) {
+      var item = e.target.closest('.search-suggestion');
+      if (item && item.dataset.id) {
+        window.location.href = 'product-details.html?id=' + item.dataset.id;
+      }
+    });
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        input.value = '';
+        clearBtn.style.display = 'none';
+        suggestionsContainer.style.display = 'none';
+        input.focus();
+        var hi = document.getElementById('headerSearchInput');
+        if (hi) hi.value = '';
+        var mi = document.getElementById('mobileSearchInput');
+        if (mi) mi.value = '';
+      });
+    }
+  })();
+
+  /**
+   * Enhanced wishlist modal with better UX
+   */
+  var wishlistModal = document.getElementById('wishlistModal');
+  if (wishlistModal) {
+    // Close on overlay click
+    wishlistModal.addEventListener('click', function(e) {
+      if (e.target === this) closeWishlistModal();
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && wishlistModal.style.display === 'flex') {
+        closeWishlistModal();
+      }
+    });
+    
+    // Track wishlist count in header
+    function updateWishlistBadge() {
+      var count = wishlist.length;
+      var badge = document.querySelector('.wishlist-badge');
+      if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+      }
+    }
+    
+    // Override toggleWishlist to update badge
+    var originalToggleWishlist = window.toggleWishlist;
+    window.toggleWishlist = function(id, name, price, image, capacity, btnElement) {
+      originalToggleWishlist(id, name, price, image, capacity, btnElement);
+      updateWishlistBadge();
+    };
+    
+    // Initialize badge
+    setTimeout(updateWishlistBadge, 100);
+  }
 
 // ============================================================
-// SHOP.HTML
+// SHOP.HTML - ENHANCED WITH MORE FEATURES
 // ============================================================
 if (document.getElementById('catChips')) {
   
@@ -784,11 +1435,30 @@ if (document.getElementById('catChips')) {
   var currentPage = 1;
   var PAGE_SIZE = 12;
   var currentSort = 'featured';
-  var currentFilters = { category: 'all', search: '', priceMin: null, priceMax: null, onSale: false };
+  var currentFilters = { 
+    category: 'all', 
+    search: '', 
+    priceMin: null, 
+    priceMax: null, 
+    onSale: false,
+    minRating: null,
+    inStock: false,
+    sizes: [],
+    countries: [],
+    categories: []
+  };
   var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
 
   var categoriesShop = [
     { name: "All", cat: "all" },
+    // ===== NEW CATEGORIES (ADDED) =====
+    { name: "Whisky", cat: "whisky" },
+    { name: "Wine", cat: "wine" },
+    { name: "Vodka", cat: "vodka" },
+    { name: "Gin", cat: "gin" },
+    { name: "Cognac", cat: "cognac" },
+    { name: "Creams", cat: "cream" },
+    // ===== EXISTING CATEGORIES =====
     { name: "Beer", cat: "beer" },
     { name: "Brandy", cat: "brandy" },
     { name: "Bourbon", cat: "bourbon" },
@@ -801,59 +1471,162 @@ if (document.getElementById('catChips')) {
     { name: "Energy", cat: "energy" },
     { name: "Cigar", cat: "cigar" },
     { name: "Accessory", cat: "accessory" }
+];
+
+  // ===== AD POSTER - MODERN DYNAMIC VERSION =====
+(function initAdPoster() {
+  var adData = [
+    { 
+      icon: 'ph-shield-check', 
+      title: '100% Authentic Products', 
+      desc: 'Official distributors • Genuine brands • Quality guaranteed', 
+      badge: 'Trusted',
+      bgGradient: 'linear-gradient(135deg, #1a472a, #2d6a4f)',
+      accentColor: '#52b788'
+    },
+    { 
+      icon: 'ph-truck', 
+      title: 'Fast & Reliable Delivery', 
+      desc: '10–45 minutes across Nairobi • Rider calls before arrival', 
+      badge: 'Swift',
+      bgGradient: 'linear-gradient(135deg, #1a365d, #2b6cb0)',
+      accentColor: '#63b3ed'
+    },
+    { 
+      icon: 'ph-credit-card', 
+      title: 'Easy M-PESA Checkout', 
+      desc: 'STK Push payment • Secure • Instant confirmation', 
+      badge: 'Simple',
+      bgGradient: 'linear-gradient(135deg, #6b21a5, #7c3aed)',
+      accentColor: '#a78bfa'
+    },
+    { 
+      icon: 'ph-clock', 
+      title: 'Open 24/7 — We Never Close', 
+      desc: 'Order anytime • Day or night • Always available', 
+      badge: 'Always',
+      bgGradient: 'linear-gradient(135deg, #9a3412, #c2410c)',
+      accentColor: '#fb923c'
+    },
+    { 
+      icon: 'ph-seal-check', 
+      title: 'Wide Selection — 100+ Brands', 
+      desc: 'Whisky • Cognac • Vodka • Gin • Rum • Wine • Beer', 
+      badge: 'Variety',
+      bgGradient: 'linear-gradient(135deg, #1e1b4b, #3730a3)',
+      accentColor: '#818cf8'
+    }
   ];
+  
+  var adIndex = 0;
+  var adInterval = null;
+  var isTransitioning = false;
 
-  (function initAdPoster() {
-    var adData = [
-      { icon: 'ph-shield-check', title: '100% Authentic Products', desc: 'Official distributors • Genuine brands • Quality guaranteed', badge: 'Trusted' },
-      { icon: 'ph-truck', title: 'Fast & Reliable Delivery', desc: '10–45 minutes across Nairobi • Rider calls before arrival', badge: 'Swift' },
-      { icon: 'ph-credit-card', title: 'Easy M-PESA Checkout', desc: 'STK Push payment • Secure • Instant confirmation', badge: 'Simple' },
-      { icon: 'ph-clock', title: 'Open 24/7 — We Never Close', desc: 'Order anytime • Day or night • Always available', badge: 'Always' },
-      { icon: 'ph-seal-check', title: 'Wide Selection — 100+ Brands', desc: 'Whisky • Cognac • Vodka • Gin • Rum • Wine • Beer', badge: 'Variety' }
-    ];
-    var adIndex = 0;
-    var adInterval = null;
-
-    function renderAd(index) {
-      var data = adData[index % adData.length];
-      var iconEl = document.getElementById('adIcon');
-      if (iconEl) iconEl.innerHTML = '<i class="ph ' + data.icon + '"></i>';
-      var titleEl = document.getElementById('adTitle');
-      if (titleEl) titleEl.textContent = data.title;
-      var descEl = document.getElementById('adDesc');
-      if (descEl) descEl.textContent = data.desc;
-      var badgeEl = document.getElementById('adBadge');
-      if (badgeEl) badgeEl.textContent = data.badge;
-      var dots = document.querySelectorAll('.ad-dot');
-      dots.forEach(function(d, i) { d.classList.toggle('active', i === index); });
-      var poster = document.getElementById('adPosterInner');
-      if (poster) { poster.style.opacity = '0';
-        setTimeout(function() { poster.style.opacity = '1'; }, 50); }
+  function renderAd(index) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    
+    var data = adData[index % adData.length];
+    
+    // Update main poster
+    var poster = document.getElementById('adPosterInner');
+    if (poster) {
+      poster.style.opacity = '0';
+      poster.style.transform = 'scale(0.98)';
+      
+      setTimeout(function() {
+        // Update content
+        var iconEl = document.getElementById('adIcon');
+        if (iconEl) {
+          iconEl.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          iconEl.innerHTML = '<i class="ph ' + data.icon + '"></i>';
+          iconEl.style.transform = 'scale(1.2)';
+          setTimeout(function() { iconEl.style.transform = 'scale(1)'; }, 300);
+        }
+        
+        var titleEl = document.getElementById('adTitle');
+        if (titleEl) {
+          titleEl.style.transition = 'all 0.4s ease';
+          titleEl.textContent = data.title;
+        }
+        
+        var descEl = document.getElementById('adDesc');
+        if (descEl) descEl.textContent = data.desc;
+        
+        var badgeEl = document.getElementById('adBadge');
+        if (badgeEl) {
+          badgeEl.textContent = data.badge;
+          badgeEl.style.transition = 'all 0.4s ease';
+          badgeEl.style.transform = 'scale(1.1)';
+          setTimeout(function() { badgeEl.style.transform = 'scale(1)'; }, 300);
+        }
+        
+        // Update gradient background
+        var wrapper = document.getElementById('adPosterWrapper');
+        if (wrapper) {
+          wrapper.style.transition = 'background 0.8s ease';
+          wrapper.style.background = data.bgGradient;
+          wrapper.style.setProperty('--accent-color', data.accentColor);
+        }
+        
+        // Update dots
+        var dots = document.querySelectorAll('.ad-dot');
+        dots.forEach(function(d, i) {
+          d.classList.toggle('active', i === index);
+        });
+        
+        // Fade back in
+        poster.style.opacity = '1';
+        poster.style.transform = 'scale(1)';
+        
+        setTimeout(function() {
+          isTransitioning = false;
+        }, 400);
+      }, 300);
     }
+  }
 
-    var container = document.getElementById('adDots');
-    if (container) {
-      container.innerHTML = '';
-      for (var i = 0; i < adData.length; i++) {
-        var dot = document.createElement('span');
-        dot.className = 'ad-dot' + (i === 0 ? ' active' : '');
-        dot.onclick = (function(idx) {
-          return function() {
-            clearInterval(adInterval);
-            adIndex = idx;
-            renderAd(adIndex);
-            adInterval = setInterval(function() { adIndex = (adIndex + 1) % adData.length;
-              renderAd(adIndex); }, 5000);
-          };
-        })(i);
-        container.appendChild(dot);
-      }
-      renderAd(0);
-      adInterval = setInterval(function() { adIndex = (adIndex + 1) % adData.length;
-        renderAd(adIndex); }, 5000);
+  // Build dots
+  var container = document.getElementById('adDots');
+  if (container) {
+    container.innerHTML = '';
+    for (var i = 0; i < adData.length; i++) {
+      var dot = document.createElement('span');
+      dot.className = 'ad-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('data-index', i);
+      dot.style.transition = 'all 0.3s ease';
+      dot.style.cursor = 'pointer';
+      dot.onclick = (function(idx) {
+        return function() {
+          if (isTransitioning) return;
+          clearInterval(adInterval);
+          adIndex = idx;
+          renderAd(adIndex);
+          adInterval = setInterval(function() { 
+            adIndex = (adIndex + 1) % adData.length;
+            renderAd(adIndex); 
+          }, 5000);
+        };
+      })(i);
+      container.appendChild(dot);
     }
-  })();
+    
+    // Set initial background
+    var wrapper = document.getElementById('adPosterWrapper');
+    if (wrapper) {
+      wrapper.style.background = adData[0].bgGradient;
+      wrapper.style.setProperty('--accent-color', adData[0].accentColor);
+    }
+    
+    renderAd(0);
+    adInterval = setInterval(function() { 
+      adIndex = (adIndex + 1) % adData.length;
+      renderAd(adIndex); 
+    }, 5000);
+  }
+})();
 
+  // ===== ANNOUNCEMENT BAR =====
   (function initAnnounceBar() {
     var announceMessages = [
       '<i class="ph ph-lightning"></i> 10–45 minute delivery across Nairobi',
@@ -888,6 +1661,7 @@ if (document.getElementById('catChips')) {
     };
   })();
 
+  // ===== CACHE HELPERS =====
   function getCachedProducts() {
     try {
       var cached = localStorage.getItem(CACHE_KEY);
@@ -907,45 +1681,74 @@ if (document.getElementById('catChips')) {
     } catch (e) {}
   }
 
-  function mapDbProducts(rawProducts) {
-    return rawProducts.map(function(p) {
-      var variants = p.variants || [];
-      var sizeOrderMap = { '250ml': 1, '350ml': 2, '500ml': 3, '750ml': 4, '1L': 5, '1.5L': 6 };
-      var sortedVariants = [...variants].sort(function(a, b) { return (sizeOrderMap[a.size] || 99) - (sizeOrderMap[b.size] || 99); });
-      var cheapestVariant = sortedVariants[0] || null;
-      var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
-      var discountPercent = cheapestVariant?.discount || 0;
-      var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
-      return {
-        _id: p._id,
-        id: p._id,
-        name: p.name,
-        capacity: cheapestVariant?.size || '750ml',
-        price: discountedPrice,
-        originalPrice: originalPrice,
-        discountPercent: discountPercent,
-        category: p.category || '',
-        badge: p.badge || (discountPercent > 10 ? 'hot' : ''),
-        image: p.image || '',
-        description: p.description || '',
-        isTrending: p.isTrending || false,
-        isNew: p.isNew || false,
-        rating: p.rating || 4,
-        variants: variants
-      };
+  // ===== MAP DB PRODUCTS =====
+function mapDbProducts(rawProducts) {
+  return rawProducts.map(function(p) {
+    var variants = p.variants || [];
+    var sizeOrderMap = { '250ml': 1, '350ml': 2, '500ml': 3, '750ml': 4, '1L': 5, '1.5L': 6 };
+    var sortedVariants = [...variants].sort(function(a, b) { return (sizeOrderMap[a.size] || 99) - (sizeOrderMap[b.size] || 99); });
+    var cheapestVariant = sortedVariants[0] || null;
+    var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
+    var discountPercent = cheapestVariant?.discount || 0;
+    var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
+    
+    // ===== STOCK STATUS =====
+    // Check if any variant is in stock
+    var hasInStock = variants.some(function(v) {
+      return v.stock === 'inStock' || (!v.stock && v.stockQuantity > 0) || (!v.stock && v.stockQuantity === undefined);
     });
-  }
-
-  function renderSkeletonsShop(count, containerId) {
-    var container = document.getElementById(containerId);
-    if (!container) return;
-    var skeletons = '';
-    for (var i = 0; i < count; i++) {
-      skeletons += '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
+    
+    // Check if all variants are out of stock
+    var allOutOfStock = variants.every(function(v) {
+      return v.stock === 'outOfStock' || (v.stockQuantity !== undefined && v.stockQuantity <= 0);
+    });
+    
+    // Determine stock status
+    var stockStatus = 'in-stock';
+    if (allOutOfStock || !hasInStock) {
+      stockStatus = 'out-of-stock';
+    } else {
+      // Check if low stock (some variants with quantity < 5)
+      var lowStock = variants.some(function(v) {
+        return v.stockQuantity !== undefined && v.stockQuantity > 0 && v.stockQuantity < 5;
+      });
+      if (lowStock) stockStatus = 'low-stock';
     }
-    container.innerHTML = skeletons;
-  }
+    
+    return {
+      _id: p._id,
+      id: p._id,
+      name: p.name,
+      capacity: cheapestVariant?.size || '750ml',
+      price: discountedPrice,
+      originalPrice: originalPrice,
+      discountPercent: discountPercent,
+      category: p.category || '',
+      badge: p.badge || (discountPercent > 10 ? 'hot' : ''),
+      image: p.image || '',
+      description: p.description || '',
+      isTrending: p.isTrending || false,
+      isNew: p.isNew || false,
+      rating: p.rating || 4,
+      country: p.country || '',
+      stock: p.stock !== undefined ? p.stock : 999,
+      stockStatus: stockStatus,
+      variants: variants
+    };
+  });
+}
 
+function renderSkeletonsShop(count, containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var skeletons = '';
+  for (var i = 0; i < count; i++) {
+    skeletons += '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
+  }
+  container.innerHTML = skeletons;
+}
+
+  // ===== LOAD PRODUCTS =====
   window.loadProductsShop = function() {
     renderSkeletonsShop(10, 'shopGrid');
     var titleEl = document.getElementById('shopTitle');
@@ -997,6 +1800,7 @@ if (document.getElementById('catChips')) {
       .catch(function(e) { console.error('Background refresh failed:', e); });
   }
 
+  // ===== RENDER FEATURED SECTIONS - SAFE =====
   function renderFeaturedSections() {
     var selectedCategory = currentFilters.category;
     var isAll = selectedCategory === 'all';
@@ -1023,19 +1827,24 @@ if (document.getElementById('catChips')) {
     var trendingScroll = document.getElementById('trendingScroll');
     var newScroll = document.getElementById('newArrivalsScroll');
 
-    if (trendingItems.length) {
-      trendingScroll.innerHTML = trendingItems.map(buildFeaturedItem).join('');
-    } else {
-      trendingScroll.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:.75rem;grid-column:1/-1;text-align:center;">No trending products' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
+    if (trendingScroll) {
+      if (trendingItems.length) {
+        trendingScroll.innerHTML = trendingItems.map(buildFeaturedItem).join('');
+      } else {
+        trendingScroll.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:.75rem;grid-column:1/-1;text-align:center;">No trending products' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
+      }
     }
 
-    if (newItems.length) {
-      newScroll.innerHTML = newItems.map(buildFeaturedItem).join('');
-    } else {
-      newScroll.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:.75rem;grid-column:1/-1;text-align:center;">No new arrivals' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
+    if (newScroll) {
+      if (newItems.length) {
+        newScroll.innerHTML = newItems.map(buildFeaturedItem).join('');
+      } else {
+        newScroll.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:.75rem;grid-column:1/-1;text-align:center;">No new arrivals' + (isAll ? '' : ' in ' + selectedCategory) + '</div>';
+      }
     }
   }
 
+  // ===== CATEGORY CHIPS =====
   window.renderCatChips = function() {
     var container = document.getElementById('catChips');
     if (!container) return;
@@ -1056,6 +1865,7 @@ if (document.getElementById('catChips')) {
     document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  // ===== SEARCH =====
   function setSearch(val) {
     val = val.trim();
     currentFilters.search = val;
@@ -1096,12 +1906,21 @@ if (document.getElementById('catChips')) {
     }
   })();
 
+  // ===== FILTER DRAWER =====
   window.openFilterDrawer = function() {
     document.getElementById('priceMinInput').value = currentFilters.priceMin ?? '';
     document.getElementById('priceMaxInput').value = currentFilters.priceMax ?? '';
     document.getElementById('filterOnSale').checked = currentFilters.onSale;
     document.getElementById('filterDrawer').classList.add('open');
     document.getElementById('filterOverlay').classList.add('open');
+    
+    // Update size and country checkboxes
+    document.querySelectorAll('.size-filter').forEach(function(cb) {
+      cb.checked = currentFilters.sizes && currentFilters.sizes.indexOf(cb.value) !== -1;
+    });
+    document.querySelectorAll('.country-filter').forEach(function(cb) {
+      cb.checked = currentFilters.countries && currentFilters.countries.indexOf(cb.value) !== -1;
+    });
   };
 
   window.closeFilterDrawer = function() {
@@ -1115,6 +1934,15 @@ if (document.getElementById('catChips')) {
     currentFilters.priceMin = min !== '' ? Number(min) : null;
     currentFilters.priceMax = max !== '' ? Number(max) : null;
     currentFilters.onSale = document.getElementById('filterOnSale').checked;
+    
+    // Get selected sizes
+    var sizeCheckboxes = document.querySelectorAll('.size-filter:checked');
+    currentFilters.sizes = Array.from(sizeCheckboxes).map(function(cb) { return cb.value; });
+    
+    // Get selected countries
+    var countryCheckboxes = document.querySelectorAll('.country-filter:checked');
+    currentFilters.countries = Array.from(countryCheckboxes).map(function(cb) { return cb.value; });
+    
     currentPage = 1;
     closeFilterDrawer();
     applyFiltersShop();
@@ -1124,47 +1952,76 @@ if (document.getElementById('catChips')) {
     currentFilters.priceMin = null;
     currentFilters.priceMax = null;
     currentFilters.onSale = false;
+    currentFilters.sizes = [];
+    currentFilters.countries = [];
     currentFilters.category = 'all';
+    currentFilters.search = '';
+    currentFilters.minRating = null;
+    currentFilters.inStock = false;
+    
     document.getElementById('priceMinInput').value = '';
     document.getElementById('priceMaxInput').value = '';
     document.getElementById('filterOnSale').checked = false;
+    document.querySelectorAll('.size-filter:checked').forEach(function(cb) { cb.checked = false; });
+    document.querySelectorAll('.country-filter:checked').forEach(function(cb) { cb.checked = false; });
+    
     var url = new URL(window.location);
     url.searchParams.delete('cat');
+    url.searchParams.delete('search');
     window.history.replaceState({}, '', url);
+    
     renderCatChips();
     closeFilterDrawer();
     applyFiltersShop();
   };
 
+  // ===== UPDATE FILTER COUNT =====
   function updateFilterCount() {
     var n = 0;
     if (currentFilters.priceMin != null) n++;
     if (currentFilters.priceMax != null) n++;
     if (currentFilters.onSale) n++;
     if (currentFilters.search && currentFilters.search.length > 0) n++;
+    if (currentFilters.sizes && currentFilters.sizes.length > 0) n++;
+    if (currentFilters.countries && currentFilters.countries.length > 0) n++;
+    if (currentFilters.minRating) n++;
     var badge = document.getElementById('filterCount');
     if (n > 0) { badge.style.display = 'flex';
       badge.innerText = n; } else { badge.style.display = 'none'; }
   }
 
+  // ===== RENDER ACTIVE FILTER PILLS =====
   function renderActiveFilterPills() {
     var wrap = document.getElementById('activeFilters');
     if (!wrap) return;
     var pills = [];
+    
     if (currentFilters.category !== 'all') {
       var catName = (categoriesShop.find(function(c) { return c.cat === currentFilters.category; }) || {}).name || currentFilters.category;
       pills.push('<div class="filter-pill">' + catName + '<button onclick="selectCategory(\'all\')"><i class="ph ph-x"></i></button></div>');
     }
+    
     if (currentFilters.search) {
       pills.push('<div class="filter-pill">"' + escapeHtml(currentFilters.search) + '"<button onclick="clearSearchPill()"><i class="ph ph-x"></i></button></div>');
     }
+    
     if (currentFilters.priceMin != null || currentFilters.priceMax != null) {
       var label = 'KES ' + (currentFilters.priceMin ?? 0) + ' – ' + (currentFilters.priceMax ?? '∞');
       pills.push('<div class="filter-pill">' + label + '<button onclick="clearPricePill()"><i class="ph ph-x"></i></button></div>');
     }
+    
     if (currentFilters.onSale) {
       pills.push('<div class="filter-pill">On Sale<button onclick="clearSalePill()"><i class="ph ph-x"></i></button></div>');
     }
+    
+    if (currentFilters.sizes && currentFilters.sizes.length > 0) {
+      pills.push('<div class="filter-pill">' + currentFilters.sizes.join(', ') + '<button onclick="clearSizePill()"><i class="ph ph-x"></i></button></div>');
+    }
+    
+    if (currentFilters.countries && currentFilters.countries.length > 0) {
+      pills.push('<div class="filter-pill">' + currentFilters.countries.join(', ') + '<button onclick="clearCountryPill()"><i class="ph ph-x"></i></button></div>');
+    }
+    
     wrap.innerHTML = pills.join('');
   }
 
@@ -1177,37 +2034,49 @@ if (document.getElementById('catChips')) {
   window.clearSalePill = function() { currentFilters.onSale = false;
     currentPage = 1;
     applyFiltersShop(); };
+  window.clearSizePill = function() { currentFilters.sizes = [];
+    currentPage = 1;
+    applyFiltersShop(); };
+  window.clearCountryPill = function() { currentFilters.countries = [];
+    currentPage = 1;
+    applyFiltersShop(); };
 
+  // ===== APPLY FILTERS =====
   function applyFiltersShop() {
     var f = currentFilters;
     var list = ALL_PRODUCTS.filter(function(p) {
       if (f.category !== 'all' && (p.category || '').toLowerCase() !== f.category) return false;
       if (f.search) {
         var q = f.search.toLowerCase();
-        var haystack = ((p.name || '') + ' ' + (p.category || '')).toLowerCase();
+        var haystack = ((p.name || '') + ' ' + (p.category || '') + ' ' + (p.country || '')).toLowerCase();
         if (haystack.indexOf(q) === -1) return false;
       }
       if (f.priceMin != null && p.price < f.priceMin) return false;
       if (f.priceMax != null && p.price > f.priceMax) return false;
       if (f.onSale && !(p.discountPercent > 0)) return false;
+      if (f.minRating && (p.rating || 0) < f.minRating) return false;
+      if (f.inStock && (p.stock === 0 || p.stock === undefined)) return false;
+      if (f.sizes && f.sizes.length > 0) {
+        var size = p.capacity || '';
+        var match = f.sizes.some(function(s) { return size.indexOf(s) !== -1; });
+        if (!match) return false;
+      }
+      if (f.countries && f.countries.length > 0) {
+        var country = p.country || '';
+        var match = f.countries.some(function(c) { return country.toLowerCase().indexOf(c.toLowerCase()) !== -1; });
+        if (!match) return false;
+      }
       return true;
     });
 
     switch (currentSort) {
-      case 'price-asc':
-        list.sort(function(a, b) { return a.price - b.price; });
-        break;
-      case 'price-desc':
-        list.sort(function(a, b) { return b.price - a.price; });
-        break;
-      case 'name-asc':
-        list.sort(function(a, b) { return a.name.localeCompare(b.name); });
-        break;
-      case 'newest':
-        list.sort(function(a, b) { return (b.isNew === true) - (a.isNew === true); });
-        break;
-      default:
-        break;
+      case 'price-asc': list.sort(function(a, b) { return a.price - b.price; }); break;
+      case 'price-desc': list.sort(function(a, b) { return b.price - a.price; }); break;
+      case 'name-asc': list.sort(function(a, b) { return a.name.localeCompare(b.name); }); break;
+      case 'name-desc': list.sort(function(a, b) { return b.name.localeCompare(a.name); }); break;
+      case 'newest': list.sort(function(a, b) { return (b.isNew === true) - (a.isNew === true); }); break;
+      case 'rating': list.sort(function(a, b) { return (b.rating || 0) - (a.rating || 0); }); break;
+      default: break;
     }
 
     filteredProducts = list;
@@ -1221,6 +2090,17 @@ if (document.getElementById('catChips')) {
     renderActiveFilterPills();
     renderShopGrid();
     renderPagination();
+    updateResultCount();
+  }
+
+  function updateResultCount() {
+    var countEl = document.getElementById('resultCount');
+    if (countEl) {
+      var total = filteredProducts.length;
+      var msg = total + ' product' + (total !== 1 ? 's' : '');
+      if (currentFilters.search) msg += ' found for "' + currentFilters.search + '"';
+      countEl.textContent = msg;
+    }
   }
 
   function updateTitleBar() {
@@ -1239,6 +2119,7 @@ if (document.getElementById('catChips')) {
     }
   }
 
+  // ===== PAGINATION =====
   window.goToPage = function(page) {
     var totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
     if (page < 1 || page > totalPages) return;
@@ -1271,11 +2152,12 @@ if (document.getElementById('catChips')) {
     wrap.innerHTML = html;
   }
 
+  // ===== RENDER SHOP GRID =====
   function renderShopGrid() {
     var grid = document.getElementById('shopGrid');
     if (!grid) return;
     if (!filteredProducts.length) {
-      grid.innerHTML = '<div class="empty-state"><i class="ph ph-wine"></i><p>No products available at the moment.<br>Please check back later or refresh the page.</p></div>';
+      grid.innerHTML = '<div class="empty-state"><i class="ph ph-wine"></i><p>No products found.</p><small style="color:var(--muted);">Try adjusting your filters or search terms</small></div>';
       return;
     }
     var start = (currentPage - 1) * PAGE_SIZE;
@@ -1283,6 +2165,7 @@ if (document.getElementById('catChips')) {
     grid.innerHTML = visible.map(function(p) { return renderProductCardShop(p); }).join('');
   }
 
+  // ===== SHOP PRODUCT CARD =====
   function renderProductCardShop(p) {
     var original = p.originalPrice || p.price;
     var savePercent = p.discountPercent || 0;
@@ -1295,8 +2178,10 @@ if (document.getElementById('catChips')) {
     } else if (p.isTrending) {
       topBadge = '<div class="badge-bestseller"><i class="ph-fill ph-flame" style="font-size:9px;"></i> BESTSELLER</div>';
     }
+    
     var heartIcon = isWishlisted ? 'ph-fill ph-heart' : 'ph ph-heart';
     var wishlistBtn = '<button class="pc-wishlist ' + (isWishlisted ? 'wishlisted' : '') + '" onclick="event.stopPropagation();toggleWishlist(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\', this)"><i class="' + heartIcon + '"></i></button>';
+    
     var variantHtml = '';
     if (p.variants && p.variants.length > 1) {
       variantHtml = '<div class="variant-select-wrap"><select onchange="updateVariantPrice(this, \'' + p._id + '\')">' +
@@ -1305,8 +2190,11 @@ if (document.getElementById('catChips')) {
           return '<option value="' + v.size + '" data-price="' + v.price + '" ' + selected + '>' + v.size + ' — KES ' + v.price.toLocaleString() + '</option>';
         }).join('') + '</select></div>';
     }
+    
     var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
     var escapedName = escapeHtml(p.name).replace(/'/g, "\\'");
+    var stockText = (p.stock !== undefined && p.stock <= 3) ? 'Only ' + p.stock + ' left' : 'In Stock';
+    var stockClass = (p.stock !== undefined && p.stock <= 3) ? 'pc-stock low' : 'pc-stock';
 
     return '<div class="prod-card" data-product-id="' + p._id + '" onclick="goToProduct(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')">' +
       '<div class="pc-img-wrap">' +
@@ -1317,10 +2205,12 @@ if (document.getElementById('catChips')) {
       '<div class="pc-name">' + escapeHtml(p.name) + '</div>' +
       renderStars(p.rating) +
       (p.capacity ? '<div class="pc-vol">' + escapeHtml(p.capacity) + '</div>' : '') +
+      (p.country ? '<div class="pc-country">' + escapeHtml(p.country) + '</div>' : '') +
       '<div class="pc-price-wrap">' +
       (savePercent > 0 ? '<span class="pc-price-old">KES ' + original.toLocaleString() + '</span>' : '') +
       '<span class="pc-price-new">KES ' + p.price.toLocaleString() + '</span>' +
       '</div>' +
+      '<div class="' + stockClass + '">' + stockText + '</div>' +
       variantHtml +
       '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.capacity || '') + '\')"><i class="ph ph-plus"></i> Add</button>' +
       '<div class="click-hint">Click for details →</div>' +
@@ -2232,6 +3122,7 @@ if (document.getElementById('customerEmail')) {
     updateCartUI();
   }, 3000);
 }
+
 // ============================================================
 // ADMIN FUNCTIONS
 // ============================================================
@@ -2283,7 +3174,6 @@ window.submitAdminLogin = function() {
     btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
   }
   
-  // Call the admin login function from your existing code
   window.adminLogin(password.value)
     .then(success => {
       if (btn) {
@@ -2311,35 +3201,128 @@ window.submitAdminLogin = function() {
 };
 
 // ============================================================
-// TRACK-ORDERS.HTML
+// TRACK-ORDERS.HTML - AUTO-LOAD ORDERS
 // ============================================================
 if (document.getElementById('trackEmail')) {
   
-  function showGuestOrderCard() {
-    var container = document.getElementById('guestOrderCard');
+  // ============================================================
+  // CHECK IF USER IS LOGGED IN AND LOAD ORDERS AUTOMATICALLY
+  // ============================================================
+  function autoLoadOrders() {
+    var user = getCurrentUser();
+    var token = getAuthToken();
+    
+    if (user && token) {
+      // Logged in user - fetch orders automatically
+      fetchUserOrders();
+      return;
+    }
+    
+    // Guest user - show orders from localStorage
+    showGuestOrders();
+  }
+
+  // ============================================================
+  // FETCH ORDERS FOR LOGGED-IN USER
+  // ============================================================
+  function fetchUserOrders() {
+    var container = document.getElementById('ordersContainer');
+    var token = getAuthToken();
+    
+    if (!token) {
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-lock"></i><p>Please login to see your orders</p></div>';
+      return;
+    }
+    
+    container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
+    
+    fetch(API_BASE + '/api/customers/me/orders', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(function(res) {
+      if (res.status === 401 || res.status === 403) {
+        // Token expired - logout and show guest orders
+        logoutUser();
+        showGuestOrders();
+        return null;
+      }
+      return res.json();
+    })
+    .then(function(data) {
+      if (!data) return;
+      if (data.success && data.orders && data.orders.length > 0) {
+        renderOrders(data.orders);
+        document.getElementById('myAccountSection').style.display = 'block';
+        var user = getCurrentUser();
+        if (user) {
+          document.getElementById('accountName').textContent = user.name || '—';
+          document.getElementById('accountEmail').textContent = user.email || '—';
+          document.getElementById('accountPhone').textContent = user.phone || '—';
+          document.getElementById('accountOrderCount').textContent = data.orders.length;
+        }
+      } else {
+        container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
+      }
+    })
+    .catch(function(e) {
+      console.error('Error loading orders:', e);
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Could not load orders</p><small>Please check your connection and try again.</small></div>';
+    });
+  }
+
+  // ============================================================
+  // SHOW GUEST ORDERS FROM LOCAL STORAGE
+  // ============================================================
+  function showGuestOrders() {
+    var container = document.getElementById('ordersContainer');
     var lastOrder = localStorage.getItem('liquorbelle_last_order');
+    
     if (lastOrder) {
       try {
         var order = JSON.parse(lastOrder);
         var orderDate = new Date(order.timestamp || Date.now());
         var daysAgo = (Date.now() - orderDate.getTime()) / (1000 * 60 * 60 * 24);
+        
         if (daysAgo > 7) {
-          container.innerHTML = '';
+          container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No recent orders</p><small>Your orders older than 7 days are not stored locally.</small></div>';
           return;
         }
-        container.innerHTML =
-          '<div class="guest-order-card">' +
-          '<div class="guest-label"><i class="ph ph-clock-counter-clockwise"></i><span>Recent Order</span></div>' +
-          '<span class="guest-id">' + escapeHtml(order.orderId || 'LB-??????') + '</span>' +
-          '<span class="guest-total">KES ' + (order.total || 0).toLocaleString() + '</span>' +
-          '<button class="guest-btn" onclick="quickTrackOrder(\'' + escapeHtml(order.orderId || '') + '\')"><i class="ph ph-magnifying-glass"></i> View</button>' +
+        
+        // Show guest order card
+        container.innerHTML = 
+          '<div style="text-align:center;padding:20px 0 10px;">' +
+          '<span style="background:var(--gold-bg);padding:4px 14px;border-radius:30px;font-size:.65rem;font-weight:600;color:var(--gold);border:1px solid var(--gold);">👤 Guest Order</span>' +
+          '</div>' +
+          '<div class="orders-list">' +
+          '<div class="order-card">' +
+          '<div class="order-header">' +
+          '<div><div class="order-number">📦 Order #' + escapeHtml(order.orderId || 'LB-??????') + '</div>' +
+          '<div class="order-date">📅 ' + orderDate.toLocaleDateString() + ' at ' + orderDate.toLocaleTimeString() + '</div></div>' +
+          '<span class="order-status status-paid">✅ Paid</span>' +
+          '</div>' +
+          '<div class="order-items">' +
+          '<div class="order-item"><div><div class="order-item-name">Order Total</div></div><div class="order-item-price">KES ' + (order.total || 0).toLocaleString() + '</div></div>' +
+          '</div>' +
+          '<div class="order-footer">' +
+          '<div class="order-total-row"><span>Total</span><span>KES ' + (order.total || 0).toLocaleString() + '</span></div>' +
+          '</div>' +
+          '</div>' +
           '</div>';
       } catch(e) {
-        container.innerHTML = '';
+        container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p></div>';
       }
     } else {
-      container.innerHTML = '';
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
     }
+  }
+
+  // ============================================================
+  // GUEST ORDER CARD (Recent order from localStorage - DEPRECATED)
+  // ============================================================
+  function showGuestOrderCard() {
+    // This is now handled by showGuestOrders() above
+    // Keeping for compatibility
+    showGuestOrders();
   }
 
   window.quickTrackOrder = function(orderId) {
@@ -2348,6 +3331,9 @@ if (document.getElementById('trackEmail')) {
     trackByOrderId();
   };
 
+  // ============================================================
+  // ORDER STATUS STEPS
+  // ============================================================
   function updateStatusSteps(status) {
     var steps = ['step1', 'step2', 'step3', 'step4'];
     var labels = ['label1', 'label2', 'label3', 'label4'];
@@ -2368,83 +3354,80 @@ if (document.getElementById('trackEmail')) {
     }
   }
 
+  // ============================================================
+  // TRACK BY EMAIL (Guest users)
+  // ============================================================
   window.trackByEmail = function() {
     var email = document.getElementById('trackEmail').value.trim();
     if (!email) { toast('Please enter your email address'); return; }
     if (!email.includes('@')) { toast('Please enter a valid email'); return; }
-    fetchOrders('email', email);
+    fetchOrdersByEmail(email);
   };
 
+  // ============================================================
+  // TRACK BY ORDER ID
+  // ============================================================
   window.trackByOrderId = function() {
     var orderId = document.getElementById('trackOrderId').value.trim();
     if (!orderId) { toast('Please enter your Order ID (e.g. LB-12345678)'); return; }
-    fetchOrders('orderId', orderId);
+    fetchOrdersByOrderId(orderId);
   };
 
-  function fetchOrders(method, value) {
+  // ============================================================
+  // FETCH ORDERS BY EMAIL (Guest)
+  // ============================================================
+  function fetchOrdersByEmail(email) {
     var container = document.getElementById('ordersContainer');
-    container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
-    document.getElementById('myAccountSection').style.display = 'none';
+    container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Searching for orders...</div>';
 
-    try {
-      var url = API_BASE + '/api/orders/track';
-      var body = { email: value };
-      if (method === 'orderId') {
-        body = { orderId: value };
+    fetch(API_BASE + '/api/orders/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.success && data.orders && data.orders.length > 0) {
+        renderOrders(data.orders);
+      } else {
+        container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found for this email</p><small>Try checking your email address or Order ID</small></div>';
       }
-
-      fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          if (data.success && data.orders) {
-            var userOrders = data.orders;
-
-            if (method === 'orderId') {
-              var searchId = value.toUpperCase().trim();
-              userOrders = data.orders.filter(function(o) {
-                var orderNumber = (o.order_number || '').toUpperCase();
-                var id = (o._id || '').toUpperCase();
-                return orderNumber.includes(searchId) || id.includes(searchId);
-              });
-            }
-
-            if (method === 'email' && userOrders.length > 0) {
-              var accountSection = document.getElementById('myAccountSection');
-              accountSection.style.display = 'block';
-              var firstOrder = userOrders[0];
-              document.getElementById('accountName').textContent = firstOrder.customer_name || '—';
-              document.getElementById('accountEmail').textContent = firstOrder.customer_email || value;
-              document.getElementById('accountPhone').textContent = firstOrder.phone || '—';
-              document.getElementById('accountOrderCount').textContent = userOrders.length;
-            }
-
-            if (userOrders.length > 0) {
-              userOrders.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
-              if (userOrders[0] && userOrders[0].status) {
-                updateStatusSteps(userOrders[0].status);
-              }
-              renderOrders(userOrders);
-            } else {
-              container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Try checking your email or Order ID again</small></div>';
-              updateStatusSteps('pending');
-            }
-          } else {
-            container.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>Unable to fetch orders. Please try again.</p></div>';
-          }
-        })
-        .catch(function(e) {
-          console.error('Error tracking orders:', e);
-          container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Error loading orders. Please check your connection and try again.</p></div>';
-        });
-    } catch(e) {
-      container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Error loading orders. Please check your connection and try again.</p></div>';
-    }
+    })
+    .catch(function(e) {
+      console.error('Error tracking orders:', e);
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Error loading orders. Please try again.</p></div>';
+    });
   }
 
+  // ============================================================
+  // FETCH ORDERS BY ORDER ID
+  // ============================================================
+  function fetchOrdersByOrderId(orderId) {
+    var container = document.getElementById('ordersContainer');
+    container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Searching for order...</div>';
+
+    fetch(API_BASE + '/api/orders/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId: orderId })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.success && data.orders && data.orders.length > 0) {
+        renderOrders(data.orders);
+      } else {
+        container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No order found with ID: ' + escapeHtml(orderId) + '</p><small>Please check your Order ID and try again</small></div>';
+      }
+    })
+    .catch(function(e) {
+      console.error('Error tracking orders:', e);
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Error loading orders. Please try again.</p></div>';
+    });
+  }
+
+  // ============================================================
+  // RENDER ORDERS LIST
+  // ============================================================
   function renderOrders(orders) {
     var container = document.getElementById('ordersContainer');
     var html = '<div class="orders-list">';
@@ -2490,16 +3473,34 @@ if (document.getElementById('trackEmail')) {
     container.innerHTML = html;
   }
 
+  // ============================================================
+  // INIT - AUTO LOAD ORDERS ON PAGE LOAD
+  // ============================================================
+  function initTrackOrders() {
+    updateStatusSteps('pending');
+    autoLoadOrders();
+    updateCartUI();
+    
+    // Set interval to refresh cart UI
+    setInterval(updateCartUI, 3000);
+  }
+
+  // ============================================================
+  // QUERY PARAM HANDLING (email or orderId from URL)
+  // ============================================================
   var emailParam = getQueryParam('email');
   var orderIdParam = getQueryParam('orderId');
   if (emailParam) {
     document.getElementById('trackEmail').value = emailParam;
-    setTimeout(function() { trackByEmail(); }, 500);
+    setTimeout(function() { fetchOrdersByEmail(emailParam); }, 500);
   } else if (orderIdParam) {
     document.getElementById('trackOrderId').value = orderIdParam;
-    setTimeout(function() { trackByOrderId(); }, 500);
+    setTimeout(function() { fetchOrdersByOrderId(orderIdParam); }, 500);
   }
 
+  // ============================================================
+  // EVENT LISTENERS
+  // ============================================================
   document.getElementById('trackEmail')?.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') trackByEmail();
   });
@@ -2507,27 +3508,74 @@ if (document.getElementById('trackEmail')) {
     if (e.key === 'Enter') trackByOrderId();
   });
 
-  updateStatusSteps('pending');
-  showGuestOrderCard();
-  updateCartUI();
-  setInterval(updateCartUI, 3000);
+  // ============================================================
+  // START
+  // ============================================================
+  initTrackOrders();
 }
-
 // ============================================================
-// SERVICE WORKER REGISTRATION
+// SERVICE WORKER REGISTRATION - ENHANCED
 // ============================================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/liquorbelle/sw.js')
-      .then(function(reg) {
-        console.log('[SW] Registered successfully:', reg);
-      })
-      .catch(function(err) {
-        console.log('[SW] Registration failed:', err);
+    // Only register on secure origins (HTTPS or localhost)
+    if (window.location.protocol === 'file:') {
+      console.log('[SW] Skipping registration on file:// protocol');
+      return;
+    }
+
+    navigator.serviceWorker.register('/liquorbelle/sw.js', {
+      scope: '/liquorbelle/'
+    })
+    .then(function(reg) {
+      console.log('[SW] Registered successfully:', reg);
+      
+      // Check for updates
+      reg.addEventListener('updatefound', function() {
+        var newWorker = reg.installing;
+        console.log('[SW] Update found!');
+        
+        newWorker.addEventListener('statechange', function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            console.log('[SW] New version available!');
+            // Optionally show a notification to the user
+            if (typeof toast === 'function') {
+              toast('🔄 New update available. Refresh to apply.');
+            }
+          }
+        });
       });
+    })
+    .catch(function(err) {
+      console.log('[SW] Registration failed:', err);
+      
+      // Try alternative registration path
+      if (err.message && err.message.includes('not supported')) {
+        console.log('[SW] Trying fallback registration...');
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(reg) {
+            console.log('[SW] Fallback registration successful:', reg);
+          })
+          .catch(function(fallbackErr) {
+            console.log('[SW] Fallback registration failed:', fallbackErr);
+          });
+      }
+    });
   });
 }
 
+// ============================================================
+// SERVICE WORKER MESSAGING (Optional)
+// ============================================================
+navigator.serviceWorker?.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'TOAST') {
+    if (typeof toast === 'function') {
+      toast(event.data.message);
+    }
+  }
+});
+
+console.log('✅ Service Worker module loaded');
 // ============================================================
 // USER BADGE INIT (For all pages)
 // ============================================================
@@ -2542,4 +3590,4 @@ window.addEventListener('storage', function(e) {
   }
 });
 
-console.log('🚀 LiquorBelle — Master app.js loaded (Full integrated version)');
+console.log('🚀 LiquorBelle — Master app.js loaded (Enhanced version)');

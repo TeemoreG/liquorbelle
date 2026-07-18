@@ -64,9 +64,15 @@ if (document.getElementById('categoryGrid')) {
     }
   })();
 
-  // Categories
+  // ===== CATEGORIES - ALL 18 =====
   var categories = [
     { name: "All", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+    { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+    { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+    { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+    { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+    { name: "Cognac", cat: "cognac", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
+    { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
     { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
     { name: "Brandy", cat: "brandy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
     { name: "Bourbon", cat: "bourbon", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318444/a72b554e-5c0b-4ac3-8a66-bdbbf931453c.3c0dcb1f945848aa6629090c307ae781_ksa4md.jpg" },
@@ -93,6 +99,9 @@ if (document.getElementById('categoryGrid')) {
     var select = document.getElementById(selectId);
     if (!select) return;
     var dropdownCats = [
+      { id: 'whisky', label: 'Whisky' }, { id: 'wine', label: 'Wine' },
+      { id: 'vodka', label: 'Vodka' }, { id: 'gin', label: 'Gin' },
+      { id: 'cognac', label: 'Cognac' }, { id: 'cream', label: 'Creams' },
       { id: 'beer', label: 'Beer' }, { id: 'brandy', label: 'Brandy' },
       { id: 'bourbon', label: 'Bourbon' }, { id: 'rum', label: 'Rum' },
       { id: 'spirits', label: 'Spirits' }, { id: 'liqueur', label: 'Liqueur' },
@@ -110,6 +119,9 @@ if (document.getElementById('categoryGrid')) {
 
   var allProductsCache = [];
 
+  // ============================================================
+  // renderProductCard WITH STOCK STATUS
+  // ============================================================
   function renderProductCard(p, index) {
     var imgData = getResponsiveImage(p.image);
     var price = p.variants && p.variants.length ? p.variants[0].price : 0;
@@ -118,17 +130,28 @@ if (document.getElementById('categoryGrid')) {
     var loadingAttr = index < 12 ? 'loading="eager"' : 'loading="lazy"';
     var fetchPriority = index < 8 ? 'fetchpriority="high"' : '';
 
+    // ===== STOCK STATUS =====
+    var stockInfo = getStockStatus(p.variants);
+    var isInStock = stockInfo.status === 'in-stock' || stockInfo.status === 'low-stock';
+    var stockBadge = '<div class="stock-badge ' + stockInfo.status + '"><i class="ph ' + stockInfo.icon + '"></i> ' + stockInfo.label + '</div>';
+
+    // ===== ADD TO CART BUTTON =====
+    var atcHtml = isInStock ? 
+      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + price + ',\'' + escapeHtml(capacity) + '\')"><i class="ph ph-plus"></i> Add</button>' :
+      '<button class="atc-btn out-of-stock" disabled><i class="ph ph-x-circle"></i> Out of Stock</button>';
+
     return '<div class="prod-card" data-product-id="' + String(p._id) + '">' +
       '<div class="pc-img-wrap">' +
       (imgData.src ? '<img class="pc-img" src="' + imgData.src + '" srcset="' + imgData.srcset + '" sizes="' + imgData.sizes + '" alt="' + escapeHtml(p.name) + '" ' + loadingAttr + ' ' + fetchPriority + ' decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'">' : '') +
-      (p.isTrending ? '<span class="badge-new">🔥 Trending</span>' : '') +
+      (p.isTrending ? '<span class="badge-new">Trending</span>' : '') +
+      stockBadge +
       '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-name">' + escapeHtml(p.name) + '</div>' +
       (capacity ? '<div class="pc-vol">' + escapeHtml(capacity) + '</div>' : '') +
       ratingHtml +
-      '<div class="pc-price-wrap"><span class="pc-price-regular">KES ' + price.toLocaleString() + '</span></div>' +
-      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + price + ',\'' + escapeHtml(capacity) + '\')"><i class="ph ph-plus"></i> Add</button>' +
+      '<div class="pc-price-wrap"><span class="pc-price-new">KES ' + price.toLocaleString() + '</span></div>' +
+      atcHtml +
       '</div></div>';
   }
 
@@ -180,7 +203,6 @@ if (document.getElementById('categoryGrid')) {
           renderProductSection(newArrivals.length ? newArrivals : products.slice(0, 8), 'newArrivalsGrid', 8);
           renderProductSection(trending.length ? trending : products, 'trendingGrid', 8);
           renderProductSection(featured, 'featuredGrid', 8);
-          preloadProductImages(products);
         } else {
           var msg = '<div class="empty-state"><i class="ph ph-clock"></i><h3>Loading products</h3><p>Products will appear here shortly.</p></div>';
           newArrivalsGrid.innerHTML = msg;
@@ -434,8 +456,15 @@ if (document.getElementById('catChips')) {
   var currentFilters = { category: 'all', search: '', priceMin: null, priceMax: null, onSale: false };
   var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
 
+  // ===== CATEGORIES - ALL 18 =====
   var categoriesShop = [
     { name: "All", cat: "all" },
+    { name: "Whisky", cat: "whisky" },
+    { name: "Wine", cat: "wine" },
+    { name: "Vodka", cat: "vodka" },
+    { name: "Gin", cat: "gin" },
+    { name: "Cognac", cat: "cognac" },
+    { name: "Creams", cat: "cream" },
     { name: "Beer", cat: "beer" },
     { name: "Brandy", cat: "brandy" },
     { name: "Bourbon", cat: "bourbon" },
@@ -450,33 +479,58 @@ if (document.getElementById('catChips')) {
     { name: "Accessory", cat: "accessory" }
   ];
 
-  // Ad Poster Rotator
+  // ===== AD POSTER - MODERN VERSION =====
   (function initAdPoster() {
     var adData = [
-      { icon: 'ph-shield-check', title: '100% Authentic Products', desc: 'Official distributors • Genuine brands • Quality guaranteed', badge: 'Trusted' },
-      { icon: 'ph-truck', title: 'Fast & Reliable Delivery', desc: '10–45 minutes across Nairobi • Rider calls before arrival', badge: 'Swift' },
-      { icon: 'ph-credit-card', title: 'Easy M-PESA Checkout', desc: 'STK Push payment • Secure • Instant confirmation', badge: 'Simple' },
-      { icon: 'ph-clock', title: 'Open 24/7 — We Never Close', desc: 'Order anytime • Day or night • Always available', badge: 'Always' },
-      { icon: 'ph-seal-check', title: 'Wide Selection — 100+ Brands', desc: 'Whisky • Cognac • Vodka • Gin • Rum • Wine • Beer', badge: 'Variety' }
+      { icon: 'ph-shield-check', title: '100% Authentic Products', desc: 'Official distributors • Genuine brands • Quality guaranteed', badge: 'Trusted', bgGradient: 'linear-gradient(135deg, #1a472a, #2d6a4f)', accentColor: '#52b788' },
+      { icon: 'ph-truck', title: 'Fast & Reliable Delivery', desc: '10–45 minutes across Nairobi • Rider calls before arrival', badge: 'Swift', bgGradient: 'linear-gradient(135deg, #1a365d, #2b6cb0)', accentColor: '#63b3ed' },
+      { icon: 'ph-credit-card', title: 'Easy M-PESA Checkout', desc: 'STK Push payment • Secure • Instant confirmation', badge: 'Simple', bgGradient: 'linear-gradient(135deg, #6b21a5, #7c3aed)', accentColor: '#a78bfa' },
+      { icon: 'ph-clock', title: 'Open 24/7 — We Never Close', desc: 'Order anytime • Day or night • Always available', badge: 'Always', bgGradient: 'linear-gradient(135deg, #9a3412, #c2410c)', accentColor: '#fb923c' },
+      { icon: 'ph-seal-check', title: 'Wide Selection — 100+ Brands', desc: 'Whisky • Cognac • Vodka • Gin • Rum • Wine • Beer', badge: 'Variety', bgGradient: 'linear-gradient(135deg, #1e1b4b, #3730a3)', accentColor: '#818cf8' }
     ];
     var adIndex = 0;
     var adInterval = null;
+    var isTransitioning = false;
 
     function renderAd(index) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      
       var data = adData[index % adData.length];
-      var iconEl = document.getElementById('adIcon');
-      if (iconEl) iconEl.innerHTML = '<i class="ph ' + data.icon + '"></i>';
-      var titleEl = document.getElementById('adTitle');
-      if (titleEl) titleEl.textContent = data.title;
-      var descEl = document.getElementById('adDesc');
-      if (descEl) descEl.textContent = data.desc;
-      var badgeEl = document.getElementById('adBadge');
-      if (badgeEl) badgeEl.textContent = data.badge;
-      var dots = document.querySelectorAll('.ad-dot');
-      dots.forEach(function(d, i) { d.classList.toggle('active', i === index); });
       var poster = document.getElementById('adPosterInner');
-      if (poster) { poster.style.opacity = '0';
-        setTimeout(function() { poster.style.opacity = '1'; }, 50); }
+      if (poster) {
+        poster.style.opacity = '0';
+        poster.style.transform = 'scale(0.98)';
+        setTimeout(function() {
+          var iconEl = document.getElementById('adIcon');
+          if (iconEl) {
+            iconEl.innerHTML = '<i class="ph ' + data.icon + '"></i>';
+          }
+          var titleEl = document.getElementById('adTitle');
+          if (titleEl) titleEl.textContent = data.title;
+          var descEl = document.getElementById('adDesc');
+          if (descEl) descEl.textContent = data.desc;
+          var badgeEl = document.getElementById('adBadge');
+          if (badgeEl) badgeEl.textContent = data.badge;
+          
+          var wrapper = document.getElementById('adPosterWrapper');
+          if (wrapper) {
+            wrapper.style.background = data.bgGradient;
+            wrapper.style.setProperty('--accent-color', data.accentColor);
+          }
+          
+          var dots = document.querySelectorAll('.ad-dot');
+          dots.forEach(function(d, i) {
+            d.classList.toggle('active', i === index);
+          });
+          
+          poster.style.opacity = '1';
+          poster.style.transform = 'scale(1)';
+          setTimeout(function() {
+            isTransitioning = false;
+          }, 400);
+        }, 300);
+      }
     }
 
     var container = document.getElementById('adDots');
@@ -485,20 +539,32 @@ if (document.getElementById('catChips')) {
       for (var i = 0; i < adData.length; i++) {
         var dot = document.createElement('span');
         dot.className = 'ad-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('data-index', i);
         dot.onclick = (function(idx) {
           return function() {
+            if (isTransitioning) return;
             clearInterval(adInterval);
             adIndex = idx;
             renderAd(adIndex);
-            adInterval = setInterval(function() { adIndex = (adIndex + 1) % adData.length;
-              renderAd(adIndex); }, 5000);
+            adInterval = setInterval(function() { 
+              adIndex = (adIndex + 1) % adData.length;
+              renderAd(adIndex); 
+            }, 5000);
           };
         })(i);
         container.appendChild(dot);
       }
+      
+      var wrapper = document.getElementById('adPosterWrapper');
+      if (wrapper) {
+        wrapper.style.background = adData[0].bgGradient;
+        wrapper.style.setProperty('--accent-color', adData[0].accentColor);
+      }
       renderAd(0);
-      adInterval = setInterval(function() { adIndex = (adIndex + 1) % adData.length;
-        renderAd(adIndex); }, 5000);
+      adInterval = setInterval(function() { 
+        adIndex = (adIndex + 1) % adData.length;
+        renderAd(adIndex); 
+      }, 5000);
     }
   })();
 
@@ -556,6 +622,7 @@ if (document.getElementById('catChips')) {
     } catch (e) {}
   }
 
+  // ===== MAP DB PRODUCTS WITH STOCK STATUS =====
   function mapDbProducts(rawProducts) {
     return rawProducts.map(function(p) {
       var variants = p.variants || [];
@@ -565,6 +632,24 @@ if (document.getElementById('catChips')) {
       var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
       var discountPercent = cheapestVariant?.discount || 0;
       var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
+      
+      // ===== STOCK STATUS =====
+      var hasInStock = variants.some(function(v) {
+        return v.stock === 'inStock' || (!v.stock && v.stockQuantity > 0) || (!v.stock && v.stockQuantity === undefined);
+      });
+      var allOutOfStock = variants.every(function(v) {
+        return v.stock === 'outOfStock' || (v.stockQuantity !== undefined && v.stockQuantity <= 0);
+      });
+      var stockStatus = 'in-stock';
+      if (allOutOfStock || !hasInStock) {
+        stockStatus = 'out-of-stock';
+      } else {
+        var lowStock = variants.some(function(v) {
+          return v.stockQuantity !== undefined && v.stockQuantity > 0 && v.stockQuantity < 5;
+        });
+        if (lowStock) stockStatus = 'low-stock';
+      }
+      
       return {
         _id: p._id,
         id: p._id,
@@ -580,6 +665,7 @@ if (document.getElementById('catChips')) {
         isTrending: p.isTrending || false,
         isNew: p.isNew || false,
         rating: p.rating || 4,
+        stockStatus: stockStatus,
         variants: variants
       };
     });
@@ -944,8 +1030,23 @@ if (document.getElementById('catChips')) {
     } else if (p.isTrending) {
       topBadge = '<div class="badge-bestseller"><i class="ph-fill ph-flame" style="font-size:9px;"></i> BESTSELLER</div>';
     }
+    
+    // ===== STOCK STATUS =====
+    var stockInfo = getStockStatus(p.variants);
+    var isInStock = stockInfo.status === 'in-stock' || stockInfo.status === 'low-stock';
+    var stockBadge = '<div class="stock-badge ' + stockInfo.status + '"><i class="ph ' + stockInfo.icon + '"></i> ' + stockInfo.label + '</div>';
+    var stockText = '';
+    if (stockInfo.status === 'in-stock') {
+      stockText = '<div class="pc-stock in-stock"><i class="ph ph-check-circle"></i> In Stock</div>';
+    } else if (stockInfo.status === 'low-stock') {
+      stockText = '<div class="pc-stock low-stock"><i class="ph ph-warning"></i> Low Stock</div>';
+    } else {
+      stockText = '<div class="pc-stock out-of-stock"><i class="ph ph-x-circle"></i> Out of Stock</div>';
+    }
+    
     var heartIcon = isWishlisted ? 'ph-fill ph-heart' : 'ph ph-heart';
     var wishlistBtn = '<button class="pc-wishlist ' + (isWishlisted ? 'wishlisted' : '') + '" onclick="event.stopPropagation();toggleWishlist(\'' + p._id + '\',\'' + escapeHtml(p.name).replace(/'/g, "\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\', this)"><i class="' + heartIcon + '"></i></button>';
+    
     var variantHtml = '';
     if (p.variants && p.variants.length > 1) {
       variantHtml = '<div class="variant-select-wrap"><select onchange="updateVariantPrice(this, \'' + p._id + '\')">' +
@@ -956,11 +1057,15 @@ if (document.getElementById('catChips')) {
     }
     var imgSrc = p.image ? optimizeImage(p.image, 300) : FALLBACK_IMG;
     var escapedName = escapeHtml(p.name).replace(/'/g, "\\'");
+    
+    var atcHtml = isInStock ? 
+      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.capacity || '') + '\')"><i class="ph ph-plus"></i> Add</button>' :
+      '<button class="atc-btn out-of-stock" disabled><i class="ph ph-x-circle"></i> Out of Stock</button>';
 
     return '<div class="prod-card" data-product-id="' + p._id + '" onclick="goToProduct(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.image || '') + '\',\'' + (p.capacity || '') + '\')">' +
       '<div class="pc-img-wrap">' +
       '<img class="pc-img" src="' + imgSrc + '" alt="' + escapeHtml(p.name) + '" loading="lazy" onerror="this.src=\'' + FALLBACK_IMG + '\'">' +
-      topBadge + wishlistBtn +
+      topBadge + wishlistBtn + stockBadge +
       '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-name">' + escapeHtml(p.name) + '</div>' +
@@ -970,8 +1075,9 @@ if (document.getElementById('catChips')) {
       (savePercent > 0 ? '<span class="pc-price-old">KES ' + original.toLocaleString() + '</span>' : '') +
       '<span class="pc-price-new">KES ' + p.price.toLocaleString() + '</span>' +
       '</div>' +
+      stockText +
       variantHtml +
-      '<button class="atc-btn" onclick="event.stopPropagation();addToCart(\'' + p._id + '\',\'' + escapedName + '\',' + p.price + ',\'' + (p.capacity || '') + '\')"><i class="ph ph-plus"></i> Add</button>' +
+      atcHtml +
       '<div class="click-hint">Click for details →</div>' +
       '</div></div>';
   }
