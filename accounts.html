@@ -139,35 +139,12 @@ a{color:inherit;text-decoration:none;}
 .header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 
 /* ===== HEADER USER BADGE ===== */
-.header-user-badge{
-  position:relative;
-  width:36px;height:36px;
-  border-radius:50%;
-  border:2px solid var(--btn-green);
-  background:rgba(255,255,255,0.08);
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:.2s;
-  font-size:16px;
-}
+
 .header-user-badge:hover{background:rgba(255,255,255,0.2);}
 .header-user-badge .user-initial{
   font-weight:700;
   font-size:14px;
   text-transform:uppercase;
-}
-.header-user-badge .user-dot{
-  position:absolute;bottom:-2px;right:-2px;
-  width:12px;height:12px;
-  border-radius:50%;
-  background:var(--btn-green);
-  border:2px solid var(--primary);
-}
-.header-user-badge .user-dot.guest{
-  background:var(--muted);
 }
 
 .header-icon-btn{
@@ -728,10 +705,6 @@ a{color:inherit;text-decoration:none;}
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
-    <div class="header-user-badge" id="headerUserBadge" onclick="window.location.href='https://teemoreg.github.io/liquorbelle/liquourbelle/account.html'" title="My Account">
-      <span class="user-initial" id="userInitial">G</span>
-      <span class="user-dot guest" id="userDot"></span>
-    </div>
     <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
       <i class="ph ph-shopping-cart"></i>
       <span class="header-cart-badge" id="headerCartCount">0</span>

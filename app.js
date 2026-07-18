@@ -149,8 +149,8 @@ function getCurrentUser() {
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
-  if (window.location.pathname.indexOf('account.html') === -1) {
-    window.location.href = 'account.html';
+  if (window.location.pathname.indexOf('accounts.html') === -1) {
+    window.location.href = 'accounts.html';
   } else {
     window.location.reload();
   }
@@ -426,7 +426,7 @@ window.updateUserBadge = function() {
     if (dotEl) { dotEl.className = 'user-dot guest'; }
     if (menuAuth) {
       menuAuth.innerHTML = `
-        <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
           <i class="ph ph-user-circle"></i> Login / Register
         </a>
       `;
