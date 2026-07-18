@@ -208,13 +208,16 @@ a{color:inherit;text-decoration:none;}
 .mobile-search-inline i{color:var(--muted);font-size:16px;}
 .mobile-search-inline input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.85rem;color:var(--text);}
 
-/* ===== AGE GATE ===== */
+/* ============================================================
+   AGE GATE - LIQUORBELLE BRANDED (Gold & Maroon)
+   ============================================================ */
+
 .age-gate {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(139, 0, 0, 0.92); /* Maroon overlay */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 99999;
   display: none;
   align-items: center;
@@ -235,9 +238,10 @@ a{color:inherit;text-decoration:none;}
   pointer-events: none !important;
 }
 
+/* ===== AGE GATE CARD ===== */
 .age-gate-card {
-  background: var(--white, #ffffff);
-  border-radius: var(--radius, 16px);
+  background: #ffffff;
+  border-radius: 20px;
   padding: 48px 40px 40px;
   max-width: 440px;
   width: 100%;
@@ -248,6 +252,7 @@ a{color:inherit;text-decoration:none;}
   opacity: 0;
   position: relative;
   overflow: hidden;
+  border: 2px solid #d4a843;
 }
 
 .age-gate.active .age-gate-card {
@@ -255,16 +260,17 @@ a{color:inherit;text-decoration:none;}
   opacity: 1;
 }
 
+/* ===== GOLD SHIMMER BAR ===== */
 .age-gate-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--gold, #d4a843), var(--gold-light, #f0d080), var(--gold, #d4a843));
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
+  height: 5px;
+  background: linear-gradient(90deg, #d4a843, #f0d080, #d4a843, #b8860b, #d4a843);
+  background-size: 300% 100%;
+  animation: shimmer 4s ease-in-out infinite;
 }
 
 @keyframes shimmer {
@@ -272,6 +278,20 @@ a{color:inherit;text-decoration:none;}
   50% { background-position: 100% 50%; }
 }
 
+/* ===== GOLD CORNER ACCENTS ===== */
+.age-gate-card::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at top right, rgba(212, 168, 67, 0.15), transparent 70%);
+  pointer-events: none;
+  border-radius: 0 20px 0 0;
+}
+
+/* ===== LOGO ===== */
 .age-gate-logo {
   margin-bottom: 16px;
 }
@@ -281,29 +301,32 @@ a{color:inherit;text-decoration:none;}
   height: 80px;
   border-radius: 20px;
   object-fit: cover;
-  background: var(--bg2, #f5f5f5);
+  background: #ffffff;
   padding: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.2);
+  border: 2px solid #d4a843;
 }
 
+/* ===== HEADING ===== */
 .age-gate-card h2 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: var(--text, #111111);
+  color: #800000;
   margin: 0 0 4px 0;
   letter-spacing: -0.5px;
 }
 
 .age-gate-card h2 .gold {
-  color: var(--gold, #d4a843);
-  background: linear-gradient(135deg, var(--gold, #d4a843), var(--gold-light, #f0d080));
+  color: #d4a843;
+  background: linear-gradient(135deg, #d4a843, #b8860b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* ===== TEXT ===== */
 .age-gate-text {
-  color: var(--muted, #666666);
+  color: #666666;
   font-size: 0.9rem;
   margin: 8px 0 24px;
   line-height: 1.6;
@@ -312,6 +335,7 @@ a{color:inherit;text-decoration:none;}
   margin-right: auto;
 }
 
+/* ===== BUTTONS ===== */
 .age-gate-btns {
   display: flex;
   gap: 12px;
@@ -323,12 +347,12 @@ a{color:inherit;text-decoration:none;}
   min-width: 120px;
   padding: 14px 20px;
   border: none;
-  border-radius: var(--radius-sm, 8px);
+  border-radius: 10px;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.25s ease;
-  font-family: var(--font-body, 'Inter', sans-serif);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -336,13 +360,13 @@ a{color:inherit;text-decoration:none;}
 }
 
 .age-yes {
-  background: var(--gold, #d4a843);
-  color: white;
+  background: #d4a843;
+  color: #ffffff;
   box-shadow: 0 4px 16px rgba(212, 168, 67, 0.3);
 }
 
 .age-yes:hover {
-  background: var(--gold-light, #f0d080);
+  background: #e8c96a;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(212, 168, 67, 0.4);
 }
@@ -352,29 +376,56 @@ a{color:inherit;text-decoration:none;}
 }
 
 .age-no {
-  background: var(--bg2, #f0f0f0);
-  color: var(--text, #111111);
+  background: #800000;
+  color: #ffffff;
 }
 
 .age-no:hover {
-  background: var(--sale-red, #dc2626);
-  color: white;
+  background: #a00000;
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 0, 0, 0.3);
 }
 
+.age-no:active {
+  transform: translateY(0px);
+}
+
+/* ===== FOOTER ===== */
 .age-gate-footer {
   margin-top: 20px;
   font-size: 0.7rem;
-  color: var(--muted-light, #999999);
+  color: #999999;
   line-height: 1.4;
   opacity: 0.7;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ============================================================
+   BODY SCROLL CONTROL - CRITICAL FIX
+   ============================================================ */
+
+/* When age gate is active - lock scroll */
+body.age-gate-active {
+  overflow: hidden !important;
+  height: 100vh !important;
+  position: fixed !important;
+  width: 100% !important;
+}
+
+/* When age gate is hidden - allow scroll */
+body:not(.age-gate-active) {
+  overflow: auto !important;
+  height: auto !important;
+  position: relative !important;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
 @media (max-width: 480px) {
   .age-gate-card {
     padding: 32px 24px 28px;
-    border-radius: 12px;
+    border-radius: 16px;
   }
   
   .age-gate-card h2 {
@@ -400,34 +451,33 @@ a{color:inherit;text-decoration:none;}
   }
 }
 
-/* ===== DARK MODE SUPPORT ===== */
-@media (prefers-color-scheme: dark) {
+@media (max-width: 380px) {
   .age-gate-card {
-    background: var(--dark-bg, #1a1a1a);
+    padding: 24px 16px 20px;
   }
   
   .age-gate-card h2 {
-    color: var(--dark-text, #ffffff);
-  }
-  
-  .age-gate-text {
-    color: var(--dark-muted, #aaaaaa);
-  }
-  
-  .age-no {
-    background: var(--dark-bg2, #2a2a2a);
-    color: var(--dark-text, #ffffff);
-  }
-  
-  .age-no:hover {
-    background: var(--sale-red, #dc2626);
-    color: white;
-  }
-  
-  .age-gate-footer {
-    color: var(--dark-muted-light, #666666);
+    font-size: 1.2rem;
   }
 }
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .age-gate,
+  .age-gate-card,
+  .age-gate-card::before {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .age-gate-card::before {
+    display: none;
+  }
+}
+
 /* ===== MARQUEE ===== */
 .marquee-strip{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:8px 0;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.08);}
 .marquee-content{display:flex;width:max-content;animation:marquee 30s linear infinite;}
@@ -2010,31 +2060,76 @@ a{color:inherit;text-decoration:none;}
 <script src="app.js"></script>
 
 <script>
-// ===== AGE GATE =====
+// ===== AGE GATE - FIXED =====
 (function initAgeGate() {
   var ageGate = document.getElementById('ageGate');
   var ageYesBtn = document.getElementById('ageYesBtn');
   var ageNoBtn = document.getElementById('ageNoBtn');
+  
+  if (!ageGate) return;
+  
+  // Function to enable scrolling
+  function enableScroll() {
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.body.classList.remove('age-gate-active');
+  }
+  
+  // Function to disable scrolling
+  function disableScroll() {
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100vh';
+    document.body.classList.add('age-gate-active');
+  }
+  
+  // Check if age was already confirmed
   if (localStorage.getItem('lb_age_confirmed') === 'true') {
-    if (ageGate) { ageGate.style.display = 'none'; }
+    ageGate.style.display = 'none';
+    ageGate.classList.remove('active');
+    enableScroll();  // ← Ensure scroll is enabled
     return;
   }
-  if (ageGate) {
-    ageGate.style.display = 'flex';
-    setTimeout(function() { ageGate.classList.add('active'); }, 10);
-  }
+  
+  // Show age gate
+  ageGate.style.display = 'flex';
+  disableScroll();  // Lock scroll when showing
+  
+  setTimeout(function() {
+    ageGate.classList.add('active');
+  }, 50);
+  
+  // Yes button
   if (ageYesBtn) {
     ageYesBtn.onclick = function() {
       localStorage.setItem('lb_age_confirmed', 'true');
-      if (ageGate) {
-        ageGate.classList.remove('active');
-        setTimeout(function() { ageGate.style.display = 'none'; }, 500);
-      }
+      ageGate.classList.remove('active');
+      
+      setTimeout(function() {
+        ageGate.style.display = 'none';
+        enableScroll();  // ← KEY: Unlock scroll!
+      }, 400);
     };
   }
+  
+  // No button
   if (ageNoBtn) {
     ageNoBtn.onclick = function() {
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;color:#800000;font-size:1.1rem;padding:20px;text-align:center;background:white;">Sorry, you must be 18 or older to visit this site.</div>';
+      document.body.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;padding:20px;text-align:center;background:#f8f8f8;">
+          <div style="font-size:4rem;margin-bottom:12px;">🚫</div>
+          <h2 style="font-size:1.6rem;color:#800000;margin-bottom:8px;">Access Denied</h2>
+          <p style="color:#666;font-size:1rem;max-width:400px;">Sorry, you must be 18 or older to visit this site.</p>
+          <button onclick="localStorage.removeItem('lb_age_confirmed');location.reload();" 
+            style="margin-top:20px;padding:12px 28px;background:#800000;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;">
+            Try Again
+          </button>
+        </div>
+      `;
+      enableScroll();
     };
   }
 })();
