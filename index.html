@@ -208,28 +208,31 @@ a{color:inherit;text-decoration:none;}
 .mobile-search-inline i{color:var(--muted);font-size:16px;}
 .mobile-search-inline input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.85rem;color:var(--text);}
 
-/* ===== AGE GATE ===== */
-.age-gate{
-  position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(20px);
-  z-index:9999;display:none;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .4s;
+/* ===== AGE GATE - FIXED ===== */
+.age-gate {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(20px);
+  z-index: 9999;
+  display: none !important;  /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;  /* Don't block clicks when hidden */
 }
-.age-gate.active{opacity:1;display:flex;}
-.age-gate-card{
-  background:var(--white);border-radius:var(--radius);padding:48px 40px;max-width:420px;
-  text-align:center;box-shadow:var(--shadow-xl);transform:scale(0.92);transition:transform .4s;
+
+.age-gate.active {
+  display: flex !important;  /* Show when active */
+  opacity: 1;
+  pointer-events: auto;  /* Block clicks when active */
 }
-.age-gate.active .age-gate-card{transform:scale(1);}
-.age-gate-card img{width:64px;border-radius:16px;margin:0 auto 12px;background:var(--bg2);padding:4px;}
-.age-gate-card h2{font-size:1.6rem;font-weight:800;color:var(--text);margin-bottom:4px;}
-.age-gate-card h2 .gold{color:var(--gold);}
-.age-gate-card p{color:var(--muted);font-size:.85rem;margin:8px 0 20px;line-height:1.5;}
-.age-gate-btns{display:flex;gap:12px;}
-.age-gate-btns button{flex:1;padding:12px;border:none;border-radius:var(--radius-sm);font-weight:700;font-size:1rem;cursor:pointer;transition:.2s;font-family:var(--font-body);}
-.age-yes{background:var(--gold);color:white;}
-.age-yes:hover{background:var(--gold-light);transform:translateY(-2px);}
-.age-no{background:var(--bg2);color:var(--text);}
-.age-no:hover{background:var(--sale-red);color:white;}
+
+.age-gate:not(.active) {
+  display: none !important;
+  pointer-events: none !important;
+}
 
 /* ===== MARQUEE ===== */
 .marquee-strip{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:8px 0;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.08);}
