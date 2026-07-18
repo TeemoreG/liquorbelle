@@ -1029,7 +1029,7 @@ a{color:inherit;text-decoration:none;}
 </div>
 
 <!-- ============================================================
-     JAVASCRIPT - ACCOUNT PAGE (DYNAMIC & FAST)
+     JAVASCRIPT - ACCOUNT PAGE (COMPLETE)
      ============================================================ -->
 <script>
 // ============================================================
@@ -1369,6 +1369,45 @@ async function apiCall(endpoint, data, method = 'POST') {
 }
 
 // ============================================================
+// AUTH FUNCTIONS - Using apiCall()
+// ============================================================
+
+/**
+ * Register a new user
+ */
+async function registerUserApp(name, email, phone, pin, otp) {
+  return await apiCall('/api/auth/register', { name, email, phone, pin, otp });
+}
+
+/**
+ * Login existing user
+ */
+async function loginUserApp(email, pin) {
+  return await apiCall('/api/auth/login', { email, pin });
+}
+
+/**
+ * Request OTP for registration
+ */
+async function requestOTP(email) {
+  return await apiCall('/api/auth/send-email-otp', { email });
+}
+
+/**
+ * Request OTP for PIN reset
+ */
+async function requestResetOTP(email) {
+  return await apiCall('/api/auth/forgot-pin', { email });
+}
+
+/**
+ * Reset PIN with OTP
+ */
+async function resetPinApp(email, otp, newPin) {
+  return await apiCall('/api/auth/reset-pin', { email, otp, newPin });
+}
+
+// ============================================================
 // SEND FORGOT PIN OTP
 // ============================================================
 async function sendForgotOtp() {
@@ -1386,7 +1425,7 @@ async function sendForgotOtp() {
   btn.dataset.loadingText = 'Sending...';
 
   try {
-    const data = await apiCall('/api/auth/forgot-pin', { email });
+    await requestResetOTP(email);
     showStatus('OTP sent to your email', 'success');
     document.getElementById('forgotOtpGroup').style.display = 'block';
     document.getElementById('forgotPinGroup').style.display = 'block';
@@ -1449,7 +1488,7 @@ async function resetPin() {
   btn.dataset.loadingText = 'Resetting...';
 
   try {
-    await apiCall('/api/auth/reset-pin', { email, otp, newPin });
+    await resetPinApp(email, otp, newPin);
     showStatus('PIN reset successfully! Please login with your new PIN.', 'success');
     setTimeout(() => {
       hideForgotPin();
@@ -1487,7 +1526,7 @@ async function sendRegisterOtp() {
   btn.dataset.loadingText = 'Sending...';
 
   try {
-    await apiCall('/api/auth/send-email-otp', { email });
+    await requestOTP(email);
     showStatus('OTP sent to ' + email, 'success');
     startRegOtpTimer();
   } catch (error) {
@@ -1556,7 +1595,7 @@ async function registerUser() {
   btn.dataset.loadingText = 'Creating Account...';
 
   try {
-    const data = await apiCall('/api/auth/register', { name, phone, email, pin, otp });
+    const data = await registerUserApp(name, email, phone, pin, otp);
     const user = {
       id: data.customer.id,
       email: data.customer.email,
@@ -1600,7 +1639,7 @@ async function loginUser() {
   btn.dataset.loadingText = 'Logging in...';
 
   try {
-    const data = await apiCall('/api/auth/login', { email, pin });
+    const data = await loginUserApp(email, pin);
     const user = {
       id: data.customer.id,
       email: data.customer.email,
