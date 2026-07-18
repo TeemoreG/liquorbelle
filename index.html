@@ -1473,7 +1473,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ===== HEADER - LARGER WITH ACCOUNT ICON ===== -->
+<!-- ===== HEADER - LARGER WITH ACCOUNT DROPDOWN ===== -->
 <header class="main-header">
   <a class="logo" href="index.html">
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
@@ -1484,7 +1484,7 @@ a{color:inherit;text-decoration:none;}
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
-    <!-- User Dropdown with Account Icon -->
+    <!-- Account Dropdown -->
     <div class="header-user-wrapper">
       <button class="header-user-btn" id="headerUserBtn" onclick="toggleUserDropdown(event)" aria-label="Account">
         <i class="ph ph-user-circle" id="userIcon"></i>
@@ -1512,7 +1512,7 @@ a{color:inherit;text-decoration:none;}
   </div>
 </header>
 
-<!-- ===== MOBILE MENU ===== -->
+<!-- ===== MOBILE MENU (ONCE) ===== -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
@@ -1853,7 +1853,6 @@ document.addEventListener('click', function(event) {
 
 // ===== UPDATE DROPDOWN - Safe check =====
 function updateUserDropdown() {
-  // Check if getCurrentUser exists (from app.js)
   var user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
   var nameEl = document.getElementById('dropdownUserName');
   var emailEl = document.getElementById('dropdownUserEmail');
@@ -1959,7 +1958,6 @@ window.clearMainSearch = function() {
 
 // ===== UPDATE USER BADGE ON LOAD =====
 document.addEventListener('DOMContentLoaded', function() {
-  // Wait for app.js to fully load
   setTimeout(function() {
     if (typeof updateUserDropdown === 'function') {
       updateUserDropdown();
@@ -1972,6 +1970,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('🍾 LiquorBelle homepage loaded');
 </script>
-
 </body>
 </html>
