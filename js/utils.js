@@ -189,6 +189,172 @@ function refreshAuthToken(token) {
 }
 
 // ============================================================
+// CHECK USER EXISTS (For Registration Validation)
+// ============================================================
+async function checkUserExists(name, email, phone) {
+  try {
+    const response = await fetch(API_BASE + '/api/auth/check-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone })
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Check user error:', error);
+    return { exists: false, error: error.message };
+  }
+}
+
+// ============================================================
+// REAL-TIME FIELD VALIDATION WITH EXISTENCE CHECK
+// ============================================================
+function validateNameInput(input) {
+  const errorEl = document.getElementById('regNameError');
+  const name = input.value.trim();
+  
+  if (name.length > 0 && name.length < 2) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) {
+      errorEl.textContent = 'Name must be at least 2 characters';
+      errorEl.classList.add('show');
+    }
+  } else if (name.length >= 2) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  }
+  updateSubmitButtons();
+}
+
+function validatePhoneInput(input) {
+  const errorEl = document.getElementById('regPhoneError');
+  const phone = input.value.replace(/\D/g, '');
+  input.value = phone;
+  
+  if (phone.length > 0 && phone.length < 10) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) {
+      errorEl.textContent = 'Phone must be at least 10 digits';
+      errorEl.classList.add('show');
+    }
+  } else if (phone.length >= 10) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  }
+  updateSubmitButtons();
+}
+
+function validateEmailInput(input) {
+  const errorEl = document.getElementById('regEmailError');
+  const email = input.value.trim();
+  
+  if (email.length > 0 && !/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) {
+      errorEl.textContent = 'Please enter a valid email address';
+      errorEl.classList.add('show');
+    }
+  } else if (email.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  }
+  updateSubmitButtons();
+}
+
+function validateLoginEmail(input) {
+  const errorEl = document.getElementById('loginEmailError');
+  const email = input.value.trim();
+  
+  if (email.length > 0 && !/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+    input.classList.add('error');
+    input.classList.remove('valid');
+    if (errorEl) {
+      errorEl.textContent = 'Please enter a valid email address';
+      errorEl.classList.add('show');
+    }
+  } else if (email.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+    input.classList.remove('error');
+    input.classList.add('valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  } else {
+    input.classList.remove('error', 'valid');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+  }
+  updateSubmitButtons();
+}
+
+function updateSubmitButtons() {
+  // This function is also in accounts.html - it's shared across pages
+  // If on account page, use the account page's version
+  if (document.getElementById('loginSubmitBtn')) {
+    // Login button
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPin = getPinValue ? getPinValue('login') : '';
+    const loginBtn = document.getElementById('loginSubmitBtn');
+    if (loginBtn && loginEmail) {
+      loginBtn.disabled = !(loginEmail.value.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(loginEmail.value) && loginPin.length === 4);
+    }
+  }
+  
+  if (document.getElementById('registerSubmitBtn')) {
+    // Register button
+    const regName = document.getElementById('regName');
+    const regPhone = document.getElementById('regPhone');
+    const regEmail = document.getElementById('regEmail');
+    const regPin = getPinValue ? getPinValue('reg') : '';
+    const regOtp = document.getElementById('regOtp');
+    const regBtn = document.getElementById('registerSubmitBtn');
+    if (regBtn && regName && regPhone && regEmail) {
+      const nameValid = regName.value.length >= 2;
+      const phoneValid = regPhone.value.replace(/\D/g, '').length >= 10;
+      const emailValid = regEmail.value.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(regEmail.value);
+      const pinValid = regPin.length === 4;
+      const otpValid = regOtp && regOtp.value.length === 6;
+      regBtn.disabled = !(nameValid && phoneValid && emailValid && pinValid && otpValid);
+    }
+  }
+}
+
+// ============================================================
 // OFFLINE DETECTION
 // ============================================================
 window.addEventListener('online', function() {

@@ -28,6 +28,225 @@ window.handleHeaderSearch = function(e) {
 };
 
 // ============================================================
+// CART FUNCTIONS (Shared across pages)
+// ============================================================
+var cart = {};
+
+function loadCart() {
+  try {
+    var data = localStorage.getItem(CART_KEY);
+    cart = data ? JSON.parse(data) : {};
+  } catch (e) {
+    cart = {};
+  }
+}
+
+function saveCart() {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartUI();
+}
+
+window.addToCart = function(id, name, price, capacity) {
+  loadCart();
+  if (cart[id]) {
+    cart[id].qty += 1;
+  } else {
+    cart[id] = {
+      id: id,
+      name: name,
+      price: price,
+      qty: 1,
+      capacity: capacity || ''
+    };
+  }
+  saveCart();
+  toast('✅ ' + name + ' added to cart!', false);
+};
+
+window.updateCartUI = function() {
+  loadCart();
+  var items = Object.values(cart);
+  var count = items.reduce(function(sum, item) { return sum + item.qty; }, 0);
+  var total = items.reduce(function(sum, item) { return sum + (item.price * item.qty); }, 0);
+  
+  document.querySelectorAll('.cart-count, .header-cart-badge, #cartBadgeCount, #headerCartCount').forEach(function(el) {
+    if (el) el.textContent = count;
+  });
+  
+  var totalEl = document.getElementById('cartTotal');
+  if (totalEl) totalEl.textContent = 'KES ' + total.toLocaleString();
+  
+  // Update cart drawer if open
+  var drawerItems = document.getElementById('cartItemsList');
+  if (drawerItems) {
+    renderCartDrawer();
+  }
+};
+
+window.renderCartDrawer = function() {
+  loadCart();
+  var items = Object.values(cart);
+  var container = document.getElementById('cartItemsList');
+  var footer = document.getElementById('cartFooter');
+  var totalEl = document.getElementById('cartTotalAmount');
+  
+  if (!container) return;
+  
+  if (!items.length) {
+    container.innerHTML = `
+      <div class="cart-container">
+        <div class="cart-icon-wrapper">
+          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
+            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
+          </svg>
+          <span class="cart-badge">0</span>
+        </div>
+        <h2 class="cart-message">Your cart is empty!</h2>
+        <a href="shop.html" class="shop-button">Start Shopping</a>
+      </div>
+    `;
+    if (footer) footer.style.display = 'none';
+    return;
+  }
+  
+  var html = '';
+  var total = 0;
+  var count = 0;
+  items.forEach(function(item) {
+    var subtotal = item.price * item.qty;
+    total += subtotal;
+    count += item.qty;
+    html += `
+      <div class="cart-item">
+        <div>
+          <div class="cart-item-name">${escapeHtml(item.name)}</div>
+          <div class="cart-item-qty">Qty: ${item.qty} × KES ${item.price.toLocaleString()}</div>
+        </div>
+        <div class="cart-item-price">KES ${subtotal.toLocaleString()}</div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+  if (totalEl) totalEl.textContent = 'KES ' + total.toLocaleString();
+  if (footer) footer.style.display = 'block';
+  
+  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
+    if (el) el.textContent = count;
+  });
+};
+
+window.openCartDrawer = function() {
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartDrawer').classList.add('open');
+  renderCartDrawer();
+};
+
+window.closeCartDrawer = function() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartDrawer').classList.remove('open');
+};
+
+// ============================================================
+// WISHLIST FUNCTIONS
+// ============================================================
+var wishlist = [];
+
+function loadWishlist() {
+  try {
+    var data = localStorage.getItem(WISHLIST_KEY);
+    wishlist = data ? JSON.parse(data) : [];
+  } catch (e) {
+    wishlist = [];
+  }
+}
+
+function saveWishlist() {
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+}
+
+window.toggleWishlist = function(id, name, price, image, capacity, btn) {
+  loadWishlist();
+  var index = wishlist.findIndex(function(item) { return item.id == id; });
+  if (index > -1) {
+    wishlist.splice(index, 1);
+    if (btn) {
+      btn.classList.remove('wishlisted');
+      btn.innerHTML = '<i class="ph ph-heart"></i>';
+    }
+    toast('Removed from wishlist', false);
+  } else {
+    wishlist.push({ id: id, name: name, price: price, image: image, capacity: capacity });
+    if (btn) {
+      btn.classList.add('wishlisted');
+      btn.innerHTML = '<i class="ph-fill ph-heart"></i>';
+    }
+    toast('❤️ Added to wishlist!', false);
+  }
+  saveWishlist();
+};
+
+window.openWishlistModal = function() {
+  loadWishlist();
+  var modal = document.getElementById('wishlistModal');
+  var grid = document.getElementById('wishlistGrid');
+  if (!modal || !grid) return;
+  
+  if (!wishlist.length) {
+    grid.innerHTML = '<div class="empty-state"><i class="ph ph-heart"></i><p>Your wishlist is empty</p></div>';
+  } else {
+    grid.innerHTML = wishlist.map(function(item) {
+      var imgSrc = item.image ? optimizeImage(item.image, 200) : FALLBACK_IMG;
+      return '<div class="wishlist-item">' +
+        '<img src="' + imgSrc + '" alt="' + escapeHtml(item.name) + '">' +
+        '<div class="wishlist-item-info">' +
+        '<div class="wishlist-item-name">' + escapeHtml(item.name) + '</div>' +
+        '<div class="wishlist-item-price">KES ' + item.price.toLocaleString() + '</div>' +
+        '<button onclick="addToCart(\'' + item.id + '\',\'' + escapeHtml(item.name).replace(/'/g, "\\'") + '\',' + item.price + ',\'' + (item.capacity || '') + '\');closeWishlistModal();">Add to Cart</button>' +
+        '</div></div>';
+    }).join('');
+  }
+  modal.style.display = 'flex';
+};
+
+window.closeWishlistModal = function() {
+  document.getElementById('wishlistModal').style.display = 'none';
+};
+
+// ============================================================
+// SUPPORT MODAL
+// ============================================================
+window.showSupportForm = function() {
+  document.getElementById('supportModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeSupportModal = function() {
+  document.getElementById('supportModal').style.display = 'none';
+  document.body.style.overflow = '';
+};
+
+// ============================================================
+// CHECK USER EXISTS (For Registration Validation)
+// ============================================================
+window.checkUserExists = async function(name, email, phone) {
+  try {
+    const response = await fetch(API_BASE + '/api/auth/check-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone })
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Check user error:', error);
+    return { exists: false, error: error.message };
+  }
+};
+
+// ============================================================
 // INDEX.HTML
 // ============================================================
 if (document.getElementById('categoryGrid')) {

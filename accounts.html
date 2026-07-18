@@ -1407,6 +1407,24 @@ async function resetPinApp(email, otp, newPin) {
   return await apiCall('/api/auth/reset-pin', { email, otp, newPin });
 }
 
+/**
+ * Check if user exists
+ */
+async function checkUserExists(name, email, phone) {
+  try {
+    const response = await fetch(API_BASE + '/api/auth/check-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone })
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Check user error:', error);
+    return { exists: false, error: error.message };
+  }
+}
+
 // ============================================================
 // SEND FORGOT PIN OTP
 // ============================================================
@@ -1426,13 +1444,13 @@ async function sendForgotOtp() {
 
   try {
     await requestResetOTP(email);
-    showStatus('OTP sent to your email', 'success');
+    showStatus('✅ OTP sent to your email', 'success');
     document.getElementById('forgotOtpGroup').style.display = 'block';
     document.getElementById('forgotPinGroup').style.display = 'block';
     document.getElementById('resetPinBtn').disabled = false;
     startForgotOtpTimer();
   } catch (error) {
-    showStatus(error.message, 'error');
+    showStatus('❌ ' + error.message, 'error');
   } finally {
     setLoading(btn, false);
     btn.innerHTML = 'Send OTP';
@@ -1489,7 +1507,7 @@ async function resetPin() {
 
   try {
     await resetPinApp(email, otp, newPin);
-    showStatus('PIN reset successfully! Please login with your new PIN.', 'success');
+    showStatus('✅ PIN reset successfully! Please login with your new PIN.', 'success');
     setTimeout(() => {
       hideForgotPin();
       document.getElementById('loginEmail').value = email;
@@ -1497,7 +1515,7 @@ async function resetPin() {
       updateSubmitButtons();
     }, 1500);
   } catch (error) {
-    showStatus(error.message, 'error');
+    showStatus('❌ ' + error.message, 'error');
   } finally {
     setLoading(btn, false);
     btn.innerHTML = '<i class="ph ph-check-circle"></i> Reset PIN';
@@ -1505,32 +1523,109 @@ async function resetPin() {
 }
 
 // ============================================================
-// SEND REGISTER OTP
+// SEND REGISTER OTP - WITH EXISTENCE CHECK
 // ============================================================
 async function sendRegisterOtp() {
+  const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
 
-  if (!email || !validators.email(email)) {
-    showStatus('Please enter a valid email address', 'error');
+  // Clear previous errors
+  document.querySelectorAll('.input-error').forEach(el => {
+    el.classList.remove('show');
+    el.textContent = '';
+  });
+  document.querySelectorAll('.auth-input').forEach(el => {
+    el.classList.remove('error');
+  });
+
+  if (!name || !validators.name(name)) {
+    showStatus('❌ Please enter a valid name (minimum 2 characters)', 'error');
+    document.getElementById('regName').classList.add('error');
+    const errorEl = document.getElementById('regNameError');
+    errorEl.textContent = 'Please enter a valid name';
+    errorEl.classList.add('show');
     return;
   }
 
   if (!phone || !validators.phone(phone)) {
-    showStatus('Please enter a valid phone number', 'error');
+    showStatus('❌ Please enter a valid phone number (10-15 digits)', 'error');
+    document.getElementById('regPhone').classList.add('error');
+    const errorEl = document.getElementById('regPhoneError');
+    errorEl.textContent = 'Please enter a valid phone number';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  if (!email || !validators.email(email)) {
+    showStatus('❌ Please enter a valid email address', 'error');
+    document.getElementById('regEmail').classList.add('error');
+    const errorEl = document.getElementById('regEmailError');
+    errorEl.textContent = 'Please enter a valid email address';
+    errorEl.classList.add('show');
     return;
   }
 
   const btn = document.getElementById('regOtpBtn');
   setLoading(btn, true);
-  btn.dataset.loadingText = 'Sending...';
+  btn.dataset.loadingText = 'Checking...';
 
   try {
+    // Check if any of the fields already exist
+    const checkResult = await checkUserExists(name, email, phone);
+    
+    if (checkResult.exists) {
+      let errorMessage = '❌ Account already exists!\n\n';
+      let fieldsWithError = [];
+      
+      if (checkResult.field === 'email' || (checkResult.fields && checkResult.fields.includes('email'))) {
+        errorMessage += '• Email "' + email + '" is already registered\n';
+        document.getElementById('regEmail').classList.add('error');
+        const errorEl = document.getElementById('regEmailError');
+        errorEl.textContent = 'This email is already registered';
+        errorEl.classList.add('show');
+        fieldsWithError.push('email');
+      }
+      if (checkResult.field === 'phone' || (checkResult.fields && checkResult.fields.includes('phone'))) {
+        errorMessage += '• Phone number "' + phone + '" is already registered\n';
+        document.getElementById('regPhone').classList.add('error');
+        const errorEl = document.getElementById('regPhoneError');
+        errorEl.textContent = 'This phone number is already registered';
+        errorEl.classList.add('show');
+        fieldsWithError.push('phone');
+      }
+      if (checkResult.field === 'name' || (checkResult.fields && checkResult.fields.includes('name'))) {
+        errorMessage += '• Name "' + name + '" is already registered\n';
+        document.getElementById('regName').classList.add('error');
+        const errorEl = document.getElementById('regNameError');
+        errorEl.textContent = 'This name is already registered';
+        errorEl.classList.add('show');
+        fieldsWithError.push('name');
+      }
+      
+      errorMessage += '\nPlease login instead or use different details.';
+      showStatus(errorMessage, 'error');
+      setLoading(btn, false);
+      btn.innerHTML = 'Send OTP';
+      
+      // Show switch to login option after 3 seconds
+      setTimeout(() => {
+        if (confirm('⚠️ Account already exists! Would you like to login instead?')) {
+          switchTab('login');
+          document.getElementById('loginEmail').value = email;
+          document.getElementById('loginEmail').classList.add('valid');
+          updateSubmitButtons();
+        }
+      }, 3000);
+      return;
+    }
+
+    // If user doesn't exist, send OTP
     await requestOTP(email);
-    showStatus('OTP sent to ' + email, 'success');
+    showStatus('✅ OTP sent to ' + email, 'success');
     startRegOtpTimer();
   } catch (error) {
-    showStatus(error.message, 'error');
+    showStatus('❌ ' + error.message, 'error');
   } finally {
     setLoading(btn, false);
     btn.innerHTML = 'Send OTP';
@@ -1559,7 +1654,7 @@ function startRegOtpTimer() {
 }
 
 // ============================================================
-// REGISTER USER
+// REGISTER USER - WITH FINAL EXISTENCE CHECK
 // ============================================================
 async function registerUser() {
   const name = document.getElementById('regName').value.trim();
@@ -1570,23 +1665,26 @@ async function registerUser() {
 
   // Validation
   if (!name || !validators.name(name)) {
-    showStatus('Please enter a valid name', 'error');
+    showStatus('❌ Please enter a valid name', 'error');
+    document.getElementById('regName').classList.add('error');
     return;
   }
   if (!phone || !validators.phone(phone)) {
-    showStatus('Please enter a valid phone number', 'error');
+    showStatus('❌ Please enter a valid phone number', 'error');
+    document.getElementById('regPhone').classList.add('error');
     return;
   }
   if (!email || !validators.email(email)) {
-    showStatus('Please enter a valid email address', 'error');
+    showStatus('❌ Please enter a valid email address', 'error');
+    document.getElementById('regEmail').classList.add('error');
     return;
   }
   if (!pin || !validators.pin(pin)) {
-    showStatus('Please enter a 4-digit PIN', 'error');
+    showStatus('❌ Please enter a 4-digit PIN', 'error');
     return;
   }
   if (!otp || !validators.otp(otp)) {
-    showStatus('Please enter a valid 6-digit OTP', 'error');
+    showStatus('❌ Please enter a valid 6-digit OTP', 'error');
     return;
   }
 
@@ -1595,6 +1693,52 @@ async function registerUser() {
   btn.dataset.loadingText = 'Creating Account...';
 
   try {
+    // Double-check if user already exists before creating
+    const checkResult = await checkUserExists(name, email, phone);
+    
+    if (checkResult.exists) {
+      let errorMessage = '❌ Cannot create account:\n';
+      
+      if (checkResult.field === 'email' || (checkResult.fields && checkResult.fields.includes('email'))) {
+        errorMessage += '• Email "' + email + '" is already registered\n';
+        document.getElementById('regEmail').classList.add('error');
+        const errorEl = document.getElementById('regEmailError');
+        errorEl.textContent = 'This email is already registered';
+        errorEl.classList.add('show');
+      }
+      if (checkResult.field === 'phone' || (checkResult.fields && checkResult.fields.includes('phone'))) {
+        errorMessage += '• Phone number "' + phone + '" is already registered\n';
+        document.getElementById('regPhone').classList.add('error');
+        const errorEl = document.getElementById('regPhoneError');
+        errorEl.textContent = 'This phone number is already registered';
+        errorEl.classList.add('show');
+      }
+      if (checkResult.field === 'name' || (checkResult.fields && checkResult.fields.includes('name'))) {
+        errorMessage += '• Name "' + name + '" is already registered\n';
+        document.getElementById('regName').classList.add('error');
+        const errorEl = document.getElementById('regNameError');
+        errorEl.textContent = 'This name is already registered';
+        errorEl.classList.add('show');
+      }
+      
+      errorMessage += '\nPlease login instead or use different details.';
+      showStatus(errorMessage, 'error');
+      setLoading(btn, false);
+      btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
+      
+      // Show switch to login option after 3 seconds
+      setTimeout(() => {
+        if (confirm('⚠️ Account already exists! Would you like to login instead?')) {
+          switchTab('login');
+          document.getElementById('loginEmail').value = email;
+          document.getElementById('loginEmail').classList.add('valid');
+          updateSubmitButtons();
+        }
+      }, 3000);
+      return;
+    }
+
+    // If user doesn't exist, proceed with registration
     const data = await registerUserApp(name, email, phone, pin, otp);
     const user = {
       id: data.customer.id,
@@ -1609,9 +1753,9 @@ async function registerUser() {
     localStorage.setItem('liquorbelle_token', data.token);
     hideStatus();
     showLoggedInState(user);
-    toast('Account created successfully! Welcome ' + name, 'success');
+    toast('✅ Account created successfully! Welcome ' + name + '! 🎉', 'success');
   } catch (error) {
-    showStatus(error.message, 'error');
+    showStatus('❌ ' + error.message, 'error');
   } finally {
     setLoading(btn, false);
     btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
@@ -1626,11 +1770,11 @@ async function loginUser() {
   const pin = getPinValue('login');
 
   if (!email || !validators.email(email)) {
-    showStatus('Please enter a valid email address', 'error');
+    showStatus('❌ Please enter a valid email address', 'error');
     return;
   }
   if (!pin || !validators.pin(pin)) {
-    showStatus('Please enter a valid 4-digit PIN', 'error');
+    showStatus('❌ Please enter a valid 4-digit PIN', 'error');
     return;
   }
 
@@ -1653,9 +1797,9 @@ async function loginUser() {
     localStorage.setItem('liquorbelle_token', data.token);
     hideStatus();
     showLoggedInState(user);
-    toast('Welcome back, ' + user.name + '!', 'success');
+    toast('✅ Welcome back, ' + user.name + '! 👋', 'success');
   } catch (error) {
-    showStatus(error.message, 'error');
+    showStatus('❌ ' + error.message, 'error');
   } finally {
     setLoading(btn, false);
     btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
@@ -1740,14 +1884,23 @@ function validateNameInput(input) {
   if (name.length > 0 && name.length < 2) {
     input.classList.add('error');
     input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
+    if (errorEl) {
+      errorEl.textContent = 'Name must be at least 2 characters';
+      errorEl.classList.add('show');
+    }
   } else if (name.length >= 2) {
     input.classList.remove('error');
     input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   } else {
     input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   }
   updateSubmitButtons();
 }
@@ -1760,14 +1913,23 @@ function validatePhoneInput(input) {
   if (phone.length > 0 && phone.length < 10) {
     input.classList.add('error');
     input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
+    if (errorEl) {
+      errorEl.textContent = 'Phone must be at least 10 digits';
+      errorEl.classList.add('show');
+    }
   } else if (phone.length >= 10 && validators.phone(phone)) {
     input.classList.remove('error');
     input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   } else {
     input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   }
   updateSubmitButtons();
 }
@@ -1779,14 +1941,23 @@ function validateEmailInput(input) {
   if (email.length > 0 && !validators.email(email)) {
     input.classList.add('error');
     input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
+    if (errorEl) {
+      errorEl.textContent = 'Please enter a valid email address';
+      errorEl.classList.add('show');
+    }
   } else if (email.length > 0 && validators.email(email)) {
     input.classList.remove('error');
     input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   } else {
     input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   }
   updateSubmitButtons();
 }
@@ -1798,21 +1969,29 @@ function validateLoginEmail(input) {
   if (email.length > 0 && !validators.email(email)) {
     input.classList.add('error');
     input.classList.remove('valid');
-    if (errorEl) errorEl.classList.add('show');
+    if (errorEl) {
+      errorEl.textContent = 'Please enter a valid email address';
+      errorEl.classList.add('show');
+    }
   } else if (email.length > 0 && validators.email(email)) {
     input.classList.remove('error');
     input.classList.add('valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   } else {
     input.classList.remove('error', 'valid');
-    if (errorEl) errorEl.classList.remove('show');
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
   }
   updateSubmitButtons();
 }
 
 // ============================================================
-// RENDER ORDERS
-// ============================================================
+// RENDER ORDERS// ============================================================
 function renderOrders(orders) {
   const container = document.getElementById('ordersContainer');
 
