@@ -135,17 +135,14 @@ a{color:inherit;text-decoration:none;}
 .header-search-form:focus-within .header-search-input::placeholder{color:var(--muted);}
 @media(max-width:600px){.header-search-form{display:none;}}
 
-.header-icons{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.header-icon-btn{position:relative;width:46px;height:46px;border-radius:50%;border:none;background:transparent;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;}
-.header-icon-btn i{font-size:25px;}
+.header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.header-icon-btn{position:relative;width:38px;height:38px;border-radius:50%;border:none;background:transparent;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;padding:0;}
+.header-icon-btn i{font-size:20px;}
 .header-icon-btn:hover{background:rgba(255,255,255,0.18);}
 .header-icon-btn:active{transform:scale(0.92);}
-.header-cart-badge{
-  position:absolute;top:-2px;right:-2px;background:var(--gold);color:white;
-  font-size:11px;font-weight:800;min-width:20px;height:20px;
-  border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--primary);
-}
+.header-cart-badge{position:absolute;top:-2px;right:-2px;background:var(--gold);color:white;font-size:9px;font-weight:800;min-width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);}
 
+@media(min-width:768px){.header-icons{gap:6px;}.header-icon-btn{width:44px;height:44px;}.header-icon-btn i{font-size:24px;}.header-cart-badge{font-size:10px;min-width:19px;height:19px;padding:0 4px;}}
 .header-user-btn:hover{background:rgba(255,255,255,0.2);}
 .header-user-btn i{font-size:22px;}
 .header-user-btn .user-dot{
@@ -155,30 +152,6 @@ a{color:inherit;text-decoration:none;}
   background:var(--btn-green);
   border:2.5px solid var(--primary);
 }
-.header-user-btn .user-dot.guest{background:var(--muted);}
-
-.user-dropdown{
-  position:absolute;top:56px;right:0;
-  background:white;border-radius:var(--radius-sm);
-  min-width:220px;box-shadow:var(--shadow-lg);
-  border:1px solid var(--border);
-  opacity:0;visibility:hidden;transform:translateY(-8px);
-  transition:all .25s ease;z-index:300;overflow:hidden;
-}
-.user-dropdown.open{opacity:1;visibility:visible;transform:translateY(0);}
-.user-dropdown .dropdown-item{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 18px;color:var(--text);
-  font-weight:500;font-size:.85rem;
-  border:none;background:none;width:100%;text-align:left;
-  cursor:pointer;transition:.15s;text-decoration:none;
-}
-.user-dropdown .dropdown-item:hover{background:var(--gold-bg);}
-.user-dropdown .dropdown-item i{font-size:18px;color:var(--gold);width:22px;}
-.user-dropdown .dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
-.user-dropdown .dropdown-user-info{padding:14px 18px 8px;border-bottom:1px solid var(--border);}
-.user-dropdown .dropdown-user-info .name{font-weight:700;font-size:.9rem;}
-.user-dropdown .dropdown-user-info .email{font-size:.75rem;color:var(--muted);}
 
 /* ===== MOBILE MENU ===== */
 .mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
@@ -204,7 +177,7 @@ a{color:inherit;text-decoration:none;}
 .age-gate {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6); /* Semi-transparent - shows page behind */
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 99999;
@@ -227,7 +200,6 @@ a{color:inherit;text-decoration:none;}
   pointer-events: none !important;
 }
 
-/* ===== AGE GATE CARD ===== */
 .age-gate-card {
   background: #ffffff;
   border-radius: 20px;
@@ -249,7 +221,6 @@ a{color:inherit;text-decoration:none;}
   opacity: 1;
 }
 
-/* ===== GOLD SHIMMER BAR ===== */
 .age-gate-card::before {
   content: '';
   position: absolute;
@@ -267,7 +238,6 @@ a{color:inherit;text-decoration:none;}
   50% { background-position: 100% 50%; }
 }
 
-/* ===== GOLD CORNER ACCENTS ===== */
 .age-gate-card::after {
   content: '';
   position: absolute;
@@ -280,7 +250,6 @@ a{color:inherit;text-decoration:none;}
   border-radius: 0 20px 0 0;
 }
 
-/* ===== LOGO ===== */
 .age-gate-logo {
   margin-bottom: 16px;
 }
@@ -296,7 +265,6 @@ a{color:inherit;text-decoration:none;}
   border: 2px solid #d4a843;
 }
 
-/* ===== HEADING ===== */
 .age-gate-card h2 {
   font-size: 1.8rem;
   font-weight: 800;
@@ -313,7 +281,6 @@ a{color:inherit;text-decoration:none;}
   background-clip: text;
 }
 
-/* ===== TEXT ===== */
 .age-gate-text {
   color: #666666;
   font-size: 0.9rem;
@@ -324,7 +291,6 @@ a{color:inherit;text-decoration:none;}
   margin-right: auto;
 }
 
-/* ===== BUTTONS ===== */
 .age-gate-btns {
   display: flex;
   gap: 12px;
@@ -379,7 +345,6 @@ a{color:inherit;text-decoration:none;}
   transform: translateY(0px);
 }
 
-/* ===== FOOTER ===== */
 .age-gate-footer {
   margin-top: 20px;
   font-size: 0.7rem;
@@ -388,11 +353,6 @@ a{color:inherit;text-decoration:none;}
   opacity: 0.7;
 }
 
-/* ============================================================
-   BODY SCROLL CONTROL - CRITICAL FIX
-   ============================================================ */
-
-/* When age gate is active - lock scroll */
 body.age-gate-active {
   overflow: hidden !important;
   height: 100vh !important;
@@ -400,41 +360,31 @@ body.age-gate-active {
   width: 100% !important;
 }
 
-/* When age gate is hidden - allow scroll */
 body:not(.age-gate-active) {
   overflow: auto !important;
   height: auto !important;
   position: relative !important;
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-
 @media (max-width: 480px) {
   .age-gate-card {
     padding: 32px 24px 28px;
     border-radius: 16px;
   }
-  
   .age-gate-card h2 {
     font-size: 1.4rem;
   }
-  
   .age-gate-logo img {
     width: 64px;
     height: 64px;
   }
-  
   .age-gate-btns {
     flex-direction: column;
   }
-  
   .age-gate-btns button {
     width: 100%;
     padding: 16px;
   }
-  
   .age-gate-text {
     font-size: 0.85rem;
   }
@@ -444,15 +394,10 @@ body:not(.age-gate-active) {
   .age-gate-card {
     padding: 24px 16px 20px;
   }
-  
   .age-gate-card h2 {
     font-size: 1.2rem;
   }
 }
-
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
   .age-gate,
@@ -461,7 +406,6 @@ body:not(.age-gate-active) {
     animation: none !important;
     transition: none !important;
   }
-  
   .age-gate-card::before {
     display: none;
   }
@@ -635,7 +579,7 @@ body:not(.age-gate-active) {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  line-clamp: 2; /* <-- ADD THIS */
+  line-clamp: 2;
 }
 .pc-vol{
   display:inline-block;
@@ -913,7 +857,6 @@ body:not(.age-gate-active) {
   transform: scale(1);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .ad-poster-inner {
     flex-direction: column;
@@ -921,24 +864,20 @@ body:not(.age-gate-active) {
     padding: 20px 22px;
     min-height: 100px;
   }
-  
   .ad-poster-right {
     width: 100%;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
-  
   .ad-poster-icon {
     width: 44px;
     height: 44px;
     font-size: 22px;
   }
-  
   .ad-poster-title {
     font-size: 0.95rem;
   }
-  
   .ad-poster-desc {
     font-size: 0.7rem;
   }
@@ -949,26 +888,21 @@ body:not(.age-gate-active) {
     padding: 16px 18px;
     min-height: 80px;
   }
-  
   .ad-poster-left {
     gap: 12px;
   }
-  
   .ad-poster-icon {
     width: 38px;
     height: 38px;
     font-size: 18px;
   }
-  
   .ad-poster-title {
     font-size: 0.85rem;
   }
-  
   .ad-dot {
     width: 6px;
     height: 6px;
   }
-  
   .ad-dot.active {
     width: 18px;
   }
@@ -1137,7 +1071,6 @@ body:not(.age-gate-active) {
   transform: scale(0.96);
 }
 
-/* Overlay */
 .overlay {
   position: fixed;
   inset: 0;
@@ -1155,7 +1088,6 @@ body:not(.age-gate-active) {
   pointer-events: auto;
 }
 
-/* Cart Drawer */
 .cart-drawer {
   position: fixed;
   bottom: -100%;
@@ -1174,7 +1106,6 @@ body:not(.age-gate-active) {
   bottom: 0;
 }
 
-/* Cart Header */
 .cart-head {
   display: flex;
   justify-content: space-between;
@@ -1229,7 +1160,6 @@ body:not(.age-gate-active) {
   transform: scale(0.92);
 }
 
-/* Cart Items */
 .cart-items {
   padding: 8px 16px 16px;
   max-height: 50vh;
@@ -1358,7 +1288,6 @@ body:not(.age-gate-active) {
   transform: scale(1.1);
 }
 
-/* Empty Cart */
 .cart-empty {
   display: flex;
   flex-direction: column;
@@ -1391,7 +1320,6 @@ body:not(.age-gate-active) {
   margin-bottom: 20px;
 }
 
-/* Cart Footer */
 .cart-footer {
   padding: 16px 20px 24px;
   border-top: 1px solid var(--border);
@@ -1505,7 +1433,6 @@ body:not(.age-gate-active) {
   font-size: 18px;
 }
 
-/* Cart Item Count Badge in Header */
 .header-cart-badge {
   position: absolute;
   top: -2px;
@@ -1535,7 +1462,6 @@ body:not(.age-gate-active) {
   100% { transform: scale(1); }
 }
 
-/* Cart item image */
 .cart-item-img {
   width: 48px;
   height: 48px;
@@ -1545,51 +1471,40 @@ body:not(.age-gate-active) {
   flex-shrink: 0;
 }
 
-/* Responsive */
 @media (max-width: 480px) {
   .cart-head {
     padding: 14px 16px;
   }
-  
   .cart-head span {
     font-size: 0.95rem;
   }
-  
   .cart-items {
     padding: 4px 12px 12px;
   }
-  
   .cart-item {
     padding: 12px 0;
   }
-  
   .cart-item-name {
     font-size: 0.75rem;
   }
-  
   .cart-item-price {
     font-size: 0.8rem;
   }
-  
   .cart-qty button {
     width: 24px;
     height: 24px;
     font-size: 12px;
   }
-  
   .cart-footer {
     padding: 12px 16px 20px;
   }
-  
   .cart-total {
     font-size: 0.95rem;
   }
-  
   .btn-checkout {
     padding: 12px;
     font-size: 0.85rem;
   }
-  
   .cart-item-img {
     width: 40px;
     height: 40px;
@@ -1716,7 +1631,7 @@ body:not(.age-gate-active) {
   </div>
 </div>
 
-<!-- ===== HEADER - LARGER WITH ACCOUNT DROPDOWN ===== -->
+<!-- ===== HEADER ===== -->
 <header class="main-header">
   <a class="logo" href="index.html">
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
@@ -1727,10 +1642,6 @@ body:not(.age-gate-active) {
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
-    </div>
-        <button class="dropdown-item" id="logoutBtn" onclick="logoutUser()" style="color:var(--sale-red);"><i class="ph ph-sign-out"></i> Logout</button>
-      </div>
-    </div>
     <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
       <i class="ph ph-shopping-cart"></i>
       <span class="header-cart-badge" id="headerCartCount">0</span>
@@ -1741,7 +1652,7 @@ body:not(.age-gate-active) {
   </div>
 </header>
 
-<!-- ===== MOBILE MENU (ONCE) ===== -->
+<!-- ===== MOBILE MENU ===== -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
@@ -1953,7 +1864,7 @@ body:not(.age-gate-active) {
     <span>Cart</span>
     <span class="nav-badge" id="navCartCount">0</span>
   </button>
-  <button class="nav-item" onclick="window.location.href='account.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
+  <button class="nav-item" onclick="window.location.href='accounts.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
 </nav>
 
 <!-- ===== CART DRAWER ===== -->
