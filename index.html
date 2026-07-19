@@ -154,21 +154,114 @@ a{color:inherit;text-decoration:none;}
 }
 
 /* ===== MOBILE MENU ===== */
-.mobile-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:399;opacity:0;pointer-events:none;transition:opacity .25s;}
-.mobile-menu-overlay.open{opacity:1;pointer-events:auto;}
-.mobile-menu{position:fixed;top:0;right:-280px;width:260px;height:100%;background:var(--white);z-index:400;box-shadow:-8px 0 30px rgba(0,0,0,0.15);transition:right .3s cubic-bezier(0.4,0,0.2,1);padding:20px 0;overflow-y:auto;}
-.mobile-menu.open{right:0;}
-.mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:0 20px 16px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-.mobile-menu-head span{font-weight:800;font-size:1rem;color:var(--primary);}
-.mobile-menu-close{border:none;background:var(--bg2);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
-.mobile-menu a, .mobile-menu button.mm-link{display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;width:100%;background:none;border:none;text-align:left;cursor:pointer;}
-.mobile-menu a i, .mobile-menu button.mm-link i{font-size:19px;color:var(--gold);width:20px;}
-.mobile-menu a:active, .mobile-menu button.mm-link:active{background:var(--bg2);}
-.mobile-search-inline{display:none;padding:0 20px 14px;}
-@media(max-width:560px){.mobile-search-inline{display:block;}}
-.mobile-search-inline form{display:flex;align-items:center;background:var(--bg2);border-radius:50px;padding:0 14px;height:40px;}
-.mobile-search-inline i{color:var(--muted);font-size:16px;}
-.mobile-search-inline input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.85rem;color:var(--text);}
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 399;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+}
+.mobile-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 260px;
+  height: 100%;
+  background: var(--white);
+  z-index: 400;
+  box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+  transition: right .3s cubic-bezier(0.4,0,0.2,1);
+  padding: 20px 0;
+  overflow-y: auto;
+}
+.mobile-menu.open {
+  right: 0;
+}
+.mobile-menu-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.mobile-menu-head span {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--primary);
+}
+.mobile-menu-close {
+  border: none;
+  background: var(--bg2);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+}
+.mobile-menu a, .mobile-menu button.mm-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: .9rem;
+  text-decoration: none;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+.mobile-menu a i, .mobile-menu button.mm-link i {
+  font-size: 19px;
+  color: var(--btn-green);
+  width: 20px;
+}
+.mobile-menu a:active, .mobile-menu button.mm-link:active {
+  background: var(--bg2);
+}
+.mobile-search-inline {
+  display: none;
+  padding: 0 20px 14px;
+}
+@media(max-width:560px) {
+  .mobile-search-inline {
+    display: block;
+  }
+}
+.mobile-search-inline form {
+  display: flex;
+  align-items: center;
+  background: var(--bg2);
+  border-radius: 50px;
+  padding: 0 14px;
+  height: 40px;
+}
+.mobile-search-inline i {
+  color: var(--muted);
+  font-size: 16px;
+}
+.mobile-search-inline input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0 8px;
+  font-family: var(--font-body);
+  font-size: .85rem;
+  color: var(--text);
+}
 
 /* ============================================================
    AGE GATE - LIQUORBELLE BRANDED (Gold & Maroon) - TRANSPARENT
@@ -1665,14 +1758,12 @@ body:not(.age-gate-active) {
       <input id="mobileSearchInput" type="text" placeholder="Search products...">
     </form>
   </div>
-  <div id="mobileMenuAuth">
-    <!-- Will be populated by JS -->
-  </div>
+  <div id="mobileMenuAuth"></div>
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="accounts.html"><i class="ph ph-user-circle"></i> My Account</a>
+  <a href="profile.html"><i class="ph ph-user-gear"></i> My Profile</a>
   <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
@@ -1864,7 +1955,10 @@ body:not(.age-gate-active) {
     <span>Cart</span>
     <span class="nav-badge" id="navCartCount">0</span>
   </button>
-  <button class="nav-item" onclick="window.location.href='accounts.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
+  <button class="nav-item" id="bottomNavAccount">
+    <i class="ph ph-user-circle"></i>
+    <span id="bottomNavAccountLabel">Account</span>
+  </button>
 </nav>
 
 <!-- ===== CART DRAWER ===== -->
@@ -1947,64 +2041,8 @@ body:not(.age-gate-active) {
 
 <script>
 // ============================================================
-// INDEX PAGE - POWERFUL DYNAMIC JAVASCRIPT
+// INDEX PAGE - ONLY UNIQUE FUNCTIONS
 // ============================================================
-
-// ============================================================
-// CONFIG
-// ============================================================
-const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-const CART_KEY = 'liquorbelle_cart';
-const TOAST_DURATION = 3000;
-
-// ============================================================
-// UTILITY FUNCTIONS
-// ============================================================
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/[&<>"']/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    if (m === '"') return '&quot;';
-    if (m === "'") return '&#39;';
-    return m;
-  });
-}
-
-function toast(msg, type) {
-  var t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.className = 'toast';
-  if (type === 'error') t.classList.add('error');
-  if (type === 'success') t.classList.add('success');
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.style.opacity = '0'; }, TOAST_DURATION);
-}
-
-// ============================================================
-// USER MANAGEMENT
-// ============================================================
-function getCurrentUser() {
-  try {
-    var user = localStorage.getItem('liquorbelle_user');
-    return user ? JSON.parse(user) : null;
-  } catch (e) {
-    return null;
-  }
-}
-
-function getAuthToken() {
-  return localStorage.getItem('liquorbelle_token') || null;
-}
-
-function isLoggedIn() {
-  var token = getAuthToken();
-  var user = getCurrentUser();
-  return !!(token && user);
-}
 
 // ============================================================
 // GOOGLE AUTH HANDLER
@@ -2034,11 +2072,7 @@ function handleGoogleCallback() {
     
     toast('✅ Welcome, ' + user.name + '! 👋', 'success');
     
-    window.history.replaceState({}, document.title, window.location.pathname);
-    
-    showUserGreeting(user);
-    updateUserBadge();
-    updateUserDropdown();
+    window.location.href = 'index.html';
   }
 }
 
@@ -2050,7 +2084,6 @@ function handleGoogleCallback() {
   var googleAuth = urlParams.get('google_auth');
   
   if (googleAuth === 'success') {
-    // Call the handler immediately
     handleGoogleCallback();
   }
 })();
@@ -2067,166 +2100,10 @@ function showUserGreeting(user) {
   
   var greetingEl = document.createElement('div');
   greetingEl.className = 'user-greeting-banner';
-  greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:10px 24px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);animation:fadeInDown 0.5s ease;';
-  greetingEl.innerHTML = '👋 Welcome , ' + escapeHtml(user.name) + '!';
+  greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:10px 24px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
+  greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
   heroOverlay.prepend(greetingEl);
 }
-
-// ============================================================
-// USER BADGE
-// ============================================================
-function updateUserBadge() {
-  var user = getCurrentUser();
-  var initialEl = document.getElementById('userInitial');
-  var dotEl = document.getElementById('userDot');
-  var menuAuth = document.getElementById('mobileMenuAuth');
-
-  if (user && user.name) {
-    var initial = user.name.charAt(0).toUpperCase();
-    if (initialEl) initialEl.textContent = initial;
-    if (dotEl) dotEl.className = 'user-dot';
-
-    if (menuAuth) {
-      menuAuth.innerHTML = `
-        <div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;">
-          <div style="font-weight:700;font-size:.85rem;color:var(--primary);">
-            <i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}
-          </div>
-          <div style="font-size:.65rem;color:var(--muted);">${escapeHtml(user.email || 'No email')}</div>
-          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;">
-            <i class="ph ph-sign-out"></i> Logout
-          </button>
-        </div>
-      `;
-    }
-  } else {
-    if (initialEl) initialEl.textContent = 'G';
-    if (dotEl) dotEl.className = 'user-dot guest';
-
-    if (menuAuth) {
-      menuAuth.innerHTML = `
-        <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
-          <i class="ph ph-user-circle"></i> Login / Register
-        </a>
-      `;
-    }
-  }
-}
-
-// ============================================================
-// USER DROPDOWN
-// ============================================================
-function updateUserDropdown() {
-  var user = getCurrentUser();
-  var nameEl = document.getElementById('dropdownUserName');
-  var emailEl = document.getElementById('dropdownUserEmail');
-  var logoutBtn = document.getElementById('logoutBtn');
-  var userDot = document.getElementById('userDot');
-  
-  if (user && user.name) {
-    if (nameEl) nameEl.textContent = user.name;
-    if (emailEl) emailEl.textContent = user.email || 'No email';
-    if (logoutBtn) logoutBtn.style.display = 'flex';
-    if (userDot) userDot.className = 'user-dot';
-  } else {
-    if (nameEl) nameEl.textContent = 'Guest';
-    if (emailEl) emailEl.textContent = 'Not logged in';
-    if (logoutBtn) logoutBtn.style.display = 'none';
-    if (userDot) userDot.className = 'user-dot guest';
-  }
-}
-
-function toggleUserDropdown(event) {
-  event.stopPropagation();
-  var dropdown = document.getElementById('userDropdown');
-  if (dropdown) dropdown.classList.toggle('open');
-}
-
-// ============================================================
-// LOGOUT
-// ============================================================
-function logoutUser() {
-  localStorage.removeItem('liquorbelle_user');
-  localStorage.removeItem('liquorbelle_token');
-  var dropdown = document.getElementById('userDropdown');
-  if (dropdown) dropdown.classList.remove('open');
-  updateUserBadge();
-  updateUserDropdown();
-  toast('Logged out successfully', 'success');
-  
-  var greeting = document.querySelector('.user-greeting-banner');
-  if (greeting) greeting.remove();
-}
-
-// ============================================================
-// AGE GATE
-// ============================================================
-(function initAgeGate() {
-  var ageGate = document.getElementById('ageGate');
-  var ageYesBtn = document.getElementById('ageYesBtn');
-  var ageNoBtn = document.getElementById('ageNoBtn');
-  
-  if (!ageGate) return;
-  
-  function enableScroll() {
-    document.body.style.overflow = '';
-    document.body.style.height = '';
-    document.documentElement.style.overflow = '';
-    document.documentElement.style.height = '';
-    document.body.classList.remove('age-gate-active');
-  }
-  
-  function disableScroll() {
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100vh';
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.style.height = '100vh';
-    document.body.classList.add('age-gate-active');
-  }
-  
-  if (localStorage.getItem('lb_age_confirmed') === 'true') {
-    ageGate.style.display = 'none';
-    ageGate.classList.remove('active');
-    enableScroll();
-    return;
-  }
-  
-  ageGate.style.display = 'flex';
-  disableScroll();
-  
-  setTimeout(function() {
-    ageGate.classList.add('active');
-  }, 50);
-  
-  if (ageYesBtn) {
-    ageYesBtn.onclick = function() {
-      localStorage.setItem('lb_age_confirmed', 'true');
-      ageGate.classList.remove('active');
-      
-      setTimeout(function() {
-        ageGate.style.display = 'none';
-        enableScroll();
-      }, 400);
-    };
-  }
-  
-  if (ageNoBtn) {
-    ageNoBtn.onclick = function() {
-      document.body.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;padding:20px;text-align:center;background:#f8f8f8;">
-          <div style="font-size:4rem;margin-bottom:12px;">🚫</div>
-          <h2 style="font-size:1.6rem;color:#800000;margin-bottom:8px;">Access Denied</h2>
-          <p style="color:#666;font-size:1rem;max-width:400px;">Sorry, you must be 18 or older to visit this site.</p>
-          <button onclick="localStorage.removeItem('lb_age_confirmed');location.reload();" 
-            style="margin-top:20px;padding:12px 28px;background:#800000;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;">
-            Try Again
-          </button>
-        </div>
-      `;
-      enableScroll();
-    };
-  }
-})();
 
 // ============================================================
 // MOBILE MENU
@@ -2317,27 +2194,14 @@ function closeCartDrawer() {
 }
 
 function renderCartDrawer() {
-  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+  var cart = JSON.parse(localStorage.getItem('liquorbelle_cart') || '{}');
   var items = Object.values(cart);
   var container = document.getElementById('cartItemsList');
   var footer = document.getElementById('cartFooter');
   var totalEl = document.getElementById('cartTotalAmount');
 
   if (!items.length) {
-    container.innerHTML = `
-      <div class="cart-container">
-        <div class="cart-icon-wrapper">
-          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
-            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
-          </svg>
-          <span class="cart-badge">0</span>
-        </div>
-        <h2 class="cart-message">Your cart is empty!</h2>
-        <a href="shop.html" class="shop-button">Start Shopping</a>
-      </div>
-    `;
+    container.innerHTML = '<div class="cart-container"><div class="cart-icon-wrapper"><svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.5" fill="#111111"/><circle cx="17" cy="20" r="1.5" fill="#111111"/></svg><span class="cart-badge">0</span></div><h2 class="cart-message">Your cart is empty!</h2><a href="shop.html" class="shop-button">Start Shopping</a></div>';
     footer.style.display = 'none';
     return;
   }
@@ -2345,12 +2209,13 @@ function renderCartDrawer() {
   var html = '';
   var total = 0;
   var count = 0;
-  items.forEach(function(item) {
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
     var subtotal = item.price * item.qty;
     total += subtotal;
     count += item.qty;
-    html += '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + ' <span style="color:var(--primary);">x' + item.qty + '</span></div><div class="cart-item-price">KES ' + subtotal.toLocaleString() + '</div></div></div>';
-  });
+    html += '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + '</div></div><div class="cart-item-price">KES ' + subtotal.toLocaleString() + '</div></div>';
+  }
 
   container.innerHTML = html;
   totalEl.textContent = 'KES ' + total.toLocaleString();
@@ -2361,14 +2226,27 @@ function renderCartDrawer() {
   });
 }
 
-function updateCartUI() {
-  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
-  var items = Object.values(cart);
-  var count = items.reduce(function(s, i) { return s + i.qty; }, 0);
+// ============================================================
+// UPDATE BOTTOM NAV
+// ============================================================
+function updateBottomNav() {
+  var user = getCurrentUser();
+  var accountBtn = document.getElementById('bottomNavAccount');
+  var accountLabel = document.getElementById('bottomNavAccountLabel');
   
-  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
-    if (el) el.textContent = count;
-  });
+  if (!accountBtn || !accountLabel) return;
+  
+  if (user && user.name) {
+    accountLabel.textContent = 'Profile';
+    accountBtn.onclick = function() {
+      window.location.href = 'profile.html';
+    };
+  } else {
+    accountLabel.textContent = 'Account';
+    accountBtn.onclick = function() {
+      window.location.href = 'accounts.html';
+    };
+  }
 }
 
 // ============================================================
@@ -2410,14 +2288,6 @@ window.addEventListener('offline', function() {
 // ============================================================
 // CLOSE MODALS ON OVERLAY CLICK
 // ============================================================
-document.addEventListener('click', function(event) {
-  var wrapper = document.querySelector('.header-user-wrapper');
-  if (wrapper && !wrapper.contains(event.target)) {
-    var dropdown = document.getElementById('userDropdown');
-    if (dropdown) dropdown.classList.remove('open');
-  }
-});
-
 document.getElementById('wishlistModal')?.addEventListener('click', function(e) {
   if (e.target === this) closeWishlistModal();
 });
@@ -2427,33 +2297,13 @@ document.getElementById('cartOverlay')?.addEventListener('click', function(e) {
 });
 
 // ============================================================
-// STORAGE EVENT LISTENER (Cross-tab updates)
-// ============================================================
-window.addEventListener('storage', function(e) {
-  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
-    updateUserBadge();
-    updateUserDropdown();
-    updateCartUI();
-    var user = getCurrentUser();
-    if (user && user.name) {
-      showUserGreeting(user);
-    }
-  }
-});
-
-// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-  // Handle Google callback
   handleGoogleCallback();
   
-  // Update UI
   updateCartUI();
-  updateUserBadge();
-  updateUserDropdown();
   
-  // Check if user is logged in and show greeting
   var user = getCurrentUser();
   if (user && user.name) {
     showUserGreeting(user);

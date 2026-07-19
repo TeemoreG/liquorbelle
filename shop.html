@@ -292,18 +292,16 @@ a{color:inherit;text-decoration:none;}
 .mobile-menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0,0,0,.45);
   z-index: 399;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s;
+  transition: opacity .25s;
 }
-
 .mobile-menu-overlay.open {
   opacity: 1;
   pointer-events: auto;
 }
-
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -312,16 +310,14 @@ a{color:inherit;text-decoration:none;}
   height: 100%;
   background: var(--white);
   z-index: 400;
-  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+  transition: right .3s cubic-bezier(0.4,0,0.2,1);
   padding: 20px 0;
   overflow-y: auto;
 }
-
 .mobile-menu.open {
   right: 0;
 }
-
 .mobile-menu-head {
   display: flex;
   align-items: center;
@@ -330,13 +326,11 @@ a{color:inherit;text-decoration:none;}
   border-bottom: 1px solid var(--border);
   margin-bottom: 8px;
 }
-
 .mobile-menu-head span {
   font-weight: 800;
   font-size: 1rem;
   color: var(--primary);
 }
-
 .mobile-menu-close {
   border: none;
   background: var(--bg2);
@@ -349,16 +343,14 @@ a{color:inherit;text-decoration:none;}
   cursor: pointer;
   color: var(--text);
 }
-
-.mobile-menu a,
-.mobile-menu button.mm-link {
+.mobile-menu a, .mobile-menu button.mm-link {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 13px 20px;
   color: var(--text);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: .9rem;
   text-decoration: none;
   width: 100%;
   background: none;
@@ -366,30 +358,23 @@ a{color:inherit;text-decoration:none;}
   text-align: left;
   cursor: pointer;
 }
-
-.mobile-menu a i,
-.mobile-menu button.mm-link i {
+.mobile-menu a i, .mobile-menu button.mm-link i {
   font-size: 19px;
-  color: var(--gold);
+  color: var(--btn-green);
   width: 20px;
 }
-
-.mobile-menu a:active,
-.mobile-menu button.mm-link:active {
+.mobile-menu a:active, .mobile-menu button.mm-link:active {
   background: var(--bg2);
 }
-
 .mobile-search-inline {
   display: none;
   padding: 0 20px 14px;
 }
-
-@media (max-width: 560px) {
+@media(max-width:560px) {
   .mobile-search-inline {
     display: block;
   }
 }
-
 .mobile-search-inline form {
   display: flex;
   align-items: center;
@@ -398,12 +383,10 @@ a{color:inherit;text-decoration:none;}
   padding: 0 14px;
   height: 40px;
 }
-
 .mobile-search-inline i {
   color: var(--muted);
   font-size: 16px;
 }
-
 .mobile-search-inline input {
   flex: 1;
   border: none;
@@ -411,10 +394,9 @@ a{color:inherit;text-decoration:none;}
   outline: none;
   padding: 0 8px;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: .85rem;
   color: var(--text);
 }
-
 /* ===== SHOP TITLE BAR ===== */
 .shop-titlebar {
   padding: 16px 4% 10px;
@@ -1484,10 +1466,12 @@ a{color:inherit;text-decoration:none;}
       <input id="mobileSearchInput" type="text" placeholder="Search products...">
     </form>
   </div>
+  <div id="mobileMenuAuth"></div>
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
+  <a href="profile.html"><i class="ph ph-user-gear"></i> My Profile</a>
   <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
