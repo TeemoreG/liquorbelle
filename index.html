@@ -2043,6 +2043,19 @@ function handleGoogleCallback() {
 }
 
 // ============================================================
+// CHECK FOR GOOGLE CALLBACK ON PAGE LOAD
+// ============================================================
+(function checkGoogleCallback() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var googleAuth = urlParams.get('google_auth');
+  
+  if (googleAuth === 'success') {
+    // Call the handler immediately
+    handleGoogleCallback();
+  }
+})();
+
+// ============================================================
 // USER GREETING
 // ============================================================
 function showUserGreeting(user) {
@@ -2055,7 +2068,7 @@ function showUserGreeting(user) {
   var greetingEl = document.createElement('div');
   greetingEl.className = 'user-greeting-banner';
   greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:10px 24px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);animation:fadeInDown 0.5s ease;';
-  greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+  greetingEl.innerHTML = '👋 Welcome , ' + escapeHtml(user.name) + '!';
   heroOverlay.prepend(greetingEl);
 }
 
