@@ -247,23 +247,72 @@ function registerUser(name, email, phone, pin, otp) {
 }
 
 /**
- * Login existing user
+ * Login existing user with email + PIN
  * @param {string} email - Email address
  * @param {string} pin - 4-digit PIN
  * @returns {Promise} Login response
  */
 function loginUser(email, pin) {
-  return fetch(API_BASE + '/api/auth/login', {
+  // Show loading state if there's a login button
+  var loginBtn = document.getElementById('loginBtn');
+  var originalText = '';
+  if (loginBtn) {
+    originalText = loginBtn.textContent;
+    loginBtn.textContent = '⏳ Checking email...';
+    loginBtn.disabled = true;
+  }
+
+  // STEP 1: First check if email exists
+  return fetch(API_BASE + '/api/auth/check-email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: email,
-      pin: pin
-    })
+    body: JSON.stringify({ email: email })
   })
   .then(function(res) { return res.json(); })
-  .then(function(data) {
-    if (data.success) {
+  .then(function(emailCheck) {
+    // If email doesn't exist
+    if (!emailCheck.exists) {
+      if (loginBtn) {
+        loginBtn.textContent = originalText;
+        loginBtn.disabled = false;
+      }
+      var error = new Error('❌ Email not registered. Please create an account first.');
+      error.type = 'email_not_found';
+      if (typeof toast === 'function') toast(error.message, true);
+      throw error;
+    }
+
+    // STEP 2: Email exists, now check PIN
+    if (loginBtn) {
+      loginBtn.textContent = '⏳ Verifying PIN...';
+    }
+
+    return fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        pin: pin
+      })
+    })
+    .then(function(res) { 
+      return res.json().then(function(data) {
+        return { status: res.status, data: data };
+      });
+    });
+  })
+  .then(function(result) {
+    // Restore login button
+    if (loginBtn) {
+      loginBtn.textContent = originalText;
+      loginBtn.disabled = false;
+    }
+
+    var data = result.data;
+    var status = result.status;
+
+    // Success case - email exists and PIN is correct
+    if (data.success && status === 200) {
       localStorage.setItem('liquorbelle_token', data.token);
       localStorage.setItem('liquorbelle_user', JSON.stringify({
         id: data.customer.id,
@@ -271,9 +320,46 @@ function loginUser(email, pin) {
         name: data.customer.name,
         phone: data.customer.phone
       }));
+      
+      // Update UI
+      if (typeof updateUserBadge === 'function') updateUserBadge();
+      if (typeof toast === 'function') toast('✅ Welcome back, ' + data.customer.name + '!');
+      
       return data;
     }
-    throw new Error(data.message || 'Login failed');
+
+    // PIN is incorrect
+    if (status === 401 || (data.message && data.message.toLowerCase().includes('invalid pin'))) {
+      var error = new Error('❌ Incorrect PIN. Please try again.');
+      error.type = 'wrong_pin';
+      if (typeof toast === 'function') toast(error.message, true);
+      throw error;
+    }
+    else if (status === 400 && data.message && data.message.toLowerCase().includes('pin')) {
+      var error = new Error('❌ PIN must be exactly 4 digits.');
+      error.type = 'invalid_pin_format';
+      if (typeof toast === 'function') toast(error.message, true);
+      throw error;
+    }
+    else {
+      throw new Error(data.message || '❌ Login failed. Please try again.');
+    }
+  })
+  .catch(function(error) {
+    // Restore login button on error
+    if (loginBtn) {
+      loginBtn.textContent = originalText;
+      loginBtn.disabled = false;
+    }
+    
+    // Show toast message if not already shown
+    if (error.type !== 'email_not_found' && error.type !== 'wrong_pin' && error.type !== 'invalid_pin_format') {
+      if (typeof toast === 'function') {
+        toast(error.message || '❌ Login failed. Please try again.', true);
+      }
+    }
+    
+    throw error;
   });
 }
 
@@ -371,29 +457,6 @@ function validateSession() {
     return { valid: false };
   });
 }
-// ============================================================
-// HEADER MENU & SEARCH (Shared) - EXPOSED GLOBALLY
-// ============================================================
-window.openMobileMenu = function() {
-  var menu = document.getElementById('mobileMenu');
-  var overlay = document.getElementById('mobileMenuOverlay');
-  if (menu) menu.classList.add('open');
-  if (overlay) overlay.classList.add('open');
-};
-
-window.closeMobileMenu = function() {
-  var menu = document.getElementById('mobileMenu');
-  var overlay = document.getElementById('mobileMenuOverlay');
-  if (menu) menu.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-};
-
-window.handleHeaderSearch = function(e) {
-  e.preventDefault();
-  var val = (document.getElementById('headerSearchInput')?.value || document.getElementById('mobileSearchInput')?.value || '').trim();
-  if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
-  return false;
-};
 
 // ============================================================
 // USER BADGE (Shared)
@@ -424,12 +487,9 @@ window.updateUserBadge = function() {
   } else {
     if (initialEl) initialEl.textContent = '';
     if (dotEl) { dotEl.className = 'user-dot guest'; }
+    // ===== GUEST SECTION - REMOVED =====
     if (menuAuth) {
-      menuAuth.innerHTML = `
-        <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
-          <i class="ph ph-user-circle"></i> Login / Register
-        </a>
-      `;
+      menuAuth.innerHTML = '';  // ← Empty - NO Guest section
     }
   }
 };
@@ -3123,216 +3183,6 @@ if (document.getElementById('customerEmail')) {
   }, 3000);
 }
 
-// ============================================================
-// REGISTER & LOGIN FUNCTIONS - FRONTEND
-// ============================================================
-
-/**
- * Register a new user
- * @param {string} name - Full name
- * @param {string} email - Email address
- * @param {string} phone - Phone number
- * @param {string} pin - 4-digit PIN
- * @param {string} otp - 6-digit OTP from email
- */
-function registerUser(name, email, phone, pin, otp) {
-  return fetch(API_BASE + '/api/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, phone, pin, otp })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      // Auto-login after registration
-      if (data.token) {
-        localStorage.setItem('liquorbelle_token', data.token);
-        localStorage.setItem('liquorbelle_user', JSON.stringify({
-          id: data.customer.id,
-          email: data.customer.email,
-          name: data.customer.name,
-          phone: data.customer.phone
-        }));
-      }
-      return data;
-    }
-    throw new Error(data.message || 'Registration failed');
-  });
-}
-
-/**
- * Login existing user with email + PIN
- * @param {string} email - Email address
- * @param {string} pin - 4-digit PIN
- */
-function loginUser(email, pin) {
-  return fetch(API_BASE + '/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, pin })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      localStorage.setItem('liquorbelle_token', data.token);
-      localStorage.setItem('liquorbelle_user', JSON.stringify({
-        id: data.customer.id,
-        email: data.customer.email,
-        name: data.customer.name,
-        phone: data.customer.phone
-      }));
-      return data;
-    }
-    throw new Error(data.message || 'Login failed');
-  });
-}
-
-/**
- * Request OTP via email
- * @param {string} email - Email address
- */
-function requestOTP(email) {
-  return fetch(API_BASE + '/api/auth/send-email-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send OTP');
-    }
-    return data;
-  });
-}
-
-/**
- * Request OTP for PIN reset
- * @param {string} email - Email address
- */
-function requestResetOTP(email) {
-  return fetch(API_BASE + '/api/auth/forgot-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send reset OTP');
-    }
-    return data;
-  });
-}
-
-/**
- * Reset PIN with OTP
- * @param {string} email - Email address
- * @param {string} otp - 6-digit OTP
- * @param {string} newPin - New 4-digit PIN
- */
-function resetPin(email, otp, newPin) {
-  return fetch(API_BASE + '/api/auth/reset-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, otp, newPin })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to reset PIN');
-    }
-    return data;
-  });
-}
-
-/**
- * Logout user - clear session
- */
-function logoutUser() {
-  localStorage.removeItem('liquorbelle_user');
-  localStorage.removeItem('liquorbelle_token');
-  if (typeof updateUserBadge === 'function') updateUserBadge();
-  if (typeof toast === 'function') toast('Logged out successfully');
-  window.location.href = 'account.html';
-}
-
-// ============================================================
-// ADMIN FUNCTIONS
-// ============================================================
-
-window.adminLogin = async function(password) {
-  try {
-    const res = await fetch(API_BASE + '/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
-    });
-    const data = await res.json();
-    if (data.success && data.token) {
-      localStorage.setItem('liquorbelle_admin_token', data.token);
-      return true;
-    }
-    return false;
-  } catch(e) {
-    console.error('Admin login error:', e);
-    return false;
-  }
-};
-
-window.toggleAdminPasswordVisibility = function() {
-  const input = document.getElementById('adminPassword');
-  const icon = document.getElementById('toggleAdminPasswordIcon');
-  if (!input || !icon) return;
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.className = 'ph ph-eye-slash';
-  } else {
-    input.type = 'password';
-    icon.className = 'ph ph-eye';
-  }
-};
-
-window.submitAdminLogin = function() {
-  const password = document.getElementById('adminPassword');
-  const errorDiv = document.getElementById('loginError');
-  const btn = document.getElementById('loginBtn');
-  
-  if (!password || !password.value) {
-    if (errorDiv) errorDiv.innerText = 'Please enter your password.';
-    return;
-  }
-  
-  if (btn) {
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
-  }
-  
-  window.adminLogin(password.value)
-    .then(success => {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = 'Login';
-      }
-      if (success) {
-        document.getElementById('adminLoginModal').style.display = 'none';
-        if (typeof initAdminAfterLogin === 'function') {
-          initAdminAfterLogin();
-        }
-      } else {
-        if (errorDiv) errorDiv.innerText = 'Invalid admin password. Try again.';
-        if (password) password.value = '';
-        if (password) password.focus();
-      }
-    })
-    .catch(() => {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = 'Login';
-      }
-      if (errorDiv) errorDiv.innerText = 'Network error. Please try again.';
-    });
-};
 
 // ============================================================
 // TRACK-ORDERS.HTML - AUTO-LOAD ORDERS

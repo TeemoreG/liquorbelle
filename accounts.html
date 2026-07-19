@@ -677,6 +677,54 @@ a{color:inherit;text-decoration:none;}
   .feature-card .feature-label{font-size:.65rem;}
   .feature-card .feature-desc{font-size:.5rem;}
 }
+
+/* ===== ADDED: GOOGLE BUTTON STYLES ===== */
+.google-btn {
+  width:100%;
+  padding:12px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  transition:all .2s;
+  font-family:var(--font-body);
+  color:var(--text);
+  margin-top:4px;
+}
+.google-btn:hover {
+  border-color:var(--gold);
+  background:var(--gold-bg);
+  transform:translateY(-1px);
+  box-shadow:var(--shadow);
+}
+.google-btn:active{transform:scale(0.97);}
+.divider {
+  margin: 12px 0;
+  position: relative;
+}
+.divider-line {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+}
+.divider-line hr {
+  flex:1;
+  border:none;
+  height:1px;
+  background:var(--border);
+}
+.divider-line span {
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap;
+}
 </style>
 </head>
 <body>
@@ -714,7 +762,7 @@ a{color:inherit;text-decoration:none;}
     </button>
   </div>
 </header>
- 
+
 <!-- ===== MOBILE MENU ===== -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
@@ -733,7 +781,7 @@ a{color:inherit;text-decoration:none;}
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="account.html"><i class="ph ph-user-circle"></i> My Account</a>
+  <a href="accounts.html"><i class="ph ph-user-circle"></i> My Account</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
@@ -785,11 +833,11 @@ a{color:inherit;text-decoration:none;}
       <div class="orders-section">
         <div class="section-title"><i class="ph ph-package"></i> My Orders</div>
         <div class="section-subtitle">View all your past and current orders</div>
-        
+
         <a href="track-orders.html" class="view-all-orders-link">
           <i class="ph ph-arrow-right"></i> View All Orders
         </a>
-        
+
         <div id="ordersContainer"></div>
       </div>
     </div>
@@ -806,30 +854,53 @@ a{color:inherit;text-decoration:none;}
       </div>
 
       <!-- ===== LOGIN FORM ===== -->
-      <div class="auth-form active" id="loginForm">
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" oninput="validateLoginEmail(this)">
-          <div class="input-error" id="loginEmailError">Please enter a valid email</div>
-        </div>
-        <div class="form-group">
-          <label>4-Digit PIN</label>
-          <div class="pin-input-group" id="loginPinGroup">
-            <input type="password" id="loginPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="loginPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="loginPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="loginPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          </div>
-          <div class="input-error" id="loginPinError">Please enter a 4-digit PIN (numbers only)</div>
-          <div style="margin-top:6px;">
-            <button type="button" onclick="togglePinVisibility('login')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">Show PIN</button>
-          </div>
-        </div>
-        <div style="text-align:right;margin-bottom:12px;">
-          <a href="#" onclick="showForgotPin()" style="font-size:12px;color:var(--gold);text-decoration:none;cursor:pointer;">Forgot PIN?</a>
-        </div>
-        <button class="btn-primary" id="loginSubmitBtn" onclick="loginUser()"><i class="ph ph-sign-in"></i> Login</button>
-      </div>
+<div class="auth-form active" id="loginForm">
+  <div class="form-group">
+    <label>Email Address</label>
+    <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" oninput="validateLoginEmail(this)">
+    <div class="input-error" id="loginEmailError">Please enter a valid email</div>
+  </div>
+  <div class="form-group">
+    <label>4-Digit PIN</label>
+    <div class="pin-input-group" id="loginPinGroup">
+      <input type="password" id="loginPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+      <input type="password" id="loginPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+      <input type="password" id="loginPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+      <input type="password" id="loginPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+    </div>
+    <div class="input-error" id="loginPinError">Please enter a 4-digit PIN (numbers only)</div>
+    <div style="margin-top:6px;">
+      <button type="button" onclick="togglePinVisibility('login')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">Show PIN</button>
+    </div>
+  </div>
+  <div style="text-align:right;margin-bottom:12px;">
+    <a href="#" onclick="showForgotPin()" style="font-size:12px;color:var(--gold);text-decoration:none;cursor:pointer;">Forgot PIN?</a>
+  </div>
+
+  <!-- Divider -->
+  <div class="divider">
+    <div class="divider-line">
+      <hr>
+      <span>Or continue with</span>
+      <hr>
+    </div>
+  </div>
+
+  <!-- Google Sign-In Button -->
+  <button class="google-btn" onclick="loginWithGoogle()">
+    <svg width="20" height="20" viewBox="0 0 24 24">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Sign in with Google
+  </button>
+
+  <button class="btn-primary" id="loginSubmitBtn" onclick="loginUser()" style="margin-top:8px;">
+    <i class="ph ph-sign-in"></i> Login
+  </button>
+</div>
 
       <!-- ===== FORGOT PIN FORM ===== -->
       <div class="auth-form" id="forgotPinForm" style="display:none;">
@@ -866,50 +937,70 @@ a{color:inherit;text-decoration:none;}
       </div>
 
       <!-- ===== REGISTER FORM ===== -->
-      <div class="auth-form" id="registerForm">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" id="regName" placeholder="John Mwangi" autocomplete="name" oninput="validateNameInput(this)">
-            <div class="input-error" id="regNameError">Please enter a valid name (letters and spaces only)</div>
-          </div>
-          <div class="form-group">
-            <label>Phone Number *</label>
-            <input type="tel" id="regPhone" placeholder="0712345678" maxlength="10" autocomplete="tel" oninput="validatePhoneInput(this)">
-            <div class="input-error" id="regPhoneError">Please enter a valid Kenyan phone number (e.g., 0712345678)</div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Email Address * (OTP sent here)</label>
-          <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" oninput="validateEmailInput(this)">
-          <div class="input-error" id="regEmailError">Please enter a valid email address</div>
-        </div>
-        <div class="form-group">
-          <label>4-Digit PIN *</label>
-          <div class="pin-input-group" id="regPinGroup">
-            <input type="password" id="regPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="regPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="regPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="regPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          </div>
-          <div class="input-error" id="regPinError">Please enter a 4-digit PIN (numbers only)</div>
-          <div style="margin-top:6px;">
-            <button type="button" onclick="togglePinVisibility('reg')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">Show PIN</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>OTP Code (sent to your email)</label>
-          <div class="otp-row">
-            <input type="text" id="regOtp" placeholder="Enter 6-digit code" maxlength="6" autocomplete="one-time-code" oninput="validateOtpInput(this)">
-            <button class="btn-sm" id="regOtpBtn" onclick="sendRegisterOtp()">Send OTP</button>
-          </div>
-          <div class="input-error" id="regOtpError">Please enter a valid 6-digit OTP</div>
-          <span class="otp-timer" id="regOtpTimer"></span>
-        </div>
-        <button class="btn-primary" id="registerSubmitBtn" onclick="registerUser()"><i class="ph ph-user-plus"></i> Create Account</button>
-      </div>
+<div class="auth-form" id="registerForm">
+  <div class="form-row">
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input type="text" id="regName" placeholder="John Mwangi" autocomplete="name" oninput="validateNameInput(this)">
+      <div class="input-error" id="regNameError">Please enter a valid name (letters and spaces only)</div>
+    </div>
+    <div class="form-group">
+      <label>Phone Number *</label>
+      <input type="tel" id="regPhone" placeholder="0712345678" maxlength="10" autocomplete="tel" oninput="validatePhoneInput(this)">
+      <div class="input-error" id="regPhoneError">Please enter a valid Kenyan phone number (e.g., 0712345678)</div>
     </div>
   </div>
+  <div class="form-group">
+    <label>Email Address * (OTP sent here)</label>
+    <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" oninput="validateEmailInput(this)">
+    <div class="input-error" id="regEmailError">Please enter a valid email address</div>
+  </div>
+  <div class="form-group">
+    <label>4-Digit PIN *</label>
+    <div class="pin-input-group" id="regPinGroup">
+      <input type="password" id="regPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+      <input type="password" id="regPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+      <input type="password" id="regPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+      <input type="password" id="regPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+    </div>
+    <div class="input-error" id="regPinError">Please enter a 4-digit PIN (numbers only)</div>
+    <div style="margin-top:6px;">
+      <button type="button" onclick="togglePinVisibility('reg')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">Show PIN</button>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>OTP Code (sent to your email)</label>
+    <div class="otp-row">
+      <input type="text" id="regOtp" placeholder="Enter 6-digit code" maxlength="6" autocomplete="one-time-code" oninput="validateOtpInput(this)">
+      <button class="btn-sm" id="regOtpBtn" onclick="sendRegisterOtp()">Send OTP</button>
+    </div>
+    <div class="input-error" id="regOtpError">Please enter a valid 6-digit OTP</div>
+    <span class="otp-timer" id="regOtpTimer"></span>
+  </div>
+
+  <!-- Divider -->
+  <div class="divider">
+    <div class="divider-line">
+      <hr>
+      <span>Or sign up with</span>
+      <hr>
+    </div>
+  </div>
+
+  <!-- Google Sign-Up Button -->
+  <button class="google-btn" onclick="loginWithGoogle()">
+    <svg width="20" height="20" viewBox="0 0 24 24">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Sign up with Google
+  </button>
+
+  <button class="btn-primary" id="registerSubmitBtn" onclick="registerUser()" style="margin-top:8px;">
+    <i class="ph ph-user-plus"></i> Create Account
+  </button>
 </div>
 
 <!-- ===== WHATSAPP FLOAT ===== -->
@@ -922,7 +1013,7 @@ a{color:inherit;text-decoration:none;}
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
-    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="account.html">My Account</a></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="accounts.html">My Account</a></div>
     <div class="footer-col"><h4>Support</h4><p>+254 748 894 443</p><p>WhatsApp 24/7</p></div>
     <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
   </div>
@@ -946,7 +1037,7 @@ a{color:inherit;text-decoration:none;}
     <span>Cart</span>
     <span class="nav-badge" id="navCartCount">0</span>
   </button>
-  <button class="nav-item active" onclick="window.location.href='account.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
+  <button class="nav-item active" onclick="window.location.href='accounts.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
 </nav>
 
 <!-- ===== CART DRAWER ===== -->
@@ -1001,10 +1092,11 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ============================================================
-     JAVASCRIPT - ACCOUNT PAGE (COMPLETE)
-     ============================================================ -->
 <script>
+// ============================================================
+// JAVASCRIPT - ACCOUNT PAGE (COMPLETE)
+// ============================================================
+
 // ============================================================
 // CONFIG
 // ============================================================
@@ -1030,22 +1122,21 @@ let state = {
 // ============================================================
 function escapeHtml(str) {
   if (!str) return '';
-  return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
-}
-
-function debounce(fn, delay) {
-  let timer;
-  return function(...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
+  return String(str).replace(/[&<>"']/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    if (m === '"') return '&quot;';
+    if (m === "'") return '&#39;';
+    return m;
+  });
 }
 
 // ============================================================
 // TOAST SYSTEM
 // ============================================================
 function toast(msg, type) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.className = 'toast';
@@ -1053,14 +1144,14 @@ function toast(msg, type) {
   if (type === 'success') t.classList.add('success');
   t.style.opacity = '1';
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, TOAST_DURATION);
+  t._timer = setTimeout(function() { t.style.opacity = '0'; }, TOAST_DURATION);
 }
 
 // ============================================================
 // STATUS SYSTEM
 // ============================================================
 function showStatus(msg, type) {
-  const el = document.getElementById('authStatus');
+  var el = document.getElementById('authStatus');
   if (!el) return;
   el.textContent = msg;
   el.className = 'auth-status ' + (type || 'info');
@@ -1068,7 +1159,7 @@ function showStatus(msg, type) {
 }
 
 function hideStatus() {
-  const el = document.getElementById('authStatus');
+  var el = document.getElementById('authStatus');
   if (el) { el.className = 'auth-status'; el.style.display = 'none'; }
 }
 
@@ -1090,95 +1181,126 @@ function setLoading(btn, loading) {
 // ============================================================
 // VALIDATION FUNCTIONS
 // ============================================================
-const validators = {
-  phone: (phone) => {
-    const cleaned = phone.replace(/\D/g, '');
+var validators = {
+  phone: function(phone) {
+    var cleaned = phone.replace(/\D/g, '');
     return cleaned.length >= 10 && cleaned.length <= 15;
   },
-  name: (name) => /^[a-zA-Z\s\-']+$/.test(name.trim()) && name.trim().length >= 2,
-  email: (email) => /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim()),
-  otp: (otp) => /^\d{6}$/.test(otp.trim()),
-  pin: (pin) => /^\d{4}$/.test(pin)
+  name: function(name) {
+    return /^[a-zA-Z\s\-']+$/.test(name.trim()) && name.trim().length >= 2;
+  },
+  email: function(email) {
+    return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim());
+  },
+  otp: function(otp) {
+    return /^\d{6}$/.test(otp.trim());
+  },
+  pin: function(pin) {
+    return /^\d{4}$/.test(pin);
+  }
 };
 
 // ============================================================
 // PIN INPUT HELPERS
 // ============================================================
 function getPinValue(prefix) {
-  let pin = '';
-  for (let i = 1; i <= 4; i++) {
-    const input = document.getElementById(prefix + 'Pin' + i);
+  var pin = '';
+  for (var i = 1; i <= 4; i++) {
+    var input = document.getElementById(prefix + 'Pin' + i);
     if (input) pin += input.value || '';
   }
   return pin;
 }
 
 function setupPinInputs(prefix) {
-  const inputs = [];
-  for (let i = 1; i <= 4; i++) {
+  var inputs = [];
+  for (var i = 1; i <= 4; i++) {
     inputs.push(document.getElementById(prefix + 'Pin' + i));
   }
 
-  inputs.forEach((input, index) => {
+  inputs.forEach(function(input, index) {
     if (!input) return;
 
-    const handleInput = () => {
+    var handleInput = function() {
       input.value = input.value.replace(/\D/g, '');
+      if (input.value.length > 1) {
+        input.value = input.value.slice(0, 1);
+      }
       if (input.value.length === 1 && index < 3) {
-        inputs[index + 1]?.focus();
+        if (inputs[index + 1]) inputs[index + 1].focus();
       }
       validatePinInput(prefix);
     };
 
-    const handleKeydown = (e) => {
+    var handleKeydown = function(e) {
       if (e.key === 'Backspace' && input.value === '' && index > 0) {
-        inputs[index - 1]?.focus();
+        if (inputs[index - 1]) inputs[index - 1].focus();
       }
-      if (e.key === 'ArrowLeft' && index > 0) inputs[index - 1]?.focus();
-      if (e.key === 'ArrowRight' && index < 3) inputs[index + 1]?.focus();
+      if (e.key === 'ArrowLeft' && index > 0) {
+        if (inputs[index - 1]) inputs[index - 1].focus();
+      }
+      if (e.key === 'ArrowRight' && index < 3) {
+        if (inputs[index + 1]) inputs[index + 1].focus();
+      }
+      if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && 
+          e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab' && 
+          e.key !== 'Enter' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+      }
     };
 
-    const handlePaste = (e) => {
+    var handlePaste = function(e) {
       e.preventDefault();
-      const paste = (e.clipboardData || window.clipboardData).getData('text');
-      const digits = paste.replace(/\D/g, '').slice(0, 4);
-      for (let i = 0; i < digits.length && i < 4; i++) {
+      var paste = (e.clipboardData || window.clipboardData).getData('text');
+      var digits = paste.replace(/\D/g, '').slice(0, 4);
+      for (var i = 0; i < digits.length && i < 4; i++) {
         if (inputs[i]) inputs[i].value = digits[i];
       }
       if (digits.length > 0) {
-        const nextIndex = Math.min(digits.length, 3);
-        inputs[nextIndex]?.focus();
+        var nextIndex = Math.min(digits.length, 3);
+        if (inputs[nextIndex]) inputs[nextIndex].focus();
       }
       validatePinInput(prefix);
+    };
+
+    var handleFocus = function() {
+      if (input.value && !/^\d$/.test(input.value)) {
+        input.value = '';
+      }
+      input.select();
     };
 
     input.addEventListener('input', handleInput);
     input.addEventListener('keydown', handleKeydown);
     input.addEventListener('paste', handlePaste);
+    input.addEventListener('focus', handleFocus);
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('spellcheck', 'false');
   });
 }
 
 function validatePinInput(prefix) {
-  const pin = getPinValue(prefix);
-  const errorEl = document.getElementById(prefix + 'PinError');
-  const inputs = [];
-  for (let i = 1; i <= 4; i++) {
+  var pin = getPinValue(prefix);
+  var errorEl = document.getElementById(prefix + 'PinError');
+  var inputs = [];
+  for (var i = 1; i <= 4; i++) {
     inputs.push(document.getElementById(prefix + 'Pin' + i));
   }
 
-  const allFilled = inputs.every(inp => inp && inp.value.length === 1);
+  var allFilled = inputs.every(function(inp) { return inp && inp.value.length === 1; });
 
-  inputs.forEach(inp => {
+  inputs.forEach(function(inp) {
     if (!inp) return;
     inp.classList.remove('error', 'valid');
   });
 
   if (allFilled && !validators.pin(pin)) {
-    inputs.forEach(inp => inp?.classList.add('error'));
+    inputs.forEach(function(inp) { if (inp) inp.classList.add('error'); });
     if (errorEl) errorEl.classList.add('show');
     return false;
   } else if (allFilled && validators.pin(pin)) {
-    inputs.forEach(inp => inp?.classList.add('valid'));
+    inputs.forEach(function(inp) { if (inp) inp.classList.add('valid'); });
     if (errorEl) errorEl.classList.remove('show');
     return true;
   } else {
@@ -1188,12 +1310,12 @@ function validatePinInput(prefix) {
 }
 
 function togglePinVisibility(prefix) {
-  const inputs = [];
-  for (let i = 1; i <= 4; i++) {
+  var inputs = [];
+  for (var i = 1; i <= 4; i++) {
     inputs.push(document.getElementById(prefix + 'Pin' + i));
   }
-  const isPassword = inputs[0]?.type === 'password';
-  inputs.forEach(inp => {
+  var isPassword = inputs[0] && inputs[0].type === 'password';
+  inputs.forEach(function(inp) {
     if (inp) inp.type = isPassword ? 'text' : 'password';
   });
 }
@@ -1201,45 +1323,45 @@ function togglePinVisibility(prefix) {
 // ============================================================
 // REAL-TIME INPUT VALIDATION
 // ============================================================
-const validateField = {
-  phone: (input) => {
-    const errorEl = input.parentElement.querySelector('.input-error');
+var validateField = {
+  phone: function(input) {
+    var errorEl = input.parentElement.querySelector('.input-error');
     input.value = input.value.replace(/\D/g, '');
-    const isValid = input.value.length > 0 && validators.phone(input.value);
+    var isValid = input.value.length > 0 && validators.phone(input.value);
     input.classList.toggle('error', input.value.length > 0 && !isValid);
     input.classList.toggle('valid', isValid);
     if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
     updateSubmitButtons();
   },
-  name: (input) => {
-    const errorEl = input.parentElement.querySelector('.input-error');
+  name: function(input) {
+    var errorEl = input.parentElement.querySelector('.input-error');
     input.value = input.value.replace(/[^a-zA-Z\s\-']/g, '');
-    const isValid = input.value.length >= 2 && validators.name(input.value);
+    var isValid = input.value.length >= 2 && validators.name(input.value);
     input.classList.toggle('error', input.value.length > 0 && !isValid);
     input.classList.toggle('valid', isValid);
     if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
     updateSubmitButtons();
   },
-  email: (input) => {
-    const errorEl = input.parentElement.querySelector('.input-error');
-    const isValid = input.value.length > 0 && validators.email(input.value);
+  email: function(input) {
+    var errorEl = input.parentElement.querySelector('.input-error');
+    var isValid = input.value.length > 0 && validators.email(input.value);
     input.classList.toggle('error', input.value.length > 0 && !isValid);
     input.classList.toggle('valid', isValid);
     if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
     updateSubmitButtons();
   },
-  loginEmail: (input) => {
-    const errorEl = document.getElementById('loginEmailError');
-    const isValid = input.value.length > 0 && validators.email(input.value);
+  loginEmail: function(input) {
+    var errorEl = document.getElementById('loginEmailError');
+    var isValid = input.value.length > 0 && validators.email(input.value);
     input.classList.toggle('error', input.value.length > 0 && !isValid);
     input.classList.toggle('valid', isValid);
     if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && !isValid);
     updateSubmitButtons();
   },
-  otp: (input) => {
-    const errorEl = input.parentElement.parentElement.querySelector('.input-error');
+  otp: function(input) {
+    var errorEl = input.parentElement.parentElement.querySelector('.input-error');
     input.value = input.value.replace(/\D/g, '');
-    const isValid = input.value.length === 6 && validators.otp(input.value);
+    var isValid = input.value.length === 6 && validators.otp(input.value);
     input.classList.toggle('error', input.value.length > 0 && input.value.length < 6);
     input.classList.toggle('valid', isValid);
     if (errorEl) errorEl.classList.toggle('show', input.value.length > 0 && input.value.length < 6);
@@ -1251,21 +1373,19 @@ const validateField = {
 // SUBMIT BUTTON STATE
 // ============================================================
 function updateSubmitButtons() {
-  // Login button
-  const loginEmail = document.getElementById('loginEmail');
-  const loginPin = getPinValue('login');
-  const loginBtn = document.getElementById('loginSubmitBtn');
+  var loginEmail = document.getElementById('loginEmail');
+  var loginPin = getPinValue('login');
+  var loginBtn = document.getElementById('loginSubmitBtn');
   if (loginBtn) {
     loginBtn.disabled = !(loginEmail && validators.email(loginEmail.value) && loginPin.length === 4 && validators.pin(loginPin));
   }
 
-  // Register button
-  const regName = document.getElementById('regName');
-  const regPhone = document.getElementById('regPhone');
-  const regEmail = document.getElementById('regEmail');
-  const regPin = getPinValue('reg');
-  const regOtp = document.getElementById('regOtp');
-  const regBtn = document.getElementById('registerSubmitBtn');
+  var regName = document.getElementById('regName');
+  var regPhone = document.getElementById('regPhone');
+  var regEmail = document.getElementById('regEmail');
+  var regPin = getPinValue('reg');
+  var regOtp = document.getElementById('regOtp');
+  var regBtn = document.getElementById('registerSubmitBtn');
   if (regBtn) {
     regBtn.disabled = !(
       regName && regName.value.length >= 2 && validators.name(regName.value) &&
@@ -1284,15 +1404,22 @@ function switchTab(tab) {
   hideStatus();
   if (state.isForgotPinMode) hideForgotPin();
 
-  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.auth-tab[data-tab="${tab}"]`)?.classList.add('active');
+  document.querySelectorAll('.auth-tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  var activeTab = document.querySelector('.auth-tab[data-tab="' + tab + '"]');
+  if (activeTab) activeTab.classList.add('active');
 
-  document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
+  document.querySelectorAll('.auth-form').forEach(function(f) {
+    f.style.display = 'none';
+  });
   if (tab === 'login') {
     document.getElementById('loginForm').style.display = 'block';
     document.getElementById('forgotPinForm').style.display = 'none';
-  } else {
+    document.getElementById('registerForm').style.display = 'none';
+  } else if (tab === 'register') {
     document.getElementById('registerForm').style.display = 'block';
+    document.getElementById('loginForm').style.display = 'none';
     document.getElementById('forgotPinForm').style.display = 'none';
   }
   setTimeout(updateSubmitButtons, 100);
@@ -1326,14 +1453,15 @@ function hideForgotPin() {
 // ============================================================
 // API CALLS
 // ============================================================
-async function apiCall(endpoint, data, method = 'POST') {
+async function apiCall(endpoint, data, method) {
+  method = method || 'POST';
   try {
-    const response = await fetch(API_BASE + endpoint, {
-      method,
+    var response = await fetch(API_BASE + endpoint, {
+      method: method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    const result = await response.json();
+    var result = await response.json();
     if (!response.ok) throw new Error(result.message || 'Request failed');
     return result;
   } catch (error) {
@@ -1342,55 +1470,40 @@ async function apiCall(endpoint, data, method = 'POST') {
 }
 
 // ============================================================
-// AUTH FUNCTIONS - Using apiCall()
+// AUTH FUNCTIONS
 // ============================================================
-
-/**
- * Register a new user
- */
 async function registerUserApp(name, email, phone, pin, otp) {
-  return await apiCall('/api/auth/register', { name, email, phone, pin, otp });
+  return await apiCall('/api/auth/register', { name: name, email: email, phone: phone, pin: pin, otp: otp });
 }
 
-/**
- * Login existing user
- */
 async function loginUserApp(email, pin) {
-  return await apiCall('/api/auth/login', { email, pin });
+  return await apiCall('/api/auth/login', { email: email, pin: pin });
 }
 
-/**
- * Request OTP for registration
- */
 async function requestOTP(email) {
-  return await apiCall('/api/auth/send-email-otp', { email });
+  return await apiCall('/api/auth/send-email-otp', { email: email });
 }
 
-/**
- * Request OTP for PIN reset
- */
 async function requestResetOTP(email) {
-  return await apiCall('/api/auth/forgot-pin', { email });
+  return await apiCall('/api/auth/forgot-pin', { email: email });
 }
 
-/**
- * Reset PIN with OTP
- */
 async function resetPinApp(email, otp, newPin) {
-  return await apiCall('/api/auth/reset-pin', { email, otp, newPin });
+  return await apiCall('/api/auth/reset-pin', { email: email, otp: otp, newPin: newPin });
 }
 
-/**
- * Check if user exists
- */
 async function checkUserExists(name, email, phone) {
   try {
-    const response = await fetch(API_BASE + '/api/auth/check-user', {
+    var response = await fetch(API_BASE + '/api/auth/check-user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, phone })
+      body: JSON.stringify({
+        name: name || undefined,
+        email: email || undefined,
+        phone: phone || undefined
+      })
     });
-    const result = await response.json();
+    var result = await response.json();
     return result;
   } catch (error) {
     console.error('Check user error:', error);
@@ -1402,8 +1515,8 @@ async function checkUserExists(name, email, phone) {
 // SEND FORGOT PIN OTP
 // ============================================================
 async function sendForgotOtp() {
-  const email = document.getElementById('forgotEmail').value.trim();
-  const errorEl = document.getElementById('forgotEmailError');
+  var email = document.getElementById('forgotEmail').value.trim();
+  var errorEl = document.getElementById('forgotEmailError');
 
   if (!email || !validators.email(email)) {
     errorEl.classList.add('show');
@@ -1411,7 +1524,7 @@ async function sendForgotOtp() {
   }
   errorEl.classList.remove('show');
 
-  const btn = document.getElementById('forgotOtpBtn');
+  var btn = document.getElementById('forgotOtpBtn');
   setLoading(btn, true);
   btn.dataset.loadingText = 'Sending...';
 
@@ -1432,13 +1545,13 @@ async function sendForgotOtp() {
 
 function startForgotOtpTimer() {
   state.forgotOtpCountdown = 60;
-  const timerEl = document.getElementById('forgotOtpTimer');
-  const btn = document.getElementById('forgotOtpBtn');
+  var timerEl = document.getElementById('forgotOtpTimer');
+  var btn = document.getElementById('forgotOtpBtn');
   timerEl.textContent = 'Resend in ' + state.forgotOtpCountdown + 's';
   btn.disabled = true;
 
   clearInterval(state.forgotOtpTimer);
-  state.forgotOtpTimer = setInterval(() => {
+  state.forgotOtpTimer = setInterval(function() {
     state.forgotOtpCountdown--;
     if (state.forgotOtpCountdown <= 0) {
       clearInterval(state.forgotOtpTimer);
@@ -1455,12 +1568,12 @@ function startForgotOtpTimer() {
 // RESET PIN
 // ============================================================
 async function resetPin() {
-  const email = document.getElementById('forgotEmail').value.trim();
-  const otp = document.getElementById('forgotOtp').value.trim();
-  const newPin = getPinValue('forgot');
+  var email = document.getElementById('forgotEmail').value.trim();
+  var otp = document.getElementById('forgotOtp').value.trim();
+  var newPin = getPinValue('forgot');
 
-  const otpError = document.getElementById('forgotOtpError');
-  const pinError = document.getElementById('forgotPinError');
+  var otpError = document.getElementById('forgotOtpError');
+  var pinError = document.getElementById('forgotPinError');
 
   if (!otp || !validators.otp(otp)) {
     otpError.classList.add('show');
@@ -1474,14 +1587,14 @@ async function resetPin() {
   }
   pinError.classList.remove('show');
 
-  const btn = document.getElementById('resetPinBtn');
+  var btn = document.getElementById('resetPinBtn');
   setLoading(btn, true);
   btn.dataset.loadingText = 'Resetting...';
 
   try {
     await resetPinApp(email, otp, newPin);
     showStatus('✅ PIN reset successfully! Please login with your new PIN.', 'success');
-    setTimeout(() => {
+    setTimeout(function() {
       hideForgotPin();
       document.getElementById('loginEmail').value = email;
       document.getElementById('loginEmail').classList.add('valid');
@@ -1496,93 +1609,68 @@ async function resetPin() {
 }
 
 // ============================================================
-// SEND REGISTER OTP - WITH EXISTENCE CHECK
+// SEND REGISTER OTP
 // ============================================================
 async function sendRegisterOtp() {
-  const name = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
+  var name = document.getElementById('regName').value.trim();
+  var email = document.getElementById('regEmail').value.trim();
+  var phone = document.getElementById('regPhone').value.trim();
 
-  // Clear previous errors
-  document.querySelectorAll('.input-error').forEach(el => {
+  document.querySelectorAll('.input-error').forEach(function(el) {
     el.classList.remove('show');
     el.textContent = '';
   });
-  document.querySelectorAll('.auth-input').forEach(el => {
+  document.querySelectorAll('.auth-input').forEach(function(el) {
     el.classList.remove('error');
   });
 
   if (!name || !validators.name(name)) {
     showStatus('❌ Please enter a valid name (minimum 2 characters)', 'error');
     document.getElementById('regName').classList.add('error');
-    const errorEl = document.getElementById('regNameError');
-    errorEl.textContent = 'Please enter a valid name';
-    errorEl.classList.add('show');
     return;
   }
 
   if (!phone || !validators.phone(phone)) {
     showStatus('❌ Please enter a valid phone number (10-15 digits)', 'error');
     document.getElementById('regPhone').classList.add('error');
-    const errorEl = document.getElementById('regPhoneError');
-    errorEl.textContent = 'Please enter a valid phone number';
-    errorEl.classList.add('show');
     return;
   }
 
   if (!email || !validators.email(email)) {
     showStatus('❌ Please enter a valid email address', 'error');
     document.getElementById('regEmail').classList.add('error');
-    const errorEl = document.getElementById('regEmailError');
-    errorEl.textContent = 'Please enter a valid email address';
-    errorEl.classList.add('show');
     return;
   }
 
-  const btn = document.getElementById('regOtpBtn');
+  var btn = document.getElementById('regOtpBtn');
   setLoading(btn, true);
   btn.dataset.loadingText = 'Checking...';
 
   try {
-    // Check if any of the fields already exist
-    const checkResult = await checkUserExists(name, email, phone);
+    var checkResult = await checkUserExists(name, email, phone);
     
     if (checkResult.exists) {
-      let errorMessage = '❌ Account already exists!\n\n';
-      let fieldsWithError = [];
+      var errorMessage = '❌ Account already exists!\n\n';
       
-      if (checkResult.field === 'email' || (checkResult.fields && checkResult.fields.includes('email'))) {
+      if (checkResult.field === 'email' || (checkResult.fields && checkResult.fields.indexOf('email') !== -1)) {
         errorMessage += '• Email "' + email + '" is already registered\n';
         document.getElementById('regEmail').classList.add('error');
-        const errorEl = document.getElementById('regEmailError');
-        errorEl.textContent = 'This email is already registered';
-        errorEl.classList.add('show');
-        fieldsWithError.push('email');
       }
-      if (checkResult.field === 'phone' || (checkResult.fields && checkResult.fields.includes('phone'))) {
+      if (checkResult.field === 'phone' || (checkResult.fields && checkResult.fields.indexOf('phone') !== -1)) {
         errorMessage += '• Phone number "' + phone + '" is already registered\n';
         document.getElementById('regPhone').classList.add('error');
-        const errorEl = document.getElementById('regPhoneError');
-        errorEl.textContent = 'This phone number is already registered';
-        errorEl.classList.add('show');
-        fieldsWithError.push('phone');
       }
-      if (checkResult.field === 'name' || (checkResult.fields && checkResult.fields.includes('name'))) {
+      if (checkResult.field === 'name' || (checkResult.fields && checkResult.fields.indexOf('name') !== -1)) {
         errorMessage += '• Name "' + name + '" is already registered\n';
         document.getElementById('regName').classList.add('error');
-        const errorEl = document.getElementById('regNameError');
-        errorEl.textContent = 'This name is already registered';
-        errorEl.classList.add('show');
-        fieldsWithError.push('name');
       }
       
-      errorMessage += '\nPlease login instead or use different details.';
+      errorMessage += '\nPlease login instead.';
       showStatus(errorMessage, 'error');
       setLoading(btn, false);
       btn.innerHTML = 'Send OTP';
       
-      // Show switch to login option after 3 seconds
-      setTimeout(() => {
+      setTimeout(function() {
         if (confirm('⚠️ Account already exists! Would you like to login instead?')) {
           switchTab('login');
           document.getElementById('loginEmail').value = email;
@@ -1593,7 +1681,6 @@ async function sendRegisterOtp() {
       return;
     }
 
-    // If user doesn't exist, send OTP
     await requestOTP(email);
     showStatus('✅ OTP sent to ' + email, 'success');
     startRegOtpTimer();
@@ -1607,13 +1694,13 @@ async function sendRegisterOtp() {
 
 function startRegOtpTimer() {
   state.regOtpCountdown = 60;
-  const timerEl = document.getElementById('regOtpTimer');
-  const btn = document.getElementById('regOtpBtn');
+  var timerEl = document.getElementById('regOtpTimer');
+  var btn = document.getElementById('regOtpBtn');
   timerEl.textContent = 'Resend in ' + state.regOtpCountdown + 's';
   btn.disabled = true;
 
   clearInterval(state.regOtpTimer);
-  state.regOtpTimer = setInterval(() => {
+  state.regOtpTimer = setInterval(function() {
     state.regOtpCountdown--;
     if (state.regOtpCountdown <= 0) {
       clearInterval(state.regOtpTimer);
@@ -1627,16 +1714,15 @@ function startRegOtpTimer() {
 }
 
 // ============================================================
-// REGISTER USER - WITH FINAL EXISTENCE CHECK
+// REGISTER USER
 // ============================================================
 async function registerUser() {
-  const name = document.getElementById('regName').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const pin = getPinValue('reg');
-  const otp = document.getElementById('regOtp').value.trim();
+  var name = document.getElementById('regName').value.trim();
+  var phone = document.getElementById('regPhone').value.trim();
+  var email = document.getElementById('regEmail').value.trim();
+  var pin = getPinValue('reg');
+  var otp = document.getElementById('regOtp').value.trim();
 
-  // Validation
   if (!name || !validators.name(name)) {
     showStatus('❌ Please enter a valid name', 'error');
     document.getElementById('regName').classList.add('error');
@@ -1661,46 +1747,35 @@ async function registerUser() {
     return;
   }
 
-  const btn = document.getElementById('registerSubmitBtn');
+  var btn = document.getElementById('registerSubmitBtn');
   setLoading(btn, true);
   btn.dataset.loadingText = 'Creating Account...';
 
   try {
-    // Double-check if user already exists before creating
-    const checkResult = await checkUserExists(name, email, phone);
+    var checkResult = await checkUserExists(name, email, phone);
     
     if (checkResult.exists) {
-      let errorMessage = '❌ Cannot create account:\n';
+      var errorMessage = '❌ Cannot create account:\n';
       
-      if (checkResult.field === 'email' || (checkResult.fields && checkResult.fields.includes('email'))) {
+      if (checkResult.field === 'email' || (checkResult.fields && checkResult.fields.indexOf('email') !== -1)) {
         errorMessage += '• Email "' + email + '" is already registered\n';
         document.getElementById('regEmail').classList.add('error');
-        const errorEl = document.getElementById('regEmailError');
-        errorEl.textContent = 'This email is already registered';
-        errorEl.classList.add('show');
       }
-      if (checkResult.field === 'phone' || (checkResult.fields && checkResult.fields.includes('phone'))) {
+      if (checkResult.field === 'phone' || (checkResult.fields && checkResult.fields.indexOf('phone') !== -1)) {
         errorMessage += '• Phone number "' + phone + '" is already registered\n';
         document.getElementById('regPhone').classList.add('error');
-        const errorEl = document.getElementById('regPhoneError');
-        errorEl.textContent = 'This phone number is already registered';
-        errorEl.classList.add('show');
       }
-      if (checkResult.field === 'name' || (checkResult.fields && checkResult.fields.includes('name'))) {
+      if (checkResult.field === 'name' || (checkResult.fields && checkResult.fields.indexOf('name') !== -1)) {
         errorMessage += '• Name "' + name + '" is already registered\n';
         document.getElementById('regName').classList.add('error');
-        const errorEl = document.getElementById('regNameError');
-        errorEl.textContent = 'This name is already registered';
-        errorEl.classList.add('show');
       }
       
-      errorMessage += '\nPlease login instead or use different details.';
+      errorMessage += '\nPlease login instead.';
       showStatus(errorMessage, 'error');
       setLoading(btn, false);
       btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
       
-      // Show switch to login option after 3 seconds
-      setTimeout(() => {
+      setTimeout(function() {
         if (confirm('⚠️ Account already exists! Would you like to login instead?')) {
           switchTab('login');
           document.getElementById('loginEmail').value = email;
@@ -1711,9 +1786,8 @@ async function registerUser() {
       return;
     }
 
-    // If user doesn't exist, proceed with registration
-    const data = await registerUserApp(name, email, phone, pin, otp);
-    const user = {
+    var data = await registerUserApp(name, email, phone, pin, otp);
+    var user = {
       id: data.customer.id,
       email: data.customer.email,
       name: data.customer.name,
@@ -1739,29 +1813,53 @@ async function registerUser() {
 // LOGIN USER
 // ============================================================
 async function loginUser() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pin = getPinValue('login');
+  var email = document.getElementById('loginEmail').value.trim();
+  var pin = getPinValue('login');
 
   if (!email || !validators.email(email)) {
     showStatus('❌ Please enter a valid email address', 'error');
+    document.getElementById('loginEmail').classList.add('error');
     return;
   }
+  document.getElementById('loginEmail').classList.remove('error');
+
   if (!pin || !validators.pin(pin)) {
     showStatus('❌ Please enter a valid 4-digit PIN', 'error');
     return;
   }
 
-  const btn = document.getElementById('loginSubmitBtn');
+  var btn = document.getElementById('loginSubmitBtn');
+  var originalText = btn.innerHTML;
   setLoading(btn, true);
-  btn.dataset.loadingText = 'Logging in...';
+  btn.dataset.loadingText = '⏳ Checking email...';
 
   try {
-    const data = await loginUserApp(email, pin);
-    const user = {
+    var checkResult = await checkUserExists(null, email, null);
+    
+    if (checkResult && !checkResult.exists) {
+      showStatus('❌ Email not registered. Please create an account first.', 'error');
+      setLoading(btn, false);
+      btn.innerHTML = originalText;
+      
+      setTimeout(function() {
+        if (confirm('⚠️ Email not registered! Would you like to create an account instead?')) {
+          switchTab('register');
+          document.getElementById('regEmail').value = email;
+          document.getElementById('regEmail').classList.add('valid');
+          updateSubmitButtons();
+        }
+      }, 2000);
+      return;
+    }
+
+    btn.dataset.loadingText = '⏳ Verifying PIN...';
+    var data = await loginUserApp(email, pin);
+    
+    var user = {
       id: data.customer.id,
       email: data.customer.email,
       name: data.customer.name,
-      phone: data.customer.phone,
+      phone: data.customer.phone || '',
       token: data.token,
       loggedIn: true,
       loginTime: Date.now()
@@ -1772,10 +1870,58 @@ async function loginUser() {
     showLoggedInState(user);
     toast('✅ Welcome back, ' + user.name + '! 👋', 'success');
   } catch (error) {
-    showStatus('❌ ' + error.message, 'error');
+    var errorMsg = error.message || 'Login failed';
+    
+    if (errorMsg.toLowerCase().indexOf('pin') !== -1 || errorMsg.toLowerCase().indexOf('invalid') !== -1) {
+      showStatus('❌ Incorrect PIN. Please try again.', 'error');
+    } else if (errorMsg.toLowerCase().indexOf('not found') !== -1 || errorMsg.toLowerCase().indexOf('not registered') !== -1) {
+      showStatus('❌ Email not registered. Please create an account first.', 'error');
+    } else {
+      showStatus('❌ ' + errorMsg, 'error');
+    }
   } finally {
     setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
+    btn.innerHTML = originalText;
+  }
+}
+
+// ============================================================
+// GOOGLE LOGIN
+// ============================================================
+function loginWithGoogle() {
+  window.location.href = API_BASE + '/api/auth/google';
+}
+
+function handleGoogleCallback() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var googleAuth = urlParams.get('google_auth');
+  var token = urlParams.get('token');
+  var email = urlParams.get('email');
+  var name = urlParams.get('name');
+  var phone = urlParams.get('phone') || '';
+
+  if (googleAuth === 'success' && token) {
+    var user = {
+      id: Date.now().toString(),
+      email: email,
+      name: decodeURIComponent(name),
+      phone: phone,
+      token: token,
+      loggedIn: true,
+      loginTime: Date.now(),
+      authMethod: 'google'
+    };
+    
+    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+    localStorage.setItem('liquorbelle_token', token);
+    
+    window.history.replaceState({}, document.title, window.location.pathname);
+    showLoggedInState(user);
+    toast('✅ Welcome, ' + user.name + '! 👋', 'success');
+    
+    setTimeout(function() {
+      window.location.href = 'index.html';
+    }, 2000);
   }
 }
 
@@ -1789,10 +1935,15 @@ function logoutUser() {
   document.getElementById('loggedInSection').classList.remove('active');
   document.getElementById('authForms').style.display = 'block';
   document.getElementById('ordersContainer').innerHTML = '';
-  document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
+  document.querySelectorAll('.auth-form').forEach(function(f) {
+    f.style.display = 'none';
+  });
   document.getElementById('loginForm').style.display = 'block';
-  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.auth-tab-login')?.classList.add('active');
+  document.querySelectorAll('.auth-tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  var loginTab = document.querySelector('.auth-tab-login');
+  if (loginTab) loginTab.classList.add('active');
   toast('Logged out successfully', 'success');
   updateUserBadge();
 }
@@ -1814,8 +1965,8 @@ function showLoggedInState(user) {
 // LOAD ORDERS
 // ============================================================
 async function loadOrders() {
-  const container = document.getElementById('ordersContainer');
-  const token = localStorage.getItem('liquorbelle_token');
+  var container = document.getElementById('ordersContainer');
+  var token = localStorage.getItem('liquorbelle_token');
 
   if (!token) {
     container.innerHTML = '<div class="empty-state"><i class="ph ph-lock"></i><p>Please login to see your orders</p></div>';
@@ -1825,7 +1976,7 @@ async function loadOrders() {
   container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
 
   try {
-    const response = await fetch(API_BASE + '/api/customers/me/orders', {
+    var response = await fetch(API_BASE + '/api/customers/me/orders', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
 
@@ -1834,7 +1985,7 @@ async function loadOrders() {
       throw new Error('Session expired');
     }
 
-    const data = await response.json();
+    var data = await response.json();
     if (data.success && data.orders && data.orders.length > 0) {
       renderOrders(data.orders);
     } else {
@@ -1847,174 +1998,36 @@ async function loadOrders() {
 }
 
 // ============================================================
-// VALIDATION FUNCTIONS (REAL-TIME)
+// RENDER ORDERS
 // ============================================================
-
-function validateNameInput(input) {
-  const errorEl = document.getElementById('regNameError');
-  const name = input.value.trim();
-  
-  if (name.length > 0 && name.length < 2) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) {
-      errorEl.textContent = 'Name must be at least 2 characters';
-      errorEl.classList.add('show');
-    }
-  } else if (name.length >= 2) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  }
-  updateSubmitButtons();
-}
-
-function validatePhoneInput(input) {
-  const errorEl = document.getElementById('regPhoneError');
-  const phone = input.value.replace(/\D/g, '');
-  input.value = phone;
-  
-  if (phone.length > 0 && phone.length < 10) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) {
-      errorEl.textContent = 'Phone must be at least 10 digits';
-      errorEl.classList.add('show');
-    }
-  } else if (phone.length >= 10 && validators.phone(phone)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  }
-  updateSubmitButtons();
-}
-
-function validateEmailInput(input) {
-  const errorEl = document.getElementById('regEmailError');
-  const email = input.value.trim();
-  
-  if (email.length > 0 && !validators.email(email)) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) {
-      errorEl.textContent = 'Please enter a valid email address';
-      errorEl.classList.add('show');
-    }
-  } else if (email.length > 0 && validators.email(email)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  }
-  updateSubmitButtons();
-}
-
-function validateLoginEmail(input) {
-  const errorEl = document.getElementById('loginEmailError');
-  const email = input.value.trim();
-  
-  if (email.length > 0 && !validators.email(email)) {
-    input.classList.add('error');
-    input.classList.remove('valid');
-    if (errorEl) {
-      errorEl.textContent = 'Please enter a valid email address';
-      errorEl.classList.add('show');
-    }
-  } else if (email.length > 0 && validators.email(email)) {
-    input.classList.remove('error');
-    input.classList.add('valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  } else {
-    input.classList.remove('error', 'valid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-  }
-  updateSubmitButtons();
-}
-
-// ============================================================
-// RENDER ORDERS// ============================================================
 function renderOrders(orders) {
-  const container = document.getElementById('ordersContainer');
+  var container = document.getElementById('ordersContainer');
 
   if (!orders || !orders.length) {
     container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
     return;
   }
 
-  let html = '<div class="orders-list">';
-  orders.forEach(o => {
-    const items = o.items || [];
-    const statusText = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : o.status === 'delivered' ? 'Delivered' : 'Unknown';
-    const statusClass = 'status-' + (o.status || 'pending');
+  var html = '<div class="orders-list">';
+  for (var i = 0; i < orders.length; i++) {
+    var o = orders[i];
+    var items = o.items || [];
+    var statusText = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : o.status === 'delivered' ? 'Delivered' : 'Unknown';
+    var statusClass = 'status-' + (o.status || 'pending');
 
-    let itemsHtml = '';
-    items.forEach(item => {
-      const name = item.product_name || item.name || 'Product';
-      const qty = item.quantity || item.qty || 1;
-      const price = item.price || 0;
-      itemsHtml += `
-        <div class="order-item">
-          <div>
-            <div class="order-item-name">${escapeHtml(name)}</div>
-            <div class="order-item-qty">Qty: ${qty}</div>
-          </div>
-          <div class="order-item-price">KES ${(price * qty).toLocaleString()}</div>
-        </div>
-      `;
-    });
+    var itemsHtml = '';
+    for (var j = 0; j < items.length; j++) {
+      var item = items[j];
+      var name = item.product_name || item.name || 'Product';
+      var qty = item.quantity || item.qty || 1;
+      var price = item.price || 0;
+      itemsHtml += '<div class="order-item"><div><div class="order-item-name">' + escapeHtml(name) + '</div><div class="order-item-qty">Qty: ' + qty + '</div></div><div class="order-item-price">KES ' + (price * qty).toLocaleString() + '</div></div>';
+    }
 
-    const orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
+    var orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
 
-    html += `
-      <div class="order-card">
-        <div class="order-header">
-          <div>
-            <div class="order-number">📦 Order #${orderNumber}</div>
-            <div class="order-date">${new Date(o.created_at).toLocaleDateString()} at ${new Date(o.created_at).toLocaleTimeString()}</div>
-          </div>
-          <span class="order-status ${statusClass}">${statusText}</span>
-        </div>
-        <div class="order-items">${itemsHtml}</div>
-        <div class="order-footer">
-          <div class="order-total-row"><span>Subtotal</span><span>KES ${(o.subtotal || 0).toLocaleString()}</span></div>
-          <div class="order-total-row"><span>Delivery</span><span>${o.delivery === 0 ? 'FREE' : 'KES ' + (o.delivery || 0).toLocaleString()}</span></div>
-          <div class="order-total-row"><span>Total</span><span>KES ${(o.total || 0).toLocaleString()}</span></div>
-        </div>
-      </div>
-    `;
-  });
+    html += '<div class="order-card"><div class="order-header"><div><div class="order-number">📦 Order #' + orderNumber + '</div><div class="order-date">' + new Date(o.created_at).toLocaleDateString() + ' at ' + new Date(o.created_at).toLocaleTimeString() + '</div></div><span class="order-status ' + statusClass + '">' + statusText + '</span></div><div class="order-items">' + itemsHtml + '</div><div class="order-footer"><div class="order-total-row"><span>Subtotal</span><span>KES ' + (o.subtotal || 0).toLocaleString() + '</span></div><div class="order-total-row"><span>Delivery</span><span>' + (o.delivery === 0 ? 'FREE' : 'KES ' + (o.delivery || 0).toLocaleString()) + '</span></div><div class="order-total-row"><span>Total</span><span>KES ' + (o.total || 0).toLocaleString() + '</span></div></div></div>';
+  }
   html += '</div>';
   container.innerHTML = html;
 }
@@ -2023,39 +2036,25 @@ function renderOrders(orders) {
 // USER BADGE
 // ============================================================
 function updateUserBadge() {
-  const user = getCurrentUser();
-  const initialEl = document.getElementById('userInitial');
-  const dotEl = document.getElementById('userDot');
-  const menuAuth = document.getElementById('mobileMenuAuth');
+  var user = getCurrentUser();
+  var initialEl = document.getElementById('userInitial');
+  var dotEl = document.getElementById('userDot');
+  var menuAuth = document.getElementById('mobileMenuAuth');
 
   if (user && user.name) {
-    const initial = user.name.charAt(0).toUpperCase();
+    var initial = user.name.charAt(0).toUpperCase();
     if (initialEl) initialEl.textContent = initial;
     if (dotEl) dotEl.className = 'user-dot';
 
     if (menuAuth) {
-      menuAuth.innerHTML = `
-        <div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;">
-          <div style="font-weight:700;font-size:.85rem;color:var(--primary);">
-            <i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}
-          </div>
-          <div style="font-size:.65rem;color:var(--muted);">${escapeHtml(user.email || 'No email')}</div>
-          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;">
-            <i class="ph ph-sign-out"></i> Logout
-          </button>
-        </div>
-      `;
+      menuAuth.innerHTML = '<div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;"><div style="font-weight:700;font-size:.85rem;color:var(--primary);"><i class="ph ph-user-circle"></i> ' + escapeHtml(user.name) + '</div><div style="font-size:.65rem;color:var(--muted);">' + escapeHtml(user.email || 'No email') + '</div><button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;"><i class="ph ph-sign-out"></i> Logout</button></div>';
     }
   } else {
     if (initialEl) initialEl.textContent = 'G';
     if (dotEl) dotEl.className = 'user-dot guest';
 
     if (menuAuth) {
-      menuAuth.innerHTML = `
-        <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
-          <i class="ph ph-user-circle"></i> Login / Register
-        </a>
-      `;
+      menuAuth.innerHTML = '<a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;"><i class="ph ph-user-circle"></i> Login / Register</a>';
     }
   }
 }
@@ -2065,9 +2064,9 @@ function updateUserBadge() {
 // ============================================================
 function getCurrentUser() {
   try {
-    const user = localStorage.getItem('liquorbelle_user');
+    var user = localStorage.getItem('liquorbelle_user');
     return user ? JSON.parse(user) : null;
-  } catch {
+  } catch (e) {
     return null;
   }
 }
@@ -2087,7 +2086,7 @@ function closeMobileMenu() {
 
 function handleHeaderSearch(e) {
   e.preventDefault();
-  const q = document.getElementById('headerSearchInput').value.trim();
+  var q = document.getElementById('headerSearchInput').value.trim();
   if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q);
   return false;
 }
@@ -2112,53 +2111,34 @@ function closeWishlistModal() {
 }
 
 function renderCartDrawer() {
-  const cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
-  const items = Object.values(cart);
-  const container = document.getElementById('cartItemsList');
-  const footer = document.getElementById('cartFooter');
-  const totalEl = document.getElementById('cartTotalAmount');
+  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+  var items = Object.values(cart);
+  var container = document.getElementById('cartItemsList');
+  var footer = document.getElementById('cartFooter');
+  var totalEl = document.getElementById('cartTotalAmount');
 
   if (!items.length) {
-    container.innerHTML = `
-      <div class="cart-container">
-        <div class="cart-icon-wrapper">
-          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
-            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
-          </svg>
-          <span class="cart-badge">0</span>
-        </div>
-        <h2 class="cart-message">Your cart is empty!</h2>
-        <a href="shop.html" class="shop-button">Start Shopping</a>
-      </div>
-    `;
+    container.innerHTML = '<div class="cart-container"><div class="cart-icon-wrapper"><svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.5" fill="#111111"/><circle cx="17" cy="20" r="1.5" fill="#111111"/></svg><span class="cart-badge">0</span></div><h2 class="cart-message">Your cart is empty!</h2><a href="shop.html" class="shop-button">Start Shopping</a></div>';
     footer.style.display = 'none';
     return;
   }
 
-  let html = '';
-  let total = 0;
-  let count = 0;
-  items.forEach(item => {
-    const subtotal = item.price * item.qty;
+  var html = '';
+  var total = 0;
+  var count = 0;
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var subtotal = item.price * item.qty;
     total += subtotal;
     count += item.qty;
-    html += `
-      <div class="cart-item">
-        <div>
-          <div class="cart-item-name">${escapeHtml(item.name)}</div>
-        </div>
-        <div class="cart-item-price">KES ${subtotal.toLocaleString()}</div>
-      </div>
-    `;
-  });
+    html += '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + '</div></div><div class="cart-item-price">KES ' + subtotal.toLocaleString() + '</div></div>';
+  }
 
   container.innerHTML = html;
   totalEl.textContent = 'KES ' + total.toLocaleString();
   footer.style.display = 'block';
 
-  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(el => {
+  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
     if (el) el.textContent = count;
   });
 }
@@ -2180,19 +2160,18 @@ function closeSupportModal() {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-  // Setup PIN inputs
   setupPinInputs('login');
   setupPinInputs('reg');
   setupPinInputs('forgot');
 
-  // Render cart
+  handleGoogleCallback();
+
   renderCartDrawer();
   updateSubmitButtons();
   updateUserBadge();
 
-  // Check if user is logged in
   try {
-    const saved = localStorage.getItem('liquorbelle_user');
+    var saved = localStorage.getItem('liquorbelle_user');
     if (saved) {
       state.currentUser = JSON.parse(saved);
       if (state.currentUser && state.currentUser.email) {
@@ -2203,38 +2182,49 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('Failed to parse user data:', e);
   }
 
-  // Show login form by default
   document.getElementById('loginForm').style.display = 'block';
   document.getElementById('registerForm').style.display = 'none';
   document.getElementById('forgotPinForm').style.display = 'none';
 
-  // Close modals on overlay click
-  document.getElementById('supportModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeSupportModal();
-  });
+  var supportModal = document.getElementById('supportModal');
+  if (supportModal) {
+    supportModal.addEventListener('click', function(e) {
+      if (e.target === this) closeSupportModal();
+    });
+  }
+  
+  var wishlistModal = document.getElementById('wishlistModal');
+  if (wishlistModal) {
+    wishlistModal.addEventListener('click', function(e) {
+      if (e.target === this) closeWishlistModal();
+    });
+  }
 });
 
-// Real-time input validation
 document.addEventListener('input', function(e) {
-  const id = e.target.id;
-  if (id === 'loginEmail') validateField.loginEmail(e.target);
-  else if (id === 'regName') validateField.name(e.target);
-  else if (id === 'regPhone') validateField.phone(e.target);
-  else if (id === 'regEmail') validateField.email(e.target);
-  else if (id === 'regOtp') validateField.otp(e.target);
-  else if (id && id.match(/^(login|reg|forgot)Pin[1-4]$/)) {
-    const prefix = id.replace(/Pin[1-4]$/, '');
+  var id = e.target.id;
+  if (id === 'loginEmail') {
+    validateField.loginEmail(e.target);
+  } else if (id === 'regName') {
+    validateField.name(e.target);
+  } else if (id === 'regPhone') {
+    validateField.phone(e.target);
+  } else if (id === 'regEmail') {
+    validateField.email(e.target);
+  } else if (id === 'regOtp') {
+    validateField.otp(e.target);
+  } else if (id && id.match(/^(login|reg|forgot)Pin[1-4]$/)) {
+    var prefix = id.replace(/Pin[1-4]$/, '');
     validatePinInput(prefix);
     updateSubmitButtons();
   }
 });
 
-// Storage event listener for cross-tab updates
 window.addEventListener('storage', function(e) {
   if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
     updateUserBadge();
     if (e.key === 'liquorbelle_user') {
-      const user = getCurrentUser();
+      var user = getCurrentUser();
       if (user && user.email) {
         showLoggedInState(user);
       }
@@ -2242,7 +2232,7 @@ window.addEventListener('storage', function(e) {
   }
 });
 
-console.log('✅ Account page loaded (PIN-based auth with orders)');
+console.log('✅ Account page loaded (PIN-based auth with Google Sign-In)');
 </script>
 </body>
 </html>

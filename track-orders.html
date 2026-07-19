@@ -134,38 +134,6 @@ a{color:inherit;text-decoration:none;}
 
 .header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 
-/* ===== HEADER USER BADGE ===== */
-.header-user-badge{
-  position:relative;
-  width:36px;height:36px;
-  border-radius:50%;
-  border:2px solid var(--btn-green);
-  background:rgba(255,255,255,0.08);
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:.2s;
-  font-size:16px;
-}
-.header-user-badge:hover{background:rgba(255,255,255,0.2);}
-.header-user-badge .user-initial{
-  font-weight:700;
-  font-size:14px;
-  text-transform:uppercase;
-}
-.header-user-badge .user-dot{
-  position:absolute;bottom:-2px;right:-2px;
-  width:12px;height:12px;
-  border-radius:50%;
-  background:var(--btn-green);
-  border:2px solid var(--primary);
-}
-.header-user-badge .user-dot.guest{
-  background:var(--muted);
-}
-
 .header-icon-btn{
   position:relative;width:40px;height:40px;border-radius:50%;border:none;
   background:transparent;color:white;
@@ -559,11 +527,6 @@ a{color:inherit;text-decoration:none;}
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
-    <!-- User Badge -->
-    <div class="header-user-badge" id="headerUserBadge" onclick="window.location.href='account.html'" title="My Account">
-      <span class="user-initial" id="userInitial">G</span>
-      <span class="user-dot guest" id="userDot"></span>
-    </div>
     <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
       <i class="ph ph-shopping-cart"></i>
       <span class="header-cart-badge" id="headerCartCount">0</span>
@@ -592,13 +555,13 @@ a{color:inherit;text-decoration:none;}
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="account.html"><i class="ph ph-user-circle"></i> My Account</a>
+  <a href="accounts.html"><i class="ph ph-user-circle"></i> My Account</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
 <!-- TRACK CONTENT -->
 <div class="track-container">
-  <a href="account.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Account</a>
+  <a href="accounts.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Account</a>
   
   <div class="track-card">
     <h1><i class="ph ph-package"></i> My Orders</h1>
@@ -619,7 +582,7 @@ a{color:inherit;text-decoration:none;}
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
-    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="account.html">My Account</a></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="accounts.html">My Account</a></div>
     <div class="footer-col"><h4>Support</h4><p>+254 748 894 443</p><p>WhatsApp 24/7</p></div>
     <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
   </div>
@@ -643,7 +606,7 @@ a{color:inherit;text-decoration:none;}
     <span>Cart</span>
     <span class="nav-badge" id="navCartCount">0</span>
   </button>
-  <button class="nav-item active" onclick="window.location.href='account.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
+  <button class="nav-item active" onclick="window.location.href='accounts.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
 </nav>
 
 <!-- Cart Drawer -->
