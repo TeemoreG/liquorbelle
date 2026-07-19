@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<meta name="theme-color" content="#800000">
+<title>My Profile — LiquorBelle</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#800000;
+  --primary-bright:#990000;
+  --primary-dark:#5C0000;
+  --sale-red:#D50000;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --gold:#B8860B;
+  --gold-light:#d4a017;
+  --gold-bg:#fdf6e3;
+  --btn-green:#22C55E;
+  --btn-green-hover:#16A34A;
+  --green-light:#E8F5E9;
+  --radius:24px;
+  --radius-sm:14px;
+  --radius-xs:10px;
+  --shadow:0 4px 20px rgba(0,0,0,0.06);
+  --font-body:'Inter',-apple-system,sans-serif;
+  --bottom-nav-height:70px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));}
+
+.profile-container{
+  max-width: 700px;
+  margin: 20px auto 32px;
+  padding: 0 4%;
+}
+.profile-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  padding: 32px;
+  box-shadow:var(--shadow);
+  border-top:4px solid var(--gold);
+}
+.profile-header{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:24px;
+  padding-bottom:16px;
+  border-bottom:2px solid var(--border);
+}
+.profile-avatar{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  background:var(--primary);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+  font-weight:800;
+  flex-shrink:0;
+}
+.profile-header-info h1{
+  font-size:1.4rem;
+  font-weight:800;
+  color:var(--text);
+}
+.profile-header-info p{
+  color:var(--muted);
+  font-size:.85rem;
+}
+
+.form-group{
+  margin-bottom:16px;
+}
+.form-group label{
+  display:block;
+  margin-bottom:4px;
+  font-weight:600;
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+.form-group input{
+  width:100%;
+  padding:12px 16px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-family:var(--font-body);
+  font-size:14px;
+  transition:all .2s;
+}
+.form-group input:focus{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(184,134,11,0.08);
+  background:var(--white);
+}
+.form-group input:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+.form-group input.error{
+  border-color:var(--sale-red);
+  background:#FFF5F5;
+}
+.form-group input.valid{
+  border-color:var(--btn-green);
+  background:#F0FFF4;
+}
+.input-error{
+  color:var(--sale-red);
+  font-size:10px;
+  margin-top:4px;
+  display:none;
+}
+.input-error.show{display:block;}
+
+.btn-primary{
+  width:100%;
+  padding:14px;
+  background:var(--gold);
+  color:white;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-weight:700;
+  font-size:1rem;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:var(--font-body);
+}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 4px 20px rgba(184,134,11,0.3);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+
+.btn-secondary{
+  width:100%;
+  padding:14px;
+  background:var(--bg2);
+  color:var(--text);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-weight:700;
+  font-size:1rem;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:var(--font-body);
+  margin-top:8px;
+}
+.btn-secondary:hover{background:var(--border);}
+
+.auth-status{
+  padding:10px 14px;
+  border-radius:var(--radius-xs);
+  font-size:.85rem;
+  font-weight:600;
+  margin-bottom:12px;
+  display:none;
+}
+.auth-status.error{display:block;background:#FFEBEE;color:#D32F2F;border:1px solid #FFCDD2;}
+.auth-status.success{display:block;background:#E8F5E9;color:#1A8A3E;border:1px solid #C8E6C9;}
+.auth-status.info{display:block;background:#FFF3E0;color:#E67E22;border:1px solid #FFE0B2;}
+
+.section-divider{
+  margin:24px 0;
+  border:none;
+  height:2px;
+  background:var(--border);
+}
+
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
+.toast.error{background:var(--sale-red);}
+.toast.success{background:var(--btn-green);}
+
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--primary);
+  text-decoration:none;
+  margin-bottom:16px;
+  font-weight:600;
+  font-size:.9rem;
+}
+.back-link:hover{color:var(--gold);}
+
+.pin-input-group{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin:8px 0 12px;
+}
+.pin-input-group input{
+  width:48px !important;
+  height:56px !important;
+  text-align:center;
+  font-size:22px !important;
+  font-weight:700;
+  letter-spacing:4px;
+  border-radius:12px !important;
+  padding:0 !important;
+  background:var(--bg);
+  border:2px solid var(--border);
+  transition:all .2s;
+  font-family:monospace;
+}
+.pin-input-group input:focus{
+  border-color:var(--gold);
+  background:var(--white);
+  box-shadow:0 0 0 3px rgba(184,134,11,0.1);
+}
+.pin-input-group input.error{
+  border-color:var(--sale-red);
+  background:#FFF5F5;
+}
+.pin-input-group input.valid{
+  border-color:var(--btn-green);
+  background:#F0FFF4;
+}
+
+@media(max-width:600px){
+  .profile-container{padding:0 3%;margin:12px auto 20px;}
+  .profile-card{padding:20px 16px;}
+  .profile-header{flex-direction:column;text-align:center;}
+  .profile-avatar{width:60px;height:60px;font-size:26px;}
+}
+</style>
+</head>
+<body>
+
+<div class="profile-container">
+  <a href="accounts.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Account</a>
+  
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">G</div>
+      <div class="profile-header-info">
+        <h1 id="profileName">Loading...</h1>
+        <p id="profileEmail">Loading...</p>
+        <span id="authMethodBadge" style="font-size:11px;padding:2px 10px;border-radius:30px;background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold);display:inline-block;margin-top:4px;">Email + PIN</span>
+      </div>
+    </div>
+
+    <div class="auth-status" id="profileStatus"></div>
+
+    <!-- Profile Edit Form -->
+    <form id="profileForm">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="editName" placeholder="Your full name">
+        <div class="input-error" id="editNameError">Name must be at least 2 characters</div>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="editPhone" placeholder="0712345678" maxlength="10">
+        <div class="input-error" id="editPhoneError">Please enter a valid phone number</div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="editEmail" placeholder="you@example.com" disabled>
+        <small style="color:var(--muted);font-size:.65rem;">Email cannot be changed</small>
+      </div>
+      <button type="submit" class="btn-primary" id="updateProfileBtn">Update Profile</button>
+    </form>
+
+    <hr class="section-divider">
+
+    <!-- Change PIN Section - For ALL users -->
+    <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--primary);">Change PIN</h3>
+    <form id="pinForm">
+      <div class="form-group">
+        <label>Current PIN</label>
+        <div class="pin-input-group" id="currentPinGroup">
+          <input type="password" id="currentPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          <input type="password" id="currentPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          <input type="password" id="currentPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          <input type="password" id="currentPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="input-error" id="currentPinError">Please enter your current 4-digit PIN</div>
+      </div>
+      <div class="form-group">
+        <label>New PIN</label>
+        <div class="pin-input-group" id="newPinGroup">
+          <input type="password" id="newPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          <input type="password" id="newPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          <input type="password" id="newPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+          <input type="password" id="newPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="input-error" id="newPinError">Please enter a new 4-digit PIN</div>
+      </div>
+      <button type="submit" class="btn-secondary" id="updatePinBtn">Change PIN</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// PROFILE PAGE JAVASCRIPT
+// ============================================================
+
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const TOAST_DURATION = 3000;
+
+// ============================================================
+// TOAST SYSTEM
+// ============================================================
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = 'toast';
+  if (type === 'error') t.classList.add('error');
+  if (type === 'success') t.classList.add('success');
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, TOAST_DURATION);
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('profileStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'auth-status ' + (type || 'info');
+  el.style.display = 'block';
+}
+
+function hideStatus() {
+  const el = document.getElementById('profileStatus');
+  if (el) { el.className = 'auth-status'; el.style.display = 'none'; }
+}
+
+// ============================================================
+// GET CURRENT USER
+// ============================================================
+function getCurrentUser() {
+  try {
+    const user = localStorage.getItem('liquorbelle_user');
+    return user ? JSON.parse(user) : null;
+  } catch { return null; }
+}
+
+function getAuthToken() {
+  return localStorage.getItem('liquorbelle_token') || null;
+}
+
+// ============================================================
+// PIN INPUT HELPERS
+// ============================================================
+function getPinValue(prefix) {
+  let pin = '';
+  for (let i = 1; i <= 4; i++) {
+    const input = document.getElementById(prefix + i);
+    if (input) pin += input.value || '';
+  }
+  return pin;
+}
+
+function setupPinInputs(prefix) {
+  const inputs = [];
+  for (let i = 1; i <= 4; i++) {
+    inputs.push(document.getElementById(prefix + i));
+  }
+
+  inputs.forEach((input, index) => {
+    if (!input) return;
+    
+    input.addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '');
+      if (this.value.length > 1) this.value = this.value.slice(0, 1);
+      if (this.value.length === 1 && index < 3) {
+        if (inputs[index + 1]) inputs[index + 1].focus();
+      }
+    });
+    
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && this.value === '' && index > 0) {
+        if (inputs[index - 1]) inputs[index - 1].focus();
+      }
+      if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && 
+          e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab') {
+        e.preventDefault();
+      }
+    });
+    
+    input.setAttribute('autocomplete', 'off');
+  });
+}
+
+// ============================================================
+// LOAD PROFILE
+// ============================================================
+async function loadProfile() {
+  const token = getAuthToken();
+  if (!token) {
+    toast('Please login first', 'error');
+    window.location.href = 'accounts.html';
+    return;
+  }
+
+  try {
+    const response = await fetch(API_BASE + '/api/customers/me', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    
+    const data = await response.json();
+    
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      window.location.href = 'accounts.html';
+      return;
+    }
+    
+    if (data.success) {
+      const user = data.customer;
+      document.getElementById('profileName').textContent = user.name;
+      document.getElementById('profileEmail').textContent = user.email;
+      document.getElementById('profileAvatar').textContent = user.name.charAt(0).toUpperCase();
+      document.getElementById('editName').value = user.name;
+      document.getElementById('editPhone').value = user.phone || '';
+      document.getElementById('editEmail').value = user.email;
+      
+      // Show auth method
+      if (user.googleId) {
+        document.getElementById('authMethodBadge').textContent = 'Google';
+        document.getElementById('authMethodBadge').style.background = '#4285F4';
+        document.getElementById('authMethodBadge').style.color = 'white';
+        document.getElementById('authMethodBadge').style.border = 'none';
+      } else {
+        document.getElementById('authMethodBadge').textContent = 'Email + PIN';
+        document.getElementById('authMethodBadge').style.background = 'var(--gold-bg)';
+        document.getElementById('authMethodBadge').style.color = 'var(--gold)';
+        document.getElementById('authMethodBadge').style.border = '1px solid var(--gold)';
+      }
+      
+      // Update local storage
+      localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+    }
+  } catch (error) {
+    console.error('Load profile error:', error);
+    toast('Failed to load profile', 'error');
+  }
+}
+
+// ============================================================
+// UPDATE PROFILE - ALL USERS
+// ============================================================
+async function updateProfile(e) {
+  e.preventDefault();
+  hideStatus();
+  
+  const name = document.getElementById('editName').value.trim();
+  const phone = document.getElementById('editPhone').value.trim();
+  
+  if (name.length < 2) {
+    showStatus('Name must be at least 2 characters', 'error');
+    document.getElementById('editName').focus();
+    return;
+  }
+  
+  const btn = document.getElementById('updateProfileBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Updating...';
+  
+  try {
+    const token = getAuthToken();
+    const response = await fetch(API_BASE + '/api/customers/me', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ name, phone })
+    });
+    
+    const data = await response.json();
+    
+    if (response.status === 401 || response.status === 403) {
+      logoutUser();
+      return;
+    }
+    
+    if (data.success) {
+      showStatus('✅ Profile updated successfully!', 'success');
+      toast('Profile updated successfully', 'success');
+      
+      // Update local user
+      const user = getCurrentUser();
+      if (user) {
+        user.name = name;
+        user.phone = phone;
+        localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+      }
+      
+      document.getElementById('profileName').textContent = name;
+      document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
+    } else {
+      showStatus('❌ ' + (data.message || 'Update failed'), 'error');
+    }
+  } catch (error) {
+    showStatus('❌ Network error. Please try again.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Update Profile';
+  }
+}
+
+// ============================================================
+// UPDATE PIN - FOR ALL USERS (Email + PIN & Google users with PIN)
+// ============================================================
+async function updatePin(e) {
+  e.preventDefault();
+  hideStatus();
+  
+  const currentPin = getPinValue('currentPin');
+  const newPin = getPinValue('newPin');
+  
+  if (currentPin.length !== 4) {
+    showStatus('Please enter your current PIN', 'error');
+    return;
+  }
+  
+  if (newPin.length !== 4) {
+    showStatus('Please enter a new 4-digit PIN', 'error');
+    return;
+  }
+  
+  const btn = document.getElementById('updatePinBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Updating...';
+  
+  try {
+    const token = getAuthToken();
+    const response = await fetch(API_BASE + '/api/customers/me/pin', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ currentPin, newPin })
+    });
+    
+    const data = await response.json();
+    
+    if (response.status === 401 || response.status === 403) {
+      logoutUser();
+      return;
+    }
+    
+    if (data.success) {
+      showStatus('✅ PIN updated successfully!', 'success');
+      toast('PIN updated successfully', 'success');
+      
+      // Clear PIN inputs
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('currentPin' + i).value = '';
+        document.getElementById('newPin' + i).value = '';
+        document.getElementById('currentPin' + i).classList.remove('valid');
+        document.getElementById('newPin' + i).classList.remove('valid');
+      }
+    } else {
+      showStatus('❌ ' + (data.message || 'Update failed'), 'error');
+    }
+  } catch (error) {
+    showStatus('❌ Network error. Please try again.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Change PIN';
+  }
+}
+
+// ============================================================
+// LOGOUT
+// ============================================================
+function logoutUser() {
+  localStorage.removeItem('liquorbelle_user');
+  localStorage.removeItem('liquorbelle_token');
+  window.location.href = 'accounts.html';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  // Setup PIN inputs
+  setupPinInputs('currentPin');
+  setupPinInputs('newPin');
+  
+  // Load profile
+  loadProfile();
+  
+  // Form submissions
+  document.getElementById('profileForm').addEventListener('submit', updateProfile);
+  document.getElementById('pinForm').addEventListener('submit', updatePin);
+  
+  // Real-time validation
+  document.getElementById('editName').addEventListener('input', function() {
+    const errorEl = document.getElementById('editNameError');
+    const isValid = this.value.trim().length >= 2;
+    this.classList.toggle('error', this.value.length > 0 && !isValid);
+    this.classList.toggle('valid', isValid);
+    if (errorEl) errorEl.classList.toggle('show', this.value.length > 0 && !isValid);
+  });
+  
+  document.getElementById('editPhone').addEventListener('input', function() {
+    const errorEl = document.getElementById('editPhoneError');
+    const phone = this.value.replace(/\D/g, '');
+    this.value = phone;
+    const isValid = phone.length === 10;
+    this.classList.toggle('error', phone.length > 0 && phone.length < 10);
+    this.classList.toggle('valid', isValid);
+    if (errorEl) errorEl.classList.toggle('show', phone.length > 0 && phone.length < 10);
+  });
+});
+
+console.log('👤 Profile page loaded');
+</script>
+</body>
+</html>

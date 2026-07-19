@@ -1946,99 +1946,165 @@ body:not(.age-gate-active) {
 <script src="app.js"></script>
 
 <script>
-// ===== AGE GATE - FIXED =====
-(function initAgeGate() {
-  var ageGate = document.getElementById('ageGate');
-  var ageYesBtn = document.getElementById('ageYesBtn');
-  var ageNoBtn = document.getElementById('ageNoBtn');
-  
-  if (!ageGate) return;
-  
-  // Function to enable scrolling
-  function enableScroll() {
-    document.body.style.overflow = '';
-    document.body.style.height = '';
-    document.documentElement.style.overflow = '';
-    document.documentElement.style.height = '';
-    document.body.classList.remove('age-gate-active');
+// ============================================================
+// INDEX PAGE - POWERFUL DYNAMIC JAVASCRIPT
+// ============================================================
+
+// ============================================================
+// CONFIG
+// ============================================================
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const CART_KEY = 'liquorbelle_cart';
+const TOAST_DURATION = 3000;
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    if (m === '"') return '&quot;';
+    if (m === "'") return '&#39;';
+    return m;
+  });
+}
+
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = 'toast';
+  if (type === 'error') t.classList.add('error');
+  if (type === 'success') t.classList.add('success');
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.style.opacity = '0'; }, TOAST_DURATION);
+}
+
+// ============================================================
+// USER MANAGEMENT
+// ============================================================
+function getCurrentUser() {
+  try {
+    var user = localStorage.getItem('liquorbelle_user');
+    return user ? JSON.parse(user) : null;
+  } catch (e) {
+    return null;
   }
-  
-  // Function to disable scrolling
-  function disableScroll() {
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100vh';
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.style.height = '100vh';
-    document.body.classList.add('age-gate-active');
-  }
-  
-  // Check if age was already confirmed
-  if (localStorage.getItem('lb_age_confirmed') === 'true') {
-    ageGate.style.display = 'none';
-    ageGate.classList.remove('active');
-    enableScroll();
-    return;
-  }
-  
-  // Show age gate
-  ageGate.style.display = 'flex';
-  disableScroll();
-  
-  setTimeout(function() {
-    ageGate.classList.add('active');
-  }, 50);
-  
-  // Yes button
-  if (ageYesBtn) {
-    ageYesBtn.onclick = function() {
-      localStorage.setItem('lb_age_confirmed', 'true');
-      ageGate.classList.remove('active');
-      
-      setTimeout(function() {
-        ageGate.style.display = 'none';
-        enableScroll();
-      }, 400);
+}
+
+function getAuthToken() {
+  return localStorage.getItem('liquorbelle_token') || null;
+}
+
+function isLoggedIn() {
+  var token = getAuthToken();
+  var user = getCurrentUser();
+  return !!(token && user);
+}
+
+// ============================================================
+// GOOGLE AUTH HANDLER
+// ============================================================
+function handleGoogleCallback() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var googleAuth = urlParams.get('google_auth');
+  var token = urlParams.get('token');
+  var email = urlParams.get('email');
+  var name = urlParams.get('name');
+  var phone = urlParams.get('phone') || '';
+
+  if (googleAuth === 'success' && token) {
+    var user = {
+      id: Date.now().toString(),
+      email: email,
+      name: decodeURIComponent(name),
+      phone: phone,
+      token: token,
+      loggedIn: true,
+      loginTime: Date.now(),
+      authMethod: 'google'
     };
+    
+    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+    localStorage.setItem('liquorbelle_token', token);
+    
+    toast('✅ Welcome, ' + user.name + '! 👋', 'success');
+    
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    showUserGreeting(user);
+    updateUserBadge();
+    updateUserDropdown();
   }
+}
+
+// ============================================================
+// USER GREETING
+// ============================================================
+function showUserGreeting(user) {
+  var heroOverlay = document.querySelector('.hero-overlay');
+  if (!heroOverlay) return;
   
-  // No button
-  if (ageNoBtn) {
-    ageNoBtn.onclick = function() {
-      document.body.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;padding:20px;text-align:center;background:#f8f8f8;">
-          <div style="font-size:4rem;margin-bottom:12px;">🚫</div>
-          <h2 style="font-size:1.6rem;color:#800000;margin-bottom:8px;">Access Denied</h2>
-          <p style="color:#666;font-size:1rem;max-width:400px;">Sorry, you must be 18 or older to visit this site.</p>
-          <button onclick="localStorage.removeItem('lb_age_confirmed');location.reload();" 
-            style="margin-top:20px;padding:12px 28px;background:#800000;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;">
-            Try Again
+  var existing = heroOverlay.querySelector('.user-greeting-banner');
+  if (existing) existing.remove();
+  
+  var greetingEl = document.createElement('div');
+  greetingEl.className = 'user-greeting-banner';
+  greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:10px 24px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);animation:fadeInDown 0.5s ease;';
+  greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+  heroOverlay.prepend(greetingEl);
+}
+
+// ============================================================
+// USER BADGE
+// ============================================================
+function updateUserBadge() {
+  var user = getCurrentUser();
+  var initialEl = document.getElementById('userInitial');
+  var dotEl = document.getElementById('userDot');
+  var menuAuth = document.getElementById('mobileMenuAuth');
+
+  if (user && user.name) {
+    var initial = user.name.charAt(0).toUpperCase();
+    if (initialEl) initialEl.textContent = initial;
+    if (dotEl) dotEl.className = 'user-dot';
+
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <div style="font-weight:700;font-size:.85rem;color:var(--primary);">
+            <i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);">${escapeHtml(user.email || 'No email')}</div>
+          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;">
+            <i class="ph ph-sign-out"></i> Logout
           </button>
         </div>
       `;
-      enableScroll();
-    };
-  }
-})();
+    }
+  } else {
+    if (initialEl) initialEl.textContent = 'G';
+    if (dotEl) dotEl.className = 'user-dot guest';
 
-// ===== USER DROPDOWN =====
-function toggleUserDropdown(event) {
-  event.stopPropagation();
-  var dropdown = document.getElementById('userDropdown');
-  if (dropdown) dropdown.classList.toggle('open');
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <i class="ph ph-user-circle"></i> Login / Register
+        </a>
+      `;
+    }
+  }
 }
 
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-  var wrapper = document.querySelector('.header-user-wrapper');
-  if (wrapper && !wrapper.contains(event.target)) {
-    var dropdown = document.getElementById('userDropdown');
-    if (dropdown) dropdown.classList.remove('open');
-  }
-});
-
-// ===== UPDATE DROPDOWN =====
+// ============================================================
+// USER DROPDOWN
+// ============================================================
 function updateUserDropdown() {
-  var user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+  var user = getCurrentUser();
   var nameEl = document.getElementById('dropdownUserName');
   var emailEl = document.getElementById('dropdownUserEmail');
   var logoutBtn = document.getElementById('logoutBtn');
@@ -2057,61 +2123,138 @@ function updateUserDropdown() {
   }
 }
 
-if (typeof window.updateUserBadge === 'function') {
-  var originalUpdateUserBadge = window.updateUserBadge;
-  window.updateUserBadge = function() {
-    if (originalUpdateUserBadge) originalUpdateUserBadge();
-    updateUserDropdown();
-  };
+function toggleUserDropdown(event) {
+  event.stopPropagation();
+  var dropdown = document.getElementById('userDropdown');
+  if (dropdown) dropdown.classList.toggle('open');
 }
 
-// ===== LOGOUT =====
-window.logoutUser = function() {
+// ============================================================
+// LOGOUT
+// ============================================================
+function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
   var dropdown = document.getElementById('userDropdown');
   if (dropdown) dropdown.classList.remove('open');
-  if (typeof updateUserBadge === 'function') updateUserBadge();
-  if (typeof toast === 'function') toast('Logged out successfully');
-};
+  updateUserBadge();
+  updateUserDropdown();
+  toast('Logged out successfully', 'success');
+  
+  var greeting = document.querySelector('.user-greeting-banner');
+  if (greeting) greeting.remove();
+}
 
-// ===== MOBILE MENU =====
-window.openMobileMenu = function() {
+// ============================================================
+// AGE GATE
+// ============================================================
+(function initAgeGate() {
+  var ageGate = document.getElementById('ageGate');
+  var ageYesBtn = document.getElementById('ageYesBtn');
+  var ageNoBtn = document.getElementById('ageNoBtn');
+  
+  if (!ageGate) return;
+  
+  function enableScroll() {
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.body.classList.remove('age-gate-active');
+  }
+  
+  function disableScroll() {
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100vh';
+    document.body.classList.add('age-gate-active');
+  }
+  
+  if (localStorage.getItem('lb_age_confirmed') === 'true') {
+    ageGate.style.display = 'none';
+    ageGate.classList.remove('active');
+    enableScroll();
+    return;
+  }
+  
+  ageGate.style.display = 'flex';
+  disableScroll();
+  
+  setTimeout(function() {
+    ageGate.classList.add('active');
+  }, 50);
+  
+  if (ageYesBtn) {
+    ageYesBtn.onclick = function() {
+      localStorage.setItem('lb_age_confirmed', 'true');
+      ageGate.classList.remove('active');
+      
+      setTimeout(function() {
+        ageGate.style.display = 'none';
+        enableScroll();
+      }, 400);
+    };
+  }
+  
+  if (ageNoBtn) {
+    ageNoBtn.onclick = function() {
+      document.body.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;padding:20px;text-align:center;background:#f8f8f8;">
+          <div style="font-size:4rem;margin-bottom:12px;">🚫</div>
+          <h2 style="font-size:1.6rem;color:#800000;margin-bottom:8px;">Access Denied</h2>
+          <p style="color:#666;font-size:1rem;max-width:400px;">Sorry, you must be 18 or older to visit this site.</p>
+          <button onclick="localStorage.removeItem('lb_age_confirmed');location.reload();" 
+            style="margin-top:20px;padding:12px 28px;background:#800000;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;">
+            Try Again
+          </button>
+        </div>
+      `;
+      enableScroll();
+    };
+  }
+})();
+
+// ============================================================
+// MOBILE MENU
+// ============================================================
+function openMobileMenu() {
   var menu = document.getElementById('mobileMenu');
   var overlay = document.getElementById('mobileMenuOverlay');
   if (menu) menu.classList.add('open');
   if (overlay) overlay.classList.add('open');
-};
+}
 
-window.closeMobileMenu = function() {
+function closeMobileMenu() {
   var menu = document.getElementById('mobileMenu');
   var overlay = document.getElementById('mobileMenuOverlay');
   if (menu) menu.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
-};
+}
 
-// ===== HEADER SEARCH =====
-window.handleHeaderSearch = function(e) {
+// ============================================================
+// SEARCH
+// ============================================================
+function handleHeaderSearch(e) {
   e.preventDefault();
   var val = (document.getElementById('headerSearchInput')?.value || document.getElementById('mobileSearchInput')?.value || '').trim();
   if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
   return false;
-};
+}
 
-// ===== CLEAR SEARCH =====
-window.clearMainSearch = function() {
+function clearMainSearch() {
   var input = document.getElementById('mainSearchInput');
   if (input) input.value = '';
   var clearBtn = document.getElementById('mainSearchClear');
   if (clearBtn) clearBtn.style.display = 'none';
   if (input) input.focus();
-};
+}
 
-// ===== MAIN SEARCH =====
 (function initMainSearch() {
   var input = document.getElementById('mainSearchInput');
   var clearBtn = document.getElementById('mainSearchClear');
   if (!input) return;
+  
   input.addEventListener('input', function() {
     var val = this.value.trim();
     if (clearBtn) clearBtn.style.display = val.length > 0 ? 'block' : 'none';
@@ -2120,6 +2263,7 @@ window.clearMainSearch = function() {
     var mi = document.getElementById('mobileSearchInput');
     if (mi) mi.value = val;
   });
+  
   input.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -2127,6 +2271,7 @@ window.clearMainSearch = function() {
       if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
     }
   });
+  
   if (clearBtn) {
     clearBtn.addEventListener('click', function() {
       input.value = '';
@@ -2140,19 +2285,171 @@ window.clearMainSearch = function() {
   }
 })();
 
-// ===== UPDATE USER BADGE ON LOAD =====
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() {
-    if (typeof updateUserDropdown === 'function') {
-      updateUserDropdown();
-    }
-    if (typeof window.updateUserBadge === 'function') {
-      window.updateUserBadge();
-    }
-  }, 100);
+// ============================================================
+// CART
+// ============================================================
+function openCartDrawer() {
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+  renderCartDrawer();
+}
+
+function closeCartDrawer() {
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function renderCartDrawer() {
+  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+  var items = Object.values(cart);
+  var container = document.getElementById('cartItemsList');
+  var footer = document.getElementById('cartFooter');
+  var totalEl = document.getElementById('cartTotalAmount');
+
+  if (!items.length) {
+    container.innerHTML = `
+      <div class="cart-container">
+        <div class="cart-icon-wrapper">
+          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
+            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
+          </svg>
+          <span class="cart-badge">0</span>
+        </div>
+        <h2 class="cart-message">Your cart is empty!</h2>
+        <a href="shop.html" class="shop-button">Start Shopping</a>
+      </div>
+    `;
+    footer.style.display = 'none';
+    return;
+  }
+
+  var html = '';
+  var total = 0;
+  var count = 0;
+  items.forEach(function(item) {
+    var subtotal = item.price * item.qty;
+    total += subtotal;
+    count += item.qty;
+    html += '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + ' <span style="color:var(--primary);">x' + item.qty + '</span></div><div class="cart-item-price">KES ' + subtotal.toLocaleString() + '</div></div></div>';
+  });
+
+  container.innerHTML = html;
+  totalEl.textContent = 'KES ' + total.toLocaleString();
+  footer.style.display = 'block';
+
+  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
+    if (el) el.textContent = count;
+  });
+}
+
+function updateCartUI() {
+  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+  var items = Object.values(cart);
+  var count = items.reduce(function(s, i) { return s + i.qty; }, 0);
+  
+  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
+    if (el) el.textContent = count;
+  });
+}
+
+// ============================================================
+// WISHLIST
+// ============================================================
+function openWishlistModal() {
+  var modal = document.getElementById('wishlistModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeWishlistModal() {
+  var modal = document.getElementById('wishlistModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// ============================================================
+// SCROLL TO TOP
+// ============================================================
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (!btn) return;
+  if (window.scrollY > 300) btn.classList.add('show');
+  else btn.classList.remove('show');
+}, { passive: true });
+
+// ============================================================
+// OFFLINE DETECTION
+// ============================================================
+window.addEventListener('online', function() {
+  var banner = document.getElementById('offlineBanner');
+  if (banner) banner.classList.remove('show');
 });
 
-console.log('🍾 LiquorBelle homepage loaded');
+window.addEventListener('offline', function() {
+  var banner = document.getElementById('offlineBanner');
+  if (banner) banner.classList.add('show');
+});
+
+// ============================================================
+// CLOSE MODALS ON OVERLAY CLICK
+// ============================================================
+document.addEventListener('click', function(event) {
+  var wrapper = document.querySelector('.header-user-wrapper');
+  if (wrapper && !wrapper.contains(event.target)) {
+    var dropdown = document.getElementById('userDropdown');
+    if (dropdown) dropdown.classList.remove('open');
+  }
+});
+
+document.getElementById('wishlistModal')?.addEventListener('click', function(e) {
+  if (e.target === this) closeWishlistModal();
+});
+
+document.getElementById('cartOverlay')?.addEventListener('click', function(e) {
+  if (e.target === this) closeCartDrawer();
+});
+
+// ============================================================
+// STORAGE EVENT LISTENER (Cross-tab updates)
+// ============================================================
+window.addEventListener('storage', function(e) {
+  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
+    updateUserBadge();
+    updateUserDropdown();
+    updateCartUI();
+    var user = getCurrentUser();
+    if (user && user.name) {
+      showUserGreeting(user);
+    }
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle Google callback
+  handleGoogleCallback();
+  
+  // Update UI
+  updateCartUI();
+  updateUserBadge();
+  updateUserDropdown();
+  
+  // Check if user is logged in and show greeting
+  var user = getCurrentUser();
+  if (user && user.name) {
+    showUserGreeting(user);
+  }
+  
+  console.log('🍾 LiquorBelle homepage loaded');
+  console.log('📱 User logged in:', !!user);
+});
 </script>
 </body>
 </html>
+
