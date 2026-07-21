@@ -1763,7 +1763,8 @@ body:not(.age-gate-active) {
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="profile.html"><i class="ph ph-user-gear"></i> My Profile</a>
+  <!-- MY PROFILE - Will be dynamically shown/hidden via JavaScript -->
+  <a href="profile.html" id="mobileMenuProfile"><i class="ph ph-user-gear"></i> My Profile</a>
   <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
@@ -2227,26 +2228,74 @@ function renderCartDrawer() {
 }
 
 // ============================================================
-// UPDATE BOTTOM NAV
+// UPDATE BOTTOM NAV & MOBILE MENU
 // ============================================================
 function updateBottomNav() {
   var user = getCurrentUser();
   var accountBtn = document.getElementById('bottomNavAccount');
   var accountLabel = document.getElementById('bottomNavAccountLabel');
+  var profileLink = document.getElementById('mobileMenuProfile');
   
-  if (!accountBtn || !accountLabel) return;
+  // Update bottom nav
+  if (accountBtn && accountLabel) {
+    if (user && user.name) {
+      accountLabel.textContent = 'Profile';
+      accountBtn.onclick = function() {
+        window.location.href = 'profile.html';
+      };
+    } else {
+      accountLabel.textContent = 'Account';
+      accountBtn.onclick = function() {
+        window.location.href = 'accounts.html';
+      };
+    }
+  }
+  
+  // Update mobile menu - hide/show "My Profile"
+  if (profileLink) {
+    if (user && user.name) {
+      profileLink.style.display = 'flex';
+    } else {
+      profileLink.style.display = 'none';
+    }
+  }
+}
+
+// ============================================================
+// UPDATE MOBILE MENU AUTH SECTION
+// ============================================================
+function updateMobileMenuAuth() {
+  var user = getCurrentUser();
+  var authSection = document.getElementById('mobileMenuAuth');
+  if (!authSection) return;
   
   if (user && user.name) {
-    accountLabel.textContent = 'Profile';
-    accountBtn.onclick = function() {
-      window.location.href = 'profile.html';
-    };
+    authSection.innerHTML = `
+      <div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div>
+        <button onclick="logoutUser();closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;">
+          <i class="ph ph-sign-out"></i> Logout
+        </button>
+      </div>
+    `;
   } else {
-    accountLabel.textContent = 'Account';
-    accountBtn.onclick = function() {
-      window.location.href = 'accounts.html';
-    };
+    authSection.innerHTML = `
+      <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
+      </a>
+    `;
   }
+}
+
+// ============================================================
+// LOGOUT (override)
+// ============================================================
+function logoutUser() {
+  localStorage.removeItem('liquorbelle_user');
+  localStorage.removeItem('liquorbelle_token');
+  closeMobileMenu();
+  window.location.href = 'accounts.html';
 }
 
 // ============================================================
@@ -2295,7 +2344,6 @@ document.getElementById('wishlistModal')?.addEventListener('click', function(e) 
 document.getElementById('cartOverlay')?.addEventListener('click', function(e) {
   if (e.target === this) closeCartDrawer();
 });
-
 // ============================================================
 // INIT
 // ============================================================
@@ -2303,6 +2351,8 @@ document.addEventListener('DOMContentLoaded', function() {
   handleGoogleCallback();
   
   updateCartUI();
+  updateBottomNav();
+  updateMobileMenuAuth(); // <-- ADD THIS
   
   var user = getCurrentUser();
   if (user && user.name) {

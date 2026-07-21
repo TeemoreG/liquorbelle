@@ -1509,29 +1509,7 @@ if (document.getElementById('catChips')) {
   };
   var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
 
-  var categoriesShop = [
-    { name: "All", cat: "all" },
-    // ===== NEW CATEGORIES (ADDED) =====
-    { name: "Whisky", cat: "whisky" },
-    { name: "Wine", cat: "wine" },
-    { name: "Vodka", cat: "vodka" },
-    { name: "Gin", cat: "gin" },
-    { name: "Cognac", cat: "cognac" },
-    { name: "Creams", cat: "cream" },
-    // ===== EXISTING CATEGORIES =====
-    { name: "Beer", cat: "beer" },
-    { name: "Brandy", cat: "brandy" },
-    { name: "Bourbon", cat: "bourbon" },
-    { name: "Rum", cat: "rum" },
-    { name: "Spirits", cat: "spirits" },
-    { name: "Liqueur", cat: "liqueur" },
-    { name: "Juice", cat: "juice" },
-    { name: "Soda", cat: "soda" },
-    { name: "Water", cat: "water" },
-    { name: "Energy", cat: "energy" },
-    { name: "Cigar", cat: "cigar" },
-    { name: "Accessory", cat: "accessory" }
-];
+  var categoriesShop = [];
 
   // ===== AD POSTER - MODERN DYNAMIC VERSION =====
 (function initAdPoster() {
@@ -1742,6 +1720,7 @@ if (document.getElementById('catChips')) {
   }
 
   // ===== MAP DB PRODUCTS =====
+  
 function mapDbProducts(rawProducts) {
   return rawProducts.map(function(p) {
     var variants = p.variants || [];
@@ -1751,6 +1730,31 @@ function mapDbProducts(rawProducts) {
     var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
     var discountPercent = cheapestVariant?.discount || 0;
     var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
+    
+  // ===== GET DEFAULT CATEGORIES =====
+  function getDefaultCategories() {
+    return [
+      { name: 'All', cat: 'all' },
+      { name: 'Whisky', cat: 'whisky' },
+      { name: 'Wine', cat: 'wine' },
+      { name: 'Vodka', cat: 'vodka' },
+      { name: 'Gin', cat: 'gin' },
+      { name: 'Cognac', cat: 'cognac' },
+      { name: 'Creams', cat: 'cream' },
+      { name: 'Beer', cat: 'beer' },
+      { name: 'Brandy', cat: 'brandy' },
+      { name: 'Bourbon', cat: 'bourbon' },
+      { name: 'Rum', cat: 'rum' },
+      { name: 'Spirits', cat: 'spirits' },
+      { name: 'Liqueur', cat: 'liqueur' },
+      { name: 'Juice', cat: 'juice' },
+      { name: 'Soda', cat: 'soda' },
+      { name: 'Water', cat: 'water' },
+      { name: 'Energy', cat: 'energy' },
+      { name: 'Cigar', cat: 'cigar' },
+      { name: 'Accessory', cat: 'accessory' }
+    ];
+  }
     
     // ===== STOCK STATUS =====
     // Check if any variant is in stock
@@ -1808,6 +1812,98 @@ function renderSkeletonsShop(count, containerId) {
   container.innerHTML = skeletons;
 }
 
+    // ===== MAP DB PRODUCTS =====
+  function mapDbProducts(rawProducts) {
+    return rawProducts.map(function(p) {
+      var variants = p.variants || [];
+      var sizeOrderMap = { '250ml': 1, '350ml': 2, '500ml': 3, '750ml': 4, '1L': 5, '1.5L': 6 };
+      var sortedVariants = [...variants].sort(function(a, b) { return (sizeOrderMap[a.size] || 99) - (sizeOrderMap[b.size] || 99); });
+      var cheapestVariant = sortedVariants[0] || null;
+      var originalPrice = cheapestVariant ? cheapestVariant.price : 0;
+      var discountPercent = cheapestVariant?.discount || 0;
+      var discountedPrice = discountPercent > 0 ? Math.round(originalPrice * (100 - discountPercent) / 100) : originalPrice;
+      
+      // ===== STOCK STATUS =====
+      // Check if any variant is in stock
+      var hasInStock = variants.some(function(v) {
+        return v.stock === 'inStock' || (!v.stock && v.stockQuantity > 0) || (!v.stock && v.stockQuantity === undefined);
+      });
+      
+      // Check if all variants are out of stock
+      var allOutOfStock = variants.every(function(v) {
+        return v.stock === 'outOfStock' || (v.stockQuantity !== undefined && v.stockQuantity <= 0);
+      });
+      
+      // Determine stock status
+      var stockStatus = 'in-stock';
+      if (allOutOfStock || !hasInStock) {
+        stockStatus = 'out-of-stock';
+      } else {
+        // Check if low stock (some variants with quantity < 5)
+        var lowStock = variants.some(function(v) {
+          return v.stockQuantity !== undefined && v.stockQuantity > 0 && v.stockQuantity < 5;
+        });
+        if (lowStock) stockStatus = 'low-stock';
+      }
+      
+      return {
+        _id: p._id,
+        id: p._id,
+        name: p.name,
+        capacity: cheapestVariant?.size || '750ml',
+        price: discountedPrice,
+        originalPrice: originalPrice,
+        discountPercent: discountPercent,
+        category: p.category || '',
+        badge: p.badge || (discountPercent > 10 ? 'hot' : ''),
+        image: p.image || '',
+        description: p.description || '',
+        isTrending: p.isTrending || false,
+        isNew: p.isNew || false,
+        rating: p.rating || 4,
+        country: p.country || '',
+        stock: p.stock !== undefined ? p.stock : 999,
+        stockStatus: stockStatus,
+        variants: variants
+      };
+    });
+  }
+
+    // ===== GET DEFAULT CATEGORIES =====
+  function getDefaultCategories() {
+    return [
+      { name: 'All', cat: 'all' },
+      { name: 'Whisky', cat: 'whisky' },
+      { name: 'Wine', cat: 'wine' },
+      { name: 'Vodka', cat: 'vodka' },
+      { name: 'Gin', cat: 'gin' },
+      { name: 'Cognac', cat: 'cognac' },
+      { name: 'Creams', cat: 'cream' },
+      { name: 'Beer', cat: 'beer' },
+      { name: 'Brandy', cat: 'brandy' },
+      { name: 'Bourbon', cat: 'bourbon' },
+      { name: 'Rum', cat: 'rum' },
+      { name: 'Spirits', cat: 'spirits' },
+      { name: 'Liqueur', cat: 'liqueur' },
+      { name: 'Juice', cat: 'juice' },
+      { name: 'Soda', cat: 'soda' },
+      { name: 'Water', cat: 'water' },
+      { name: 'Energy', cat: 'energy' },
+      { name: 'Cigar', cat: 'cigar' },
+      { name: 'Accessory', cat: 'accessory' }
+    ];
+  }
+
+  function renderSkeletonsShop(count, containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var skeletons = '';
+    for (var i = 0; i < count; i++) {
+      skeletons += '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div><div class="skeleton-btn"></div></div>';
+    }
+    container.innerHTML = skeletons;
+  }
+  
   // ===== LOAD PRODUCTS =====
   window.loadProductsShop = function() {
     renderSkeletonsShop(10, 'shopGrid');
@@ -1904,10 +2000,24 @@ function renderSkeletonsShop(count, containerId) {
     }
   }
 
-  // ===== CATEGORY CHIPS =====
+    // ===== CATEGORY CHIPS =====
   window.renderCatChips = function() {
     var container = document.getElementById('catChips');
     if (!container) return;
+    
+    // If categories not loaded yet, use cached or default
+    if (!categoriesShop || categoriesShop.length === 0) {
+      var cached = localStorage.getItem('liquorbelle_categories');
+      if (cached) {
+        try {
+          categoriesShop = JSON.parse(cached);
+        } catch(e) {}
+      }
+      if (!categoriesShop || categoriesShop.length === 0) {
+        categoriesShop = getDefaultCategories();
+      }
+    }
+    
     container.innerHTML = categoriesShop.map(function(cat) {
       var active = currentFilters.category === cat.cat ? 'active' : '';
       return '<button class="cat-chip ' + active + '" data-cat="' + cat.cat + '" onclick="selectCategory(\'' + cat.cat + '\')">' + cat.name + '</button>';
@@ -2101,7 +2211,7 @@ function renderSkeletonsShop(count, containerId) {
     currentPage = 1;
     applyFiltersShop(); };
 
-  // ===== APPLY FILTERS =====
+    // ===== APPLY FILTERS =====
   function applyFiltersShop() {
     var f = currentFilters;
     var list = ALL_PRODUCTS.filter(function(p) {
@@ -2167,8 +2277,23 @@ function renderSkeletonsShop(count, containerId) {
     var titleEl = document.getElementById('shopTitle');
     var breadcrumbEl = document.getElementById('shopBreadcrumbCat');
     var catName = 'All Products';
+    
+    // Ensure categoriesShop has data
+    if (!categoriesShop || categoriesShop.length === 0) {
+      var cached = localStorage.getItem('liquorbelle_categories');
+      if (cached) {
+        try {
+          categoriesShop = JSON.parse(cached);
+        } catch(e) {}
+      }
+      if (!categoriesShop || categoriesShop.length === 0) {
+        categoriesShop = getDefaultCategories();
+      }
+    }
+    
     if (currentFilters.category !== 'all') {
-      catName = (categoriesShop.find(function(c) { return c.cat === currentFilters.category; }) || {}).name || currentFilters.category;
+      var found = categoriesShop.find(function(c) { return c.cat === currentFilters.category; });
+      catName = found ? found.name : currentFilters.category;
     }
     if (currentFilters.search) {
       titleEl.textContent = 'Search: "' + currentFilters.search + '"';

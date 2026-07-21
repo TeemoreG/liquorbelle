@@ -1438,30 +1438,30 @@ a{color:inherit;text-decoration:none;}
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <div class="logo-text">Liquor<span class="gold">Belle</span><small>Nairobi's Finest</small></div>
   </a>
-  <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
+  <form class="header-search-form" id="headerSearchForm" onsubmit="return window.handleHeaderSearch(event)">
     <i class="ph ph-magnifying-glass"></i>
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
-    <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
+    <button class="header-icon-btn" onclick="window.openCartDrawer()" aria-label="Cart">
       <i class="ph ph-shopping-cart"></i>
       <span class="header-cart-badge" id="headerCartCount">0</span>
     </button>
-    <button class="header-icon-btn" onclick="openMobileMenu()" aria-label="Menu">
+    <button class="header-icon-btn" onclick="window.openMobileMenu()" aria-label="Menu">
       <i class="ph ph-list"></i>
     </button>
   </div>
 </header>
 
 <!-- ===== MOBILE MENU ===== -->
-<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="window.closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
     <span>Menu</span>
-    <button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="ph ph-x"></i></button>
+    <button class="mobile-menu-close" onclick="window.closeMobileMenu()"><i class="ph ph-x"></i></button>
   </div>
   <div class="mobile-search-inline">
-    <form onsubmit="return handleHeaderSearch(event)">
+    <form onsubmit="return window.handleHeaderSearch(event)">
       <i class="ph ph-magnifying-glass"></i>
       <input id="mobileSearchInput" type="text" placeholder="Search products...">
     </form>
@@ -1469,9 +1469,9 @@ a{color:inherit;text-decoration:none;}
   <div id="mobileMenuAuth"></div>
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
-  <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
-  <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="profile.html"><i class="ph ph-user-gear"></i> My Profile</a>
+  <button class="mm-link" onclick="window.closeMobileMenu();window.openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
+  <button class="mm-link" onclick="window.closeMobileMenu();window.openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
+  <a href="profile.html" id="mobileMenuProfile"><i class="ph ph-user-gear"></i> My Profile</a>
   <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
@@ -1681,7 +1681,10 @@ a{color:inherit;text-decoration:none;}
     <span>Cart</span>
     <span class="nav-badge" id="navCartCount">0</span>
   </button>
-  <button class="nav-item" onclick="window.location.href='accounts.html'"><i class="ph ph-user-circle"></i><span>Account</span></button>
+  <button class="nav-item" id="bottomNavAccount">
+    <i class="ph ph-user-circle"></i>
+    <span id="bottomNavAccountLabel">Account</span>
+  </button>
 </nav>
 
 <!-- ===== CART DRAWER ===== -->
@@ -1715,19 +1718,43 @@ a{color:inherit;text-decoration:none;}
 <script src="app.js"></script>
 
 <script>
+// SHOP.JS — LIQUORBELLE SHOP PAGE
+// Fully exposed to global scope for HTML onclick handlers
 // ============================================================
-// PRODUCT VIEW SWITCHER
+
+window.openMobileMenu = function() {
+  var menu = document.getElementById('mobileMenu');
+  var overlay = document.getElementById('mobileMenuOverlay');
+  if (menu) menu.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+};
+
+// ============================================================
+// STATE
 // ============================================================
 var currentProductView = 'all';
 var currentCategory = 'all';
+var currentSort = 'featured';
+var currentPage = 1;
+var PAGE_SIZE = 12;
+var currentFilters = {};
 
-function switchProductView(view) {
+// ============================================================
+// PRODUCT VIEW SWITCHER
+// ============================================================
+window.switchProductView = function(view) {
   currentProductView = view;
+  
   document.querySelectorAll('.filter-tab').forEach(function(tab) {
     tab.classList.toggle('active', tab.dataset.view === view);
   });
   
-  var titleMap = { 'all': 'All Products', 'new': 'New Arrivals', 'trending': 'Trending' };
+  var titleMap = {
+    'all': 'All Products',
+    'new': 'New Arrivals',
+    'trending': 'Trending'
+  };
+  
   document.getElementById('shopTitle').textContent = titleMap[view] || 'All Products';
   document.getElementById('shopBreadcrumbCat').textContent = titleMap[view] || 'All Products';
   
@@ -1743,29 +1770,34 @@ function switchProductView(view) {
   }
   document.getElementById('breadcrumbCategoryLink').textContent = categoryName;
   
-  applyFilters();
-}
+  window.applyFilters();
+};
 
 // ============================================================
 // APPLY FILTERS
 // ============================================================
 window.applyFilters = function() {
-  var f = window.currentFilters || {};
+  var f = currentFilters || {};
   var view = currentProductView || 'all';
   var category = currentCategory || 'all';
   
   var list = window.ALL_PRODUCTS ? [...window.ALL_PRODUCTS] : [];
   
+  // View filter
   if (view === 'new') {
     list = list.filter(function(p) { return p.isNew === true; });
   } else if (view === 'trending') {
     list = list.filter(function(p) { return p.isTrending === true; });
   }
   
+  // Category filter
   if (category && category !== 'all') {
-    list = list.filter(function(p) { return (p.category || '').toLowerCase() === category; });
+    list = list.filter(function(p) {
+      return (p.category || '').toLowerCase() === category;
+    });
   }
   
+  // Search filter
   if (f.search) {
     var q = f.search.toLowerCase();
     list = list.filter(function(p) {
@@ -1774,6 +1806,7 @@ window.applyFilters = function() {
     });
   }
   
+  // Price filter
   if (f.priceMin != null) {
     list = list.filter(function(p) { return p.price >= f.priceMin; });
   }
@@ -1781,10 +1814,12 @@ window.applyFilters = function() {
     list = list.filter(function(p) { return p.price <= f.priceMax; });
   }
   
+  // On sale filter
   if (f.onSale) {
     list = list.filter(function(p) { return p.discountPercent > 0; });
   }
   
+  // Size filter
   if (f.sizes && f.sizes.length > 0) {
     list = list.filter(function(p) {
       var size = p.capacity || '';
@@ -1792,25 +1827,43 @@ window.applyFilters = function() {
     });
   }
   
+  // Country filter
   if (f.countries && f.countries.length > 0) {
     list = list.filter(function(p) {
       var country = p.country || '';
-      return f.countries.some(function(c) { return country.toLowerCase().indexOf(c.toLowerCase()) !== -1; });
+      return f.countries.some(function(c) {
+        return country.toLowerCase().indexOf(c.toLowerCase()) !== -1;
+      });
     });
   }
   
+  // Sort
   var sort = document.getElementById('sortSelect')?.value || 'featured';
+  currentSort = sort;
+  
   switch (sort) {
-    case 'price-asc': list.sort(function(a, b) { return a.price - b.price; }); break;
-    case 'price-desc': list.sort(function(a, b) { return b.price - a.price; }); break;
-    case 'name-asc': list.sort(function(a, b) { return a.name.localeCompare(b.name); }); break;
-    case 'name-desc': list.sort(function(a, b) { return b.name.localeCompare(a.name); }); break;
-    case 'newest': list.sort(function(a, b) { return (b.isNew === true) - (a.isNew === true); }); break;
-    default: break;
+    case 'price-asc':
+      list.sort(function(a, b) { return a.price - b.price; });
+      break;
+    case 'price-desc':
+      list.sort(function(a, b) { return b.price - a.price; });
+      break;
+    case 'name-asc':
+      list.sort(function(a, b) { return a.name.localeCompare(b.name); });
+      break;
+    case 'name-desc':
+      list.sort(function(a, b) { return b.name.localeCompare(a.name); });
+      break;
+    case 'newest':
+      list.sort(function(a, b) { return (b.isNew === true) - (a.isNew === true); });
+      break;
+    default:
+      break;
   }
   
   window.filteredProducts = list;
   
+  // Update result count
   var resultCountEl = document.getElementById('resultCount');
   if (resultCountEl) {
     var total = list.length;
@@ -1818,6 +1871,7 @@ window.applyFilters = function() {
     resultCountEl.textContent = total + ' product' + (total !== 1 ? 's' : '') + viewLabel + (category !== 'all' ? ' in ' + category : '');
   }
   
+  // Empty state
   if (list.length === 0) {
     var grid = document.getElementById('shopGrid');
     if (grid) {
@@ -1830,10 +1884,12 @@ window.applyFilters = function() {
     return;
   }
   
-  window.currentPage = 1;
-  var totalPages = Math.ceil(list.length / (window.PAGE_SIZE || 12));
-  if (window.currentPage > totalPages && totalPages > 0) window.currentPage = totalPages;
+  // Pagination
+  currentPage = 1;
+  var totalPages = Math.ceil(list.length / PAGE_SIZE);
+  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
   
+  // Render
   if (typeof updateFilterCount === 'function') updateFilterCount();
   if (typeof renderActiveFilterPills === 'function') renderActiveFilterPills();
   if (typeof renderShopGrid === 'function') renderShopGrid();
@@ -1846,33 +1902,29 @@ window.applyFilters = function() {
 window.applyFiltersFromDrawer = function() {
   var min = document.getElementById('priceMinInput').value;
   var max = document.getElementById('priceMaxInput').value;
-  if (!window.currentFilters) window.currentFilters = {};
-  window.currentFilters.priceMin = min !== '' ? Number(min) : null;
-  window.currentFilters.priceMax = max !== '' ? Number(max) : null;
-  window.currentFilters.onSale = document.getElementById('filterOnSale').checked;
+  
+  currentFilters.priceMin = min !== '' ? Number(min) : null;
+  currentFilters.priceMax = max !== '' ? Number(max) : null;
+  currentFilters.onSale = document.getElementById('filterOnSale').checked;
   
   var sizeCheckboxes = document.querySelectorAll('.size-filter:checked');
-  window.currentFilters.sizes = Array.from(sizeCheckboxes).map(function(cb) { return cb.value; });
+  currentFilters.sizes = Array.from(sizeCheckboxes).map(function(cb) { return cb.value; });
   
   var countryCheckboxes = document.querySelectorAll('.country-filter:checked');
-  window.currentFilters.countries = Array.from(countryCheckboxes).map(function(cb) { return cb.value; });
+  currentFilters.countries = Array.from(countryCheckboxes).map(function(cb) { return cb.value; });
   
-  window.currentPage = 1;
-  closeFilterDrawer();
-  applyFilters();
+  currentPage = 1;
+  window.closeFilterDrawer();
+  window.applyFilters();
 };
 
 window.clearFilters = function() {
-  if (!window.currentFilters) window.currentFilters = {};
-  window.currentFilters.priceMin = null;
-  window.currentFilters.priceMax = null;
-  window.currentFilters.onSale = false;
-  window.currentFilters.sizes = [];
-  window.currentFilters.countries = [];
+  currentFilters = {};
   
   document.getElementById('priceMinInput').value = '';
   document.getElementById('priceMaxInput').value = '';
   document.getElementById('filterOnSale').checked = false;
+  
   document.querySelectorAll('.size-filter:checked').forEach(function(cb) { cb.checked = false; });
   document.querySelectorAll('.country-filter:checked').forEach(function(cb) { cb.checked = false; });
   
@@ -1882,18 +1934,19 @@ window.clearFilters = function() {
   });
   
   document.getElementById('mainSearchInput').value = '';
-  if (window.currentFilters) window.currentFilters.search = '';
+  currentFilters.search = '';
   
   currentProductView = 'all';
   document.querySelectorAll('.filter-tab').forEach(function(tab) {
     tab.classList.toggle('active', tab.dataset.view === 'all');
   });
+  
   document.getElementById('shopTitle').textContent = 'All Products';
   document.getElementById('shopBreadcrumbCat').textContent = 'All Products';
   document.getElementById('breadcrumbCategoryLink').textContent = 'Shop';
   
-  closeFilterDrawer();
-  applyFilters();
+  window.closeFilterDrawer();
+  window.applyFilters();
 };
 
 // ============================================================
@@ -1901,7 +1954,7 @@ window.clearFilters = function() {
 // ============================================================
 window.selectCategory = function(cat) {
   currentCategory = cat;
-  window.currentPage = 1;
+  currentPage = 1;
   
   document.querySelectorAll('.cat-chip').forEach(function(chip) {
     chip.classList.toggle('active', chip.dataset.cat === cat);
@@ -1914,68 +1967,85 @@ window.selectCategory = function(cat) {
     'juice': 'Juice', 'soda': 'Soda', 'water': 'Water',
     'energy': 'Energy Drink', 'cigar': 'Cigar', 'accessory': 'Accessory'
   };
+  
   var catName = catMap[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
   document.getElementById('shopBreadcrumbCat').textContent = catName;
   document.getElementById('breadcrumbCategoryLink').textContent = catName;
   
   var url = new URL(window.location);
-  if (cat === 'all') { url.searchParams.delete('cat'); } 
-  else { url.searchParams.set('cat', cat); }
+  if (cat === 'all') {
+    url.searchParams.delete('cat');
+  } else {
+    url.searchParams.set('cat', cat);
+  }
   window.history.replaceState({}, '', url);
   
-  applyFilters();
+  window.applyFilters();
   document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 // ============================================================
 // SEARCH
 // ============================================================
-function setSearch(val) {
+window.setSearch = function(val) {
   val = val.trim();
-  if (!window.currentFilters) window.currentFilters = {};
-  window.currentFilters.search = val;
+  currentFilters.search = val;
+  
   var mainInput = document.getElementById('mainSearchInput');
   if (mainInput) mainInput.value = val;
+  
   var h = document.getElementById('headerSearchInput');
   if (h) h.value = val;
+  
   var m = document.getElementById('mobileSearchInput');
   if (m) m.value = val;
+  
   var clearBtn = document.getElementById('mainSearchClear');
   if (clearBtn) {
-    if (val.length > 0) { clearBtn.classList.add('visible'); } 
-    else { clearBtn.classList.remove('visible'); }
+    if (val.length > 0) {
+      clearBtn.classList.add('visible');
+    } else {
+      clearBtn.classList.remove('visible');
+    }
   }
-  window.currentPage = 1;
-  applyFilters();
+  
+  currentPage = 1;
+  window.applyFilters();
   
   if (val) {
     document.getElementById('shopTitle').textContent = 'Search: "' + val + '"';
     document.getElementById('shopBreadcrumbCat').textContent = 'Search Results';
   } else {
-    var viewMap = { 'all': 'All Products', 'new': 'New Arrivals', 'trending': 'Trending' };
+    var viewMap = {
+      'all': 'All Products',
+      'new': 'New Arrivals',
+      'trending': 'Trending'
+    };
     document.getElementById('shopTitle').textContent = viewMap[currentProductView] || 'All Products';
     document.getElementById('shopBreadcrumbCat').textContent = viewMap[currentProductView] || 'All Products';
   }
-}
+};
 
 // ============================================================
-// OVERRIDE MAIN SEARCH
+// INIT MAIN SEARCH
 // ============================================================
 (function initMainSearchShop() {
   var input = document.getElementById('mainSearchInput');
   if (!input) return;
+  
   var debounceTimer;
   input.addEventListener('input', function() {
     clearTimeout(debounceTimer);
     var val = this.value;
     debounceTimer = setTimeout(function() {
-      setSearch(val);
+      window.setSearch(val);
     }, 300);
   });
+  
   var searchParam = getQueryParam('search');
   if (searchParam) {
     input.value = searchParam;
-    setSearch(searchParam);
+    window.setSearch(searchParam);
   }
 })();
 
@@ -1994,6 +2064,75 @@ window.closeMobileMenu = function() {
   var overlay = document.getElementById('mobileMenuOverlay');
   if (menu) menu.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
+};
+
+// ============================================================
+// UPDATE BOTTOM NAV & MOBILE MENU
+// ============================================================
+window.updateBottomNav = function() {
+  var user = getCurrentUser();
+  var accountBtn = document.getElementById('bottomNavAccount');
+  var accountLabel = document.getElementById('bottomNavAccountLabel');
+  var profileLink = document.getElementById('mobileMenuProfile');
+  
+  if (accountBtn && accountLabel) {
+    if (user && user.name) {
+      accountLabel.textContent = 'Profile';
+      accountBtn.onclick = function() {
+        window.location.href = 'profile.html';
+      };
+    } else {
+      accountLabel.textContent = 'Account';
+      accountBtn.onclick = function() {
+        window.location.href = 'accounts.html';
+      };
+    }
+  }
+  
+  if (profileLink) {
+    if (user && user.name) {
+      profileLink.style.display = 'flex';
+    } else {
+      profileLink.style.display = 'none';
+    }
+  }
+};
+
+// ============================================================
+// UPDATE MOBILE MENU AUTH SECTION
+// ============================================================
+window.updateMobileMenuAuth = function() {
+  var user = getCurrentUser();
+  var authSection = document.getElementById('mobileMenuAuth');
+  if (!authSection) return;
+  
+  if (user && user.name) {
+    authSection.innerHTML = `
+      <div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div>
+        <button onclick="window.logoutUser();window.closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;">
+          <i class="ph ph-sign-out"></i> Logout
+        </button>
+      </div>
+    `;
+  } else {
+    authSection.innerHTML = `
+      <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
+      </a>
+    `;
+  }
+};
+
+// ============================================================
+// LOGOUT
+// ============================================================
+window.logoutUser = function() {
+  localStorage.removeItem('liquorbelle_user');
+  localStorage.removeItem('liquorbelle_token');
+  window.closeMobileMenu();
+  window.location.href = 'accounts.html';
 };
 
 // ============================================================
@@ -2051,7 +2190,7 @@ window.clearMainSearch = function() {
   if (input) input.value = '';
   var clearBtn = document.getElementById('mainSearchClear');
   if (clearBtn) clearBtn.classList.remove('visible');
-  setSearch('');
+  window.setSearch('');
   if (input) input.focus();
 };
 
@@ -2077,20 +2216,51 @@ window.dismissAnnounceBar = function() {
 };
 
 // ============================================================
+// PAGINATION
+// ============================================================
+window.goToPage = function(page) {
+  var totalPages = Math.ceil((window.filteredProducts || []).length / PAGE_SIZE);
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  if (typeof renderShopGrid === 'function') renderShopGrid();
+  if (typeof renderPagination === 'function') renderPagination();
+  document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+// ============================================================
+// SORT HANDLER
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  var sortSelect = document.getElementById('sortSelect');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      currentSort = this.value;
+      window.applyFilters();
+    });
+  }
+});
+
+// ============================================================
 // DOM READY
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-  if (!window.PAGE_SIZE) window.PAGE_SIZE = 12;
-  if (!window.currentPage) window.currentPage = 1;
-  if (!window.currentFilters) window.currentFilters = {};
+  PAGE_SIZE = 12;
+  currentPage = 1;
+  currentFilters = {};
+  
+  window.updateBottomNav();
+  window.updateMobileMenuAuth();
+  updateCartUI();
+  
+  // Call loadProductsShop directly
+  window.loadProductsShop();
   
   setTimeout(function() {
-    applyFilters();
-  }, 200);
+    window.applyFilters();
+  }, 500);
 });
 
-console.log('🍾 Shop page loaded - mobile first with real-time filters');
+console.log('🍾 Shop page loaded — mobile first with real-time filters');
 </script>
-
 </body>
 </html>
