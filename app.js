@@ -499,6 +499,26 @@ window.updateUserBadge = function() {
 // ============================================================
 
 window.updateBottomNav = function() {
+  // ===== HIGHLIGHT ACTIVE PAGE (Simple Version) =====
+  var currentPath = window.location.pathname;
+  
+  // Remove all active classes first
+  document.querySelectorAll('.nav-item').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  
+  // Add active class based on current page
+  if (currentPath.endsWith('index.html') || currentPath === '/' || currentPath.endsWith('/')) {
+    var homeBtn = document.querySelector('.nav-item[onclick*="index.html"]');
+    if (homeBtn) homeBtn.classList.add('active');
+  } else if (currentPath.endsWith('shop.html')) {
+    var shopBtn = document.querySelector('.nav-item[onclick*="shop.html"]');
+    if (shopBtn) shopBtn.classList.add('active');
+  } else if (currentPath.endsWith('accounts.html') || currentPath.endsWith('profile.html')) {
+    var accountBtn = document.getElementById('bottomNavAccount');
+    if (accountBtn) accountBtn.classList.add('active');
+  }
+  
   var user = getCurrentUser();
   var accountBtn = document.getElementById('bottomNavAccount');
   var accountLabel = document.getElementById('bottomNavAccountLabel');
