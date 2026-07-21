@@ -495,6 +495,76 @@ window.updateUserBadge = function() {
 };
 
 // ============================================================
+// BOTTOM NAV & MOBILE MENU AUTH (GLOBAL - USED BY ALL PAGES)
+// ============================================================
+
+window.updateBottomNav = function() {
+  var user = getCurrentUser();
+  var accountBtn = document.getElementById('bottomNavAccount');
+  var accountLabel = document.getElementById('bottomNavAccountLabel');
+  var profileLink = document.getElementById('mobileMenuProfile');
+  
+  // Update bottom nav
+  if (accountBtn && accountLabel) {
+    if (user && user.name) {
+      accountLabel.textContent = 'Profile';
+      accountBtn.setAttribute('onclick', "window.location.href='profile.html'");
+    } else {
+      accountLabel.textContent = 'Account';
+      accountBtn.setAttribute('onclick', "window.location.href='accounts.html'");
+    }
+  }
+  
+  // Update mobile menu - hide/show "My Profile"
+  if (profileLink) {
+    profileLink.style.display = (user && user.name) ? 'flex' : 'none';
+  }
+  
+  // Also update header user badge if present
+  var userInitial = document.getElementById('userInitial');
+  if (userInitial) {
+    if (user && user.name) {
+      userInitial.textContent = user.name.charAt(0).toUpperCase();
+    } else {
+      userInitial.textContent = 'G';
+    }
+  }
+  
+  // Update cart badge in bottom nav
+  var cartItems = Object.values(cart);
+  var count = cartItems.reduce(function(s, i) { return s + i.qty; }, 0);
+  var badge = document.getElementById('navCartCount');
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  }
+};
+
+window.updateMobileMenuAuth = function() {
+  var user = getCurrentUser();
+  var authSection = document.getElementById('mobileMenuAuth');
+  if (!authSection) return;
+  
+  if (user && user.name) {
+    authSection.innerHTML = `
+      <div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div>
+        <button onclick="logoutUser();closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;">
+          <i class="ph ph-sign-out"></i> Logout
+        </button>
+      </div>
+    `;
+  } else {
+    authSection.innerHTML = `
+      <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
+      </a>
+    `;
+  }
+};
+
+// ============================================================
 // CART (Shared) - EXPOSED GLOBALLY
 // ============================================================
 var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
@@ -2263,6 +2333,7 @@ if (document.getElementById('catChips')) {
     wrap.innerHTML = html;
   }
 
+
   // ===== RENDER SHOP GRID =====
   function renderShopGrid() {
     var grid = document.getElementById('shopGrid');
@@ -2376,6 +2447,16 @@ if (document.getElementById('catChips')) {
         '<div class="recently-info"><div class="recently-name">' + escapeHtml(p.name) + '</div><div class="recently-price">KES ' + p.price.toLocaleString() + '</div></div></div>';
     }).join('');
   }
+
+  // ============================================================
+  // INIT BOTTOM NAV
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', function() {
+    updateBottomNav();
+    updateMobileMenuAuth();
+    updateCartUI();
+  });
+
 
   window.loadDeliverySettingsShop = function() {
     fetch(API_BASE + '/api/delivery-settings')
