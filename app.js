@@ -1987,6 +1987,17 @@ if (document.getElementById('catChips')) {
     document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  // ===== PRODUCT VIEW SWITCHER =====
+  window.switchProductView = function(view) {
+    currentProductView = view;
+    
+    document.querySelectorAll('.filter-tab').forEach(function(tab) {
+      tab.classList.toggle('active', tab.dataset.view === view);
+    });
+    
+    applyFiltersShop();
+  };
+
   // ===== SEARCH =====
   function setSearch(val) {
     val = val.trim();

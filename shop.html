@@ -1500,15 +1500,6 @@ a{color:inherit;text-decoration:none;}
   <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782462538/af530399-7256-422f-97b7-71496c648bc1_osqga6.png" alt="LiquorBelle Premium Selection" loading="lazy" fetchpriority="high">
 </div>
 
-<!-- ===== SEARCH BAR ===== -->
-<div class="search-section">
-  <div class="search-box">
-    <i class="ph ph-magnifying-glass"></i>
-    <input type="text" id="mainSearchInput" placeholder="Search for whisky, vodka, gin, beer...">
-    <button class="clear-btn" id="mainSearchClear" onclick="clearMainSearch()"><i class="ph ph-x-circle"></i></button>
-  </div>
-</div>
-
 <!-- ===== SHOP BODY ===== -->
 <div class="shop-body-grid">
 <!-- Filter Drawer -->
@@ -1578,11 +1569,21 @@ a{color:inherit;text-decoration:none;}
   <div class="cat-chips" id="catChips"></div>
 </div>
 
+
 <!-- ===== VIEW FILTERS (Sub-filters) ===== -->
 <div class="filter-tabs" id="filterTabs">
   <button class="filter-tab active" data-view="all" onclick="window.switchProductView('all')">All</button>
   <button class="filter-tab" data-view="new" onclick="window.switchProductView('new')">New</button>
   <button class="filter-tab" data-view="trending" onclick="window.switchProductView('trending')">Trending</button>
+</div>
+
+<!-- ===== SEARCH BAR ===== -->
+<div class="search-section">
+  <div class="search-box">
+    <i class="ph ph-magnifying-glass"></i>
+    <input type="text" id="mainSearchInput" placeholder="Search for whisky, vodka, gin, beer...">
+    <button class="clear-btn" id="mainSearchClear" onclick="clearMainSearch()"><i class="ph ph-x-circle"></i></button>
+  </div>
 </div>
 
         <!-- Title shown here (no count) -->
