@@ -1476,30 +1476,6 @@ a{color:inherit;text-decoration:none;}
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
-<!-- ===== SHOP CONTENT ===== -->
-<div class="shop-titlebar">
-  <div class="shop-breadcrumb">
-    <a href="index.html">Home</a> <i class="ph ph-caret-right"></i>
-    <a href="shop.html" id="breadcrumbCategoryLink">Shop</a>
-    <i class="ph ph-caret-right"></i>
-    <span id="shopBreadcrumbCat">All Products</span>
-  </div>
-  <h1 class="shop-title" id="shopTitle">All Products</h1>
-  <div id="resultCount"></div>
-</div>
-
-<!-- ===== FILTER TABS ===== -->
-<div class="filter-tabs" id="filterTabs">
-  <button class="filter-tab active" data-view="all" onclick="switchProductView('all')">All Products</button>
-  <button class="filter-tab" data-view="new" onclick="switchProductView('new')">New Arrivals</button>
-  <button class="filter-tab" data-view="trending" onclick="switchProductView('trending')">Trending</button>
-</div>
-
-<!-- ===== CATEGORY CHIPS ===== -->
-<div class="cat-chips-wrap">
-  <div class="cat-chips" id="catChips"></div>
-</div>
-
 <!-- ===== FEATURED SECTIONS (Hidden - fixes app.js error) ===== -->
 <div id="featuredSections" style="display:none;">
   <div id="trendingScroll"></div>
@@ -1536,11 +1512,11 @@ a{color:inherit;text-decoration:none;}
 <!-- ===== SHOP BODY ===== -->
 <div class="shop-body-grid">
 <!-- Filter Drawer -->
-<div class="overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
+<div class="overlay" id="filterOverlay" onclick="window.closeFilterDrawer()"></div>
 <div class="filter-drawer" id="filterDrawer">
   <div class="cart-head">
     <span>Filters</span>
-    <button class="cart-close" onclick="closeFilterDrawer()"><i class="ph ph-x"></i></button>
+    <button class="cart-close" onclick="window.closeFilterDrawer()"><i class="ph ph-x"></i></button>
   </div>
   <div class="filter-body">
     <div class="filter-group">
@@ -1550,10 +1526,6 @@ a{color:inherit;text-decoration:none;}
         <span>—</span>
         <input type="number" id="priceMaxInput" placeholder="Max" min="0">
       </div>
-    </div>
-    <div class="filter-group">
-      <h4>Availability</h4>
-      <label class="filter-check-row"><input type="checkbox" id="filterOnSale"> On Sale Only</label>
     </div>
     <div class="filter-group">
       <h4>Bottle Size</h4>
@@ -1569,25 +1541,53 @@ a{color:inherit;text-decoration:none;}
     </div>
   </div>
   <div class="filter-footer">
-    <button class="filter-clear-btn" onclick="clearFilters()">Clear All</button>
-    <button class="filter-apply-btn" onclick="applyFiltersFromDrawer()">Apply Filters</button>
+    <button class="filter-clear-btn" onclick="window.clearFilters()">Clear All</button>
+    <button class="filter-apply-btn" onclick="window.applyFiltersFromDrawer()">Apply Filters</button>
   </div>
 </div>
 
   <!-- Main Column -->
   <div class="shop-main-col">
     <div class="shop-toolbar">
-      <button class="filter-btn" onclick="openFilterDrawer()">
+      <button class="filter-btn" onclick="window.openFilterDrawer()">
         <i class="ph ph-funnel"></i> Filters
         <span class="filter-count" id="filterCount" style="display:none;">0</span>
       </button>
-      <select class="sort-select" id="sortSelect" onchange="currentSort=this.value;applyFilters();">
+      <select class="sort-select" id="sortSelect" onchange="currentSort=this.value;window.applyFilters();">
         <option value="featured">Recommended</option>
         <option value="newest">Newest</option>
         <option value="price-asc">Price: Low to High</option>
         <option value="price-desc">Price: High to Low</option>
         <option value="name-asc">Name: A–Z</option>
       </select>
+    </div>
+
+<!-- ===== SHOP CONTENT ===== -->
+<div class="shop-titlebar">
+  <div class="shop-breadcrumb">
+    <a href="index.html">Home</a> <i class="ph ph-caret-right"></i>
+    <a href="shop.html" id="breadcrumbCategoryLink">Shop</a>
+    <i class="ph ph-caret-right"></i>
+    <span id="shopBreadcrumbCat">All Products</span>
+  </div>
+  <h1 class="shop-title" id="shopTitle">All Products</h1>
+</div>
+
+    <!-- ===== CATEGORY CHIPS (Main filters) ===== -->
+<div class="cat-chips-wrap">
+  <div class="cat-chips" id="catChips"></div>
+</div>
+
+<!-- ===== VIEW FILTERS (Sub-filters) ===== -->
+<div class="filter-tabs" id="filterTabs">
+  <button class="filter-tab active" data-view="all" onclick="window.switchProductView('all')">All</button>
+  <button class="filter-tab" data-view="new" onclick="window.switchProductView('new')">New</button>
+  <button class="filter-tab" data-view="trending" onclick="window.switchProductView('trending')">Trending</button>
+</div>
+
+        <!-- Title shown here (no count) -->
+    <div class="shop-result-header">
+      <h2 class="shop-result-title" id="shopResultTitle">All Products</h2>
     </div>
 
     <div class="active-filters" id="activeFilters"></div>
@@ -1716,551 +1716,5 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <script src="app.js"></script>
-
-<script>
-// SHOP.JS — LIQUORBELLE SHOP PAGE
-// Fully exposed to global scope for HTML onclick handlers
-// ============================================================
-
-window.openMobileMenu = function() {
-  var menu = document.getElementById('mobileMenu');
-  var overlay = document.getElementById('mobileMenuOverlay');
-  if (menu) menu.classList.add('open');
-  if (overlay) overlay.classList.add('open');
-};
-
-// ============================================================
-// STATE
-// ============================================================
-var currentProductView = 'all';
-var currentCategory = 'all';
-var currentSort = 'featured';
-var currentPage = 1;
-var PAGE_SIZE = 12;
-var currentFilters = {};
-
-// ============================================================
-// PRODUCT VIEW SWITCHER
-// ============================================================
-window.switchProductView = function(view) {
-  currentProductView = view;
-  
-  document.querySelectorAll('.filter-tab').forEach(function(tab) {
-    tab.classList.toggle('active', tab.dataset.view === view);
-  });
-  
-  var titleMap = {
-    'all': 'All Products',
-    'new': 'New Arrivals',
-    'trending': 'Trending'
-  };
-  
-  document.getElementById('shopTitle').textContent = titleMap[view] || 'All Products';
-  document.getElementById('shopBreadcrumbCat').textContent = titleMap[view] || 'All Products';
-  
-  var categoryName = 'Shop';
-  if (currentCategory && currentCategory !== 'all') {
-    var catMap = {
-      'beer': 'Beer', 'brandy': 'Brandy', 'bourbon': 'Bourbon',
-      'rum': 'Rum', 'spirits': 'Spirits', 'liqueur': 'Liqueur',
-      'juice': 'Juice', 'soda': 'Soda', 'water': 'Water',
-      'energy': 'Energy Drink', 'cigar': 'Cigar', 'accessory': 'Accessory'
-    };
-    categoryName = catMap[currentCategory] || currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
-  }
-  document.getElementById('breadcrumbCategoryLink').textContent = categoryName;
-  
-  window.applyFilters();
-};
-
-// ============================================================
-// APPLY FILTERS
-// ============================================================
-window.applyFilters = function() {
-  var f = currentFilters || {};
-  var view = currentProductView || 'all';
-  var category = currentCategory || 'all';
-  
-  var list = window.ALL_PRODUCTS ? [...window.ALL_PRODUCTS] : [];
-  
-  // View filter
-  if (view === 'new') {
-    list = list.filter(function(p) { return p.isNew === true; });
-  } else if (view === 'trending') {
-    list = list.filter(function(p) { return p.isTrending === true; });
-  }
-  
-  // Category filter
-  if (category && category !== 'all') {
-    list = list.filter(function(p) {
-      return (p.category || '').toLowerCase() === category;
-    });
-  }
-  
-  // Search filter
-  if (f.search) {
-    var q = f.search.toLowerCase();
-    list = list.filter(function(p) {
-      var haystack = ((p.name || '') + ' ' + (p.category || '') + ' ' + (p.country || '')).toLowerCase();
-      return haystack.indexOf(q) !== -1;
-    });
-  }
-  
-  // Price filter
-  if (f.priceMin != null) {
-    list = list.filter(function(p) { return p.price >= f.priceMin; });
-  }
-  if (f.priceMax != null) {
-    list = list.filter(function(p) { return p.price <= f.priceMax; });
-  }
-  
-  // On sale filter
-  if (f.onSale) {
-    list = list.filter(function(p) { return p.discountPercent > 0; });
-  }
-  
-  // Size filter
-  if (f.sizes && f.sizes.length > 0) {
-    list = list.filter(function(p) {
-      var size = p.capacity || '';
-      return f.sizes.some(function(s) { return size.indexOf(s) !== -1; });
-    });
-  }
-  
-  // Country filter
-  if (f.countries && f.countries.length > 0) {
-    list = list.filter(function(p) {
-      var country = p.country || '';
-      return f.countries.some(function(c) {
-        return country.toLowerCase().indexOf(c.toLowerCase()) !== -1;
-      });
-    });
-  }
-  
-  // Sort
-  var sort = document.getElementById('sortSelect')?.value || 'featured';
-  currentSort = sort;
-  
-  switch (sort) {
-    case 'price-asc':
-      list.sort(function(a, b) { return a.price - b.price; });
-      break;
-    case 'price-desc':
-      list.sort(function(a, b) { return b.price - a.price; });
-      break;
-    case 'name-asc':
-      list.sort(function(a, b) { return a.name.localeCompare(b.name); });
-      break;
-    case 'name-desc':
-      list.sort(function(a, b) { return b.name.localeCompare(a.name); });
-      break;
-    case 'newest':
-      list.sort(function(a, b) { return (b.isNew === true) - (a.isNew === true); });
-      break;
-    default:
-      break;
-  }
-  
-  window.filteredProducts = list;
-  
-  // Update result count
-  var resultCountEl = document.getElementById('resultCount');
-  if (resultCountEl) {
-    var total = list.length;
-    var viewLabel = view === 'all' ? '' : view === 'new' ? ' new arrivals' : ' trending';
-    resultCountEl.textContent = total + ' product' + (total !== 1 ? 's' : '') + viewLabel + (category !== 'all' ? ' in ' + category : '');
-  }
-  
-  // Empty state
-  if (list.length === 0) {
-    var grid = document.getElementById('shopGrid');
-    if (grid) {
-      var searchTerm = f.search || '';
-      var emptyMsg = 'No products found';
-      if (searchTerm) emptyMsg += ' matching "' + searchTerm + '"';
-      grid.innerHTML = '<div class="empty-state"><i class="ph ph-magnifying-glass"></i><p>' + emptyMsg + '</p><small style="color:var(--muted);font-size:.7rem;">Try adjusting your filters or search terms</small></div>';
-    }
-    document.getElementById('paginationWrap').innerHTML = '';
-    return;
-  }
-  
-  // Pagination
-  currentPage = 1;
-  var totalPages = Math.ceil(list.length / PAGE_SIZE);
-  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-  
-  // Render
-  if (typeof updateFilterCount === 'function') updateFilterCount();
-  if (typeof renderActiveFilterPills === 'function') renderActiveFilterPills();
-  if (typeof renderShopGrid === 'function') renderShopGrid();
-  if (typeof renderPagination === 'function') renderPagination();
-};
-
-// ============================================================
-// FILTER DRAWER
-// ============================================================
-window.applyFiltersFromDrawer = function() {
-  var min = document.getElementById('priceMinInput').value;
-  var max = document.getElementById('priceMaxInput').value;
-  
-  currentFilters.priceMin = min !== '' ? Number(min) : null;
-  currentFilters.priceMax = max !== '' ? Number(max) : null;
-  currentFilters.onSale = document.getElementById('filterOnSale').checked;
-  
-  var sizeCheckboxes = document.querySelectorAll('.size-filter:checked');
-  currentFilters.sizes = Array.from(sizeCheckboxes).map(function(cb) { return cb.value; });
-  
-  var countryCheckboxes = document.querySelectorAll('.country-filter:checked');
-  currentFilters.countries = Array.from(countryCheckboxes).map(function(cb) { return cb.value; });
-  
-  currentPage = 1;
-  window.closeFilterDrawer();
-  window.applyFilters();
-};
-
-window.clearFilters = function() {
-  currentFilters = {};
-  
-  document.getElementById('priceMinInput').value = '';
-  document.getElementById('priceMaxInput').value = '';
-  document.getElementById('filterOnSale').checked = false;
-  
-  document.querySelectorAll('.size-filter:checked').forEach(function(cb) { cb.checked = false; });
-  document.querySelectorAll('.country-filter:checked').forEach(function(cb) { cb.checked = false; });
-  
-  currentCategory = 'all';
-  document.querySelectorAll('.cat-chip').forEach(function(chip) {
-    chip.classList.toggle('active', chip.dataset.cat === 'all');
-  });
-  
-  document.getElementById('mainSearchInput').value = '';
-  currentFilters.search = '';
-  
-  currentProductView = 'all';
-  document.querySelectorAll('.filter-tab').forEach(function(tab) {
-    tab.classList.toggle('active', tab.dataset.view === 'all');
-  });
-  
-  document.getElementById('shopTitle').textContent = 'All Products';
-  document.getElementById('shopBreadcrumbCat').textContent = 'All Products';
-  document.getElementById('breadcrumbCategoryLink').textContent = 'Shop';
-  
-  window.closeFilterDrawer();
-  window.applyFilters();
-};
-
-// ============================================================
-// CATEGORY SELECTION
-// ============================================================
-window.selectCategory = function(cat) {
-  currentCategory = cat;
-  currentPage = 1;
-  
-  document.querySelectorAll('.cat-chip').forEach(function(chip) {
-    chip.classList.toggle('active', chip.dataset.cat === cat);
-  });
-  
-  var catMap = {
-    'all': 'All Products',
-    'beer': 'Beer', 'brandy': 'Brandy', 'bourbon': 'Bourbon',
-    'rum': 'Rum', 'spirits': 'Spirits', 'liqueur': 'Liqueur',
-    'juice': 'Juice', 'soda': 'Soda', 'water': 'Water',
-    'energy': 'Energy Drink', 'cigar': 'Cigar', 'accessory': 'Accessory'
-  };
-  
-  var catName = catMap[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
-  document.getElementById('shopBreadcrumbCat').textContent = catName;
-  document.getElementById('breadcrumbCategoryLink').textContent = catName;
-  
-  var url = new URL(window.location);
-  if (cat === 'all') {
-    url.searchParams.delete('cat');
-  } else {
-    url.searchParams.set('cat', cat);
-  }
-  window.history.replaceState({}, '', url);
-  
-  window.applyFilters();
-  document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
-// ============================================================
-// SEARCH
-// ============================================================
-window.setSearch = function(val) {
-  val = val.trim();
-  currentFilters.search = val;
-  
-  var mainInput = document.getElementById('mainSearchInput');
-  if (mainInput) mainInput.value = val;
-  
-  var h = document.getElementById('headerSearchInput');
-  if (h) h.value = val;
-  
-  var m = document.getElementById('mobileSearchInput');
-  if (m) m.value = val;
-  
-  var clearBtn = document.getElementById('mainSearchClear');
-  if (clearBtn) {
-    if (val.length > 0) {
-      clearBtn.classList.add('visible');
-    } else {
-      clearBtn.classList.remove('visible');
-    }
-  }
-  
-  currentPage = 1;
-  window.applyFilters();
-  
-  if (val) {
-    document.getElementById('shopTitle').textContent = 'Search: "' + val + '"';
-    document.getElementById('shopBreadcrumbCat').textContent = 'Search Results';
-  } else {
-    var viewMap = {
-      'all': 'All Products',
-      'new': 'New Arrivals',
-      'trending': 'Trending'
-    };
-    document.getElementById('shopTitle').textContent = viewMap[currentProductView] || 'All Products';
-    document.getElementById('shopBreadcrumbCat').textContent = viewMap[currentProductView] || 'All Products';
-  }
-};
-
-// ============================================================
-// INIT MAIN SEARCH
-// ============================================================
-(function initMainSearchShop() {
-  var input = document.getElementById('mainSearchInput');
-  if (!input) return;
-  
-  var debounceTimer;
-  input.addEventListener('input', function() {
-    clearTimeout(debounceTimer);
-    var val = this.value;
-    debounceTimer = setTimeout(function() {
-      window.setSearch(val);
-    }, 300);
-  });
-  
-  var searchParam = getQueryParam('search');
-  if (searchParam) {
-    input.value = searchParam;
-    window.setSearch(searchParam);
-  }
-})();
-
-// ============================================================
-// MOBILE MENU
-// ============================================================
-window.openMobileMenu = function() {
-  var menu = document.getElementById('mobileMenu');
-  var overlay = document.getElementById('mobileMenuOverlay');
-  if (menu) menu.classList.add('open');
-  if (overlay) overlay.classList.add('open');
-};
-
-window.closeMobileMenu = function() {
-  var menu = document.getElementById('mobileMenu');
-  var overlay = document.getElementById('mobileMenuOverlay');
-  if (menu) menu.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-};
-
-// ============================================================
-// UPDATE BOTTOM NAV & MOBILE MENU
-// ============================================================
-window.updateBottomNav = function() {
-  var user = getCurrentUser();
-  var accountBtn = document.getElementById('bottomNavAccount');
-  var accountLabel = document.getElementById('bottomNavAccountLabel');
-  var profileLink = document.getElementById('mobileMenuProfile');
-  
-  if (accountBtn && accountLabel) {
-    if (user && user.name) {
-      accountLabel.textContent = 'Profile';
-      accountBtn.onclick = function() {
-        window.location.href = 'profile.html';
-      };
-    } else {
-      accountLabel.textContent = 'Account';
-      accountBtn.onclick = function() {
-        window.location.href = 'accounts.html';
-      };
-    }
-  }
-  
-  if (profileLink) {
-    if (user && user.name) {
-      profileLink.style.display = 'flex';
-    } else {
-      profileLink.style.display = 'none';
-    }
-  }
-};
-
-// ============================================================
-// UPDATE MOBILE MENU AUTH SECTION
-// ============================================================
-window.updateMobileMenuAuth = function() {
-  var user = getCurrentUser();
-  var authSection = document.getElementById('mobileMenuAuth');
-  if (!authSection) return;
-  
-  if (user && user.name) {
-    authSection.innerHTML = `
-      <div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;">
-        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div>
-        <div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div>
-        <button onclick="window.logoutUser();window.closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;">
-          <i class="ph ph-sign-out"></i> Logout
-        </button>
-      </div>
-    `;
-  } else {
-    authSection.innerHTML = `
-      <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
-        <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
-      </a>
-    `;
-  }
-};
-
-// ============================================================
-// LOGOUT
-// ============================================================
-window.logoutUser = function() {
-  localStorage.removeItem('liquorbelle_user');
-  localStorage.removeItem('liquorbelle_token');
-  window.closeMobileMenu();
-  window.location.href = 'accounts.html';
-};
-
-// ============================================================
-// CART
-// ============================================================
-window.openCartDrawer = function() {
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if (drawer) drawer.classList.add('open');
-  if (overlay) overlay.classList.add('open');
-};
-
-window.closeCartDrawer = function() {
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if (drawer) drawer.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-};
-
-// ============================================================
-// WISHLIST
-// ============================================================
-window.openWishlistModal = function() {
-  var modal = document.getElementById('wishlistModal');
-  if (modal) modal.classList.add('open');
-};
-
-window.closeWishlistModal = function() {
-  var modal = document.getElementById('wishlistModal');
-  if (modal) modal.classList.remove('open');
-};
-
-// ============================================================
-// FILTER DRAWER
-// ============================================================
-window.openFilterDrawer = function() {
-  var drawer = document.getElementById('filterDrawer');
-  var overlay = document.getElementById('filterOverlay');
-  if (drawer) drawer.classList.add('open');
-  if (overlay) overlay.classList.add('open');
-};
-
-window.closeFilterDrawer = function() {
-  var drawer = document.getElementById('filterDrawer');
-  var overlay = document.getElementById('filterOverlay');
-  if (drawer) drawer.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-};
-
-// ============================================================
-// CLEAR SEARCH
-// ============================================================
-window.clearMainSearch = function() {
-  var input = document.getElementById('mainSearchInput');
-  if (input) input.value = '';
-  var clearBtn = document.getElementById('mainSearchClear');
-  if (clearBtn) clearBtn.classList.remove('visible');
-  window.setSearch('');
-  if (input) input.focus();
-};
-
-// ============================================================
-// HEADER SEARCH
-// ============================================================
-window.handleHeaderSearch = function(e) {
-  e.preventDefault();
-  var val = (document.getElementById('headerSearchInput')?.value || document.getElementById('mobileSearchInput')?.value || '').trim();
-  if (val) {
-    window.location.href = 'shop.html?search=' + encodeURIComponent(val);
-  }
-  return false;
-};
-
-// ============================================================
-// ANNOUNCEMENT
-// ============================================================
-window.dismissAnnounceBar = function() {
-  var bar = document.getElementById('announceBar');
-  if (bar) bar.style.display = 'none';
-  try { sessionStorage.setItem('lb_announce_dismissed', '1'); } catch(e) {}
-};
-
-// ============================================================
-// PAGINATION
-// ============================================================
-window.goToPage = function(page) {
-  var totalPages = Math.ceil((window.filteredProducts || []).length / PAGE_SIZE);
-  if (page < 1 || page > totalPages) return;
-  currentPage = page;
-  if (typeof renderShopGrid === 'function') renderShopGrid();
-  if (typeof renderPagination === 'function') renderPagination();
-  document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
-// ============================================================
-// SORT HANDLER
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-  var sortSelect = document.getElementById('sortSelect');
-  if (sortSelect) {
-    sortSelect.addEventListener('change', function() {
-      currentSort = this.value;
-      window.applyFilters();
-    });
-  }
-});
-
-// ============================================================
-// DOM READY
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-  PAGE_SIZE = 12;
-  currentPage = 1;
-  currentFilters = {};
-  
-  window.updateBottomNav();
-  window.updateMobileMenuAuth();
-  updateCartUI();
-  
-  // Call loadProductsShop directly
-  window.loadProductsShop();
-  
-  setTimeout(function() {
-    window.applyFilters();
-  }, 500);
-});
-
-console.log('🍾 Shop page loaded — mobile first with real-time filters');
-</script>
 </body>
 </html>
