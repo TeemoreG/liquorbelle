@@ -928,6 +928,67 @@ textarea { resize: vertical; }
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const ADMIN_TOKEN_KEY = 'liquorbelle_admin_token';
 
+// ==================== INACTIVITY TIMEOUT ====================
+const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
+let inactivityTimer = null;
+let countdownTimer = null;
+let countdownValue = 30;
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  clearInterval(countdownTimer);
+  document.getElementById('inactivityWarning').classList.remove('show');
+  startInactivityTimer();
+}
+
+function startInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  clearInterval(countdownTimer);
+  inactivityTimer = setTimeout(showInactivityWarning, INACTIVITY_TIMEOUT - 30000);
+}
+
+function showInactivityWarning() {
+  const warning = document.getElementById('inactivityWarning');
+  const countdownEl = document.getElementById('inactivityCountdown');
+  countdownValue = 30;
+  countdownEl.textContent = countdownValue;
+  warning.classList.add('show');
+  
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(() => {
+    countdownValue--;
+    countdownEl.textContent = countdownValue;
+    if (countdownValue <= 0) {
+      clearInterval(countdownTimer);
+      warning.classList.remove('show');
+      logout();
+      showToast('⏰ Session expired due to inactivity', 'error');
+    }
+  }, 1000);
+  
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    clearInterval(countdownTimer);
+    warning.classList.remove('show');
+    logout();
+    showToast('⏰ Session expired due to inactivity', 'error');
+  }, 30000);
+}
+
+function resetActivityTimer() {
+  if (getAdminToken()) {
+    resetInactivityTimer();
+  }
+}
+
+// Listen for user activity events
+document.addEventListener('click', resetActivityTimer);
+document.addEventListener('keydown', resetActivityTimer);
+document.addEventListener('scroll', resetActivityTimer);
+document.addEventListener('mousemove', resetActivityTimer);
+document.addEventListener('touchstart', resetActivityTimer);
+
+
 // ==================== CATEGORY CONFIG ====================
 const CATEGORY_LABELS = {
   whisky: 'Whisky', wine: 'Wine', vodka: 'Vodka', gin: 'Gin',
@@ -1054,6 +1115,7 @@ function initializeAdmin() {
   loadProducts();
   loadSettings();
   loadCategories();
+  startInactivityTimer(); 
 }
 
 // ==================== PRODUCTS ====================
