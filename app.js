@@ -518,7 +518,7 @@ window.updateBottomNav = function() {
     var accountBtn = document.getElementById('bottomNavAccount');
     if (accountBtn) accountBtn.classList.add('active');
   }
-  
+
   var user = getCurrentUser();
   var accountBtn = document.getElementById('bottomNavAccount');
   var accountLabel = document.getElementById('bottomNavAccountLabel');
@@ -1212,12 +1212,23 @@ if (document.getElementById('categoryGrid')) {
 
   window.quickViewById = function(id) {
     var idStr = String(id);
+    // FIX: Check if allProductsCache exists and is an array
+    if (!allProductsCache || !Array.isArray(allProductsCache)) {
+      console.warn('allProductsCache not ready yet');
+      // Try to load products first
+      if (typeof loadProducts === 'function') {
+        loadProducts().then(function() {
+          window.quickViewById(id);
+        });
+      }
+      return;
+    }
     var product = allProductsCache.find(function(p) { return String(p._id) === idStr; });
     if (product) {
       qvShowProduct(product);
       return;
     }
-
+    
     var overlay = document.getElementById('quickviewOverlay');
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
