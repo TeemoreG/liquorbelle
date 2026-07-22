@@ -169,8 +169,8 @@ textarea { resize: vertical; }
 .remove-variant:hover { background: var(--red); color: white; }
 
 .table-container { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: var(--radius); overflow-x: auto; box-shadow: var(--shadow); }
-.table-header { display: grid; grid-template-columns: 56px 1.8fr 220px 100px 100px 88px; background: var(--gold-bg); padding: 11px 16px; font-weight: 700; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid var(--gold); }
-.product-row { display: grid; grid-template-columns: 56px 1.8fr 220px 100px 100px 88px; padding: 12px 16px; align-items: center; border-bottom: 1px solid var(--border-light); font-size: 13px; transition: var(--transition); }
+.table-header { display: grid; grid-template-columns: 36px 56px 1.8fr 220px 100px 100px 88px; background: var(--gold-bg); padding: 11px 16px; font-weight: 700; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid var(--gold); }
+.product-row { display: grid; grid-template-columns: 36px 56px 1.8fr 220px 100px 100px 88px; padding: 12px 16px; align-items: center; border-bottom: 1px solid var(--border-light); font-size: 13px; transition: var(--transition); }
 .product-row:last-child { border-bottom: none; }
 .product-row:hover { background: rgba(184,134,11,0.04); }
 .product-img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; background: var(--bg2); }
@@ -263,8 +263,14 @@ textarea { resize: vertical; }
 .zone-remove-btn { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-size: 11px; transition: var(--transition); }
 .zone-remove-btn:hover { background: var(--red); color: white; }
 
+/* ===== BULK SELECT & CATEGORY FILTER ===== */
+.row-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--gold); }
+.bulk-action-bar { display: flex; align-items: center; gap: 16px; background: var(--gold-bg); border: 1.5px solid var(--gold); border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 14px; flex-wrap: wrap; }
+.bulk-action-bar label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.bulk-count { font-size: 13px; color: var(--muted); margin-right: auto; }
+
 @media (max-width: 900px) {
-  .table-header, .product-row { grid-template-columns: 48px 1fr 150px 80px 80px 60px; }
+  .table-header, .product-row { grid-template-columns: 36px 48px 1fr 150px 80px 80px 60px; }
 }
 @media (max-width: 768px) {
   .admin-header { padding: 10px 4%; height: auto; flex-wrap: wrap; }
@@ -274,6 +280,7 @@ textarea { resize: vertical; }
   .product-row { grid-template-columns: 1fr; padding: 12px 14px; gap: 8px; position: relative; }
   .product-row > div:first-child { position: absolute; top: 12px; left: 14px; }
   .product-row > div:nth-child(2) { padding-left: 52px; }
+  .row-checkbox-wrap { position: absolute; top: 12px; right: 14px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .order-header { grid-template-columns: 1fr; }
   .order-header-right { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
@@ -525,6 +532,10 @@ textarea { resize: vertical; }
     <!-- Search & Sort -->
     <div class="search-bar">
       <div class="search-input-wrap"><i class="ph ph-magnifying-glass"></i><input type="text" id="productSearch" class="search-input" placeholder="Search products..." oninput="filterProducts()"></div>
+      <!-- ADDED: Category filter dropdown -->
+      <select id="categoryFilterSelect" class="sort-select" onchange="filterProducts()">
+        <option value="all">🏷️ All Categories</option>
+      </select>
       <select id="sortSelect" class="sort-select" onchange="applySort()">
         <option value="newest">🕐 Newest First</option><option value="oldest">🕐 Oldest First</option>
         <option value="price-low">💰 Price: Low to High</option><option value="price-high">💰 Price: High to Low</option>
@@ -534,8 +545,21 @@ textarea { resize: vertical; }
       <button class="btn btn-green" onclick="refreshProducts()"><i class="ph ph-arrows-clockwise"></i> Refresh</button>
     </div>
 
+    <!-- ADDED: Bulk Action Bar -->
+    <div class="bulk-action-bar" id="bulkActionBar">
+      <label>
+        <input type="checkbox" id="selectAllCheckbox" class="row-checkbox" onchange="toggleSelectAll(this)">
+        Select All
+      </label>
+      <span class="bulk-count" id="bulkCount">0 selected</span>
+      <button class="btn btn-red btn-sm" id="bulkDeleteBtn" onclick="bulkDeleteProducts()" disabled>
+        <i class="ph ph-trash"></i> Delete Selected
+      </button>
+    </div>
+
     <div class="table-container">
-      <div class="table-header"><div>Image</div><div>Product</div><div>Variants</div><div>Badges</div><div>Rating</div><div>Actions</div></div>
+      <!-- UPDATED: Added checkbox column header -->
+      <div class="table-header"><div></div><div>Image</div><div>Product</div><div>Variants</div><div>Badges</div><div>Rating</div><div>Actions</div></div>
       <div id="productsList"></div>
     </div>
   </div>
@@ -889,7 +913,6 @@ textarea { resize: vertical; }
 
 <!-- ===== TOAST ===== -->
 <div id="toast" class="toast"><span id="toastMessage"></span><button class="toast-close" onclick="hideToast()"><i class="ph ph-x"></i></button></div>
-
 <script>
 // ============================================================
 // LIQUORBELLE ADMIN — COMPLETE JAVASCRIPT (FIXED)
@@ -898,6 +921,8 @@ textarea { resize: vertical; }
 // - Low Stock Alerts
 // - Fixed: Out of stock count only counts explicit outOfStock
 // - Fixed: Settings tab loads categories
+// - Added: Bulk select & delete with scroll preservation
+// - Fixed: Scroll jump on refresh
 // ============================================================
 
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
@@ -930,6 +955,18 @@ function showToast(message, type) {
 function hideToast() {
   const toast = document.getElementById('toast');
   if (toast) toast.classList.remove('show');
+}
+
+// ==================== SCROLL PRESERVATION ====================
+function preserveScroll(taskFn) {
+  const scrollY = window.scrollY;
+  const result = taskFn();
+  const restore = () => window.scrollTo(0, scrollY);
+  if (result && typeof result.then === 'function') {
+    return result.then(r => { requestAnimationFrame(() => requestAnimationFrame(restore)); return r; });
+  }
+  requestAnimationFrame(() => requestAnimationFrame(restore));
+  return result;
 }
 
 // ==================== AUTH ====================
@@ -1021,24 +1058,31 @@ function initializeAdmin() {
 
 // ==================== PRODUCTS ====================
 let allProducts = [], filteredProducts = [], currentSort = 'newest';
+let selectedProductIds = new Set();
 
 async function loadProducts() {
   const list = document.getElementById('productsList');
   if (!list) return;
-  list.innerHTML = '<div class="empty-state"><i class="ph ph-spinner"></i><p>Loading products...</p></div>';
+  if (!allProducts || allProducts.length === 0) {
+    list.innerHTML = '<div class="empty-state"><i class="ph ph-spinner"></i><p>Loading products...</p></div>';
+  }
   try {
     const response = await adminFetch(API_BASE + '/api/db/products');
     const data = await response.json();
     if (data.success && data.products) {
       allProducts = data.products;
-      filteredProducts = [...allProducts];
-      applySort();
-      renderProducts();
+      filterProducts();
       updateProductStats();
-    } else { list.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>No products found</p></div>'; }
+    } else if (allProducts.length === 0) {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>No products found</p></div>';
+    }
   } catch (error) {
     console.error('Error loading products:', error);
-    list.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Failed to load products. <button class="btn btn-sm" onclick="loadProducts()">Retry</button></p></div>';
+    if (allProducts.length === 0) {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Failed to load products. <button class="btn btn-sm" onclick="loadProducts()">Retry</button></p></div>';
+    } else {
+      showToast('❌ Failed to refresh products', 'error');
+    }
   }
 }
 
@@ -1047,6 +1091,7 @@ function renderProducts() {
   if (!list) return;
   if (!filteredProducts || filteredProducts.length === 0) {
     list.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No products match your search.</p></div>';
+    updateBulkActionBar();
     return;
   }
   list.innerHTML = filteredProducts.map(p => {
@@ -1059,14 +1104,14 @@ function renderProducts() {
     const variantBadges = variants.map(v => {
       const discountText = v.discount ? ' -' + v.discount + '%' : '';
       const flavourText = v.flavour ? ' ' + v.flavour : '';
-      // FIXED: Only show out of stock if explicitly set, otherwise default to in stock
       const isInStock = v.stock === 'inStock' || (!v.stock && v.stockQuantity > 0) || (!v.stock && v.stockQuantity === undefined);
       const stockText = isInStock ? '🟢' : '🔴';
       const qtyText = (v.stockQuantity !== undefined && v.stockQuantity > 0) ? ` (${v.stockQuantity})` : '';
       return '<span class="variant-badge">' + stockText + ' ' + v.size + flavourText + ' • KES ' + v.price + discountText + qtyText + '</span>';
     }).join('');
-    return '<div class="product-row"><div><img class="product-img" src="' + (p.image || 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png') + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png\'"></div><div><div class="product-name">' + p.name + '</div><div class="product-cat">' + (p.category || 'Uncategorized') + '</div></div><div>' + variantBadges + '</div><div>' + (isTrending ? '<span class="trending-badge">🔥 Trending</span>' : '') + (isNew ? '<span class="new-badge">✨ New</span>' : '') + (hasDiscount ? '<span class="discount-badge">🔄 On Sale</span>' : '') + '</div><div><span class="star-badge">' + stars + ' ' + rating.toFixed(1) + '</span></div><div><button class="edit-btn" onclick="openEditModal(\'' + p._id + '\')" title="Edit"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(\'' + p._id + '\')" title="Delete"><i class="ph ph-trash"></i></button></div></div>';
+    return '<div class="product-row"><div class="row-checkbox-wrap"><input type="checkbox" class="row-checkbox" ' + (selectedProductIds.has(p._id) ? 'checked' : '') + ' onchange="toggleProductSelection(\'' + p._id + '\', this.checked)"></div><div><img class="product-img" src="' + (p.image || 'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png') + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781119164/liqbb_goc41e.png\'"></div><div><div class="product-name">' + p.name + '</div><div class="product-cat">' + (p.category || 'Uncategorized') + '</div></div><div>' + variantBadges + '</div><div>' + (isTrending ? '<span class="trending-badge">🔥 Trending</span>' : '') + (isNew ? '<span class="new-badge">✨ New</span>' : '') + (hasDiscount ? '<span class="discount-badge">🔄 On Sale</span>' : '') + '</div><div><span class="star-badge">' + stars + ' ' + rating.toFixed(1) + '</span></div><div><button class="edit-btn" onclick="openEditModal(\'' + p._id + '\')" title="Edit"><i class="ph ph-pencil-simple"></i></button><button class="delete-btn" onclick="deleteProduct(\'' + p._id + '\')" title="Delete"><i class="ph ph-trash"></i></button></div></div>';
   }).join('');
+  updateBulkActionBar();
 }
 
 function updateProductStats() {
@@ -1076,7 +1121,6 @@ function updateProductStats() {
   const withVariants = allProducts.filter(p => p.variants && p.variants.length > 0).length;
   const trending = allProducts.filter(p => p.isTrending).length;
   
-  // FIXED: Count stock status properly
   let inStockVariants = 0;
   let outOfStockVariants = 0;
   let lowStockProducts = 0;
@@ -1085,11 +1129,9 @@ function updateProductStats() {
     if (p.variants && p.variants.length > 0) {
       let hasLowStock = false;
       p.variants.forEach(v => {
-        // FIXED: Only count as out of stock if explicitly set to outOfStock
         const isInStock = v.stock === 'inStock' || (!v.stock && v.stockQuantity > 0) || (!v.stock && v.stockQuantity === undefined);
         if (isInStock) {
           inStockVariants++;
-          // Check low stock (only for items with explicit quantity > 0 and < 5)
           if (v.stockQuantity !== undefined && v.stockQuantity > 0 && v.stockQuantity < 5) {
             hasLowStock = true;
           }
@@ -1101,7 +1143,6 @@ function updateProductStats() {
     }
   });
   
-  // Count by category
   const categoryCount = {};
   allProducts.forEach(p => {
     const cat = p.category || 'uncategorized';
@@ -1126,7 +1167,13 @@ function updateProductStats() {
 
 window.filterProducts = function() {
   const search = document.getElementById('productSearch').value.toLowerCase().trim();
-  filteredProducts = search ? allProducts.filter(p => p.name.toLowerCase().includes(search) || (p.category && p.category.toLowerCase().includes(search))) : [...allProducts];
+  const categorySelect = document.getElementById('categoryFilterSelect');
+  const categoryValue = categorySelect ? categorySelect.value : 'all';
+  filteredProducts = allProducts.filter(p => {
+    const matchesSearch = !search || p.name.toLowerCase().includes(search) || (p.category && p.category.toLowerCase().includes(search));
+    const matchesCategory = categoryValue === 'all' || p.category === categoryValue;
+    return matchesSearch && matchesCategory;
+  });
   applySort();
   renderProducts();
 };
@@ -1148,10 +1195,60 @@ window.applySort = function() {
 
 window.clearProductSearch = function() {
   document.getElementById('productSearch').value = '';
+  const categorySelect = document.getElementById('categoryFilterSelect');
+  if (categorySelect) categorySelect.value = 'all';
   filterProducts();
 };
 
-window.refreshProducts = function() { loadProducts(); showToast('🔄 Refreshing products...', ''); };
+window.refreshProducts = function() { preserveScroll(loadProducts); showToast('🔄 Refreshing products...', ''); };
+
+// ==================== BULK SELECT FUNCTIONS ====================
+window.toggleProductSelection = function(id, checked) {
+  if (checked) selectedProductIds.add(id); else selectedProductIds.delete(id);
+  updateBulkActionBar();
+};
+
+window.toggleSelectAll = function(checkbox) {
+  if (checkbox.checked) {
+    filteredProducts.forEach(p => selectedProductIds.add(p._id));
+  } else {
+    filteredProducts.forEach(p => selectedProductIds.delete(p._id));
+  }
+  renderProducts();
+};
+
+function updateBulkActionBar() {
+  const count = selectedProductIds.size;
+  const countEl = document.getElementById('bulkCount');
+  const deleteBtn = document.getElementById('bulkDeleteBtn');
+  const selectAll = document.getElementById('selectAllCheckbox');
+  if (countEl) countEl.textContent = count + ' selected';
+  if (deleteBtn) deleteBtn.disabled = count === 0;
+  if (selectAll) {
+    selectAll.checked = filteredProducts.length > 0 && filteredProducts.every(p => selectedProductIds.has(p._id));
+  }
+}
+
+window.bulkDeleteProducts = async function() {
+  const ids = Array.from(selectedProductIds);
+  if (ids.length === 0) return;
+  if (!confirm('Delete ' + ids.length + ' selected product(s)? This cannot be undone.')) return;
+  const btn = document.getElementById('bulkDeleteBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Deleting...';
+  let success = 0, failed = 0;
+  for (const id of ids) {
+    try {
+      const response = await adminFetch(API_BASE + '/api/db/products/' + id, { method: 'DELETE' });
+      const data = await response.json();
+      if (data.success) success++; else failed++;
+    } catch (e) { failed++; }
+  }
+  selectedProductIds.clear();
+  showToast(failed === 0 ? ('✅ Deleted ' + success + ' product(s)') : ('⚠️ Deleted ' + success + ', ' + failed + ' failed'), failed === 0 ? 'success' : 'error');
+  btn.innerHTML = '<i class="ph ph-trash"></i> Delete Selected';
+  await preserveScroll(loadProducts);
+};
 
 // ==================== ADD PRODUCT ====================
 window.addProduct = async function() {
@@ -1194,7 +1291,7 @@ window.addProduct = async function() {
       document.getElementById('prodTrending').checked = false;
       document.getElementById('prodNew').checked = false;
       document.getElementById('variantsBody').innerHTML = '<tr class="variant-row"><td><select class="variant-size" onchange="toggleVariantOther(this)"><optgroup label="🍺 Beer"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option></optgroup><optgroup label="🥃 Spirits"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></optgroup><optgroup label="🧃 Juice &amp; Soda"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option></optgroup><option value="OTHER">✏️ Other (Type custom)</option></select><input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;"></td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><select class="variant-stock" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><option value="inStock">✅ In Stock</option><option value="outOfStock">❌ Out of Stock</option></select></td><td><input type="number" class="variant-quantity" placeholder="Qty" value="20" min="0" step="1" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td></tr>';
-      loadProducts();
+      preserveScroll(loadProducts);
     } else { showToast('❌ ' + (data.message || 'Failed to add product'), 'error'); }
   } catch (error) { console.error('Error adding product:', error); showToast('❌ Network error. Please try again.', 'error'); }
   btn.disabled = false;
@@ -1323,7 +1420,7 @@ window.saveProductEdit = async function() {
   try {
     const response = await adminFetch(API_BASE + '/api/db/products/' + id, { method: 'PUT', body: JSON.stringify(productData) });
     const data = await response.json();
-    if (data.success) { showToast('✅ Product updated successfully!', 'success'); closeEditModal(); loadProducts(); }
+    if (data.success) { showToast('✅ Product updated successfully!', 'success'); closeEditModal(); preserveScroll(loadProducts); }
     else { showToast('❌ ' + (data.message || 'Failed to update product'), 'error'); }
   } catch (error) { console.error('Error updating product:', error); showToast('❌ Network error. Please try again.', 'error'); }
 };
@@ -1334,7 +1431,7 @@ window.deleteProduct = async function(productId) {
   try {
     const response = await adminFetch(API_BASE + '/api/db/products/' + productId, { method: 'DELETE' });
     const data = await response.json();
-    if (data.success) { showToast('✅ Product deleted successfully!', 'success'); loadProducts(); }
+    if (data.success) { showToast('✅ Product deleted successfully!', 'success'); preserveScroll(loadProducts); }
     else { showToast('❌ ' + (data.message || 'Failed to delete product'), 'error'); }
   } catch (error) { console.error('Error deleting product:', error); showToast('❌ Network error. Please try again.', 'error'); }
 };
@@ -1345,15 +1442,25 @@ let allOrders = [];
 async function loadOrders() {
   const list = document.getElementById('ordersList');
   if (!list) return;
-  list.innerHTML = '<div class="empty-state"><i class="ph ph-spinner"></i><p>Loading orders...</p></div>';
+  if (!allOrders || allOrders.length === 0) {
+    list.innerHTML = '<div class="empty-state"><i class="ph ph-spinner"></i><p>Loading orders...</p></div>';
+  }
   try {
     const response = await adminFetch(API_BASE + '/api/db/orders');
     const data = await response.json();
-    if (data.success && data.orders) { allOrders = data.orders; applyFilters(); }
-    else { list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>'; }
+    if (data.success && data.orders) {
+      allOrders = data.orders;
+      applyFilters();
+    } else if (!allOrders || allOrders.length === 0) {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>';
+    }
   } catch (error) {
     console.error('Error loading orders:', error);
-    list.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Failed to load orders. <button class="btn btn-sm" onclick="loadOrders()">Retry</button></p></div>';
+    if (!allOrders || allOrders.length === 0) {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Failed to load orders. <button class="btn btn-sm" onclick="loadOrders()">Retry</button></p></div>';
+    } else {
+      showToast('❌ Failed to refresh orders', 'error');
+    }
   }
 }
 
@@ -1399,12 +1506,12 @@ window.markDelivered = async function(orderId) {
   try {
     const response = await adminFetch(API_BASE + '/api/db/orders/' + orderId, { method: 'PUT', body: JSON.stringify({ status: 'delivered' }) });
     const data = await response.json();
-    if (data.success) { showToast('✅ Order marked as delivered!', 'success'); loadOrders(); }
+    if (data.success) { showToast('✅ Order marked as delivered!', 'success'); preserveScroll(loadOrders); }
     else { showToast('❌ ' + (data.message || 'Failed to update order'), 'error'); }
   } catch (error) { console.error('Error updating order:', error); showToast('❌ Network error. Please try again.', 'error'); }
 };
 
-window.refreshOrders = function() { loadOrders(); showToast('🔄 Refreshing orders...', ''); };
+window.refreshOrders = function() { preserveScroll(loadOrders); showToast('🔄 Refreshing orders...', ''); };
 
 // ==================== ANALYTICS ====================
 async function loadAnalytics() {
@@ -1420,32 +1527,26 @@ async function loadAnalytics() {
     const products = productsData.success ? productsData.products : [];
     const orders = ordersData.success ? ordersData.orders : [];
     
-    // ===== CALCULATE STATS =====
     const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
     const totalOrders = orders.length;
     const totalProducts = products.length;
     const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
     
-    // ===== CONVERSION RATE =====
     const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
     const conversionRate = totalOrders > 0 ? Math.round((deliveredOrders / totalOrders) * 100) : 0;
     
-    // ===== AVERAGE RATING =====
     const ratedProducts = products.filter(p => p.rating && p.rating > 0);
     const avgRating = ratedProducts.length > 0 
       ? (ratedProducts.reduce((sum, p) => sum + p.rating, 0) / ratedProducts.length).toFixed(1) 
       : 0;
     
-    // ===== UNIQUE CUSTOMERS =====
     const uniqueCustomers = new Set(orders.map(o => o.customer_email).filter(email => email));
     
-    // ===== UPDATE STAT CARDS =====
     document.getElementById('totalRevenue').textContent = 'KES ' + totalRevenue.toLocaleString();
     document.getElementById('totalOrders').textContent = totalOrders;
     document.getElementById('totalProducts').textContent = totalProducts;
     document.getElementById('avgOrder').textContent = 'KES ' + Math.round(avgOrder).toLocaleString();
     
-    // ===== UPDATE ADDITIONAL STATS =====
     const conversionEl = document.getElementById('conversionRate');
     if (conversionEl) conversionEl.textContent = conversionRate + '%';
     
@@ -1458,7 +1559,6 @@ async function loadAnalytics() {
     const categoryTotalEl = document.getElementById('categoryTotalCount');
     if (categoryTotalEl) categoryTotalEl.textContent = totalProducts + ' products';
     
-    // ===== CATEGORY BREAKDOWN =====
     const categoryCount = {};
     products.forEach(p => { 
       const cat = p.category || 'Uncategorized'; 
@@ -1480,7 +1580,6 @@ async function loadAnalytics() {
         return;
       }
       
-      // Category colors mapping
       const colors = {
         whisky: '#D4A843', wine: '#722F37', vodka: '#E8E8E8', gin: '#4CAF50',
         cognac: '#8B6914', cream: '#F5D0A9', beer: '#F59E0B', brandy: '#B8860B',
@@ -1527,14 +1626,12 @@ async function loadAnalytics() {
 // ==================== SETTINGS ====================
 async function loadSettings() {
   try {
-    // Show loading state
     const deliveryMessage = document.getElementById('deliveryMessage');
     if (deliveryMessage) {
       deliveryMessage.innerHTML = '⏳ Loading settings...';
       deliveryMessage.style.color = 'var(--muted)';
     }
 
-    // Load delivery settings
     const settingsRes = await adminFetch(API_BASE + '/api/delivery-settings');
     const settingsData = await settingsRes.json();
     
@@ -1556,7 +1653,6 @@ async function loadSettings() {
       }
     }
     
-    // Load delivery zones
     await loadDeliveryZones();
     
   } catch (error) {
@@ -1566,7 +1662,6 @@ async function loadSettings() {
       deliveryMessage.innerHTML = '❌ Failed to load settings. Please refresh.';
       deliveryMessage.style.color = 'red';
     }
-    // Still try to load zones with defaults
     try {
       await loadDeliveryZones();
     } catch (zoneError) {
@@ -1715,16 +1810,19 @@ async function loadCategories() {
       
       renderCategories();
       updateCategoryDropdowns();
+      populateCategoryFilter();
     } else {
       categories = [...ALL_CATEGORIES];
       renderCategories();
       updateCategoryDropdowns();
+      populateCategoryFilter();
     }
   } catch (error) { 
     console.error('Error loading categories:', error); 
     categories = [...ALL_CATEGORIES]; 
     renderCategories(); 
-    updateCategoryDropdowns(); 
+    updateCategoryDropdowns();
+    populateCategoryFilter();
   }
 }
 
@@ -1791,6 +1889,20 @@ function updateCategoryDropdowns() {
       select.value = currentVal;
     }
   });
+  populateCategoryFilter();
+}
+
+function populateCategoryFilter() {
+  const select = document.getElementById('categoryFilterSelect');
+  if (!select) return;
+  const current = select.value || 'all';
+  const uniqueCategories = [...new Set(categories)];
+  let html = '<option value="all">🏷️ All Categories</option>';
+  uniqueCategories.forEach(c => {
+    html += '<option value="' + c + '">' + (CATEGORY_LABELS[c] || c) + '</option>';
+  });
+  select.innerHTML = html;
+  select.value = (uniqueCategories.includes(current) || current === 'all') ? current : 'all';
 }
 
 window.addCategory = async function() {
@@ -1925,7 +2037,7 @@ window.bulkImport = async function() {
       progress.innerHTML = '📊 Imported ' + (imported + failed) + '/' + products.length + '... (' + imported + ' success, ' + failed + ' failed)';
     }
     progress.innerHTML = '✅ Import complete! ' + imported + ' imported, ' + failed + ' failed.';
-    if (imported > 0) { showToast('✅ Imported ' + imported + ' products!', 'success'); loadProducts(); }
+    if (imported > 0) { showToast('✅ Imported ' + imported + ' products!', 'success'); preserveScroll(loadProducts); }
     else { showToast('❌ No products were imported. Check your CSV format.', 'error'); }
   } catch (error) { console.error('Bulk import error:', error); progress.innerHTML = '❌ Import failed. Check your CSV format.'; showToast('❌ Import failed', 'error'); }
 };
@@ -1946,7 +2058,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const token = getAdminToken();
   if (token) {
     initializeAdmin();
-    // Load categories when admin initializes
     setTimeout(loadCategories, 500);
   } else {
     document.getElementById('adminLoginModal').style.display = 'flex';
@@ -1965,6 +2076,7 @@ console.log('🍾 LiquorBelle Admin — Fully Loaded');
 console.log('🔑 API Base:', API_BASE);
 console.log('📂 Categories:', ALL_CATEGORIES.length + ' categories loaded');
 console.log('📦 Stock tracking enabled');
+console.log('✅ Bulk select & delete enabled with scroll preservation');
 </script>
 </body>
 </html>
