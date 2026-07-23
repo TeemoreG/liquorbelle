@@ -785,62 +785,107 @@ if (document.getElementById('categoryGrid')) {
     }
   })();
 
-  // ===== CATEGORIES - ALL 18 =====
-  var categories = [
-    { name: "All", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
-    // ===== NEW CATEGORIES (ADDED) =====
-    { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
-    { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
-    { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
-    { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
-    { name: "Cognac", cat: "cognac", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
-    { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
-    // ===== EXISTING CATEGORIES =====
-    { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
-    { name: "Brandy", cat: "brandy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
-    { name: "Bourbon", cat: "bourbon", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318444/a72b554e-5c0b-4ac3-8a66-bdbbf931453c.3c0dcb1f945848aa6629090c307ae781_ksa4md.jpg" },
-    { name: "Rum", cat: "rum", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
-    { name: "Spirits", cat: "spirits", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
-    { name: "Liqueur", cat: "liqueur", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
-    { name: "Juice", cat: "juice", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318835/Cold_Tea_in_Kenya_600x600_q0ik5i.jpg" },
-    { name: "Soda", cat: "soda", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319077/soda_kzknqb.jpg" },
-    { name: "Water", cat: "water", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319248/keringet-still-water_fykbf3.jpg" },
-    { name: "Energy Drink", cat: "energy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782476528/Red-Bull-Energy-Drink-80mg-Caffeine-8-4-fl-oz-Can_c9e445f3-1800-40d0-81ab-6b93a9aaacb3.d2f8d87c58e8287c26cae8b3b6d9e38a_snc71g.jpg" },
-    { name: "Cigar", cat: "cigar", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319403/Scene2_fgsgg1.webp" },
-    { name: "Accessory", cat: "accessory", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319473/51PDVK6sQzL._AC_UF1000_1000_QL80__cn0azd.jpg" }
+  /// ===== CATEGORIES - ALL 22 =====
+var categories = [
+  { name: "All", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+  // ===== WHISKY =====
+  { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+  // ===== WINE =====
+  { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  // ===== VODKA =====
+  { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+  // ===== GIN =====
+  { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+  // ===== COGNAC =====
+  { name: "Cognac", cat: "cognac", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
+  // ===== CREAMS =====
+  { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
+  // ===== BEER =====
+  { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  // ===== BRANDY =====
+  { name: "Brandy", cat: "brandy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
+  // ===== BOURBON =====
+  { name: "Bourbon", cat: "bourbon", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318444/a72b554e-5c0b-4ac3-8a66-bdbbf931453c.3c0dcb1f945848aa6629090c307ae781_ksa4md.jpg" },
+  // ===== RUM =====
+  { name: "Rum", cat: "rum", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+  // ===== SPIRITS =====
+  { name: "Spirits", cat: "spirits", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+  // ===== LIQUEUR =====
+  { name: "Liqueur", cat: "liqueur", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
+  // ===== JUICE =====
+  { name: "Juice", cat: "juice", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318835/Cold_Tea_in_Kenya_600x600_q0ik5i.jpg" },
+  // ===== SODA =====
+  { name: "Soda", cat: "soda", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319077/soda_kzknqb.jpg" },
+  // ===== WATER =====
+  { name: "Water", cat: "water", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319248/keringet-still-water_fykbf3.jpg" },
+  // ===== ENERGY DRINK =====
+  { name: "Energy Drink", cat: "energy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782476528/Red-Bull-Energy-Drink-80mg-Caffeine-8-4-fl-oz-Can_c9e445f3-1800-40d0-81ab-6b93a9aaacb3.d2f8d87c58e8287c26cae8b3b6d9e38a_snc71g.jpg" },
+  // ===== CIGAR =====
+  { name: "Cigar", cat: "cigar", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319403/Scene2_fgsgg1.webp" },
+  // ===== ACCESSORY =====
+  { name: "Accessory", cat: "accessory", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319473/51PDVK6sQzL._AC_UF1000_1000_QL80__cn0azd.jpg" },
+  // ===== NEW CATEGORIES =====
+  { name: "Cider", cat: "cider", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  { name: "RTD", cat: "rtd", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+  { name: "Sparkling Wine", cat: "sparkling-wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+  { name: "Vermouth", cat: "vermouth", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" }
+];
+
+window.renderCategories = function() {
+  var container = document.getElementById('categoryGrid');
+  if (!container) return;
+  container.innerHTML = categories.map(function(cat) {
+    return '<a href="shop.html?cat=' + cat.cat + '" class="cat-card"><img class="cat-img" src="' + cat.image + '" alt="' + cat.name + '" loading="lazy"><span>' + cat.name + '</span></a>';
+  }).join('');
+};
+
+window.populateCategoryDropdown = function(selectId) {
+  var select = document.getElementById(selectId);
+  if (!select) return;
+  // Clear existing options
+  select.innerHTML = '';
+  // Add default "All" option
+  var allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent = 'All Categories';
+  select.appendChild(allOption);
+  
+  // Add all categories - plain text, NO EMOJIS
+  var dropdownCats = [
+    { id: 'whisky', label: 'Whisky' },
+    { id: 'wine', label: 'Wine' },
+    { id: 'vodka', label: 'Vodka' },
+    { id: 'gin', label: 'Gin' },
+    { id: 'cognac', label: 'Cognac' },
+    { id: 'cream', label: 'Creams' },
+    { id: 'beer', label: 'Beer' },
+    { id: 'brandy', label: 'Brandy' },
+    { id: 'bourbon', label: 'Bourbon' },
+    { id: 'rum', label: 'Rum' },
+    { id: 'spirits', label: 'Spirits' },
+    { id: 'liqueur', label: 'Liqueur' },
+    { id: 'juice', label: 'Juice' },
+    { id: 'soda', label: 'Soda' },
+    { id: 'water', label: 'Water' },
+    { id: 'energy', label: 'Energy Drink' },
+    { id: 'cigar', label: 'Cigar' },
+    { id: 'accessory', label: 'Accessory' },
+    // NEW CATEGORIES - plain text, NO EMOJIS
+    { id: 'cider', label: 'Cider' },
+    { id: 'rtd', label: 'RTD' },
+    { id: 'sparkling-wine', label: 'Sparkling Wine' },
+    { id: 'vermouth', label: 'Vermouth' }
   ];
+  
+  dropdownCats.forEach(function(cat) {
+    var option = document.createElement('option');
+    option.value = cat.id;
+    option.textContent = cat.label;
+    select.appendChild(option);
+  });
+};
 
-  window.renderCategories = function() {
-    var container = document.getElementById('categoryGrid');
-    if (!container) return;
-    container.innerHTML = categories.map(function(cat) {
-      return '<a href="shop.html?cat=' + cat.cat + '" class="cat-card"><img class="cat-img" src="' + cat.image + '" alt="' + cat.name + '" loading="lazy"><span>' + cat.name + '</span></a>';
-    }).join('');
-  };
-
-  window.populateCategoryDropdown = function(selectId) {
-    var select = document.getElementById(selectId);
-    if (!select) return;
-    var dropdownCats = [
-      { id: 'whisky', label: 'Whisky' }, { id: 'wine', label: 'Wine' },
-      { id: 'vodka', label: 'Vodka' }, { id: 'gin', label: 'Gin' },
-      { id: 'cognac', label: 'Cognac' }, { id: 'cream', label: 'Creams' },
-      { id: 'beer', label: 'Beer' }, { id: 'brandy', label: 'Brandy' },
-      { id: 'bourbon', label: 'Bourbon' }, { id: 'rum', label: 'Rum' },
-      { id: 'spirits', label: 'Spirits' }, { id: 'liqueur', label: 'Liqueur' },
-      { id: 'juice', label: 'Juice' }, { id: 'soda', label: 'Soda' },
-      { id: 'water', label: 'Water' }, { id: 'energy', label: 'Energy Drink' },
-      { id: 'cigar', label: 'Cigar' }, { id: 'accessory', label: 'Accessory' }
-    ];
-    dropdownCats.forEach(function(cat) {
-      var option = document.createElement('option');
-      option.value = cat.id;
-      option.textContent = cat.label;
-      select.appendChild(option);
-    });
-  };
-
-  var allProductsCache = [];
+var allProductsCache = [];
 
   // ============================================================
   // USER GREETING ON INDEX PAGE
@@ -1887,32 +1932,64 @@ if (document.getElementById('catChips')) {
     container.innerHTML = skeletons;
   }
 
-        // ===== GET DEFAULT CATEGORIES =====
-  function getDefaultCategories() {
-    return [
-      { name: 'All', cat: 'all' },
-      { name: 'Whisky', cat: 'whisky' },
-      { name: 'Wine', cat: 'wine' },
-      { name: 'Vodka', cat: 'vodka' },
-      { name: 'Gin', cat: 'gin' },
-      { name: 'Cognac', cat: 'cognac' },
-      { name: 'Creams', cat: 'cream' },
-      { name: 'Beer', cat: 'beer' },
-      { name: 'Brandy', cat: 'brandy' },
-      { name: 'Bourbon', cat: 'bourbon' },
-      { name: 'Rum', cat: 'rum' },
-      { name: 'Spirits', cat: 'spirits' },
-      { name: 'Liqueur', cat: 'liqueur' },
-      { name: 'Juice', cat: 'juice' },
-      { name: 'Soda', cat: 'soda' },
-      { name: 'Water', cat: 'water' },
-      { name: 'Energy', cat: 'energy' },
-      { name: 'Cigar', cat: 'cigar' },
-      { name: 'Accessory', cat: 'accessory' }
-    ];
-  }
-
+        // ===== GET DEFAULT CATEGORIES - ALL 22 =====
+function getDefaultCategories() {
+  return [
+    { name: 'All', cat: 'all' },
+    // ===== MAIN CATEGORIES =====
+    { name: 'Whisky', cat: 'whisky' },
+    { name: 'Wine', cat: 'wine' },
+    { name: 'Vodka', cat: 'vodka' },
+    { name: 'Gin', cat: 'gin' },
+    { name: 'Cognac', cat: 'cognac' },
+    { name: 'Creams', cat: 'cream' },
+    { name: 'Beer', cat: 'beer' },
+    { name: 'Brandy', cat: 'brandy' },
+    { name: 'Bourbon', cat: 'bourbon' },
+    { name: 'Rum', cat: 'rum' },
+    { name: 'Spirits', cat: 'spirits' },
+    { name: 'Liqueur', cat: 'liqueur' },
+    { name: 'Juice', cat: 'juice' },
+    { name: 'Soda', cat: 'soda' },
+    { name: 'Water', cat: 'water' },
+    { name: 'Energy', cat: 'energy' },
+    { name: 'Cigar', cat: 'cigar' },
+    { name: 'Accessory', cat: 'accessory' },
+    // ===== NEW CATEGORIES =====
+    { name: 'Cider', cat: 'cider' },
+    { name: 'RTD', cat: 'rtd' },
+    { name: 'Sparkling Wine', cat: 'sparkling-wine' },
+    { name: 'Vermouth', cat: 'vermouth' }
+  ];
+}
   
+// ===== POPULATE CATEGORY DROPDOWN - ALL 22 =====
+window.populateCategoryDropdown = function(selectId) {
+  var select = document.getElementById(selectId);
+  if (!select) return;
+  
+  // Clear existing options
+  select.innerHTML = '';
+  
+  // Add "All" option
+  var allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent = 'All Categories';
+  select.appendChild(allOption);
+  
+  // Get categories (use cached or default)
+  var cats = categoriesShop.length > 0 ? categoriesShop : getDefaultCategories();
+  
+  // Add each category (skip "All" since we already added it)
+  cats.forEach(function(cat) {
+    if (cat.cat === 'all') return;
+    var option = document.createElement('option');
+    option.value = cat.cat;
+    option.textContent = cat.name;
+    select.appendChild(option);
+  });
+};
+
   // ===== RENDER FEATURED SECTIONS - SAFE =====
   function renderFeaturedSections() {
     var selectedCategory = currentFilters.category;
@@ -2045,48 +2122,48 @@ if (document.getElementById('catChips')) {
     wrap.innerHTML = pills.join('');
   }
 
-        // ===== CATEGORY CHIPS =====
-  window.renderCatChips = function() {
-    var container = document.getElementById('catChips');
-    if (!container) return;
-    
-    // If categories not loaded yet, use cached or default
-    if (!categoriesShop || categoriesShop.length === 0) {
-      var cached = localStorage.getItem('liquorbelle_categories');
-      if (cached) {
-        try {
-          categoriesShop = JSON.parse(cached);
-        } catch(e) {}
-      }
-      if (!categoriesShop || categoriesShop.length === 0) {
-        categoriesShop = getDefaultCategories();
-      }
+        // ===== CATEGORY CHIPS - ALL 22 =====
+window.renderCatChips = function() {
+  var container = document.getElementById('catChips');
+  if (!container) return;
+  
+  // If categories not loaded yet, use cached or default
+  if (!categoriesShop || categoriesShop.length === 0) {
+    var cached = localStorage.getItem('liquorbelle_categories');
+    if (cached) {
+      try {
+        categoriesShop = JSON.parse(cached);
+      } catch(e) {}
     }
-    
-    container.innerHTML = categoriesShop.map(function(cat) {
-      var active = currentFilters.category === cat.cat ? 'active' : '';
-      return '<button class="cat-chip ' + active + '" data-cat="' + cat.cat + '" onclick="selectCategory(\'' + cat.cat + '\')">' + cat.name + '</button>';
-    }).join('');
-  };
+    if (!categoriesShop || categoriesShop.length === 0) {
+      categoriesShop = getDefaultCategories();
+    }
+  }
+  
+  container.innerHTML = categoriesShop.map(function(cat) {
+    var active = currentFilters.category === cat.cat ? 'active' : '';
+    return '<button class="cat-chip ' + active + '" data-cat="' + cat.cat + '" onclick="selectCategory(\'' + cat.cat + '\')">' + cat.name + '</button>';
+  }).join('');
+};
 
-  window.selectCategory = function(cat) {
-    currentFilters.category = cat;
-    currentCategory = cat;  // <-- ADD THIS LINE
-    currentPage = 1;
-    var url = new URL(window.location);
-    if (cat === 'all') { url.searchParams.delete('cat'); } else { url.searchParams.set('cat', cat); }
-    window.history.replaceState({}, '', url);
-    renderCatChips();
-    
-    // Reset view to 'all' when switching category
-    currentProductView = 'all';
-    document.querySelectorAll('.filter-tab').forEach(function(tab) {
-      tab.classList.toggle('active', tab.dataset.view === 'all');
-    });
-    
-    applyFiltersShop();
-    document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+window.selectCategory = function(cat) {
+  currentFilters.category = cat;
+  currentCategory = cat;
+  currentPage = 1;
+  var url = new URL(window.location);
+  if (cat === 'all') { url.searchParams.delete('cat'); } else { url.searchParams.set('cat', cat); }
+  window.history.replaceState({}, '', url);
+  renderCatChips();
+  
+  // Reset view to 'all' when switching category
+  currentProductView = 'all';
+  document.querySelectorAll('.filter-tab').forEach(function(tab) {
+    tab.classList.toggle('active', tab.dataset.view === 'all');
+  });
+  
+  applyFiltersShop();
+  document.querySelector('.shop-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
   // ===== PRODUCT VIEW SWITCHER =====
   window.switchProductView = function(view) {
