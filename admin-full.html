@@ -352,6 +352,27 @@ textarea { resize: vertical; }
 .toggle-switch input:focus + .toggle-slider {
   box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
 }
+
+/* ===== CATEGORY MANAGEMENT FIX ===== */
+#settingsTab .btn-green {
+  background: var(--green) !important;
+  color: white !important;
+  padding: 10px 24px !important;
+  border: none !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: var(--transition) !important;
+  white-space: nowrap !important;
+}
+
+#settingsTab .btn-green:hover {
+  background: var(--green-light) !important;
+  box-shadow: 0 4px 16px rgba(26,107,53,0.3) !important;
+}
 </style>
 </head>
 <body>
@@ -826,33 +847,35 @@ textarea { resize: vertical; }
   </div>
 
   <!-- Manage Categories -->
-  <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
-    <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
-      <i class="ph ph-tag" style="color:var(--gold);font-size:20px;"></i> Manage Categories
-      <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Add new product categories</span>
-    </div>
-    <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
-      <i class="ph ph-info" style="color:var(--gold);"></i> Add new categories to organize your products. Category keys must be lowercase with no spaces.
-    </div>
-    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;">
-      <div class="form-group">
-        <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);">Category Name</label>
-        <input type="text" id="newCategoryName" placeholder="e.g. Champagne, Port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-      </div>
-      <div class="form-group">
-        <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);">Category Key (slug)</label>
-        <input type="text" id="newCategoryKey" placeholder="e.g. champagne, port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-        <span class="form-hint" style="font-size:10px;color:var(--muted);margin-top:4px;">Lowercase, no spaces</span>
-      </div>
-      <div class="form-group" style="flex-direction:row;align-items:flex-end;gap:8px;padding-bottom:2px;">
-        <button class="btn btn-green" onclick="addCategory()" style="padding:10px 24px;background:var(--btn-green);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
-          <i class="ph ph-plus"></i> Add Category
-        </button>
-      </div>
-    </div>
-    <div id="categoryList" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;"></div>
-    <div id="categoryMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
+<div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
+  <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
+    <i class="ph ph-tag" style="color:var(--gold);font-size:20px;"></i> Manage Categories
+    <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Add new product categories</span>
   </div>
+  <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
+    <i class="ph ph-info" style="color:var(--gold);"></i> Add new categories to organize your products. Category keys must be lowercase with no spaces.
+  </div>
+  
+  <!-- UPDATED: Better layout for category form -->
+  <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;margin-bottom:16px;">
+    <div>
+      <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px;">Category Name</label>
+      <input type="text" id="newCategoryName" placeholder="e.g. Champagne, Port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+    </div>
+    <div>
+      <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px;">Category Key (slug)</label>
+      <input type="text" id="newCategoryKey" placeholder="e.g. champagne, port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+      <span style="font-size:10px;color:var(--muted);margin-top:4px;display:block;">Lowercase, no spaces</span>
+    </div>
+    <div style="padding-bottom:2px;">
+      <button class="btn btn-green" onclick="addCategory()" style="padding:10px 24px;background:var(--btn-green);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);white-space:nowrap;">
+        <i class="ph ph-plus"></i> Add Category
+      </button>
+    </div>
+  </div>
+  
+  <div id="categoryList" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <div id="categoryMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
 </div>
 
 <!-- ===== EDIT MODAL ===== -->
