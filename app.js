@@ -1228,7 +1228,7 @@ if (document.getElementById('categoryGrid')) {
       qvShowProduct(product);
       return;
     }
-    
+
     var overlay = document.getElementById('quickviewOverlay');
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -2538,7 +2538,7 @@ if (document.getElementById('catChips')) {
   updateCartUI();
 }
 // ============================================================
-// PRODUCT-DETAILS.HTML
+// PRODUCT-DETAILS.HTML - COMPLETE JAVASCRIPT
 // ============================================================
 if (document.getElementById('productImage')) {
   
@@ -2566,6 +2566,31 @@ if (document.getElementById('productImage')) {
       localStorage.setItem('liquorbelle_product_' + productId, JSON.stringify({ product: product, timestamp: Date.now() }));
     } catch (e) {}
   }
+
+  // ===== RENDER GOLDEN STARS - Using Phosphor =====
+function renderStars(rating) {
+  var fullStars = Math.floor(rating);
+  var hasHalfStar = rating % 1 >= 0.5;
+  var emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  var html = '';
+  
+  // Full stars
+  for (var i = 0; i < fullStars; i++) {
+    html += '<i class="ph-fill ph-star" style="color:#F59E0B;font-size:18px;"></i>';
+  }
+  
+  // Half star
+  if (hasHalfStar) {
+    html += '<i class="ph ph-star-half" style="color:#F59E0B;font-size:18px;"></i>';
+  }
+  
+  // Empty stars
+  for (var i = 0; i < emptyStars; i++) {
+    html += '<i class="ph ph-star" style="color:#d1d5db;font-size:18px;opacity:0.5;"></i>';
+  }
+  
+  return html;
+}
 
   window.loadProduct = function() {
     if (!productId) { toast('Product not found'); return; }
@@ -2623,13 +2648,18 @@ if (document.getElementById('productImage')) {
     document.getElementById('productName').innerText = name;
     document.getElementById('productCategory').innerText = category;
 
+    // ===== DESCRIPTION =====
     var descEl = document.getElementById('productDescription');
-    var descText = currentProduct.description || '';
-    if (descText.trim()) {
-      descEl.innerText = descText;
-      descEl.classList.remove('hidden');
+    var descText = document.getElementById('descText');
+
+    if (currentProduct.description && currentProduct.description.trim().length > 0) {
+      descText.textContent = currentProduct.description;
+      descText.className = 'desc-text';
+      descEl.style.display = 'block';
     } else {
-      descEl.classList.add('hidden');
+      descText.textContent = 'No description available for this product.';
+      descText.className = 'desc-text desc-empty';
+      descEl.style.display = 'block';
     }
 
     var imgData = getResponsiveImage(currentProduct.image);
