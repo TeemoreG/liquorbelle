@@ -188,8 +188,8 @@ function getCurrentUser() {
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
-  if (window.location.pathname.indexOf('account.html') === -1) {
-    window.location.href = 'account.html';
+  if (window.location.pathname.indexOf('accounts.html') === -1) {
+    window.location.href = 'accounts.html';
   } else {
     window.location.reload();
   }
@@ -627,7 +627,7 @@ function handleAccountClick() {
   if (user && user.name) {
     window.location.href = 'profile.html';
   } else {
-    window.location.href = 'account.html';
+    window.location.href = 'accounts.html';
   }
 }
 
@@ -646,7 +646,7 @@ function updateBottomNav() {
     } else {
       accountLabel.textContent = 'Account';
       accountBtn.onclick = function() {
-        window.location.href = 'account.html';
+        window.location.href = 'accounts.html';
       };
     }
   }
@@ -677,7 +677,7 @@ function updateMobileMenuAuth() {
     `;
   } else {
     authSection.innerHTML = `
-      <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+      <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
         <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
       </a>
     `;
@@ -708,7 +708,7 @@ function updateUserBadge() {
     if (dotEl) { dotEl.className = 'user-dot guest'; }
     if (menuAuth) {
       menuAuth.innerHTML = `
-        <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
           <i class="ph ph-user-circle"></i> Login / Register
         </a>
       `;
