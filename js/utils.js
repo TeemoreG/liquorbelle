@@ -13,6 +13,12 @@ const CACHE_KEY = 'liquorbelle_products_cache';
 const CACHE_DURATION = 300000;
 
 // ============================================================
+// CART + WISHLIST STATE
+// ============================================================
+var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+var wishlist = JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]');
+
+// ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
 function escapeHtml(str) {
@@ -22,15 +28,62 @@ function escapeHtml(str) {
   });
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email);
+}
+
+function validatePhone(phone) {
+  var cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
+  if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
+  return false;
+}
+
+function formatPhoneForAPI(phone) {
+  var cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) {
+    return '254' + cleaned.slice(1);
+  }
+  if (cleaned.length === 12 && cleaned.startsWith('254')) {
+    return cleaned;
+  }
+  return cleaned;
+}
+
+function formatPhoneForDisplay(phone) {
+  var cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 12 && cleaned.startsWith('254')) {
+    return '0' + cleaned.slice(3);
+  }
+  return phone;
+}
+
+// ===== TOAST / SNACK (works on both toast and snack elements) =====
 function toast(msg, isError) {
+  // Try toast element first (used on most pages)
   var t = document.getElementById('toast');
-  if (!t) return;
-  t.innerText = msg;
-  t.className = 'toast';
-  if (isError) t.classList.add('error');
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.style.opacity = '0'; }, 3000);
+  if (t) {
+    t.innerText = msg;
+    t.className = 'toast';
+    if (isError) t.classList.add('error');
+    t.style.opacity = '1';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() { t.style.opacity = '0'; }, 3000);
+    return;
+  }
+  
+  // Fallback to snack element (used on checkout page)
+  var s = document.getElementById('snack');
+  if (s) {
+    s.textContent = msg;
+    s.className = 'snack show' + (isError ? ' error' : '');
+    clearTimeout(s._timeout);
+    s._timeout = setTimeout(function() { s.classList.remove('show'); }, 3000);
+    return;
+  }
+  
+  // Ultimate fallback - alert
+  alert(msg);
 }
 
 function getQueryParam(name) {
@@ -270,14 +323,14 @@ function validateEmailInput(input) {
   const errorEl = document.getElementById('regEmailError');
   const email = input.value.trim();
   
-  if (email.length > 0 && !/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+  if (email.length > 0 && !isValidEmail(email)) {
     input.classList.add('error');
     input.classList.remove('valid');
     if (errorEl) {
       errorEl.textContent = 'Please enter a valid email address';
       errorEl.classList.add('show');
     }
-  } else if (email.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+  } else if (email.length > 0 && isValidEmail(email)) {
     input.classList.remove('error');
     input.classList.add('valid');
     if (errorEl) {
@@ -298,14 +351,14 @@ function validateLoginEmail(input) {
   const errorEl = document.getElementById('loginEmailError');
   const email = input.value.trim();
   
-  if (email.length > 0 && !/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+  if (email.length > 0 && !isValidEmail(email)) {
     input.classList.add('error');
     input.classList.remove('valid');
     if (errorEl) {
       errorEl.textContent = 'Please enter a valid email address';
       errorEl.classList.add('show');
     }
-  } else if (email.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+  } else if (email.length > 0 && isValidEmail(email)) {
     input.classList.remove('error');
     input.classList.add('valid');
     if (errorEl) {
@@ -331,7 +384,7 @@ function updateSubmitButtons() {
     const loginPin = getPinValue ? getPinValue('login') : '';
     const loginBtn = document.getElementById('loginSubmitBtn');
     if (loginBtn && loginEmail) {
-      loginBtn.disabled = !(loginEmail.value.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(loginEmail.value) && loginPin.length === 4);
+      loginBtn.disabled = !(loginEmail.value.length > 0 && isValidEmail(loginEmail.value) && loginPin.length === 4);
     }
   }
   
@@ -346,12 +399,345 @@ function updateSubmitButtons() {
     if (regBtn && regName && regPhone && regEmail) {
       const nameValid = regName.value.length >= 2;
       const phoneValid = regPhone.value.replace(/\D/g, '').length >= 10;
-      const emailValid = regEmail.value.length > 0 && /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(regEmail.value);
+      const emailValid = regEmail.value.length > 0 && isValidEmail(regEmail.value);
       const pinValid = regPin.length === 4;
       const otpValid = regOtp && regOtp.value.length === 6;
       regBtn.disabled = !(nameValid && phoneValid && emailValid && pinValid && otpValid);
     }
   }
+}
+
+// ============================================================
+// CART FUNCTIONS
+// ============================================================
+function getCart() {
+  try {
+    var stored = localStorage.getItem(CART_KEY);
+    if (!stored) return [];
+    var data = JSON.parse(stored);
+    if (Array.isArray(data)) return data;
+    return Object.values(data);
+  } catch(e) {
+    return [];
+  }
+}
+
+function getCartTotal(cart) {
+  var subtotal = 0;
+  for (var i = 0; i < cart.length; i++) {
+    var item = cart[i];
+    var price = parseFloat(item.price) || 0;
+    var qty = parseInt(item.quantity) || parseInt(item.qty) || 1;
+    subtotal += price * qty;
+  }
+  return subtotal;
+}
+
+function saveCart(cartArray) {
+  try {
+    var cartObj = {};
+    for (var i = 0; i < cartArray.length; i++) {
+      var item = cartArray[i];
+      var id = item.id || item._id || 'item_' + i;
+      cartObj[id] = {
+        id: id,
+        name: item.name || 'Product',
+        price: parseFloat(item.price) || 0,
+        qty: parseInt(item.quantity) || parseInt(item.qty) || 1,
+        capacity: item.capacity || item.size || '',
+        size: item.size || item.capacity || ''
+      };
+    }
+    localStorage.setItem(CART_KEY, JSON.stringify(cartObj));
+  } catch(e) {
+    console.error('Error saving cart:', e);
+  }
+}
+
+function updateCartBadges() {
+  var cart = getCart();
+  var count = 0;
+  for (var i = 0; i < cart.length; i++) {
+    var qty = parseInt(cart[i].quantity) || parseInt(cart[i].qty) || 1;
+    count += qty;
+  }
+  var headerBadge = document.getElementById('headerCartCount');
+  var navBadge = document.getElementById('navCartCount');
+  var drawerBadge = document.getElementById('cartBadgeCount');
+  if (headerBadge) headerBadge.textContent = count;
+  if (navBadge) navBadge.textContent = count;
+  if (drawerBadge) drawerBadge.textContent = count;
+}
+
+function updateCartUI() {
+  var cart = getCart();
+  var count = 0;
+  for (var i = 0; i < cart.length; i++) {
+    var qty = parseInt(cart[i].quantity) || parseInt(cart[i].qty) || 1;
+    count += qty;
+  }
+
+  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
+    if (el) el.innerText = count;
+  });
+
+  var container = document.getElementById('cartItemsList');
+  var footer = document.getElementById('cartFooter');
+  if (!container || !footer) return;
+
+  if (!cart.length) {
+    container.innerHTML =
+      '<div class="cart-container">' +
+      '<div class="cart-icon-wrapper">' +
+      '<svg class="cart-svg" viewBox="0 0 24 24" fill="none"><path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.5" fill="#111111"/><circle cx="17" cy="20" r="1.5" fill="#111111"/></svg>' +
+      '<span class="cart-badge">0</span>' +
+      '</div>' +
+      '<h2 class="cart-message">Your cart is empty!</h2>' +
+      '<a href="shop.html" class="shop-button">Start Shopping</a>' +
+      '</div>';
+    footer.style.display = 'none';
+    return;
+  }
+
+  footer.style.display = 'block';
+  var subtotal = 0;
+  for (var i = 0; i < cart.length; i++) {
+    var item = cart[i];
+    var price = parseFloat(item.price) || 0;
+    var qty = parseInt(item.quantity) || parseInt(item.qty) || 1;
+    subtotal += price * qty;
+  }
+
+  var totalEl = document.getElementById('cartTotalAmount');
+  if (totalEl) totalEl.innerHTML = 'KES ' + subtotal.toLocaleString();
+
+  container.innerHTML = cart.map(function(item) {
+    var id = item.id || item._id;
+    var name = item.name || 'Product';
+    var qty = parseInt(item.quantity) || parseInt(item.qty) || 1;
+    var price = parseFloat(item.price) || 0;
+    var itemTotal = price * qty;
+    return '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(name) +
+      ' <span style="color:var(--primary);">x' + qty + '</span></div>' +
+      '<div class="cart-item-price">KES ' + itemTotal.toLocaleString() +
+      '</div><div class="cart-qty"><button onclick="updateQty(\'' + id + '\',-1)">−</button>' +
+      '<span>' + qty + '</span><button onclick="updateQty(\'' + id + '\',1)">+</button>' +
+      '<button onclick="removeCartItem(\'' + id + '\')" class="cart-remove-btn">Remove</button></div></div></div>';
+  }).join('');
+}
+
+function addToCart(id, name, price, capacity) {
+  if (cart[id]) {
+    cart[id].qty += 1;
+  } else {
+    cart[id] = { id: id, name: name, price: price, qty: 1, capacity: capacity || '' };
+  }
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartUI();
+  toast(name + ' added');
+}
+
+function removeCartItem(id) {
+  if (cart[id]) {
+    delete cart[id];
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    updateCartUI();
+    toast('Item removed');
+  }
+}
+
+function updateQty(id, delta) {
+  if (cart[id]) {
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    updateCartUI();
+  }
+}
+
+function openCartDrawer() {
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+}
+
+function closeCartDrawer() {
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+}
+
+// ============================================================
+// WISHLIST FUNCTIONS
+// ============================================================
+function toggleWishlist(id, name, price, image, capacity, btnElement) {
+  var idx = wishlist.findIndex(function(w) { return w.id == id; });
+  if (idx > -1) {
+    wishlist.splice(idx, 1);
+    toast('Removed from wishlist');
+    if (btnElement) {
+      btnElement.classList.remove('wishlisted');
+      var icon = btnElement.querySelector('i');
+      if (icon) icon.className = 'ph ph-heart';
+    }
+  } else {
+    wishlist.push({ id: id, name: name, price: price, image: image, capacity: capacity });
+    toast(name + ' added to wishlist');
+    if (btnElement) {
+      btnElement.classList.add('wishlisted');
+      var icon = btnElement.querySelector('i');
+      if (icon) icon.className = 'ph-fill ph-heart';
+    }
+  }
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+}
+
+function openWishlistModal() {
+  var container = document.getElementById('wishlistItems');
+  if (!container) return;
+  if (!wishlist.length) {
+    container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart" style="font-size:40px;display:block;margin-bottom:12px;"></i>No items in your wishlist yet.</div>';
+  } else {
+    container.innerHTML = wishlist.map(function(w) {
+      var imgSrc = w.image ? optimizeImage(w.image, 100) : FALLBACK_IMG;
+      return '<div class="wishlist-item"><img src="' + imgSrc + '" onerror="this.src=\'' + FALLBACK_IMG + '\'" loading="lazy">' +
+        '<div class="wishlist-item-info"><div class="wishlist-item-name">' + escapeHtml(w.name) +
+        '</div><div class="wishlist-item-price">KES ' + w.price.toLocaleString() +
+        '</div></div><button class="wishlist-atc" onclick="addToCart(\'' + w.id + '\',\'' +
+        escapeHtml(w.name).replace(/'/g, "\\'") + '\',' + w.price + ',\'' + (w.capacity || '') +
+        '\');closeWishlistModal();">Add</button></div>';
+    }).join('');
+  }
+  var modal = document.getElementById('wishlistModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeWishlistModal() {
+  var modal = document.getElementById('wishlistModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// ============================================================
+// ACCOUNT & NAVIGATION HELPERS
+// ============================================================
+function handleAccountClick() {
+  var user = getCurrentUser();
+  if (user && user.name) {
+    window.location.href = 'profile.html';
+  } else {
+    window.location.href = 'account.html';
+  }
+}
+
+function updateBottomNav() {
+  var user = getCurrentUser();
+  var accountBtn = document.getElementById('bottomNavAccount');
+  var accountLabel = document.getElementById('bottomNavAccountLabel');
+  var profileLink = document.getElementById('mobileMenuProfile');
+  
+  if (accountBtn && accountLabel) {
+    if (user && user.name) {
+      accountLabel.textContent = 'Profile';
+      accountBtn.onclick = function() {
+        window.location.href = 'profile.html';
+      };
+    } else {
+      accountLabel.textContent = 'Account';
+      accountBtn.onclick = function() {
+        window.location.href = 'account.html';
+      };
+    }
+  }
+  
+  if (profileLink) {
+    if (user && user.name) {
+      profileLink.style.display = 'flex';
+    } else {
+      profileLink.style.display = 'none';
+    }
+  }
+}
+
+function updateMobileMenuAuth() {
+  var user = getCurrentUser();
+  var authSection = document.getElementById('mobileMenuAuth');
+  if (!authSection) return;
+  
+  if (user && user.name) {
+    authSection.innerHTML = `
+      <div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div>
+        <button onclick="logoutUser();closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;">
+          <i class="ph ph-sign-out"></i> Logout
+        </button>
+      </div>
+    `;
+  } else {
+    authSection.innerHTML = `
+      <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+        <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
+      </a>
+    `;
+  }
+}
+
+function updateUserBadge() {
+  var user = getCurrentUser();
+  var dotEl = document.getElementById('userDot');
+  var menuAuth = document.getElementById('mobileMenuAuth');
+
+  if (user && user.name) {
+    if (dotEl) { dotEl.className = 'user-dot'; }
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <div style="font-weight:700;font-size:.85rem;color:var(--primary);">
+            <i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}
+          </div>
+          <div style="font-size:.65rem;color:var(--muted);">${escapeHtml(user.email || 'No email')}</div>
+          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;">
+            <i class="ph ph-sign-out"></i> Logout
+          </button>
+        </div>
+      `;
+    }
+  } else {
+    if (dotEl) { dotEl.className = 'user-dot guest'; }
+    if (menuAuth) {
+      menuAuth.innerHTML = `
+        <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+          <i class="ph ph-user-circle"></i> Login / Register
+        </a>
+      `;
+    }
+  }
+}
+
+function openMobileMenu() {
+  var overlay = document.getElementById('mobileMenuOverlay');
+  var menu = document.getElementById('mobileMenu');
+  if (overlay) overlay.classList.add('open');
+  if (menu) menu.classList.add('open');
+}
+
+function closeMobileMenu() {
+  var overlay = document.getElementById('mobileMenuOverlay');
+  var menu = document.getElementById('mobileMenu');
+  if (overlay) overlay.classList.remove('open');
+  if (menu) menu.classList.remove('open');
+}
+
+function handleHeaderSearch(e) {
+  e.preventDefault();
+  var q = document.getElementById('headerSearchInput');
+  if (q) {
+    var val = q.value.trim();
+    if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
+  }
+  return false;
 }
 
 // ============================================================

@@ -33,8 +33,8 @@
   --text:#1A1A1A;
   --muted:#7A7368;
   --gold:#B8860B;
-  --gold-light:#d4a017;
-  --gold-bg:#fdf6e3;
+  --gold-light:#d4a017;  /* ADD THIS */
+  --gold-bg:#fdf6e3;      /* ADD THIS */
   --radius:24px;
   --radius-sm:14px;
   --radius-xs:10px;
@@ -47,6 +47,14 @@
   --bottom-nav-height:70px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
+
+/* Add gold utility classes */
+.gold{color:var(--gold);}
+.gold-text{color:var(--gold);}
+.gold-border{border-color:var(--gold);}
+.gold-bg{background:var(--gold-bg);}
+.gold-gradient{background:linear-gradient(135deg, var(--gold), var(--gold-light));}
+
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}

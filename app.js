@@ -785,7 +785,7 @@ if (document.getElementById('categoryGrid')) {
     }
   })();
 
-  /// ===== CATEGORIES - ALL 22 =====
+  // ===== CATEGORIES - ALL 20 =====
 var categories = [
   { name: "All", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
   // ===== WHISKY =====
@@ -824,10 +824,9 @@ var categories = [
   { name: "Cigar", cat: "cigar", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319403/Scene2_fgsgg1.webp" },
   // ===== ACCESSORY =====
   { name: "Accessory", cat: "accessory", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319473/51PDVK6sQzL._AC_UF1000_1000_QL80__cn0azd.jpg" },
-  // ===== NEW CATEGORIES =====
+  // ===== CIDER =====
   { name: "Cider", cat: "cider", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
-  { name: "RTD", cat: "rtd", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
-  { name: "Sparkling Wine", cat: "sparkling-wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+  // ===== VERMOUTH =====
   { name: "Vermouth", cat: "vermouth", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" }
 ];
 
@@ -870,10 +869,8 @@ window.populateCategoryDropdown = function(selectId) {
     { id: 'energy', label: 'Energy Drink' },
     { id: 'cigar', label: 'Cigar' },
     { id: 'accessory', label: 'Accessory' },
-    // NEW CATEGORIES - plain text, NO EMOJIS
+    // KEPT CATEGORIES
     { id: 'cider', label: 'Cider' },
-    { id: 'rtd', label: 'RTD' },
-    { id: 'sparkling-wine', label: 'Sparkling Wine' },
     { id: 'vermouth', label: 'Vermouth' }
   ];
   
@@ -1932,7 +1929,7 @@ if (document.getElementById('catChips')) {
     container.innerHTML = skeletons;
   }
 
-        // ===== GET DEFAULT CATEGORIES - ALL 22 =====
+       // ===== GET DEFAULT CATEGORIES - ALL 20 =====
 function getDefaultCategories() {
   return [
     { name: 'All', cat: 'all' },
@@ -1955,15 +1952,13 @@ function getDefaultCategories() {
     { name: 'Energy', cat: 'energy' },
     { name: 'Cigar', cat: 'cigar' },
     { name: 'Accessory', cat: 'accessory' },
-    // ===== NEW CATEGORIES =====
+    // ===== KEPT CATEGORIES =====
     { name: 'Cider', cat: 'cider' },
-    { name: 'RTD', cat: 'rtd' },
-    { name: 'Sparkling Wine', cat: 'sparkling-wine' },
     { name: 'Vermouth', cat: 'vermouth' }
   ];
 }
   
-// ===== POPULATE CATEGORY DROPDOWN - ALL 22 =====
+// ===== POPULATE CATEGORY DROPDOWN - ALL 20 =====
 window.populateCategoryDropdown = function(selectId) {
   var select = document.getElementById(selectId);
   if (!select) return;
@@ -2087,42 +2082,54 @@ window.populateCategoryDropdown = function(selectId) {
   }
 
     // ===== RENDER ACTIVE FILTER PILLS =====
-  function renderActiveFilterPills() {
-    var wrap = document.getElementById('activeFilters');
-    if (!wrap) return;
-    var pills = [];
-    
-    if (currentFilters.category !== 'all') {
-      var found = categoriesShop.find(function(c) { return c.cat === currentFilters.category; });
-      if (found) {
-        pills.push('<div class="filter-pill">' + found.name + '<button onclick="selectCategory(\'all\')"><i class="ph ph-x"></i></button></div>');
-      } else {
-        // Invalid category - reset to all
-        currentFilters.category = 'all';
-      }
+function renderActiveFilterPills() {
+  var wrap = document.getElementById('activeFilters');
+  if (!wrap) return;
+  var pills = [];
+  
+  // Ensure categoriesShop has data
+  if (!categoriesShop || categoriesShop.length === 0) {
+    var cached = localStorage.getItem('liquorbelle_categories');
+    if (cached) {
+      try {
+        categoriesShop = JSON.parse(cached);
+      } catch(e) {}
     }
-    
-    if (currentFilters.search) {
-      pills.push('<div class="filter-pill">"' + escapeHtml(currentFilters.search) + '"<button onclick="clearSearchPill()"><i class="ph ph-x"></i></button></div>');
+    if (!categoriesShop || categoriesShop.length === 0) {
+      categoriesShop = getDefaultCategories();
     }
-    
-    if (currentFilters.priceMin != null || currentFilters.priceMax != null) {
-      var label = 'KES ' + (currentFilters.priceMin ?? 0) + ' – ' + (currentFilters.priceMax ?? '∞');
-      pills.push('<div class="filter-pill">' + label + '<button onclick="clearPricePill()"><i class="ph ph-x"></i></button></div>');
-    }
-    
-    if (currentFilters.onSale) {
-      pills.push('<div class="filter-pill">On Sale<button onclick="clearSalePill()"><i class="ph ph-x"></i></button></div>');
-    }
-    
-    if (currentFilters.sizes && currentFilters.sizes.length > 0) {
-      pills.push('<div class="filter-pill">' + currentFilters.sizes.join(', ') + '<button onclick="clearSizePill()"><i class="ph ph-x"></i></button></div>');
-    }
-    
-    wrap.innerHTML = pills.join('');
   }
-
-        // ===== CATEGORY CHIPS - ALL 22 =====
+  
+  if (currentFilters.category !== 'all') {
+    var found = categoriesShop.find(function(c) { return c.cat === currentFilters.category; });
+    if (found) {
+      pills.push('<div class="filter-pill">' + found.name + '<button onclick="selectCategory(\'all\')"><i class="ph ph-x"></i></button></div>');
+    } else {
+      // Invalid category - reset to all
+      currentFilters.category = 'all';
+    }
+  }
+  
+  if (currentFilters.search) {
+    pills.push('<div class="filter-pill">"' + escapeHtml(currentFilters.search) + '"<button onclick="clearSearchPill()"><i class="ph ph-x"></i></button></div>');
+  }
+  
+  if (currentFilters.priceMin != null || currentFilters.priceMax != null) {
+    var label = 'KES ' + (currentFilters.priceMin ?? 0) + ' – ' + (currentFilters.priceMax ?? '∞');
+    pills.push('<div class="filter-pill">' + label + '<button onclick="clearPricePill()"><i class="ph ph-x"></i></button></div>');
+  }
+  
+  if (currentFilters.onSale) {
+    pills.push('<div class="filter-pill">On Sale<button onclick="clearSalePill()"><i class="ph ph-x"></i></button></div>');
+  }
+  
+  if (currentFilters.sizes && currentFilters.sizes.length > 0) {
+    pills.push('<div class="filter-pill">' + currentFilters.sizes.join(', ') + '<button onclick="clearSizePill()"><i class="ph ph-x"></i></button></div>');
+  }
+  
+  wrap.innerHTML = pills.join('');
+}
+// ===== CATEGORY CHIPS - ALL 20 =====
 window.renderCatChips = function() {
   var container = document.getElementById('catChips');
   if (!container) return;
@@ -2971,513 +2978,6 @@ function renderStars(rating) {
   updateCartUI();
   setInterval(updateCartUI, 3000);
 }
-
-// ============================================================
-// CHECKOUT.HTML — UPDATED WITH POD SUPPORT
-// ============================================================
-if (document.getElementById('customerEmail')) {
-  
-  var deliverySettings = { delivery_fee: 150, free_delivery_threshold: 3000, delivery_enabled: true };
-  var selectedPayment = 'mpesa';
-
-  var areaDeliveryFees = {
-    'dagoretti': 0,
-    'karen': 50,
-    'westlands': 100,
-    'cbd': 80,
-    'upperhill': 70,
-    'kilimani': 60,
-    'lavington': 80,
-    'kileleshwa': 70,
-    'rongai': 120,
-    'ngong': 150,
-    'south b': 100,
-    'langata': 130,
-    'waithaka': 140,
-    'kikuyu': 160,
-    'runda': 180
-  };
-
-  function getDeliveryFee(area) {
-    if (!area) return deliverySettings.delivery_fee;
-    var key = area.trim().toLowerCase();
-    var fee = areaDeliveryFees[key];
-    if (fee !== undefined) return fee;
-    return deliverySettings.delivery_fee;
-  }
-
-  function calculateTotals() {
-    var items = Object.values(cart);
-    var subtotal = 0;
-    for (var i = 0; i < items.length; i++) {
-      subtotal = subtotal + items[i].price * items[i].qty;
-    }
-    var areaInput = document.getElementById('deliveryArea');
-    var area = areaInput ? areaInput.value.trim() : '';
-    var baseDelivery = getDeliveryFee(area);
-    var delivery = 0;
-    var isFreeDelivery = false;
-
-    if (deliverySettings.delivery_enabled) {
-      if (subtotal >= deliverySettings.free_delivery_threshold) {
-        delivery = 0;
-        isFreeDelivery = true;
-      } else {
-        delivery = baseDelivery;
-        if (!area) delivery = deliverySettings.delivery_fee;
-      }
-    }
-    return { subtotal: subtotal, delivery: delivery, total: subtotal + delivery, isFreeDelivery: isFreeDelivery };
-  }
-
-  window.renderCartSummary = function() {
-    var items = Object.values(cart);
-    var container = document.getElementById('cartSummaryItems');
-    if (items.length === 0) {
-      container.innerHTML = '<div class="empty-cart"><i class="ph ph-shopping-bag-open"></i><p>Your cart is empty</p><a href="shop.html" style="color:var(--primary);font-weight:700;">Continue Shopping →</a></div>';
-      document.getElementById('subtotalAmount').innerText = 'KES 0';
-      document.getElementById('deliveryFee').innerText = 'KES 0';
-      document.getElementById('totalAmount').innerText = 'KES 0';
-      document.getElementById('freeDeliveryNote').innerHTML = '';
-      document.getElementById('deliveryProgressContainer').innerHTML = '';
-      return;
-    }
-    var html = '';
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
-      html += '<div class="cart-item-checkout"><span class="item-name">' + escapeHtml(item.name) + ' <small>x' + item.qty + '</small></span><span class="item-price">KES ' + (item.price * item.qty).toLocaleString() + '</span></div>';
-    }
-    container.innerHTML = html;
-
-    var totals = calculateTotals();
-    var subtotal = totals.subtotal;
-    var delivery = totals.delivery;
-    var total = totals.total;
-    var isFree = totals.isFreeDelivery;
-
-    document.getElementById('subtotalAmount').innerText = 'KES ' + subtotal.toLocaleString();
-    var deliveryText = (delivery === 0) ? 'FREE' : 'KES ' + delivery.toLocaleString();
-    document.getElementById('deliveryFee').innerText = deliveryText;
-    document.getElementById('totalAmount').innerText = 'KES ' + total.toLocaleString();
-
-    if (deliverySettings.delivery_enabled && !isFree && subtotal > 0) {
-      var remaining = deliverySettings.free_delivery_threshold - subtotal;
-      document.getElementById('freeDeliveryNote').innerHTML = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
-    } else if (isFree && subtotal > 0) {
-      document.getElementById('freeDeliveryNote').innerHTML = '🎉 FREE Delivery applied!';
-    } else {
-      document.getElementById('freeDeliveryNote').innerHTML = '';
-    }
-
-    var progContainer = document.getElementById('deliveryProgressContainer');
-    if (progContainer) {
-      if (isFree) {
-        progContainer.innerHTML = '<div class="delivery-progress unlocked"><strong>🎉 Free delivery applied!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div></div>';
-      } else {
-        var pct = Math.min((subtotal / deliverySettings.free_delivery_threshold) * 100, 100);
-        var remaining = deliverySettings.free_delivery_threshold - subtotal;
-        if (remaining > 0) {
-          progContainer.innerHTML = '<div class="delivery-progress">Add KES ' + remaining.toLocaleString() + ' more for <strong>FREE delivery</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:' + pct + '%;"></div></div></div>';
-        } else {
-          progContainer.innerHTML = '<div class="delivery-progress unlocked"><strong>🎉 Free delivery unlocked!</strong><div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:100%;"></div></div></div>';
-        }
-      }
-    }
-  };
-
-  function loadDeliverySettings() {
-    fetch(API_BASE + '/api/delivery-settings')
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.success && data.settings) {
-          deliverySettings = data.settings;
-          renderCartSummary();
-        }
-      })
-      .catch(function() {});
-  }
-
-  function getAddressFromCoords(lat, lng) {
-    return fetch(API_BASE + '/api/geocode/reverse', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lat: lat, lng: lng })
-    })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data && data.address) {
-          var addr = data.address;
-          var street = addr.road || addr.pedestrian || addr.footway || '';
-          if (!street) { street = addr.neighbourhood || addr.suburb || addr.city || ''; }
-          var area = addr.suburb || addr.neighbourhood || addr.village || addr.town || addr.city || '';
-          if (!area) { area = addr.county || addr.state || addr.region || ''; }
-          if (!area) area = 'Nairobi';
-          var areaClean = area.replace(/\s*(ward|division|sub-county|constituency|location)\s*/i, '').trim();
-          return { street: street || 'Location found', area: areaClean || 'Nairobi' };
-        }
-        return null;
-      })
-      .catch(function() { return null; });
-  }
-
-  document.getElementById('getLocationBtn')?.addEventListener('click', function() {
-    var statusDiv = document.getElementById('locationStatus');
-    statusDiv.innerHTML = '<span class="spinner"></span> Getting your exact location...';
-    statusDiv.style.color = '#666';
-
-    if (!navigator.geolocation) {
-      statusDiv.innerHTML = '❌ Geolocation not supported';
-      statusDiv.style.color = '#e03131';
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var lat = position.coords.latitude;
-      var lng = position.coords.longitude;
-      statusDiv.innerHTML = '<span class="spinner"></span> Finding your street address...';
-
-      getAddressFromCoords(lat, lng).then(function(result) {
-        if (result) {
-          document.getElementById('street').value = result.street;
-          document.getElementById('deliveryArea').value = result.area;
-          statusDiv.innerHTML = '✅ Location found: ' + result.area;
-          statusDiv.style.color = '#2ecc71';
-          setTimeout(function() { statusDiv.innerHTML = ''; }, 4000);
-          renderCartSummary();
-        } else {
-          statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
-          statusDiv.style.color = '#e03131';
-        }
-      });
-    }, function(error) {
-      var errorMsg = '❌ Location access denied. Please enter address manually.';
-      if (error.code === 1) errorMsg = '❌ Please allow location access to use this feature';
-      else if (error.code === 2) errorMsg = '❌ Location unavailable. Please enter manually.';
-      else if (error.code === 3) errorMsg = '❌ Location request timed out. Please enter manually.';
-      statusDiv.innerHTML = errorMsg;
-      statusDiv.style.color = '#e03131';
-      setTimeout(function() { statusDiv.innerHTML = ''; }, 5000);
-    });
-  });
-
-  function validatePhone(phone) {
-    var cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
-    if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
-    return false;
-  }
-
-  function formatPhoneForAPI(phone) {
-    var cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) {
-      return '254' + cleaned.slice(1);
-    }
-    if (cleaned.length === 12 && cleaned.startsWith('254')) {
-      return cleaned;
-    }
-    return cleaned;
-  }
-
-  function formatPhoneForDisplay(phone) {
-    var cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length === 12 && cleaned.startsWith('254')) {
-      return '0' + cleaned.slice(3);
-    }
-    return phone;
-  }
-
-  function getFullAddress() {
-    var street = document.getElementById('street').value.trim();
-    var building = document.getElementById('building').value.trim();
-    var parts = [];
-    if (building) parts.push(building);
-    if (street) parts.push(street);
-    return parts.join(', ') || 'Address not specified';
-  }
-
-  window.selectPayment = function(method) {
-    selectedPayment = method;
-    var mpesaOption = document.getElementById('mpesaOption');
-    var podOption = document.getElementById('podOption');
-    var mpesaInfo = document.getElementById('mpesaInfo');
-    var podInfo = document.getElementById('podInfo');
-    var hiddenInput = document.getElementById('selectedPaymentMethod');
-    
-    if (mpesaOption) mpesaOption.classList.toggle('selected', method === 'mpesa');
-    if (podOption) podOption.classList.toggle('selected', method === 'pod');
-    if (mpesaInfo) mpesaInfo.style.display = method === 'mpesa' ? 'block' : 'none';
-    if (podInfo) podInfo.style.display = method === 'pod' ? 'block' : 'none';
-    if (hiddenInput) hiddenInput.value = method;
-  };
-
-  window.placeOrder = function() {
-    var items = Object.values(cart);
-    if (items.length === 0) { toast('Your cart is empty'); return; }
-
-    var email = document.getElementById('customerEmail').value.trim();
-    var fullName = document.getElementById('fullName').value.trim();
-    var phone = document.getElementById('phone').value.trim();
-    var street = document.getElementById('street').value.trim();
-    var building = document.getElementById('building').value.trim();
-    var area = document.getElementById('deliveryArea').value.trim();
-
-    if (!email || email.indexOf('@') === -1) { toast('Please enter a valid email address'); return; }
-    if (!fullName) { toast('Please enter your full name'); return; }
-    if (!phone) { toast('Please enter your phone number'); return; }
-    if (!validatePhone(phone)) { toast('Please enter a valid Kenyan phone number (e.g., 0712345678)'); return; }
-    if (!street && !building) { toast('Please enter at least Street OR Building name'); return; }
-    if (!area) { toast('Please enter your delivery area (e.g. Dagoretti)'); return; }
-
-    var displayPhone = formatPhoneForDisplay(phone);
-    var apiPhone = formatPhoneForAPI(phone);
-    var address = getFullAddress() + ', ' + area;
-    var totals = calculateTotals();
-    var subtotal = totals.subtotal;
-    var delivery = totals.delivery;
-    var total = totals.total;
-    var orderId = 'LB-' + Date.now().toString(36).toUpperCase();
-    var timestamp = new Date().toLocaleString('en-KE', { hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
-
-    var paymentMethodInput = document.getElementById('selectedPaymentMethod');
-    var paymentMethod = paymentMethodInput ? paymentMethodInput.value : 'mpesa';
-
-    var btn = document.querySelector('.btn-place');
-    var originalHTML = btn.innerHTML;
-    btn.innerHTML = '<div class="spinner"></div> Processing...';
-    btn.disabled = true;
-
-    if (paymentMethod === 'pod') {
-      var podPayload = {
-        orderNumber: orderId,
-        customerName: fullName,
-        customerEmail: email,
-        phone: displayPhone,
-        address: address,
-        notes: '',
-        subtotal: subtotal,
-        delivery: delivery,
-        total: total,
-        items: items.map(function(i) {
-          return {
-            name: i.name,
-            product_name: i.name,
-            quantity: i.qty,
-            price: i.price,
-            size: i.size || '750ml'
-          };
-        })
-      };
-
-      fetch(API_BASE + '/api/orders/pod', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(podPayload)
-      })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          btn.innerHTML = originalHTML;
-          btn.disabled = false;
-          if (data.success) {
-            cart = {};
-            localStorage.setItem(CART_KEY, JSON.stringify(cart));
-            renderCartSummary();
-            updateCartUI();
-
-            var modal = document.getElementById('successModal');
-            document.getElementById('successOrderId').textContent = orderId;
-            document.getElementById('successMessage').textContent = '✅ Your order has been confirmed. Please have cash ready upon delivery.';
-            if (modal) modal.classList.add('active');
-
-            try {
-              localStorage.setItem('liquorbelle_last_order', JSON.stringify({ orderId: orderId, total: total, timestamp: Date.now() }));
-            } catch(e) {}
-          } else {
-            toast('❌ ' + (data.message || 'Order failed. Please try again.'), true);
-          }
-        })
-        .catch(function(err) {
-          btn.innerHTML = originalHTML;
-          btn.disabled = false;
-          toast('❌ Network error. Please check your connection.', true);
-        });
-      return;
-    }
-
-    // M-PESA flow
-    try {
-      var requestData = {
-        phone: apiPhone,
-        amount: total,
-        orderId: orderId,
-        customerName: fullName,
-        address: address,
-        items: items,
-        subtotal: subtotal,
-        delivery: delivery,
-        total: total,
-        paymentMethod: 'mpesa',
-        customerEmail: email
-      };
-
-      fetch(API_BASE + '/api/stkpush', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
-      })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          if (!data.success) throw new Error(data.message || 'STK push failed');
-
-          toast('📱 Check your phone for M-PESA prompt. Enter PIN to pay. You have 35 seconds to complete payment.');
-
-          var paymentCompleted = false;
-          var statusCheckCount = 0;
-          var MAX_STATUS_CHECKS = 12;
-          var paymentInterval = null;
-          var paymentTimeout = null;
-
-          paymentTimeout = setTimeout(function() {
-            if (!paymentCompleted) {
-              if (paymentInterval) clearInterval(paymentInterval);
-              paymentInterval = null;
-              btn.innerHTML = originalHTML;
-              btn.disabled = false;
-              toast('❌ Payment timeout. You did not complete the payment in time. Please try again.', true);
-            }
-          }, 35000);
-
-          paymentInterval = setInterval(function() {
-            if (paymentCompleted) {
-              clearInterval(paymentInterval);
-              paymentInterval = null;
-              return;
-            }
-            statusCheckCount++;
-            if (statusCheckCount > MAX_STATUS_CHECKS) {
-              clearInterval(paymentInterval);
-              paymentInterval = null;
-              if (!paymentCompleted) {
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
-                toast('❌ Payment confirmation timeout. Please check your M-PESA and contact support.', true);
-              }
-              return;
-            }
-
-            fetch(API_BASE + '/api/status/' + orderId)
-              .then(function(res) { return res.json(); })
-              .then(function(statusData) {
-                if (statusData.status === 'paid') {
-                  paymentCompleted = true;
-                  clearInterval(paymentInterval);
-                  clearTimeout(paymentTimeout);
-                  paymentInterval = null;
-                  paymentTimeout = null;
-
-                  fetch(API_BASE + '/api/db/orders', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      orderNumber: orderId,
-                      customerName: fullName,
-                      customerEmail: email,
-                      phone: displayPhone,
-                      address: address,
-                      items: items.map(function(i) { return { product_id: i.id, product_name: i.name, quantity: i.qty, price: i.price, size: i.size || '' }; }),
-                      subtotal: subtotal,
-                      delivery: delivery,
-                      total: total,
-                      paymentMethod: 'M-PESA',
-                      status: 'paid'
-                    })
-                  })
-                    .then(function() {
-                      fetch(API_BASE + '/api/send-order-email', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          email: email,
-                          orderId: orderId,
-                          customerName: fullName,
-                          phone: displayPhone,
-                          items: items.map(function(i) { return { name: i.name, qty: i.qty, price: i.price, size: i.size || '' }; }),
-                          subtotal: subtotal,
-                          delivery: delivery,
-                          total: total,
-                          address: address,
-                          timestamp: timestamp,
-                          paymentMethod: 'mpesa'
-                        })
-                      });
-
-                      cart = {};
-                      localStorage.setItem(CART_KEY, JSON.stringify(cart));
-                      renderCartSummary();
-                      updateCartUI();
-                      btn.innerHTML = originalHTML;
-                      btn.disabled = false;
-
-                      var modal = document.getElementById('successModal');
-                      document.getElementById('successOrderId').textContent = orderId;
-                      document.getElementById('successMessage').textContent = '✅ Payment confirmed! Check your email for order details.';
-                      modal.classList.add('active');
-
-                      try {
-                        localStorage.setItem('liquorbelle_last_order', JSON.stringify({ orderId: orderId, total: total, timestamp: Date.now() }));
-                      } catch(e) {}
-                    })
-                    .catch(function() {
-                      btn.innerHTML = originalHTML;
-                      btn.disabled = false;
-                      toast('❌ Order saved but email failed. Please contact support.', true);
-                    });
-                } else if (statusData.status === 'failed') {
-                  clearInterval(paymentInterval);
-                  clearTimeout(paymentTimeout);
-                  paymentInterval = null;
-                  paymentTimeout = null;
-                  btn.innerHTML = originalHTML;
-                  btn.disabled = false;
-                  toast('❌ Payment failed. Please try again.', true);
-                }
-              })
-              .catch(function(e) {
-                console.error('Status check error:', e);
-              });
-          }, 3000);
-        })
-        .catch(function(err) {
-          btn.innerHTML = originalHTML;
-          btn.disabled = false;
-          toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
-        });
-
-    } catch (err) {
-      btn.innerHTML = originalHTML;
-      btn.disabled = false;
-      toast('❌ Failed to initiate payment. Please check your phone number and try again.', true);
-    }
-  };
-
-  window.closeSuccessModal = function() {
-    document.getElementById('successModal').classList.remove('active');
-    window.location.href = 'track-orders.html';
-  };
-
-  document.getElementById('deliveryArea')?.addEventListener('input', function() {
-    renderCartSummary();
-  });
-
-  loadDeliverySettings();
-  renderCartSummary();
-  updateCartUI();
-
-  setInterval(function() {
-    renderCartSummary();
-    updateCartUI();
-  }, 3000);
-}
-
 
 // ============================================================
 // TRACK-ORDERS.HTML - AUTO-LOAD ORDERS
