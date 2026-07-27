@@ -248,6 +248,223 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
   .profile-header{flex-direction:column;text-align:center;}
   .profile-avatar{width:60px;height:60px;font-size:26px;}
 }
+
+/* ============================================================
+   ORDERS SECTION STYLES
+   ============================================================ */
+.orders-section {
+  margin-top: 8px;
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.orders-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orders-header h3 i {
+  color: var(--gold);
+  font-size: 20px;
+}
+
+.order-count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--bg2);
+  padding: 2px 12px;
+  border-radius: 30px;
+}
+
+.orders-subtitle {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+#ordersContainer {
+  min-height: 60px;
+}
+
+.orders-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.orders-loading .spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+/* Order Cards */
+.order-card {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.order-card:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow);
+}
+
+.order-header {
+  background: var(--gold-bg);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.order-number {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 0.8rem;
+}
+
+.order-date {
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.order-status {
+  padding: 3px 12px;
+  border-radius: 30px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-pending {
+  background: #FFF3E0;
+  color: #E67E22;
+}
+
+.status-paid {
+  background: #E8F5E9;
+  color: #1A8A3E;
+}
+
+.status-delivered {
+  background: #E3F2FD;
+  color: #2196F3;
+}
+
+.status-cancelled {
+  background: #FFEBEE;
+  color: #D32F2F;
+}
+
+.order-items {
+  padding: 8px 16px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.order-item-qty {
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.order-item-price {
+  font-weight: 700;
+  color: var(--sale-red);
+  font-size: 0.75rem;
+}
+
+.order-footer {
+  background: var(--bg2);
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.order-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 3px 0;
+}
+
+.order-total-row:last-child {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--primary);
+  border-top: 1px solid var(--border);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.order-total-row .delivery-free {
+  color: var(--btn-green);
+}
+
+/* Empty State */
+.orders-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--muted);
+}
+
+.orders-empty i {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 10px;
+  color: var(--border);
+}
+
+.orders-empty p {
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+
+.orders-empty small {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
 </style>
 </head>
 <body>
@@ -314,6 +531,24 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
       </div>
       <button type="submit" class="btn-secondary" id="updatePinBtn">Change PIN</button>
     </form>
+
+    <hr class="section-divider">
+
+    <!-- ===== ORDERS SECTION ===== -->
+    <div class="orders-section">
+      <div class="orders-header">
+        <h3><i class="ph ph-package"></i> My Orders</h3>
+        <span class="order-count" id="orderCount">0 orders</span>
+      </div>
+      <p class="orders-subtitle">View all your past and current orders</p>
+
+      <div id="ordersContainer">
+        <div class="orders-loading">
+          <div class="spinner"></div>
+          <span>Loading your orders...</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -461,11 +696,187 @@ async function loadProfile() {
       
       // Update local storage
       localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+      
+      // Load orders after profile
+      loadOrders();
     }
   } catch (error) {
     console.error('Load profile error:', error);
     toast('Failed to load profile', 'error');
   }
+}
+
+// ============================================================
+// LOAD ORDERS
+// ============================================================
+async function loadOrders() {
+  const container = document.getElementById('ordersContainer');
+  const orderCount = document.getElementById('orderCount');
+  const token = getAuthToken();
+
+  if (!token) {
+    container.innerHTML = `
+      <div class="orders-empty">
+        <i class="ph ph-lock"></i>
+        <p>Please login to see your orders</p>
+        <small><a href="login.html" style="color:var(--gold);font-weight:600;">Login here</a></small>
+      </div>
+    `;
+    if (orderCount) orderCount.textContent = '0 orders';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="orders-loading">
+      <div class="spinner"></div>
+      <span>Loading your orders...</span>
+    </div>
+  `;
+
+  try {
+    const response = await fetch(API_BASE + '/api/customers/me/orders', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      throw new Error('Session expired');
+    }
+
+    const data = await response.json();
+
+    if (data.success && data.orders && data.orders.length > 0) {
+      renderOrders(data.orders);
+      if (orderCount) orderCount.textContent = data.orders.length + ' order' + (data.orders.length > 1 ? 's' : '');
+    } else {
+      container.innerHTML = `
+        <div class="orders-empty">
+          <i class="ph ph-package"></i>
+          <p>No orders yet</p>
+          <small>Your orders will appear here once you place one.</small>
+        </div>
+      `;
+      if (orderCount) orderCount.textContent = '0 orders';
+    }
+  } catch (error) {
+    console.error('Load orders error:', error);
+    if (error.message === 'Session expired') {
+      logoutUser();
+    } else {
+      container.innerHTML = `
+        <div class="orders-empty">
+          <i class="ph ph-wifi-slash"></i>
+          <p>Could not load orders</p>
+          <small>Please check your connection and try again.</small>
+        </div>
+      `;
+    }
+  }
+}
+
+// ============================================================
+// RENDER ORDERS
+// ============================================================
+function renderOrders(orders) {
+  const container = document.getElementById('ordersContainer');
+
+  if (!orders || !orders.length) {
+    container.innerHTML = `
+      <div class="orders-empty">
+        <i class="ph ph-package"></i>
+        <p>No orders found</p>
+        <small>Your orders will appear here once you place one.</small>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  for (let i = 0; i < orders.length; i++) {
+    const o = orders[i];
+    const items = o.items || [];
+    
+    let statusText = 'Unknown';
+    let statusClass = '';
+    
+    if (o.status === 'pending') {
+      statusText = 'Pending';
+      statusClass = 'status-pending';
+    } else if (o.status === 'paid') {
+      statusText = 'Paid';
+      statusClass = 'status-paid';
+    } else if (o.status === 'delivered') {
+      statusText = 'Delivered';
+      statusClass = 'status-delivered';
+    } else if (o.status === 'cancelled') {
+      statusText = 'Cancelled';
+      statusClass = 'status-cancelled';
+    }
+
+    let itemsHtml = '';
+    for (let j = 0; j < items.length; j++) {
+      const item = items[j];
+      const name = item.product_name || item.name || 'Product';
+      const qty = item.quantity || item.qty || 1;
+      const price = item.price || 0;
+      const size = item.size || '';
+      
+      itemsHtml += `
+        <div class="order-item">
+          <div>
+            <div class="order-item-name">${escapeHtml(name)} ${size ? '(' + escapeHtml(size) + ')' : ''}</div>
+            <div class="order-item-qty">Qty: ${qty}</div>
+          </div>
+          <div class="order-item-price">KES ${(price * qty).toLocaleString()}</div>
+        </div>
+      `;
+    }
+
+    const orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
+    const createdDate = o.created_at ? new Date(o.created_at) : new Date();
+    const deliveryFee = o.delivery || 0;
+    const subtotal = o.subtotal || (o.total - deliveryFee);
+
+    html += `
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <div class="order-number">📦 Order #${escapeHtml(orderNumber)}</div>
+            <div class="order-date">${createdDate.toLocaleDateString()} at ${createdDate.toLocaleTimeString()}</div>
+          </div>
+          <span class="order-status ${statusClass}">${statusText}</span>
+        </div>
+        <div class="order-items">
+          ${itemsHtml}
+        </div>
+        <div class="order-footer">
+          <div class="order-total-row">
+            <span>Subtotal</span>
+            <span>KES ${(subtotal || 0).toLocaleString()}</span>
+          </div>
+          <div class="order-total-row">
+            <span>Delivery</span>
+            <span class="${deliveryFee === 0 ? 'delivery-free' : ''}">${deliveryFee === 0 ? 'FREE' : 'KES ' + deliveryFee.toLocaleString()}</span>
+          </div>
+          <div class="order-total-row">
+            <span>Total</span>
+            <span>KES ${(o.total || 0).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, function(m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+  });
 }
 
 // ============================================================
@@ -552,6 +963,7 @@ async function updatePin(e) {
   }
   
   const btn = document.getElementById('updatePinBtn');
+  const originalText = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Updating...';
   
@@ -563,12 +975,16 @@ async function updatePin(e) {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify({ currentPin, newPin })
+      body: JSON.stringify({ 
+        currentPin: currentPin, 
+        newPin: newPin 
+      })
     });
     
     const data = await response.json();
     
     if (response.status === 401 || response.status === 403) {
+      toast('Session expired. Please login again.', 'error');
       logoutUser();
       return;
     }
@@ -581,17 +997,27 @@ async function updatePin(e) {
       for (let i = 1; i <= 4; i++) {
         document.getElementById('currentPin' + i).value = '';
         document.getElementById('newPin' + i).value = '';
-        document.getElementById('currentPin' + i).classList.remove('valid');
-        document.getElementById('newPin' + i).classList.remove('valid');
+        document.getElementById('currentPin' + i).classList.remove('valid', 'error');
+        document.getElementById('newPin' + i).classList.remove('valid', 'error');
       }
+      document.getElementById('currentPin1').focus();
     } else {
-      showStatus('❌ ' + (data.message || 'Update failed'), 'error');
+      const errorMsg = data.message || 'Update failed';
+      showStatus('❌ ' + errorMsg, 'error');
+      
+      // If current PIN is wrong, highlight current PIN inputs
+      if (errorMsg.toLowerCase().includes('current pin') || errorMsg.toLowerCase().includes('incorrect')) {
+        for (let i = 1; i <= 4; i++) {
+          document.getElementById('currentPin' + i).classList.add('error');
+        }
+      }
     }
   } catch (error) {
     showStatus('❌ Network error. Please try again.', 'error');
+    toast('Network error', 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = 'Change PIN';
+    btn.innerHTML = originalText;
   }
 }
 

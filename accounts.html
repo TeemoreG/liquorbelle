@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,7 +52,6 @@ img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
 .shop-svg{width:22px;height:22px;color:currentColor;display:block;}
 
-/* ===== GOLD & GREEN ACCENTS ===== */
 .gold-text{color:var(--gold);}
 .gold-border{border-color:var(--gold);}
 .gold-bg{background:var(--gold-bg);}
@@ -62,11 +60,9 @@ a{color:inherit;text-decoration:none;}
 .green-bg{background:var(--green-light);}
 .green-border{border-color:var(--btn-green);}
 
-/* ===== OFFLINE BANNER ===== */
 .offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
 .offline-banner.show{display:block;}
 
-/* ===== WHATSAPP FLOAT ===== */
 .whatsapp-float{
   position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;
   width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -83,7 +79,6 @@ a{color:inherit;text-decoration:none;}
 .whatsapp-float:hover .tooltip{opacity:1;right:62px;}
 @media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:20px;right:24px;}}
 
-/* ===== BOTTOM NAV ===== */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;height:calc(var(--bottom-nav-height) + var(--safe-bottom));
   background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
@@ -109,7 +104,6 @@ a{color:inherit;text-decoration:none;}
 }
 .nav-item:active{transform:scale(0.92);}
 
-/* ===== HEADER ===== */
 .main-header{
   background:var(--primary);
   padding:10px 4%;
@@ -138,16 +132,6 @@ a{color:inherit;text-decoration:none;}
 @media(max-width:560px){.header-search-form{display:none;}}
 
 .header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-
-/* ===== HEADER USER BADGE ===== */
-
-.header-user-badge:hover{background:rgba(255,255,255,0.2);}
-.header-user-badge .user-initial{
-  font-weight:700;
-  font-size:14px;
-  text-transform:uppercase;
-}
-
 .header-icon-btn{
   position:relative;width:40px;height:40px;border-radius:50%;border:none;
   background:transparent;color:white;
@@ -163,7 +147,6 @@ a{color:inherit;text-decoration:none;}
   border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);
 }
 
-/* ===== MOBILE MENU ===== */
 .mobile-menu-overlay {
   position: fixed;
   inset: 0;
@@ -232,6 +215,7 @@ a{color:inherit;text-decoration:none;}
   border: none;
   text-align: left;
   cursor: pointer;
+  position: relative;
 }
 .mobile-menu a i, .mobile-menu button.mm-link i {
   font-size: 19px;
@@ -240,6 +224,10 @@ a{color:inherit;text-decoration:none;}
 }
 .mobile-menu a:active, .mobile-menu button.mm-link:active {
   background: var(--bg2);
+}
+.mm-badge{
+  margin-left:auto;background:var(--sale-red);color:white;font-size:10px;font-weight:800;
+  min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 5px;
 }
 .mobile-search-inline {
   display: none;
@@ -272,430 +260,227 @@ a{color:inherit;text-decoration:none;}
   font-size: .85rem;
   color: var(--text);
 }
-/* ============================================================
-   ACCOUNT PAGE SPECIFIC
-   ============================================================ */
-.account-container{
-  max-width: 900px;
-  margin: 20px auto 32px;
+
+.account-dashboard {
+  max-width: 1000px;
+  margin: 24px auto 40px;
   padding: 0 4%;
 }
-.account-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  border:1px solid var(--border);
-  padding: 32px;
-  box-shadow:var(--shadow);
-  border-top:4px solid var(--gold);
+
+.welcome-banner {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  color: white;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
 }
-.account-card h1{
-  font-size: 1.6rem;
+.welcome-banner::after {
+  content: '🍾';
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  font-size: 80px;
+  opacity: 0.1;
+}
+.welcome-inner{position:relative;z-index:1;}
+.welcome-top{display:flex;align-items:center;gap:16px;}
+.avatar-circle{
+  width:60px;height:60px;border-radius:50%;flex-shrink:0;
+  background:rgba(255,255,255,0.16);border:2px solid rgba(255,255,255,0.35);
+  display:none;align-items:center;justify-content:center;
+  font-size:1.25rem;font-weight:800;color:white;letter-spacing:.5px;
+}
+.welcome-banner h1 {
+  font-size: 1.8rem;
   font-weight: 800;
-  color:var(--primary);
   margin-bottom: 4px;
-  display:flex;
-  align-items:center;
-  gap:12px;
 }
-.account-card h1 i{font-size:32px;color:var(--gold);}
-.account-card .subtitle{
-  color:var(--muted);
-  margin-bottom: 24px;
-  font-size: .9rem;
+.welcome-banner .sub {
+  opacity: 0.85;
+  font-size: 1rem;
 }
-
-/* ===== AUTH TABS ===== */
-.auth-tabs{
-  display:flex;
-  gap:4px;
-  background:var(--bg2);
-  border-radius:var(--radius-sm);
-  padding:4px;
-  margin-bottom:24px;
+.welcome-banner .user-email {
+  opacity: 0.7;
+  font-size: 0.85rem;
+  margin-top: 8px;
 }
-.auth-tab{
-  flex:1;
-  padding:12px;
-  border:none;
-  background:transparent;
-  border-radius:var(--radius-xs);
-  font-weight:700;
-  font-size:.9rem;
-  color:var(--muted);
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.badge-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 12px;
+  background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);
+  border-radius:50px;font-size:.68rem;font-weight:600;color:white;
 }
-.auth-tab.active{
-  background:var(--white);
-  color:var(--primary);
-  box-shadow:var(--shadow);
+.badge-chip i{font-size:13px;}
+.badge-chip.google{background:rgba(66,133,244,0.28);border-color:rgba(66,133,244,0.4);}
+.badge-chip.verified{background:rgba(34,197,94,0.28);border-color:rgba(34,197,94,0.4);}
+.welcome-banner .logout-btn-sm {
+  margin-top: 14px;
+  padding: 8px 20px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.8rem;
 }
-.auth-tab-login.active{background:var(--primary);color:white;}
-.auth-tab-register.active{background:var(--gold);color:white;}
-.auth-tab:active{transform:scale(0.97);}
-
-/* ===== AUTH FORMS ===== */
-.auth-form{display:none;}
-.auth-form.active{display:block;}
-.auth-form .form-group{margin-bottom:16px;}
-.auth-form .form-group label{
-  display:block;
-  margin-bottom:4px;
-  font-weight:600;
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.3px;
-}
-.auth-form .form-group input{
-  width:100%;
-  padding:12px 16px;
-  background:var(--bg);
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-family:var(--font-body);
-  font-size:14px;
-  transition:all .2s;
-}
-.auth-form .form-group input:focus{
-  outline:none;
-  border-color:var(--gold);
-  box-shadow:0 0 0 3px rgba(184,134,11,0.08);
-  background:var(--white);
-}
-.auth-form .form-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-@media(max-width:500px){.auth-form .form-row{grid-template-columns:1fr;}}
-
-/* ===== PIN INPUT ===== */
-.pin-input-group{
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin:8px 0 12px;
-}
-.pin-input-group input{
-  width:48px !important;
-  height:56px !important;
-  text-align:center;
-  font-size:22px !important;
-  font-weight:700;
-  letter-spacing:4px;
-  border-radius:12px !important;
-  padding:0 !important;
-  background:var(--bg);
-  border:2px solid var(--border);
-  transition:all .2s;
-  font-family:monospace;
-}
-.pin-input-group input:focus{
-  border-color:var(--gold);
-  background:var(--white);
-  box-shadow:0 0 0 3px rgba(184,134,11,0.1);
-}
-.pin-input-group input.error{
-  border-color:var(--sale-red);
-  background:#FFF5F5;
-}
-.pin-input-group input.valid{
-  border-color:var(--btn-green);
-  background:#F0FFF4;
-}
-.pin-dots{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  margin:8px 0;
-}
-.pin-dot{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:var(--border);
-  transition:all .2s;
-}
-.pin-dot.filled{background:var(--gold);}
-.pin-dot.active{background:var(--gold-light);transform:scale(1.2);}
-
-/* ===== VALIDATION STYLES ===== */
-.form-group .input-error{
-  color:var(--sale-red);
-  font-size:10px;
-  margin-top:4px;
-  display:none;
-}
-.form-group .input-error.show{display:block;}
-.form-group input.error{
-  border-color:var(--sale-red);
-  background:#FFF5F5;
-}
-.form-group input.valid{
-  border-color:var(--btn-green);
-  background:#F0FFF4;
+.welcome-banner .logout-btn-sm:hover {
+  background: var(--sale-red);
+  border-color: var(--sale-red);
 }
 
-.btn-primary{
-  width:100%;
-  padding:14px;
-  background:var(--gold);
-  color:white;
-  border:none;
-  border-radius:var(--radius-sm);
-  font-weight:700;
-  font-size:1rem;
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
+.quick-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.quick-stat{
+  background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);
+  cursor:pointer;transition:.25s;
 }
-.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 4px 20px rgba(184,134,11,0.3);}
-.btn-primary:active{transform:scale(0.97);}
-.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.quick-stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--gold);}
+.quick-stat i{font-size:26px;color:var(--primary);flex-shrink:0;}
+.quick-stat .qs-num{font-size:1.35rem;font-weight:800;line-height:1;}
+.quick-stat .qs-label{font-size:.68rem;color:var(--muted);font-weight:600;margin-top:2px;}
 
-/* ===== OTP INPUT ===== */
-.otp-row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin-top:4px;
-}
-.otp-row input{flex:1;}
-.otp-row .btn-sm{
-  padding:12px 20px;
-  background:var(--gold);
-  color:white;
-  border:none;
-  border-radius:var(--radius-sm);
-  font-weight:700;
-  font-size:.8rem;
-  cursor:pointer;
-  transition:all .2s;
-  white-space:nowrap;
-  font-family:var(--font-body);
-}
-.otp-row .btn-sm:hover{background:var(--gold-light);}
-.otp-row .btn-sm:disabled{opacity:0.5;cursor:not-allowed;}
-.otp-timer{font-size:.75rem;color:var(--muted);margin-top:4px;display:block;}
+.section-title{font-size:.85rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 12px;padding:0 2px;}
 
-/* ===== STATUS MESSAGES ===== */
-.auth-status{
-  padding:10px 14px;
-  border-radius:var(--radius-xs);
-  font-size:.85rem;
-  font-weight:600;
-  margin-bottom:12px;
-  display:none;
+.auth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 12px;
 }
-.auth-status.error{display:block;background:#FFEBEE;color:#D32F2F;border:1px solid #FFCDD2;}
-.auth-status.success{display:block;background:#E8F5E9;color:#1A8A3E;border:1px solid #C8E6C9;}
-.auth-status.info{display:block;background:#FFF3E0;color:#E67E22;border:1px solid #FFE0B2;}
-
-/* ===== LOGGED IN STATE ===== */
-.logged-in-section{display:none;}
-.logged-in-section.active{display:block;}
-
-.user-greeting{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  padding:16px 20px;
-  background:var(--gold-bg);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border);
-  margin-bottom:20px;
+.auth-option-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 28px 24px;
+  text-align: center;
+  border: 2px solid var(--border);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: var(--shadow);
 }
-.user-greeting .greeting-text{font-size:1.1rem;font-weight:700;color:var(--text);}
-.user-greeting .greeting-text i{color:var(--gold);margin-right:8px;}
-.user-greeting .greeting-email{font-size:.85rem;color:var(--muted);}
-.user-greeting .greeting-phone{font-size:.85rem;color:var(--muted);margin-top:2px;}
-.user-greeting .logout-btn{
-  padding:8px 20px;
-  background:var(--sale-red);
-  color:white;
-  border:none;
-  border-radius:50px;
-  font-weight:600;
-  font-size:.8rem;
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
+.auth-option-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
-.user-greeting .logout-btn:hover{background:#b71c1c;transform:scale(1.02);}
-
-/* ===== ACCOUNT FEATURES GRID ===== */
-.account-features-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:12px;
-  margin:16px 0 20px;
+.auth-option-card .card-icon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
 }
-.feature-card{
-  background:var(--white);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border);
-  padding:16px 14px;
-  text-align:center;
-  transition:all .2s;
-  cursor:pointer;
-  text-decoration:none;
-  color:var(--text);
-  box-shadow:var(--shadow);
-}
-.feature-card:hover{
-  transform:translateY(-4px);
-  box-shadow:var(--shadow-lg);
-  border-color:var(--btn-green);
-}
-.feature-card i{
-  font-size:28px;
-  display:block;
-  margin-bottom:6px;
-  color:var(--btn-green);
-}
-.feature-card .feature-label{
-  font-weight:700;
-  font-size:.75rem;
-  display:block;
-}
-.feature-card .feature-desc{
-  font-size:.6rem;
-  color:var(--muted);
-  display:block;
-  margin-top:2px;
-}
-.feature-card.card-gold i{color:var(--gold);}
-.feature-card.card-gold:hover{border-color:var(--gold);}
-.feature-card.card-red i{color:var(--sale-red);}
-.feature-card.card-red:hover{border-color:var(--sale-red);}
-.feature-card.card-green i{color:var(--btn-green);}
-.feature-card.card-green:hover{border-color:var(--btn-green);}
-
-/* ===== ORDERS SECTION ===== */
-.orders-section{
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 2px solid var(--border);
-}
-.orders-section .section-title{
+.auth-option-card h3 {
   font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--primary);
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:8px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
-.orders-section .section-title i{color:var(--gold);}
-.orders-section .section-subtitle{
-  font-size: .8rem;
+.auth-option-card p {
   color: var(--muted);
-  margin-bottom:6px;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
 }
+.auth-option-card .btn-arrow {
+  display: inline-block;
+  padding: 8px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+.auth-option-card .btn-arrow:hover {
+  transform: scale(1.05);
+}
+.auth-option-card.login-card {
+  border-color: var(--primary);
+}
+.auth-option-card.login-card .card-icon {
+  color: var(--primary);
+}
+.auth-option-card.login-card .btn-arrow {
+  background: var(--primary);
+  color: white;
+}
+.auth-option-card.login-card .btn-arrow:hover {
+  background: var(--primary-bright);
+}
+.auth-option-card.login-card:hover {
+  border-color: var(--primary-bright);
+}
+.auth-option-card.register-card {
+  border-color: var(--gold);
+}
+.auth-option-card.register-card .card-icon {
+  color: var(--gold);
+}
+.auth-option-card.register-card .btn-arrow {
+  background: var(--gold);
+  color: white;
+}
+.auth-option-card.register-card .btn-arrow:hover {
+  background: var(--gold-light);
+}
+.auth-option-card.register-card:hover {
+  border-color: var(--gold-light);
+}
+.guest-cta{text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:28px;}
+.guest-cta a{color:var(--primary);font-weight:700;text-decoration:underline;}
 
-.view-all-orders-link{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  color:white;
-  font-weight:600;
-  font-size:.85rem;
-  text-decoration:none;
-  padding:8px 20px;
-  background:var(--btn-green);
-  border-radius:50px;
-  transition:all .2s;
-  margin-bottom:12px;
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
 }
-.view-all-orders-link:hover{
-  background:var(--btn-green-hover);
-  transform:translateY(-2px);
-  box-shadow:0 4px 20px rgba(34,197,94,0.3);
+.feature-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 20px 16px;
+  text-align: center;
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  position: relative;
 }
-.view-all-orders-link i{font-size:16px;}
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--btn-green);
+}
+.feature-card i {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 8px;
+  color: var(--btn-green);
+}
+.feature-card .label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: block;
+}
+.feature-card .desc {
+  font-size: 0.65rem;
+  color: var(--muted);
+  display: block;
+  margin-top: 2px;
+}
+.feature-card .feature-badge{
+  position:absolute;top:10px;right:10px;background:var(--sale-red);color:white;
+  font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;padding:0 5px;
+}
+.feature-card.gold i { color: var(--gold); }
+.feature-card.gold:hover { border-color: var(--gold); }
+.feature-card.red i { color: var(--sale-red); }
+.feature-card.red:hover { border-color: var(--sale-red); }
+.feature-card.green i { color: var(--btn-green); }
+.feature-card.green:hover { border-color: var(--btn-green); }
 
-/* ===== ORDERS LIST ===== */
-.orders-list{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-.order-card{
-  background:var(--white);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  transition:all .2s;
-}
-.order-card:hover{box-shadow:var(--shadow-lg);border-color:var(--gold);}
-.order-header{
-  background:var(--gold-bg);
-  padding:14px 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:10px;
-}
-.order-number{font-weight:700;color:var(--primary);font-size:.9rem;}
-.order-date{font-size:12px;color:var(--muted);}
-.order-status{
-  padding:4px 12px;
-  border-radius:40px;
-  font-size:11px;
-  font-weight:700;
-}
-.status-pending{background:#FFF3E0;color:#E67E22;}
-.status-paid{background:#E8F5E9;color:#1A8A3E;}
-.status-delivered{background:#E3F2FD;color:#2196F3;}
-.status-cancelled{background:#FFEBEE;color:#D32F2F;}
-
-.order-items{padding:14px 18px;max-height:240px;overflow-y:auto;}
-.order-item{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid var(--border);
-}
-.order-item:last-child{border-bottom:none;}
-.order-item-name{font-weight:600;font-size:13px;}
-.order-item-qty{font-size:11px;color:var(--muted);margin-top:2px;}
-.order-item-price{font-weight:700;color:var(--sale-red);font-size:13px;white-space:nowrap;}
-
-.order-footer{
-  background:var(--bg2);
-  padding:10px 18px;
-}
-.order-total-row{
-  display:flex;
-  justify-content:space-between;
-  font-weight:700;
-  font-size:.85rem;
-  padding:4px 0;
-}
-.order-total-row:last-child{
-  font-weight:800;
-  font-size:1rem;
-  color:var(--primary);
-  border-top:1px solid var(--border);
-  padding-top:8px;
-  margin-top:4px;
-}
-.empty-state{
-  text-align:center;
-  padding:40px 20px;
-  color:var(--muted);
-}
-.empty-state i{font-size:44px;display:block;margin-bottom:12px;color:var(--border);}
-.empty-state p{margin-bottom:4px;font-size:.9rem;}
-.empty-state small{font-size:.75rem;}
-
-/* ===== FOOTER ===== */
 .footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:32px 4% 24px;margin-top:32px;border-top:3px solid var(--gold);}
 .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;margin-bottom:24px;}
 .footer-col h4{font-size:.8rem;font-weight:700;margin-bottom:12px;color:#fff;opacity:.9;}
@@ -703,7 +488,6 @@ a{color:inherit;text-decoration:none;}
 .footer-col a:hover{opacity:1;color:var(--gold);}
 .footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
 
-/* ===== CART DRAWER ===== */
 .cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background:#fff;text-align:center;}
 .cart-icon-wrapper{position:relative;margin-bottom:25px;width:90px;height:80px;}
 .cart-svg{width:100%;height:100%;}
@@ -734,20 +518,23 @@ a{color:inherit;text-decoration:none;}
 .btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
 .btn-checkout:hover{background:var(--primary-bright);}
 #toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
+#toast.success{background:var(--btn-green-hover);}
+#toast.error{background:var(--sale-red);}
 
-/* ===== WISHLIST MODAL ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-card{background:var(--white);border-radius:var(--radius);padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
 .modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;color:var(--primary);}
 .modal-card p{color:var(--muted);font-size:.8rem;margin-bottom:16px;}
 .wishlist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
-.wishlist-item img{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-xs);}
+.wishlist-item img{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-xs);background:var(--bg2);}
 .wishlist-item-info{flex:1;}
 .wishlist-item-name{font-weight:700;font-size:.8rem;}
 .wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.75rem;}
+.wishlist-item-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
 .wishlist-atc{padding:4px 12px;background:var(--btn-green);color:#fff;border:none;border-radius:30px;font-size:.65rem;font-weight:600;cursor:pointer;}
 .wishlist-remove{background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:4px;}
 .wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
+.wishlist-empty i{font-size:36px;color:var(--border);display:block;margin-bottom:8px;}
 .modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
 .wishlist-modal{display:none;}
 .wishlist-modal.open{display:flex;}
@@ -757,397 +544,20 @@ a{color:inherit;text-decoration:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 @media(max-width:768px){
-  .account-container{padding:0 3%;margin:12px auto 20px;}
-  .account-card{padding:20px 16px;}
-  .account-card h1{font-size:1.3rem;}
-  .account-card h1 i{font-size:26px;}
-  .user-greeting{flex-direction:column;text-align:center;}
-  .auth-tabs{flex-direction:column;}
-  .pin-input-group input{width:40px !important;height:48px !important;font-size:18px !important;}
-  .account-features-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .feature-card{padding:12px 10px;}
+  .account-dashboard{padding:0 3%;margin:16px auto 24px;}
+  .auth-grid{grid-template-columns:1fr;gap:12px;}
+  .welcome-banner{padding:24px 20px;}
+  .welcome-banner h1{font-size:1.4rem;}
+  .avatar-circle{width:50px;height:50px;font-size:1.05rem;}
+  .feature-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .feature-card{padding:16px 12px;}
   .feature-card i{font-size:22px;}
-  .feature-card .feature-label{font-size:.65rem;}
-  .feature-card .feature-desc{font-size:.5rem;}
-}
-
-/* ===== ADDED: GOOGLE BUTTON STYLES ===== */
-.google-btn {
-  width:100%;
-  padding:12px;
-  background:white;
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-weight:600;
-  font-size:14px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  transition:all .2s;
-  font-family:var(--font-body);
-  color:var(--text);
-  margin-top:4px;
-}
-.google-btn:hover {
-  border-color:var(--gold);
-  background:var(--gold-bg);
-  transform:translateY(-1px);
-  box-shadow:var(--shadow);
-}
-.google-btn:active{transform:scale(0.97);}
-.divider {
-  margin: 12px 0;
-  position: relative;
-}
-.divider-line {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  width:100%;
-}
-.divider-line hr {
-  flex:1;
-  border:none;
-  height:1px;
-  background:var(--border);
-}
-.divider-line span {
-  color:var(--muted);
-  font-size:12px;
-  white-space:nowrap;
-}
-
-/* ===== UNIFIED AUTH CARD ===== */
-.auth-card {
-  max-width: 420px;
-  margin: 40px auto;
-  padding: 32px 28px;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border);
-}
-
-.auth-card .auth-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  text-align: center;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.auth-card .auth-subtitle {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-bottom: 24px;
-}
-
-/* Google Button */
-.btn-google {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--white);
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-body);
-}
-
-.btn-google:hover {
-  background: var(--bg2);
-  border-color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.btn-google img {
-  width: 20px;
-  height: 20px;
-}
-
-/* Divider */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 20px 0;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.auth-divider span {
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-/* Email Step */
-.auth-step {
-  display: none;
-}
-
-.auth-step.active {
-  display: block;
-}
-
-.auth-step .step-label {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text);
-  margin-bottom: 6px;
-  display: block;
-}
-
-.auth-step .step-hint {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.auth-input-group {
-  margin-bottom: 14px;
-}
-
-.auth-input-group input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  font-family: var(--font-body);
-  transition: all 0.2s ease;
-  background: var(--bg);
-}
-
-.auth-input-group input:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.08);
-}
-
-.auth-input-group input.error {
-  border-color: var(--sale-red);
-  background: #fff0f0;
-}
-
-.auth-input-group input.valid {
-  border-color: var(--btn-green);
-  background: #f0fff4;
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-body);
-}
-
-.btn-primary:hover {
-  background: var(--primary-bright);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(128, 0, 0, 0.25);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.btn-primary .spinner {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 0.6s linear infinite;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-/* OTP Input */
-.otp-input {
-  text-align: center;
-  letter-spacing: 8px;
-  font-size: 1.4rem !important;
-  font-weight: 700 !important;
-}
-
-/* Resend */
-.resend-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.resend-btn {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.8rem;
-  padding: 4px 8px;
-}
-
-.resend-btn:hover {
-  text-decoration: underline;
-}
-
-.resend-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  text-decoration: none !important;
-}
-
-/* Status */
-.auth-status {
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  display: none;
-  margin-bottom: 16px;
-}
-
-.auth-status.success {
-  display: block;
-  background: #f0fff4;
-  color: #1a6b35;
-  border: 1px solid #b2dfbe;
-}
-
-.auth-status.error {
-  display: block;
-  background: #fff0f0;
-  color: #a00000;
-  border: 1px solid #f5c6c6;
-}
-
-.auth-status.info {
-  display: block;
-  background: #f0f4ff;
-  color: #1a3b6b;
-  border: 1px solid #c6d4f5;
-}
-
-/* OTP Step Transition */
-.auth-step {
-  animation: fadeSlide 0.3s ease;
-}
-
-@keyframes fadeSlide {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* Back to login link */
-.back-link {
-  display: block;
-  text-align: center;
-  margin-top: 16px;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.back-link a {
-  color: var(--primary);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.back-link a:hover {
-  text-decoration: underline;
-}
-
-/* Logged in state */
-.logged-in-section {
-  display: none;
-  text-align: center;
-  padding: 20px;
-}
-
-.logged-in-section.active {
-  display: block;
-}
-
-.logged-in-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 800;
-  margin: 0 auto 16px;
-}
-
-.logged-in-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.logged-in-email {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-bottom: 4px;
-}
-
-.logged-in-phone {
-  color: var(--muted);
-  font-size: 0.8rem;
-  margin-bottom: 16px;
-}
-
-.logout-btn {
-  padding: 10px 32px;
-  background: var(--sale-red);
-  color: white;
-  border: none;
-  border-radius: 60px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.logout-btn:hover {
-  background: #b00000;
-  transform: translateY(-2px);
+  .feature-card .label{font-size:0.65rem;}
+  .auth-option-card{padding:20px 16px;}
+  .auth-option-card h3{font-size:1rem;}
+  .auth-option-card .card-icon{font-size:32px;}
+  .auth-option-card .btn-arrow{font-size:0.7rem;padding:6px 18px;}
+  .quick-stats-row{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -1157,9 +567,9 @@ a{color:inherit;text-decoration:none;}
 <div class="offline-banner" id="offlineBanner">You're offline. Please check your connection.</div>
 
 <!-- ===== WISHLIST MODAL ===== -->
-<div class="modal-overlay wishlist-modal" id="wishlistModal">
+<div class="modal-overlay wishlist-modal" id="wishlistModal" role="dialog" aria-modal="true" aria-labelledby="wishlistTitle">
   <div class="modal-card">
-    <h3>My Wishlist</h3>
+    <h3 id="wishlistTitle">My Wishlist</h3>
     <p>Save your favourites and add them to basket anytime.</p>
     <div id="wishlistItems"></div>
     <button class="modal-btn" style="background:var(--gold);color:white;margin-top:12px;padding:10px 20px;border-radius:50px;border:none;font-weight:600;cursor:pointer;" onclick="closeWishlistModal()">Close</button>
@@ -1203,153 +613,104 @@ a{color:inherit;text-decoration:none;}
   <div id="mobileMenuAuth"></div>
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
-  <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
-  <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
+  <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();">
+    <i class="ph ph-shopping-cart"></i> Cart
+    <span class="mm-badge" id="mmCartCount" style="display:none;">0</span>
+  </button>
+  <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();">
+    <i class="ph ph-heart"></i> Wishlist
+    <span class="mm-badge" id="mmWishlistCount" style="display:none;">0</span>
+  </button>
   <a href="profile.html"><i class="ph ph-user-gear"></i> My Profile</a>
   <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
+  <button class="mm-link" onclick="closeMobileMenu();openSupportModal();"><i class="ph ph-headset"></i> Help &amp; Support</button>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
 <!-- ============================================================
-     UNIFIED AUTH CARD - OTP + GOOGLE + RESET PIN (WITH LOGIN/SIGNUP BUTTONS)
+     ACCOUNT DASHBOARD
      ============================================================ -->
-<div class="auth-card">
-  <div class="auth-title">Welcome to <span class="gold">LiquorBelle</span></div>
-  <p class="auth-subtitle">Sign in or create your account</p>
+<div class="account-dashboard">
 
-  <!-- Status -->
-  <div id="authStatus" class="auth-status"></div>
-
-  <!-- Logged In State -->
-  <div id="loggedInSection" class="logged-in-section" style="display:none;">
-    <div class="logged-in-avatar" id="userInitial">G</div>
-    <div class="logged-in-name" id="userName">Guest</div>
-    <div class="logged-in-email" id="userEmail">No email</div>
-    <div class="logged-in-phone" id="userPhone">No phone</div>
-    <button class="logout-btn" onclick="logoutUser()">
-      <i class="ph ph-sign-out"></i> Logout
-    </button>
-  </div>
-
-  <!-- Auth Forms (hidden when logged in) -->
-  <div id="authForms">
-    <!-- Google Button -->
-    <button id="googleAuthBtn" class="btn-google" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-      Continue with Google
-    </button>
-
-    <div class="auth-divider"><span>or</span></div>
-
-    <!-- EMAIL STEP -->
-    <div id="emailStep" class="auth-step active">
-      <div class="auth-input-group">
-        <label class="step-label">Email Address</label>
-        <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email">
-      </div>
-      
-      <!-- Two Buttons: Login & Sign Up -->
-      <div style="display:flex;gap:10px;margin-top:4px;">
-        <button id="sendOtpLoginBtn" class="btn-primary" style="flex:1;" onclick="sendOtp('login')">
-          <i class="ph ph-sign-in"></i> Login
-        </button>
-        <button id="sendOtpSignupBtn" class="btn-primary" style="flex:1;background:var(--gold);" onclick="sendOtp('signup')">
-          <i class="ph ph-user-plus"></i> Sign Up
-        </button>
-      </div>
-      
-      <div class="back-link" style="margin-top:12px;">
-        <span style="font-size:0.75rem;color:var(--muted);">New user? Click Sign Up to create your account.</span>
-      </div>
-      <div class="back-link" style="margin-top:4px;">
-        <a onclick="showForgotPin()" style="cursor:pointer;font-size:0.8rem;color:var(--gold);">🔑 Forgot your PIN?</a>
-      </div>
-    </div>
-
-    <!-- OTP STEP -->
-    <div id="otpStep" class="auth-step">
-      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
-        We sent a 6-digit code to <strong id="otpEmailDisplay"></strong>
-      </p>
-      <div class="auth-input-group">
-        <label class="step-label">Verification Code</label>
-        <input type="text" id="authOtp" class="otp-input" maxlength="6" placeholder="000000" inputmode="numeric" pattern="\d{6}">
-      </div>
-      <button id="verifyOtpBtn" class="btn-primary">
-        <i class="ph ph-check-circle"></i> Verify & Continue
-      </button>
-      <div class="resend-row">
-        <span>Didn't get code?</span>
-        <button id="resendOtpBtn" class="resend-btn">Resend</button>
-        <span id="otpCountdown"></span>
-      </div>
-      <div class="back-link" style="margin-top:12px;">
-        <a onclick="resetAuth()" style="cursor:pointer;">← Back</a>
-      </div>
-    </div>
-
-    <!-- FORGOT PIN - RESET PIN FLOW -->
-    <div id="forgotPinStep" class="auth-step">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h3 style="font-size:1.1rem;color:var(--primary);">Reset PIN</h3>
-        <button onclick="hideForgotPin()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);">✕</button>
-      </div>
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px;">Enter your email to receive an OTP to reset your PIN.</p>
-      
-      <div class="auth-input-group">
-        <label class="step-label">Email Address</label>
-        <input type="email" id="forgotEmail" placeholder="you@example.com" autocomplete="email">
-        <div class="input-error" id="forgotEmailError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid email</div>
-      </div>
-      
-      <button id="forgotSendOtpBtn" class="btn-primary" onclick="sendForgotOtp()">
-        <i class="ph ph-paper-plane"></i> Send Reset OTP
-      </button>
-
-      <div id="forgotOtpGroup" style="display:none;margin-top:12px;">
-        <div class="auth-input-group">
-          <label class="step-label">OTP Code (sent to your email)</label>
-          <input type="text" id="forgotOtp" class="otp-input" maxlength="6" placeholder="000000" inputmode="numeric" pattern="\d{6}">
-          <div class="input-error" id="forgotOtpError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid 6-digit OTP</div>
+  <div class="welcome-banner" id="welcomeBanner">
+    <div class="welcome-inner">
+      <div class="welcome-top">
+        <div class="avatar-circle" id="userAvatar">?</div>
+        <div>
+          <h1 id="welcomeTitle">Welcome to <span class="gold-text">LiquorBelle</span></h1>
+          <p class="sub" id="welcomeSub">Your premium alcohol delivery service</p>
         </div>
-        
-        <div class="auth-input-group">
-          <label class="step-label">New 4-Digit PIN</label>
-          <div class="pin-input-group" id="forgotPinInputGroup">
-            <input type="password" id="forgotPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="forgotPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="forgotPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="forgotPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          </div>
-          <div class="input-error" id="forgotPinError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a 4-digit PIN (numbers only)</div>
-          <button type="button" onclick="togglePinVisibility('forgot')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;margin-top:4px;">Show PIN</button>
-        </div>
-
-        <button id="resetPinBtn" class="btn-primary" onclick="resetPin()" disabled>
-          <i class="ph ph-check-circle"></i> Reset PIN
-        </button>
-        <span class="otp-timer" id="forgotOtpTimer" style="display:block;text-align:center;font-size:0.75rem;color:var(--muted);margin-top:8px;"></span>
       </div>
-
-      <div class="back-link" style="margin-top:12px;">
-        <a onclick="hideForgotPin()" style="cursor:pointer;">← Back to login</a>
-      </div>
+      <div class="badge-row" id="badgeRow"></div>
+      <div class="user-email" id="userEmailDisplay" style="display:none;"></div>
+      <button class="logout-btn-sm" id="logoutBtn" style="display:none;" onclick="logoutUser()">
+        <i class="ph ph-sign-out"></i> Logout
+      </button>
     </div>
   </div>
-</div>
-      <!-- ===== ORDERS SECTION ===== -->
-      <div class="orders-section">
-        <div class="section-title"><i class="ph ph-package"></i> My Orders</div>
-        <div class="section-subtitle">View all your past and current orders</div>
 
-        <a href="track-orders.html" class="view-all-orders-link">
-          <i class="ph ph-arrow-right"></i> View All Orders
-        </a>
-
-        <div id="ordersContainer"></div>
-      </div>
+  <div class="quick-stats-row">
+    <div class="quick-stat" onclick="openCartDrawer()">
+      <i class="ph ph-shopping-cart"></i>
+      <div><div class="qs-num" id="qsCartCount">0</div><div class="qs-label">Items in Cart</div></div>
+    </div>
+    <div class="quick-stat" onclick="openWishlistModal()">
+      <i class="ph ph-heart"></i>
+      <div><div class="qs-num" id="qsWishlistCount">0</div><div class="qs-label">Wishlist Items</div></div>
     </div>
   </div>
+
+  <div id="authOptions">
+    <p class="section-title">Get Started</p>
+    <div class="auth-grid">
+      <a href="login.html" class="auth-option-card login-card">
+        <div class="card-icon"><i class="ph ph-lock-key-open"></i></div>
+        <h3>Login</h3>
+        <p>Already have an account? Sign in here</p>
+        <span class="btn-arrow">Login Now →</span>
+      </a>
+      <a href="signup.html" class="auth-option-card register-card">
+        <div class="card-icon"><i class="ph ph-user-plus"></i></div>
+        <h3>Create Account</h3>
+        <p>New customer? Register for an account</p>
+        <span class="btn-arrow">Sign Up →</span>
+      </a>
+    </div>
+    <p class="guest-cta">Just browsing? <a href="shop.html">Continue shopping as a guest →</a></p>
+  </div>
+
+  <div id="loggedInFeatures" style="display:none;">
+    <p class="section-title">My Account</p>
+    <div class="feature-grid">
+      <a href="profile.html" class="feature-card gold">
+        <i class="ph ph-user-circle"></i>
+        <span class="label">My Profile</span>
+        <span class="desc">View &amp; edit your info</span>
+      </a>
+      <a href="track-orders.html" class="feature-card green">
+        <i class="ph ph-package"></i>
+        <span class="label">Track Orders</span>
+        <span class="desc">View order status</span>
+      </a>
+      <a href="#" class="feature-card red" onclick="openWishlistModal();return false;">
+        <i class="ph ph-heart"></i>
+        <span class="feature-badge" id="featureWishlistBadge" style="display:none;">0</span>
+        <span class="label">Wishlist</span>
+        <span class="desc">Your saved items</span>
+      </a>
+      <a href="shop.html" class="feature-card">
+        <i class="ph ph-storefront"></i>
+        <span class="label">Shop Now</span>
+        <span class="desc">Browse our collection</span>
+      </a>
+      <a href="#" class="feature-card green" onclick="openSupportModal();return false;">
+        <i class="ph ph-headset"></i>
+        <span class="label">Help &amp; Support</span>
+        <span class="desc">Get assistance</span>
+      </a>
+    </div>
+  </div>
+
 </div>
 
 <!-- ===== WHATSAPP FLOAT ===== -->
@@ -1420,9 +781,9 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <!-- ===== SUPPORT MODAL ===== -->
-<div class="modal-overlay" id="supportModal" style="display:none;">
+<div class="modal-overlay" id="supportModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="supportTitle">
   <div class="modal-card">
-    <h3><i class="ph ph-headset" style="color:var(--btn-green);"></i> Support Center</h3>
+    <h3 id="supportTitle"><i class="ph ph-headset" style="color:var(--btn-green);"></i> Support Center</h3>
     <p>How can we help you today?</p>
     <div style="display:grid;gap:10px;margin:12px 0;">
       <a href="mailto:timblax0@gmail.com" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);text-decoration:none;color:var(--text);border:1px solid var(--border);">
@@ -1446,36 +807,15 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-</body>
-</html>
-// ============================================================
-// JAVASCRIPT - ACCOUNT PAGE (UNIFIED OTP + GOOGLE + PIN)
-// ============================================================
+<!-- ===== JAVASCRIPT ===== -->
 <script>
 // ============================================================
 // CONFIG
 // ============================================================
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const CART_KEY = 'liquorbelle_cart';
+const WISHLIST_KEY = 'liquorbelle_wishlist';
 const TOAST_DURATION = 3000;
-const AUTH_MODE = {
-  LOGIN: 'login',
-  SIGNUP: 'signup',
-  RESET_PIN: 'reset'
-};
-
-// ============================================================
-// STATE
-// ============================================================
-let state = {
-  authMode: AUTH_MODE.LOGIN,
-  otpTimer: null,
-  otpCountdown: 0,
-  currentUser: null,
-  isLoading: false,
-  email: '',
-  forgotEmail: ''
-};
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -1505,13 +845,65 @@ function isValidEmail(email) {
   return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim());
 }
 
-function isValidOtp(otp) {
-  return /^\d{6}$/.test(otp.trim());
+function getInitials(name) {
+  if (!name) return '?';
+  var parts = name.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  var initials = parts.slice(0, 2).map(function(w) { return w[0]; }).join('');
+  return initials.toUpperCase();
 }
 
-function isValidPin(pin) {
-  return /^\d{4}$/.test(pin);
+function formatDate(value) {
+  if (!value) return '';
+  try {
+    var d = new Date(value);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-KE', { year: 'numeric', month: 'short', day: 'numeric' });
+  } catch (e) {
+    return '';
+  }
 }
+
+// Defensive JWT decode — does NOT assume a specific payload shape.
+// Only used to soft-check an "exp" claim if one happens to be present.
+function decodeJWT(token) {
+  try {
+    var parts = token.split('.');
+    if (parts.length !== 3) return null;
+    var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (payload.length % 4) payload += '=';
+    return JSON.parse(atob(payload));
+  } catch (e) {
+    return null;
+  }
+}
+
+function checkSessionValidity() {
+  var token = localStorage.getItem('liquorbelle_token');
+  if (!token) return;
+  var payload = decodeJWT(token);
+  if (payload && typeof payload.exp === 'number') {
+    var isExpired = Date.now() >= payload.exp * 1000;
+    if (isExpired) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      toast('Your session expired. Please login again.', 'error');
+    }
+  }
+}
+
+// ============================================================
+// HANDLE ACCOUNT CLICK - FIX FOR BOTTOM NAV
+// ============================================================
+function handleAccountClick() {
+  var user = getCurrentUser();
+  if (user && user.name) {
+    window.location.href = 'profile.html';
+  } else {
+    window.location.href = 'accounts.html';
+  }
+}
+window.handleAccountClick = handleAccountClick;
 
 // ============================================================
 // UPDATE BOTTOM NAV
@@ -1520,9 +912,9 @@ function updateBottomNav() {
   var user = getCurrentUser();
   var accountBtn = document.getElementById('bottomNavAccount');
   var accountLabel = document.getElementById('bottomNavAccountLabel');
-  
+
   if (!accountBtn || !accountLabel) return;
-  
+
   if (user && user.name) {
     accountLabel.textContent = 'Profile';
     accountBtn.setAttribute('onclick', "window.location.href='profile.html'");
@@ -1548,1030 +940,103 @@ function toast(msg, type) {
 }
 
 // ============================================================
-// STATUS SYSTEM
-// ============================================================
-function showStatus(msg, type) {
-  var el = document.getElementById('authStatus');
-  if (!el) return;
-  el.textContent = msg;
-  el.className = 'auth-status ' + (type || 'info');
-  el.style.display = 'block';
-}
-
-function hideStatus() {
-  var el = document.getElementById('authStatus');
-  if (el) { el.className = 'auth-status'; el.style.display = 'none'; }
-}
-
-// ============================================================
-// LOADING STATE
-// ============================================================
-function setLoading(btn, loading) {
-  if (!btn) return;
-  if (loading) {
-    btn.disabled = true;
-    btn._originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="spinner"></span> ' + (btn.dataset.loadingText || 'Processing...');
-  } else {
-    btn.disabled = false;
-    btn.innerHTML = btn._originalText || btn.innerHTML;
-  }
-}
-
-// ============================================================
-// PIN INPUT HELPERS
-// ============================================================
-function getPinValue(prefix) {
-  var pin = '';
-  for (var i = 1; i <= 4; i++) {
-    var input = document.getElementById(prefix + 'Pin' + i);
-    if (input) pin += input.value || '';
-  }
-  return pin;
-}
-
-function setupPinInputs(prefix) {
-  var inputs = [];
-  for (var i = 1; i <= 4; i++) {
-    inputs.push(document.getElementById(prefix + 'Pin' + i));
-  }
-
-  inputs.forEach(function(input, index) {
-    if (!input) return;
-
-    var handleInput = function() {
-      input.value = input.value.replace(/\D/g, '');
-      if (input.value.length > 1) {
-        input.value = input.value.slice(0, 1);
-      }
-      if (input.value.length === 1 && index < 3) {
-        if (inputs[index + 1]) inputs[index + 1].focus();
-      }
-      validatePinInput(prefix);
-    };
-
-    var handleKeydown = function(e) {
-      if (e.key === 'Backspace' && input.value === '' && index > 0) {
-        if (inputs[index - 1]) inputs[index - 1].focus();
-      }
-      if (e.key === 'ArrowLeft' && index > 0) {
-        if (inputs[index - 1]) inputs[index - 1].focus();
-      }
-      if (e.key === 'ArrowRight' && index < 3) {
-        if (inputs[index + 1]) inputs[index + 1].focus();
-      }
-      if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && 
-          e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab' && 
-          e.key !== 'Enter' && !e.ctrlKey && !e.metaKey) {
-        e.preventDefault();
-      }
-    };
-
-    var handlePaste = function(e) {
-      e.preventDefault();
-      var paste = (e.clipboardData || window.clipboardData).getData('text');
-      var digits = paste.replace(/\D/g, '').slice(0, 4);
-      for (var i = 0; i < digits.length && i < 4; i++) {
-        if (inputs[i]) inputs[i].value = digits[i];
-      }
-      if (digits.length > 0) {
-        var nextIndex = Math.min(digits.length, 3);
-        if (inputs[nextIndex]) inputs[nextIndex].focus();
-      }
-      validatePinInput(prefix);
-    };
-
-    var handleFocus = function() {
-      if (input.value && !/^\d$/.test(input.value)) {
-        input.value = '';
-      }
-      input.select();
-    };
-
-    input.addEventListener('input', handleInput);
-    input.addEventListener('keydown', handleKeydown);
-    input.addEventListener('paste', handlePaste);
-    input.addEventListener('focus', handleFocus);
-    input.setAttribute('autocomplete', 'off');
-    input.setAttribute('autocorrect', 'off');
-    input.setAttribute('spellcheck', 'false');
-  });
-}
-
-function validatePinInput(prefix) {
-  var pin = getPinValue(prefix);
-  var errorEl = document.getElementById(prefix + 'PinError');
-  var inputs = [];
-  for (var i = 1; i <= 4; i++) {
-    inputs.push(document.getElementById(prefix + 'Pin' + i));
-  }
-
-  var allFilled = inputs.every(function(inp) { return inp && inp.value.length === 1; });
-
-  inputs.forEach(function(inp) {
-    if (!inp) return;
-    inp.classList.remove('error', 'valid');
-  });
-
-  if (allFilled && !isValidPin(pin)) {
-    inputs.forEach(function(inp) { if (inp) inp.classList.add('error'); });
-    if (errorEl) errorEl.classList.add('show');
-    return false;
-  } else if (allFilled && isValidPin(pin)) {
-    inputs.forEach(function(inp) { if (inp) inp.classList.add('valid'); });
-    if (errorEl) errorEl.classList.remove('show');
-    return true;
-  } else {
-    if (errorEl) errorEl.classList.remove('show');
-    return false;
-  }
-}
-
-function togglePinVisibility(prefix) {
-  var inputs = [];
-  for (var i = 1; i <= 4; i++) {
-    inputs.push(document.getElementById(prefix + 'Pin' + i));
-  }
-  var isPassword = inputs[0] && inputs[0].type === 'password';
-  inputs.forEach(function(inp) {
-    if (inp) inp.type = isPassword ? 'text' : 'password';
-  });
-}
-
-// ============================================================
-// UNIFIED AUTH - SEND OTP
-// ============================================================
-function sendOtp(mode) {
-  var emailInput = document.getElementById('authEmail');
-  var email = emailInput.value.trim();
-  
-  if (!isValidEmail(email)) {
-    showStatus('❌ Please enter a valid email address', 'error');
-    emailInput.classList.add('error');
-    return;
-  }
-  emailInput.classList.remove('error');
-  
-  state.authMode = mode;
-  state.email = email;
-  
-  var btn = document.getElementById('sendOtpBtn');
-  if (mode === 'login') {
-    btn = document.getElementById('sendOtpLoginBtn');
-  } else {
-    btn = document.getElementById('sendOtpSignupBtn');
-  }
-  
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Sending...';
-  hideStatus();
-
-  // First check if user exists for login mode
-  if (mode === 'login') {
-    checkUserExists(null, email, null)
-      .then(function(checkResult) {
-        if (checkResult && !checkResult.exists) {
-          showStatus('❌ Email not registered. Please click "Sign Up" to create an account.', 'error');
-          setLoading(btn, false);
-          btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
-          return;
-        }
-        return sendOtpRequest(email);
-      })
-      .then(function() {
-        // handled in sendOtpRequest
-      })
-      .catch(function(err) {
-        showStatus('❌ ' + err.message, 'error');
-        setLoading(btn, false);
-        btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
-      });
-  } else {
-    // SIGNUP mode - check if user already exists
-    checkUserExists(null, email, null)
-      .then(function(checkResult) {
-        if (checkResult && checkResult.exists) {
-          showStatus('❌ Email already registered. Please click "Login" to sign in.', 'error');
-          setLoading(btn, false);
-          btn.innerHTML = '<i class="ph ph-user-plus"></i> Sign Up';
-          return;
-        }
-        return sendOtpRequest(email);
-      })
-      .then(function() {
-        // handled in sendOtpRequest
-      })
-      .catch(function(err) {
-        showStatus('❌ ' + err.message, 'error');
-        setLoading(btn, false);
-        btn.innerHTML = '<i class="ph ph-user-plus"></i> Sign Up';
-      });
-  }
-}
-
-function sendOtpRequest(email) {
-  return fetch(API_BASE + '/api/auth/send-email-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    var btn = document.getElementById('sendOtpBtn');
-    if (state.authMode === 'login') {
-      btn = document.getElementById('sendOtpLoginBtn');
-    } else {
-      btn = document.getElementById('sendOtpSignupBtn');
-    }
-    setLoading(btn, false);
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send OTP');
-    }
-    
-    showStatus('✅ Verification code sent to your email', 'success');
-    
-    // Switch to OTP step
-    document.getElementById('emailStep').classList.remove('active');
-    document.getElementById('otpStep').classList.add('active');
-    document.getElementById('otpEmailDisplay').textContent = email;
-    document.getElementById('authOtp').focus();
-    startOtpCountdown();
-    
-    btn.innerHTML = state.authMode === 'login' ? 
-      '<i class="ph ph-sign-in"></i> Login' : 
-      '<i class="ph ph-user-plus"></i> Sign Up';
-    
-    return data;
-  });
-}
-
-// ============================================================
-// VERIFY OTP
-// ============================================================
-function verifyOtp() {
-  var otpInput = document.getElementById('authOtp');
-  var otp = otpInput.value.trim();
-  
-  if (!isValidOtp(otp)) {
-    showStatus('❌ Please enter a valid 6-digit code', 'error');
-    otpInput.classList.add('error');
-    return;
-  }
-  otpInput.classList.remove('error');
-
-  var btn = document.getElementById('verifyOtpBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Verifying...';
-  hideStatus();
-
-  // For signup, we need to collect name and phone
-  if (state.authMode === 'signup') {
-    // Show name/phone collection modal or form
-    showSignupForm(otp);
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Verify & Continue';
-    return;
-  }
-
-  // LOGIN flow - just verify
-  fetch(API_BASE + '/api/auth/verify-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      email: state.email, 
-      otp: otp,
-      action: 'login'
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Verify & Continue';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Invalid or expired code');
-    }
-
-    var user = {
-      id: data.customer.id,
-      email: data.customer.email,
-      name: data.customer.name || state.email.split('@')[0],
-      phone: data.customer.phone || '',
-      token: data.token,
-      loggedIn: true,
-      loginTime: Date.now()
-    };
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', data.token);
-
-    showStatus('✅ Successfully logged in!', 'success');
-    toast('Welcome back, ' + user.name + '! 🎉', 'success');
-
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1000);
-
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Verify & Continue';
-    showStatus('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
-// SIGNUP - Show name/phone collection
-// ============================================================
-function showSignupForm(otp) {
-  var modal = document.getElementById('signupModal');
-  if (!modal) {
-    // Create modal dynamically
-    var modalHtml = `
-      <div class="modal-overlay" id="signupModal" style="display:flex;">
-        <div class="modal-card" style="max-width:440px;">
-          <h3 style="font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:4px;">Complete Your Account</h3>
-          <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">Just a few more details to create your account.</p>
-          
-          <div class="auth-input-group">
-            <label class="step-label">Full Name *</label>
-            <input type="text" id="signupName" placeholder="John Mwangi" autocomplete="name">
-            <div class="input-error" id="signupNameError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter your full name</div>
-          </div>
-          
-          <div class="auth-input-group">
-            <label class="step-label">Phone Number *</label>
-            <input type="tel" id="signupPhone" placeholder="0712345678" maxlength="10" autocomplete="tel">
-            <div class="input-error" id="signupPhoneError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid phone number</div>
-          </div>
-          
-          <div class="auth-input-group">
-            <label class="step-label">Create 4-Digit PIN *</label>
-            <div class="pin-input-group" id="signupPinGroup">
-              <input type="password" id="signupPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-              <input type="password" id="signupPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-              <input type="password" id="signupPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-              <input type="password" id="signupPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            </div>
-            <div class="input-error" id="signupPinError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a 4-digit PIN</div>
-            <button type="button" onclick="togglePinVisibility('signup')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;margin-top:4px;">Show PIN</button>
-          </div>
-          
-          <button id="completeSignupBtn" class="btn-primary" onclick="completeSignup()">
-            <i class="ph ph-user-plus"></i> Create Account
-          </button>
-          <button onclick="closeSignupModal()" style="display:block;width:100%;margin-top:8px;padding:10px;background:var(--bg2);border:none;border-radius:50px;font-weight:600;cursor:pointer;color:var(--text);">Cancel</button>
-        </div>
-      </div>
-    `;
-    var wrapper = document.createElement('div');
-    wrapper.innerHTML = modalHtml;
-    document.body.appendChild(wrapper.firstElementChild);
-    
-    // Setup pin inputs for signup
-    setupPinInputs('signup');
-  } else {
-    modal.style.display = 'flex';
-  }
-  
-  // Store OTP for signup completion
-  state._signupOtp = otp;
-}
-
-function closeSignupModal() {
-  var modal = document.getElementById('signupModal');
-  if (modal) modal.style.display = 'none';
-  state._signupOtp = null;
-}
-
-// ============================================================
-// COMPLETE SIGNUP
-// ============================================================
-function completeSignup() {
-  var name = document.getElementById('signupName').value.trim();
-  var phone = document.getElementById('signupPhone').value.trim();
-  var pin = getPinValue('signup');
-  var otp = state._signupOtp;
-  
-  var nameError = document.getElementById('signupNameError');
-  var phoneError = document.getElementById('signupPhoneError');
-  var pinError = document.getElementById('signupPinError');
-  
-  var valid = true;
-  
-  if (!name || name.length < 2) {
-    nameError.style.display = 'block';
-    valid = false;
-  } else {
-    nameError.style.display = 'none';
-  }
-  
-  if (!phone || phone.length < 10) {
-    phoneError.style.display = 'block';
-    valid = false;
-  } else {
-    phoneError.style.display = 'none';
-  }
-  
-  if (!isValidPin(pin)) {
-    pinError.style.display = 'block';
-    valid = false;
-  } else {
-    pinError.style.display = 'none';
-  }
-  
-  if (!valid) return;
-  
-  var btn = document.getElementById('completeSignupBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Creating Account...';
-  
-  fetch(API_BASE + '/api/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: name,
-      email: state.email,
-      phone: phone,
-      pin: pin,
-      otp: otp
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Registration failed');
-    }
-    
-    var user = {
-      id: data.customer.id,
-      email: data.customer.email,
-      name: data.customer.name,
-      phone: data.customer.phone,
-      token: data.token,
-      loggedIn: true,
-      loginTime: Date.now()
-    };
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', data.token);
-    
-    closeSignupModal();
-    showStatus('✅ Account created successfully!', 'success');
-    toast('Welcome, ' + user.name + '! 🎉', 'success');
-    
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1000);
-    
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    showStatus('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
-// OTP COUNTDOWN
-// ============================================================
-function startOtpCountdown() {
-  var resendOtpBtn = document.getElementById('resendOtpBtn');
-  var otpCountdown = document.getElementById('otpCountdown');
-  
-  state.otpCountdown = 60;
-  if (resendOtpBtn) resendOtpBtn.disabled = true;
-  if (otpCountdown) otpCountdown.textContent = '(' + state.otpCountdown + 's)';
-
-  clearInterval(state.otpTimer);
-  state.otpTimer = setInterval(function() {
-    state.otpCountdown--;
-    if (state.otpCountdown <= 0) {
-      clearInterval(state.otpTimer);
-      if (resendOtpBtn) resendOtpBtn.disabled = false;
-      if (otpCountdown) otpCountdown.textContent = '';
-    } else {
-      if (otpCountdown) otpCountdown.textContent = '(' + state.otpCountdown + 's)';
-    }
-  }, 1000);
-}
-
-// ============================================================
-// RESEND OTP
-// ============================================================
-function resendOtp() {
-  var btn = document.getElementById('resendOtpBtn');
-  if (btn.disabled) return;
-  sendOtpRequest(state.email);
-}
-
-// ============================================================
-// RESET AUTH
-// ============================================================
-function resetAuth() {
-  document.getElementById('emailStep').classList.add('active');
-  document.getElementById('otpStep').classList.remove('active');
-  document.getElementById('authOtp').value = '';
-  hideStatus();
-  clearInterval(state.otpTimer);
-  document.getElementById('resendOtpBtn').disabled = false;
-  document.getElementById('otpCountdown').textContent = '';
-  document.getElementById('authEmail').focus();
-}
-
-// ============================================================
-// FORGOT PIN - SHOW/HIDE
-// ============================================================
-function showForgotPin() {
-  // Hide all other steps
-  document.getElementById('emailStep').classList.remove('active');
-  document.getElementById('otpStep').classList.remove('active');
-  document.getElementById('forgotPinStep').classList.add('active');
-  document.getElementById('forgotOtpGroup').style.display = 'none';
-  document.getElementById('forgotPinInputGroup').style.display = 'none';
-  document.getElementById('resetPinBtn').disabled = true;
-  document.getElementById('forgotEmail').value = '';
-  document.getElementById('forgotOtp').value = '';
-  document.getElementById('forgotOtpTimer').textContent = '';
-  hideStatus();
-}
-
-function hideForgotPin() {
-  document.getElementById('forgotPinStep').classList.remove('active');
-  document.getElementById('emailStep').classList.add('active');
-  clearInterval(state.forgotOtpTimer);
-}
-
-// ============================================================
-// SEND FORGOT PIN OTP
-// ============================================================
-function sendForgotOtp() {
-  var email = document.getElementById('forgotEmail').value.trim();
-  var errorEl = document.getElementById('forgotEmailError');
-
-  if (!email || !isValidEmail(email)) {
-    errorEl.style.display = 'block';
-    return;
-  }
-  errorEl.style.display = 'none';
-
-  var btn = document.getElementById('forgotSendOtpBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Sending...';
-
-  // Check if user exists
-  checkUserExists(null, email, null)
-    .then(function(checkResult) {
-      if (checkResult && !checkResult.exists) {
-        showStatus('❌ Email not registered. Please create an account first.', 'error');
-        setLoading(btn, false);
-        btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-        return;
-      }
-      return requestResetOTP(email);
-    })
-    .then(function() {
-      showStatus('✅ OTP sent to your email', 'success');
-      document.getElementById('forgotOtpGroup').style.display = 'block';
-      document.getElementById('forgotPinInputGroup').style.display = 'block';
-      document.getElementById('resetPinBtn').disabled = false;
-      startForgotOtpTimer();
-      setLoading(btn, false);
-      btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-    })
-    .catch(function(err) {
-      showStatus('❌ ' + err.message, 'error');
-      setLoading(btn, false);
-      btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-    });
-}
-
-function requestResetOTP(email) {
-  return fetch(API_BASE + '/api/auth/forgot-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send OTP');
-    }
-    return data;
-  });
-}
-
-function startForgotOtpTimer() {
-  state.forgotOtpCountdown = 60;
-  var timerEl = document.getElementById('forgotOtpTimer');
-  var btn = document.getElementById('forgotSendOtpBtn');
-  timerEl.textContent = 'Resend in ' + state.forgotOtpCountdown + 's';
-  btn.disabled = true;
-
-  clearInterval(state.forgotOtpTimer);
-  state.forgotOtpTimer = setInterval(function() {
-    state.forgotOtpCountdown--;
-    if (state.forgotOtpCountdown <= 0) {
-      clearInterval(state.forgotOtpTimer);
-      timerEl.textContent = '';
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-    } else {
-      timerEl.textContent = 'Resend in ' + state.forgotOtpCountdown + 's';
-    }
-  }, 1000);
-}
-
-// ============================================================
-// RESET PIN
-// ============================================================
-function resetPin() {
-  var email = document.getElementById('forgotEmail').value.trim();
-  var otp = document.getElementById('forgotOtp').value.trim();
-  var newPin = getPinValue('forgot');
-
-  var otpError = document.getElementById('forgotOtpError');
-  var pinError = document.getElementById('forgotPinError');
-
-  if (!otp || !isValidOtp(otp)) {
-    otpError.style.display = 'block';
-    return;
-  }
-  otpError.style.display = 'none';
-
-  if (!newPin || !isValidPin(newPin)) {
-    pinError.style.display = 'block';
-    return;
-  }
-  pinError.style.display = 'none';
-
-  var btn = document.getElementById('resetPinBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Resetting...';
-
-  fetch(API_BASE + '/api/auth/reset-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, otp: otp, newPin: newPin })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Reset PIN';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to reset PIN');
-    }
-    
-    showStatus('✅ PIN reset successfully! Please login with your new PIN.', 'success');
-    setTimeout(function() {
-      hideForgotPin();
-      document.getElementById('authEmail').value = email;
-      resetAuth();
-    }, 1500);
-    
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Reset PIN';
-    showStatus('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
-// CHECK USER EXISTS
-// ============================================================
-function checkUserExists(name, email, phone) {
-  return fetch(API_BASE + '/api/auth/check-user', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: name || undefined,
-      email: email || undefined,
-      phone: phone || undefined
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(result) {
-    return result;
-  })
-  .catch(function(error) {
-    console.error('Check user error:', error);
-    return { exists: false, error: error.message };
-  });
-}
-
-// ============================================================
-// GOOGLE LOGIN - EXCLUSIVE FOR REGISTERED USERS
-// ============================================================
-function loginWithGoogle() {
-  // Google OAuth - if user not registered, they'll be redirected to signup
-  window.location.href = API_BASE + '/api/auth/google';
-}
-
-function handleGoogleCallback() {
-  var urlParams = new URLSearchParams(window.location.search);
-  var googleAuth = urlParams.get('google_auth');
-  var token = urlParams.get('token');
-  var email = urlParams.get('email');
-  var name = urlParams.get('name');
-  var phone = urlParams.get('phone') || '';
-  var isNew = urlParams.get('is_new') === 'true';
-
-  if (googleAuth === 'success' && token) {
-    if (isNew) {
-      // New user - need to complete registration
-      showGoogleSignupModal(email, name, phone, token);
-      return;
-    }
-    
-    var user = {
-      id: Date.now().toString(),
-      email: email,
-      name: decodeURIComponent(name),
-      phone: phone,
-      token: token,
-      loggedIn: true,
-      loginTime: Date.now(),
-      authMethod: 'google'
-    };
-    
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', token);
-    
-    toast('✅ Welcome, ' + user.name + '! 👋', 'success');
-    window.location.href = 'index.html';
-  }
-}
-
-function showGoogleSignupModal(email, name, phone, token) {
-  var modalHtml = `
-    <div class="modal-overlay" id="googleSignupModal" style="display:flex;">
-      <div class="modal-card" style="max-width:440px;">
-        <h3 style="font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:4px;">Complete Your Account</h3>
-        <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">You're new here! Set up your account to continue.</p>
-        
-        <div class="auth-input-group">
-          <label class="step-label">Full Name</label>
-          <input type="text" id="googleSignupName" value="${escapeHtml(decodeURIComponent(name))}" placeholder="John Mwangi">
-        </div>
-        
-        <div class="auth-input-group">
-          <label class="step-label">Phone Number *</label>
-          <input type="tel" id="googleSignupPhone" placeholder="0712345678" maxlength="10">
-          <div class="input-error" id="googleSignupPhoneError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid phone number</div>
-        </div>
-        
-        <div class="auth-input-group">
-          <label class="step-label">Create 4-Digit PIN *</label>
-          <div class="pin-input-group" id="googleSignupPinGroup">
-            <input type="password" id="googleSignupPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="googleSignupPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="googleSignupPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="googleSignupPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          </div>
-          <div class="input-error" id="googleSignupPinError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a 4-digit PIN</div>
-          <button type="button" onclick="togglePinVisibility('googleSignup')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;margin-top:4px;">Show PIN</button>
-        </div>
-        
-        <button id="completeGoogleSignupBtn" class="btn-primary" onclick="completeGoogleSignup('${token}')">
-          <i class="ph ph-user-plus"></i> Create Account
-        </button>
-        <button onclick="closeGoogleSignupModal()" style="display:block;width:100%;margin-top:8px;padding:10px;background:var(--bg2);border:none;border-radius:50px;font-weight:600;cursor:pointer;color:var(--text);">Cancel</button>
-      </div>
-    </div>
-  `;
-  var wrapper = document.createElement('div');
-  wrapper.innerHTML = modalHtml;
-  document.body.appendChild(wrapper.firstElementChild);
-  setupPinInputs('googleSignup');
-}
-
-function closeGoogleSignupModal() {
-  var modal = document.getElementById('googleSignupModal');
-  if (modal) modal.remove();
-}
-
-function completeGoogleSignup(token) {
-  var name = document.getElementById('googleSignupName').value.trim();
-  var phone = document.getElementById('googleSignupPhone').value.trim();
-  var pin = getPinValue('googleSignup');
-  
-  var phoneError = document.getElementById('googleSignupPhoneError');
-  var pinError = document.getElementById('googleSignupPinError');
-  
-  var valid = true;
-  
-  if (!phone || phone.length < 10) {
-    phoneError.style.display = 'block';
-    valid = false;
-  } else {
-    phoneError.style.display = 'none';
-  }
-  
-  if (!isValidPin(pin)) {
-    pinError.style.display = 'block';
-    valid = false;
-  } else {
-    pinError.style.display = 'none';
-  }
-  
-  if (!valid) return;
-  
-  var btn = document.getElementById('completeGoogleSignupBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Creating Account...';
-  
-  // Get email from the URL params
-  var urlParams = new URLSearchParams(window.location.search);
-  var email = urlParams.get('email');
-  
-  fetch(API_BASE + '/api/auth/complete-google-registration', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: name,
-      email: email,
-      phone: phone,
-      pin: pin,
-      token: token
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Registration failed');
-    }
-    
-    var user = {
-      id: data.customer.id,
-      email: data.customer.email,
-      name: data.customer.name,
-      phone: data.customer.phone,
-      token: data.token,
-      loggedIn: true,
-      loginTime: Date.now(),
-      authMethod: 'google'
-    };
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', data.token);
-    
-    closeGoogleSignupModal();
-    toast('✅ Account created! Welcome, ' + user.name + '! 🎉', 'success');
-    
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1000);
-    
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    toast('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
 // LOGOUT
 // ============================================================
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
-  state.currentUser = null;
   toast('Logged out successfully', 'success');
-  window.location.href = 'accounts.html';
+  setTimeout(function() {
+    window.location.href = 'accounts.html';
+  }, 500);
 }
 
 // ============================================================
-// SHOW LOGGED IN STATE
+// UPDATE UI BASED ON LOGIN STATE
 // ============================================================
-function showLoggedInState(user) {
-  var loggedInSection = document.getElementById('loggedInSection');
-  var authForms = document.getElementById('authForms');
+function updateUI() {
+  var user = getCurrentUser();
+  var authOptions = document.getElementById('authOptions');
   var loggedInFeatures = document.getElementById('loggedInFeatures');
-  
-  if (loggedInSection) {
-    loggedInSection.style.display = 'block';
-    loggedInSection.classList.add('active');
+  var welcomeTitle = document.getElementById('welcomeTitle');
+  var welcomeSub = document.getElementById('welcomeSub');
+  var userEmailDisplay = document.getElementById('userEmailDisplay');
+  var logoutBtn = document.getElementById('logoutBtn');
+  var avatar = document.getElementById('userAvatar');
+  var badgeRow = document.getElementById('badgeRow');
+
+  if (user && user.name) {
+    if (authOptions) authOptions.style.display = 'none';
+    if (loggedInFeatures) loggedInFeatures.style.display = 'block';
+    if (welcomeTitle) welcomeTitle.innerHTML = 'Welcome back, <span class="gold-text">' + escapeHtml(user.name) + '</span>! 🍾';
+    if (welcomeSub) welcomeSub.textContent = 'Your premium alcohol delivery service';
+
+    if (avatar) {
+      avatar.style.display = 'flex';
+      avatar.textContent = getInitials(user.name);
+    }
+
+    if (userEmailDisplay) {
+      userEmailDisplay.style.display = 'block';
+      var contactLine = '📧 ' + escapeHtml(user.email || 'No email');
+      if (user.phoneDisplay || user.phone) {
+        contactLine += ' &nbsp;•&nbsp; 📱 ' + escapeHtml(user.phoneDisplay || user.phone);
+      }
+      userEmailDisplay.innerHTML = contactLine;
+    }
+
+    if (badgeRow) {
+      var chips = '';
+      if (user.authMethod === 'google') {
+        chips += '<span class="badge-chip google"><i class="ph ph-google-logo"></i> Google Account</span>';
+      } else {
+        chips += '<span class="badge-chip"><i class="ph ph-envelope"></i> Email Account</span>';
+      }
+      var memberSince = formatDate(user.createdAt);
+      if (memberSince) {
+        chips += '<span class="badge-chip"><i class="ph ph-calendar-check"></i> Member since ' + escapeHtml(memberSince) + '</span>';
+      }
+      var lastLogin = formatDate(user.lastLoginAt);
+      if (lastLogin) {
+        chips += '<span class="badge-chip"><i class="ph ph-clock-clockwise"></i> Last login ' + escapeHtml(lastLogin) + '</span>';
+      }
+      badgeRow.innerHTML = chips;
+    }
+
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+  } else {
+    if (authOptions) authOptions.style.display = 'block';
+    if (loggedInFeatures) loggedInFeatures.style.display = 'none';
+    if (welcomeTitle) welcomeTitle.innerHTML = 'Welcome to <span class="gold-text">LiquorBelle</span>';
+    if (welcomeSub) welcomeSub.textContent = 'Your premium alcohol delivery service';
+    if (avatar) {
+      avatar.style.display = 'none';
+      avatar.textContent = '?';
+    }
+    if (badgeRow) badgeRow.innerHTML = '';
+    if (userEmailDisplay) {
+      userEmailDisplay.style.display = 'none';
+      userEmailDisplay.textContent = '';
+    }
+    if (logoutBtn) logoutBtn.style.display = 'none';
   }
-  if (authForms) authForms.style.display = 'none';
-  if (loggedInFeatures) loggedInFeatures.style.display = 'block';
-  
-  var nameEl = document.getElementById('userNameDisplay');
-  if (nameEl) nameEl.textContent = user.name || 'Customer';
-  var emailEl = document.getElementById('userEmailDisplay');
-  if (emailEl) emailEl.textContent = user.email || 'No email';
-  var phoneEl = document.getElementById('userPhoneDisplay');
-  if (phoneEl) phoneEl.textContent = user.phone || 'No phone';
-  
-  var initialEl = document.getElementById('userInitial');
-  if (initialEl) initialEl.textContent = (user.name || 'G').charAt(0).toUpperCase();
-  
-  loadOrders();
+
   updateUserBadge();
   updateBottomNav();
 }
 
 // ============================================================
-// LOAD ORDERS
-// ============================================================
-async function loadOrders() {
-  var container = document.getElementById('ordersContainer');
-  var token = localStorage.getItem('liquorbelle_token');
-
-  if (!token) {
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-lock"></i><p>Please login to see your orders</p></div>';
-    return;
-  }
-
-  container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
-
-  try {
-    var response = await fetch(API_BASE + '/api/customers/me/orders', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('Session expired');
-    }
-
-    var data = await response.json();
-    if (data.success && data.orders && data.orders.length > 0) {
-      renderOrders(data.orders);
-    } else {
-      container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
-    }
-  } catch (error) {
-    console.error('Load orders error:', error);
-    if (error.message === 'Session expired') {
-      logoutUser();
-    } else {
-      container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Could not load orders</p><small>Please check your connection and try again.</small></div>';
-    }
-  }
-}
-
-// ============================================================
-// RENDER ORDERS
-// ============================================================
-function renderOrders(orders) {
-  var container = document.getElementById('ordersContainer');
-
-  if (!orders || !orders.length) {
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
-    return;
-  }
-
-  var html = '<div class="orders-list">';
-  for (var i = 0; i < orders.length; i++) {
-    var o = orders[i];
-    var items = o.items || [];
-    var statusText = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : o.status === 'delivered' ? 'Delivered' : 'Unknown';
-    var statusClass = 'status-' + (o.status || 'pending');
-
-    var itemsHtml = '';
-    for (var j = 0; j < items.length; j++) {
-      var item = items[j];
-      var name = item.product_name || item.name || 'Product';
-      var qty = item.quantity || item.qty || 1;
-      var price = item.price || 0;
-      itemsHtml += '<div class="order-item"><div><div class="order-item-name">' + escapeHtml(name) + '</div><div class="order-item-qty">Qty: ' + qty + '</div></div><div class="order-item-price">KES ' + (price * qty).toLocaleString() + '</div></div>';
-    }
-
-    var orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
-
-    html += '<div class="order-card"><div class="order-header"><div><div class="order-number">📦 Order #' + orderNumber + '</div><div class="order-date">' + new Date(o.created_at).toLocaleDateString() + ' at ' + new Date(o.created_at).toLocaleTimeString() + '</div></div><span class="order-status ' + statusClass + '">' + statusText + '</span></div><div class="order-items">' + itemsHtml + '</div><div class="order-footer"><div class="order-total-row"><span>Subtotal</span><span>KES ' + (o.subtotal || 0).toLocaleString() + '</span></div><div class="order-total-row"><span>Delivery</span><span>' + (o.delivery === 0 ? 'FREE' : 'KES ' + (o.delivery || 0).toLocaleString()) + '</span></div><div class="order-total-row"><span>Total</span><span>KES ' + (o.total || 0).toLocaleString() + '</span></div></div></div>';
-  }
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-// ============================================================
-// USER BADGE
+// USER BADGE (mobile menu)
 // ============================================================
 function updateUserBadge() {
   var user = getCurrentUser();
-  var initialEl = document.getElementById('userInitial');
-  var dotEl = document.getElementById('userDot');
   var menuAuth = document.getElementById('mobileMenuAuth');
 
   if (user && user.name) {
-    var initial = user.name.charAt(0).toUpperCase();
-    if (initialEl) initialEl.textContent = initial;
-    if (dotEl) dotEl.className = 'user-dot';
-
     if (menuAuth) {
       menuAuth.innerHTML = '<div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;"><div style="font-weight:700;font-size:.85rem;color:var(--primary);"><i class="ph ph-user-circle"></i> ' + escapeHtml(user.name) + '</div><div style="font-size:.65rem;color:var(--muted);">' + escapeHtml(user.email || 'No email') + '</div><button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;"><i class="ph ph-sign-out"></i> Logout</button></div>';
     }
   } else {
-    if (initialEl) initialEl.textContent = 'G';
-    if (dotEl) dotEl.className = 'user-dot guest';
-
     if (menuAuth) {
       menuAuth.innerHTML = '<a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;"><i class="ph ph-user-circle"></i> Login / Register</a>';
     }
@@ -2609,2729 +1074,150 @@ function closeCartDrawer() {
   document.getElementById('cartDrawer').classList.remove('open');
 }
 
-function openWishlistModal() {
-  document.getElementById('wishlistModal').style.display = 'flex';
-}
-
-function closeWishlistModal() {
-  document.getElementById('wishlistModal').style.display = 'none';
-}
-
-function renderCartDrawer() {
-  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
-  var items = Object.values(cart);
-  var container = document.getElementById('cartItemsList');
-  var footer = document.getElementById('cartFooter');
-  var totalEl = document.getElementById('cartTotalAmount');
-
-  if (!items.length) {
-    container.innerHTML = '<div class="cart-container"><div class="cart-icon-wrapper"><svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.5" fill="#111111"/><circle cx="17" cy="20" r="1.5" fill="#111111"/></svg><span class="cart-badge">0</span></div><h2 class="cart-message">Your cart is empty!</h2><a href="shop.html" class="shop-button">Start Shopping</a></div>';
-    footer.style.display = 'none';
-    return;
-  }
-
-  var html = '';
-  var total = 0;
-  var count = 0;
-  for (var i = 0; i < items.length; i++) {
-    var item = items[i];
-    var subtotal = item.price * item.qty;
-    total += subtotal;
-    count += item.qty;
-    html += '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + '</div></div><div class="cart-item-price">KES ' + subtotal.toLocaleString() + '</div></div>';
-  }
-
-  container.innerHTML = html;
-  totalEl.textContent = 'KES ' + total.toLocaleString();
-  footer.style.display = 'block';
-
-  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
-    if (el) el.textContent = count;
-  });
-}
-
 // ============================================================
-// MODAL FUNCTIONS
+// WISHLIST (localStorage-backed — new)
+// Shape: { [productId]: { id, name, price, image } }
+// Exposed on window so shop.html / product cards can call
+// addToWishlist(product) once wired up there.
 // ============================================================
-function showSupportForm() {
-  document.getElementById('supportModal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeSupportModal() {
-  document.getElementById('supportModal').style.display = 'none';
-  document.body.style.overflow = '';
-}
-
-// ============================================================
-// INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-  setupPinInputs('login');
-  setupPinInputs('reg');
-  setupPinInputs('forgot');
-
-  handleGoogleCallback();
-
-  renderCartDrawer();
-  updateUserBadge();
-
-  var user = getCurrentUser();
-  if (user && user.email) {
-    showLoggedInState(user);
-  }
-
-  var supportModal = document.getElementById('supportModal');
-  if (supportModal) {
-    supportModal.addEventListener('click', function(e) {
-      if (e.target === this) closeSupportModal();
-    });
-  }
-  
-  var wishlistModal = document.getElementById('wishlistModal');
-  if (wishlistModal) {
-    wishlistModal.addEventListener('click', function(e) {
-      if (e.target === this) closeWishlistModal();
-    });
-  }
-});
-
-window.addEventListener('storage', function(e) {
-  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
-    var user = getCurrentUser();
-    if (user && user.email) {
-      showLoggedInState(user);
-    } else {
-      window.location.reload();
-    }
-  }
-});
-
-console.log('✅ Account page loaded (Unified OTP + Google + PIN)');
-</script>
-</body>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-<meta name="theme-color" content="#800000">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>My Account — LiquorBelle</title>
-
-<!-- ===== CACHE CONTROL ===== -->
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://res.cloudinary.com">
-<link rel="dns-prefetch" href="https://res.cloudinary.com">
-<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
-<link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-:root{
-  --primary:#800000;
-  --primary-bright:#990000;
-  --primary-dark:#5C0000;
-  --sale-red:#D50000;
-  --white:#FFFFFF;
-  --bg:#F9F6F2;
-  --bg2:#F2EDE7;
-  --border:#E8E0D8;
-  --text:#1A1A1A;
-  --muted:#7A7368;
-  --gold:#B8860B;
-  --gold-light:#d4a017;
-  --gold-bg:#fdf6e3;
-  --btn-green:#22C55E;
-  --btn-green-hover:#16A34A;
-  --green-light:#E8F5E9;
-  --radius:24px;
-  --radius-sm:14px;
-  --radius-xs:10px;
-  --shadow:0 4px 20px rgba(0,0,0,0.06);
-  --shadow-lg:0 20px 50px rgba(0,0,0,0.10);
-  --shadow-xl:0 30px 80px rgba(0,0,0,0.12);
-  --font-body:'Inter',-apple-system,sans-serif;
-  --bottom-nav-height:70px;
-  --safe-bottom:env(safe-area-inset-bottom,0px);
-}
-body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
-img{display:block;max-width:100%;}
-a{color:inherit;text-decoration:none;}
-.shop-svg{width:22px;height:22px;color:currentColor;display:block;}
-
-/* ===== GOLD & GREEN ACCENTS ===== */
-.gold-text{color:var(--gold);}
-.gold-border{border-color:var(--gold);}
-.gold-bg{background:var(--gold-bg);}
-.gold-gradient{background:linear-gradient(135deg, var(--gold), var(--gold-light));}
-.green{color:var(--btn-green);}
-.green-bg{background:var(--green-light);}
-.green-border{border-color:var(--btn-green);}
-
-/* ===== OFFLINE BANNER ===== */
-.offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
-.offline-banner.show{display:block;}
-
-/* ===== WHATSAPP FLOAT ===== */
-.whatsapp-float{
-  position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;
-  width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;z-index:1000;box-shadow:0 4px 20px rgba(37,211,102,0.4);
-  transition:all .3s;border:none;text-decoration:none;
-}
-.whatsapp-float:hover{transform:scale(1.08);box-shadow:0 8px 30px rgba(37,211,102,0.5);}
-.whatsapp-float i{font-size:28px;}
-.whatsapp-float .tooltip{
-  position:absolute;right:68px;background:rgba(0,0,0,0.85);color:white;
-  padding:6px 14px;border-radius:30px;font-size:11px;white-space:nowrap;
-  opacity:0;pointer-events:none;transition:all .3s;font-weight:500;
-}
-.whatsapp-float:hover .tooltip{opacity:1;right:62px;}
-@media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:20px;right:24px;}}
-
-/* ===== BOTTOM NAV ===== */
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;height:calc(var(--bottom-nav-height) + var(--safe-bottom));
-  background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
-  border-top:1px solid rgba(0,0,0,0.06);
-  display:flex;align-items:center;justify-content:space-around;
-  z-index:300;padding:4px 0 var(--safe-bottom);
-}
-.nav-item{
-  display:flex;flex-direction:column;align-items:center;gap:2px;
-  cursor:pointer;padding:4px 12px;transition:.2s;position:relative;
-  border:none;background:none;color:var(--muted);
-  font-family:var(--font-body);font-size:9px;font-weight:500;
-  -webkit-tap-highlight-color:transparent;
-}
-.nav-item i{font-size:22px;transition:.2s;}
-.nav-item.active{color:var(--primary);}
-.nav-item.active i{color:var(--primary);}
-.nav-item .nav-badge{
-  position:absolute;top:-2px;right:2px;background:var(--sale-red);
-  color:white;font-size:9px;font-weight:700;min-width:18px;height:18px;
-  border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;
-  padding:0 5px;
-}
-.nav-item:active{transform:scale(0.92);}
-
-/* ===== HEADER ===== */
-.main-header{
-  background:var(--primary);
-  padding:10px 4%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  border-bottom:2px solid var(--btn-green);
-  position:sticky;top:0;z-index:200;
-  box-shadow:0 2px 16px rgba(0,0,0,0.15);
-}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
-.logo-img{height:40px;width:40px;object-fit:cover;border-radius:12px;background:white;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-.logo-text{font-size:1.2rem;font-weight:800;color:white;letter-spacing:-.3px;line-height:1;}
-.logo-text small{display:block;font-size:8px;font-weight:400;color:rgba(255,255,255,0.85);letter-spacing:.5px;margin-top:1px;text-transform:uppercase;}
-.logo-text .gold{color:var(--gold-light);}
-
-.header-search-form{flex:1;max-width:420px;display:flex;align-items:center;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0 6px 0 14px;height:38px;transition:.2s;}
-.header-search-form:focus-within{background:rgba(255,255,255,0.95);}
-.header-search-form i{color:rgba(255,255,255,0.8);font-size:16px;flex-shrink:0;}
-.header-search-form:focus-within i{color:var(--gold);}
-.header-search-input{flex:1;border:none;background:transparent;outline:none;padding:0 8px;font-family:var(--font-body);font-size:.82rem;color:white;min-width:0;}
-.header-search-form:focus-within .header-search-input{color:var(--text);}
-.header-search-input::placeholder{color:rgba(255,255,255,0.75);}
-.header-search-form:focus-within .header-search-input::placeholder{color:var(--muted);}
-@media(max-width:560px){.header-search-form{display:none;}}
-
-.header-icons{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-
-/* ===== HEADER USER BADGE ===== */
-
-.header-user-badge:hover{background:rgba(255,255,255,0.2);}
-.header-user-badge .user-initial{
-  font-weight:700;
-  font-size:14px;
-  text-transform:uppercase;
-}
-
-.header-icon-btn{
-  position:relative;width:40px;height:40px;border-radius:50%;border:none;
-  background:transparent;color:white;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:.2s;
-}
-.header-icon-btn i{font-size:22px;}
-.header-icon-btn:hover{background:rgba(34,197,94,0.15);}
-.header-icon-btn:active{transform:scale(0.92);}
-.header-cart-badge{
-  position:absolute;top:0;right:0;background:var(--gold);color:white;
-  font-size:10px;font-weight:800;min-width:17px;height:17px;
-  border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary);
-}
-
-/* ===== MOBILE MENU ===== */
-.mobile-menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  z-index: 399;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .25s;
-}
-.mobile-menu-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-.mobile-menu {
-  position: fixed;
-  top: 0;
-  right: -280px;
-  width: 260px;
-  height: 100%;
-  background: var(--white);
-  z-index: 400;
-  box-shadow: -8px 0 30px rgba(0,0,0,0.15);
-  transition: right .3s cubic-bezier(0.4,0,0.2,1);
-  padding: 20px 0;
-  overflow-y: auto;
-}
-.mobile-menu.open {
-  right: 0;
-}
-.mobile-menu-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 16px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 8px;
-}
-.mobile-menu-head span {
-  font-weight: 800;
-  font-size: 1rem;
-  color: var(--primary);
-}
-.mobile-menu-close {
-  border: none;
-  background: var(--bg2);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--text);
-}
-.mobile-menu a, .mobile-menu button.mm-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 20px;
-  color: var(--text);
-  font-weight: 600;
-  font-size: .9rem;
-  text-decoration: none;
-  width: 100%;
-  background: none;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-}
-.mobile-menu a i, .mobile-menu button.mm-link i {
-  font-size: 19px;
-  color: var(--btn-green);
-  width: 20px;
-}
-.mobile-menu a:active, .mobile-menu button.mm-link:active {
-  background: var(--bg2);
-}
-.mobile-search-inline {
-  display: none;
-  padding: 0 20px 14px;
-}
-@media(max-width:560px) {
-  .mobile-search-inline {
-    display: block;
-  }
-}
-.mobile-search-inline form {
-  display: flex;
-  align-items: center;
-  background: var(--bg2);
-  border-radius: 50px;
-  padding: 0 14px;
-  height: 40px;
-}
-.mobile-search-inline i {
-  color: var(--muted);
-  font-size: 16px;
-}
-.mobile-search-inline input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  padding: 0 8px;
-  font-family: var(--font-body);
-  font-size: .85rem;
-  color: var(--text);
-}
-/* ============================================================
-   ACCOUNT PAGE SPECIFIC
-   ============================================================ */
-.account-container{
-  max-width: 900px;
-  margin: 20px auto 32px;
-  padding: 0 4%;
-}
-.account-card{
-  background:var(--white);
-  border-radius:var(--radius);
-  border:1px solid var(--border);
-  padding: 32px;
-  box-shadow:var(--shadow);
-  border-top:4px solid var(--gold);
-}
-.account-card h1{
-  font-size: 1.6rem;
-  font-weight: 800;
-  color:var(--primary);
-  margin-bottom: 4px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.account-card h1 i{font-size:32px;color:var(--gold);}
-.account-card .subtitle{
-  color:var(--muted);
-  margin-bottom: 24px;
-  font-size: .9rem;
-}
-
-/* ===== AUTH TABS ===== */
-.auth-tabs{
-  display:flex;
-  gap:4px;
-  background:var(--bg2);
-  border-radius:var(--radius-sm);
-  padding:4px;
-  margin-bottom:24px;
-}
-.auth-tab{
-  flex:1;
-  padding:12px;
-  border:none;
-  background:transparent;
-  border-radius:var(--radius-xs);
-  font-weight:700;
-  font-size:.9rem;
-  color:var(--muted);
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
-}
-.auth-tab.active{
-  background:var(--white);
-  color:var(--primary);
-  box-shadow:var(--shadow);
-}
-.auth-tab-login.active{background:var(--primary);color:white;}
-.auth-tab-register.active{background:var(--gold);color:white;}
-.auth-tab:active{transform:scale(0.97);}
-
-/* ===== AUTH FORMS ===== */
-.auth-form{display:none;}
-.auth-form.active{display:block;}
-.auth-form .form-group{margin-bottom:16px;}
-.auth-form .form-group label{
-  display:block;
-  margin-bottom:4px;
-  font-weight:600;
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.3px;
-}
-.auth-form .form-group input{
-  width:100%;
-  padding:12px 16px;
-  background:var(--bg);
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-family:var(--font-body);
-  font-size:14px;
-  transition:all .2s;
-}
-.auth-form .form-group input:focus{
-  outline:none;
-  border-color:var(--gold);
-  box-shadow:0 0 0 3px rgba(184,134,11,0.08);
-  background:var(--white);
-}
-.auth-form .form-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-@media(max-width:500px){.auth-form .form-row{grid-template-columns:1fr;}}
-
-/* ===== PIN INPUT ===== */
-.pin-input-group{
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin:8px 0 12px;
-}
-.pin-input-group input{
-  width:48px !important;
-  height:56px !important;
-  text-align:center;
-  font-size:22px !important;
-  font-weight:700;
-  letter-spacing:4px;
-  border-radius:12px !important;
-  padding:0 !important;
-  background:var(--bg);
-  border:2px solid var(--border);
-  transition:all .2s;
-  font-family:monospace;
-}
-.pin-input-group input:focus{
-  border-color:var(--gold);
-  background:var(--white);
-  box-shadow:0 0 0 3px rgba(184,134,11,0.1);
-}
-.pin-input-group input.error{
-  border-color:var(--sale-red);
-  background:#FFF5F5;
-}
-.pin-input-group input.valid{
-  border-color:var(--btn-green);
-  background:#F0FFF4;
-}
-.pin-dots{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  margin:8px 0;
-}
-.pin-dot{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:var(--border);
-  transition:all .2s;
-}
-.pin-dot.filled{background:var(--gold);}
-.pin-dot.active{background:var(--gold-light);transform:scale(1.2);}
-
-/* ===== VALIDATION STYLES ===== */
-.form-group .input-error{
-  color:var(--sale-red);
-  font-size:10px;
-  margin-top:4px;
-  display:none;
-}
-.form-group .input-error.show{display:block;}
-.form-group input.error{
-  border-color:var(--sale-red);
-  background:#FFF5F5;
-}
-.form-group input.valid{
-  border-color:var(--btn-green);
-  background:#F0FFF4;
-}
-
-.btn-primary{
-  width:100%;
-  padding:14px;
-  background:var(--gold);
-  color:white;
-  border:none;
-  border-radius:var(--radius-sm);
-  font-weight:700;
-  font-size:1rem;
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
-}
-.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 4px 20px rgba(184,134,11,0.3);}
-.btn-primary:active{transform:scale(0.97);}
-.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
-
-/* ===== OTP INPUT ===== */
-.otp-row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin-top:4px;
-}
-.otp-row input{flex:1;}
-.otp-row .btn-sm{
-  padding:12px 20px;
-  background:var(--gold);
-  color:white;
-  border:none;
-  border-radius:var(--radius-sm);
-  font-weight:700;
-  font-size:.8rem;
-  cursor:pointer;
-  transition:all .2s;
-  white-space:nowrap;
-  font-family:var(--font-body);
-}
-.otp-row .btn-sm:hover{background:var(--gold-light);}
-.otp-row .btn-sm:disabled{opacity:0.5;cursor:not-allowed;}
-.otp-timer{font-size:.75rem;color:var(--muted);margin-top:4px;display:block;}
-
-/* ===== STATUS MESSAGES ===== */
-.auth-status{
-  padding:10px 14px;
-  border-radius:var(--radius-xs);
-  font-size:.85rem;
-  font-weight:600;
-  margin-bottom:12px;
-  display:none;
-}
-.auth-status.error{display:block;background:#FFEBEE;color:#D32F2F;border:1px solid #FFCDD2;}
-.auth-status.success{display:block;background:#E8F5E9;color:#1A8A3E;border:1px solid #C8E6C9;}
-.auth-status.info{display:block;background:#FFF3E0;color:#E67E22;border:1px solid #FFE0B2;}
-
-/* ===== LOGGED IN STATE ===== */
-.logged-in-section{display:none;}
-.logged-in-section.active{display:block;}
-
-.user-greeting{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  padding:16px 20px;
-  background:var(--gold-bg);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border);
-  margin-bottom:20px;
-}
-.user-greeting .greeting-text{font-size:1.1rem;font-weight:700;color:var(--text);}
-.user-greeting .greeting-text i{color:var(--gold);margin-right:8px;}
-.user-greeting .greeting-email{font-size:.85rem;color:var(--muted);}
-.user-greeting .greeting-phone{font-size:.85rem;color:var(--muted);margin-top:2px;}
-.user-greeting .logout-btn{
-  padding:8px 20px;
-  background:var(--sale-red);
-  color:white;
-  border:none;
-  border-radius:50px;
-  font-weight:600;
-  font-size:.8rem;
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
-}
-.user-greeting .logout-btn:hover{background:#b71c1c;transform:scale(1.02);}
-
-/* ===== ACCOUNT FEATURES GRID ===== */
-.account-features-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:12px;
-  margin:16px 0 20px;
-}
-.feature-card{
-  background:var(--white);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border);
-  padding:16px 14px;
-  text-align:center;
-  transition:all .2s;
-  cursor:pointer;
-  text-decoration:none;
-  color:var(--text);
-  box-shadow:var(--shadow);
-}
-.feature-card:hover{
-  transform:translateY(-4px);
-  box-shadow:var(--shadow-lg);
-  border-color:var(--btn-green);
-}
-.feature-card i{
-  font-size:28px;
-  display:block;
-  margin-bottom:6px;
-  color:var(--btn-green);
-}
-.feature-card .feature-label{
-  font-weight:700;
-  font-size:.75rem;
-  display:block;
-}
-.feature-card .feature-desc{
-  font-size:.6rem;
-  color:var(--muted);
-  display:block;
-  margin-top:2px;
-}
-.feature-card.card-gold i{color:var(--gold);}
-.feature-card.card-gold:hover{border-color:var(--gold);}
-.feature-card.card-red i{color:var(--sale-red);}
-.feature-card.card-red:hover{border-color:var(--sale-red);}
-.feature-card.card-green i{color:var(--btn-green);}
-.feature-card.card-green:hover{border-color:var(--btn-green);}
-
-/* ===== ORDERS SECTION ===== */
-.orders-section{
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 2px solid var(--border);
-}
-.orders-section .section-title{
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--primary);
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:8px;
-}
-.orders-section .section-title i{color:var(--gold);}
-.orders-section .section-subtitle{
-  font-size: .8rem;
-  color: var(--muted);
-  margin-bottom:6px;
-}
-
-.view-all-orders-link{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  color:white;
-  font-weight:600;
-  font-size:.85rem;
-  text-decoration:none;
-  padding:8px 20px;
-  background:var(--btn-green);
-  border-radius:50px;
-  transition:all .2s;
-  margin-bottom:12px;
-}
-.view-all-orders-link:hover{
-  background:var(--btn-green-hover);
-  transform:translateY(-2px);
-  box-shadow:0 4px 20px rgba(34,197,94,0.3);
-}
-.view-all-orders-link i{font-size:16px;}
-
-/* ===== ORDERS LIST ===== */
-.orders-list{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-.order-card{
-  background:var(--white);
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  transition:all .2s;
-}
-.order-card:hover{box-shadow:var(--shadow-lg);border-color:var(--gold);}
-.order-header{
-  background:var(--gold-bg);
-  padding:14px 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:10px;
-}
-.order-number{font-weight:700;color:var(--primary);font-size:.9rem;}
-.order-date{font-size:12px;color:var(--muted);}
-.order-status{
-  padding:4px 12px;
-  border-radius:40px;
-  font-size:11px;
-  font-weight:700;
-}
-.status-pending{background:#FFF3E0;color:#E67E22;}
-.status-paid{background:#E8F5E9;color:#1A8A3E;}
-.status-delivered{background:#E3F2FD;color:#2196F3;}
-.status-cancelled{background:#FFEBEE;color:#D32F2F;}
-
-.order-items{padding:14px 18px;max-height:240px;overflow-y:auto;}
-.order-item{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid var(--border);
-}
-.order-item:last-child{border-bottom:none;}
-.order-item-name{font-weight:600;font-size:13px;}
-.order-item-qty{font-size:11px;color:var(--muted);margin-top:2px;}
-.order-item-price{font-weight:700;color:var(--sale-red);font-size:13px;white-space:nowrap;}
-
-.order-footer{
-  background:var(--bg2);
-  padding:10px 18px;
-}
-.order-total-row{
-  display:flex;
-  justify-content:space-between;
-  font-weight:700;
-  font-size:.85rem;
-  padding:4px 0;
-}
-.order-total-row:last-child{
-  font-weight:800;
-  font-size:1rem;
-  color:var(--primary);
-  border-top:1px solid var(--border);
-  padding-top:8px;
-  margin-top:4px;
-}
-.empty-state{
-  text-align:center;
-  padding:40px 20px;
-  color:var(--muted);
-}
-.empty-state i{font-size:44px;display:block;margin-bottom:12px;color:var(--border);}
-.empty-state p{margin-bottom:4px;font-size:.9rem;}
-.empty-state small{font-size:.75rem;}
-
-/* ===== FOOTER ===== */
-.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:32px 4% 24px;margin-top:32px;border-top:3px solid var(--gold);}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;margin-bottom:24px;}
-.footer-col h4{font-size:.8rem;font-weight:700;margin-bottom:12px;color:#fff;opacity:.9;}
-.footer-col p,.footer-col a{display:block;font-size:.7rem;margin-bottom:6px;opacity:.7;color:#fff;text-decoration:none;}
-.footer-col a:hover{opacity:1;color:var(--gold);}
-.footer-bottom{text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);font-size:.65rem;opacity:.6;}
-
-/* ===== CART DRAWER ===== */
-.cart-container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;background:#fff;text-align:center;}
-.cart-icon-wrapper{position:relative;margin-bottom:25px;width:90px;height:80px;}
-.cart-svg{width:100%;height:100%;}
-.cart-badge{position:absolute;top:-2px;right:2px;background:var(--primary);color:#fff;font-size:13px;font-weight:bold;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.cart-message{color:#111;font-size:24px;font-weight:600;margin:0 0 20px;letter-spacing:-.5px;}
-.shop-button{display:inline-block;background:var(--primary);color:#fff;padding:10px 42px;border-radius:25px;font-size:18px;font-weight:500;border:none;cursor:pointer;transition:.2s;}
-.shop-button:hover{background:var(--primary-bright);}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
-.overlay.open{opacity:1;pointer-events:auto;}
-.cart-drawer{
-  position:fixed;bottom:-100%;left:0;right:0;background:var(--white);
-  border-radius:24px 24px 0 0;z-index:500;transition:bottom .35s cubic-bezier(0.4,0,0.2,1);
-  max-height:80vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,0.12);
-}
-.cart-drawer.open{bottom:0;}
-.cart-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1;}
-.cart-head span{font-weight:800;font-size:1rem;}
-.cart-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:16px;}
-.cart-items{padding:12px 16px;}
-.cart-item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
-.cart-item-name{font-weight:700;font-size:.8rem;}
-.cart-item-price{color:var(--sale-red);font-weight:700;font-size:.85rem;}
-.cart-qty{display:flex;align-items:center;gap:6px;margin-top:4px;}
-.cart-qty button{width:24px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:12px;transition:.2s;display:flex;align-items:center;justify-content:center;}
-.cart-qty button:hover{background:var(--gold);color:white;border-color:var(--gold);}
-.cart-footer{padding:12px 16px 20px;border-top:1px solid var(--border);}
-.cart-total{display:flex;justify-content:space-between;font-weight:800;font-size:1rem;margin-bottom:12px;}
-.btn-checkout{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:60px;font-weight:700;cursor:pointer;transition:.2s;font-size:.9rem;}
-.btn-checkout:hover{background:var(--primary-bright);}
-#toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
-
-/* ===== WISHLIST MODAL ===== */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-.modal-card{background:var(--white);border-radius:var(--radius);padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
-.modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;color:var(--primary);}
-.modal-card p{color:var(--muted);font-size:.8rem;margin-bottom:16px;}
-.wishlist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
-.wishlist-item img{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-xs);}
-.wishlist-item-info{flex:1;}
-.wishlist-item-name{font-weight:700;font-size:.8rem;}
-.wishlist-item-price{color:var(--sale-red);font-weight:700;font-size:.75rem;}
-.wishlist-atc{padding:4px 12px;background:var(--btn-green);color:#fff;border:none;border-radius:30px;font-size:.65rem;font-weight:600;cursor:pointer;}
-.wishlist-remove{background:none;border:none;color:#999;cursor:pointer;font-size:14px;padding:4px;}
-.wishlist-empty{text-align:center;padding:32px 0;color:var(--muted);}
-.modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
-.wishlist-modal{display:none;}
-.wishlist-modal.open{display:flex;}
-
-@keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-@media(max-width:768px){
-  .account-container{padding:0 3%;margin:12px auto 20px;}
-  .account-card{padding:20px 16px;}
-  .account-card h1{font-size:1.3rem;}
-  .account-card h1 i{font-size:26px;}
-  .user-greeting{flex-direction:column;text-align:center;}
-  .auth-tabs{flex-direction:column;}
-  .pin-input-group input{width:40px !important;height:48px !important;font-size:18px !important;}
-  .account-features-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .feature-card{padding:12px 10px;}
-  .feature-card i{font-size:22px;}
-  .feature-card .feature-label{font-size:.65rem;}
-  .feature-card .feature-desc{font-size:.5rem;}
-}
-
-/* ===== ADDED: GOOGLE BUTTON STYLES ===== */
-.google-btn {
-  width:100%;
-  padding:12px;
-  background:white;
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-weight:600;
-  font-size:14px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  transition:all .2s;
-  font-family:var(--font-body);
-  color:var(--text);
-  margin-top:4px;
-}
-.google-btn:hover {
-  border-color:var(--gold);
-  background:var(--gold-bg);
-  transform:translateY(-1px);
-  box-shadow:var(--shadow);
-}
-.google-btn:active{transform:scale(0.97);}
-.divider {
-  margin: 12px 0;
-  position: relative;
-}
-.divider-line {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  width:100%;
-}
-.divider-line hr {
-  flex:1;
-  border:none;
-  height:1px;
-  background:var(--border);
-}
-.divider-line span {
-  color:var(--muted);
-  font-size:12px;
-  white-space:nowrap;
-}
-
-/* ===== UNIFIED AUTH CARD ===== */
-.auth-card {
-  max-width: 420px;
-  margin: 40px auto;
-  padding: 32px 28px;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border);
-}
-
-.auth-card .auth-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  text-align: center;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.auth-card .auth-subtitle {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-bottom: 24px;
-}
-
-/* Google Button */
-.btn-google {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--white);
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-body);
-}
-
-.btn-google:hover {
-  background: var(--bg2);
-  border-color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.btn-google img {
-  width: 20px;
-  height: 20px;
-}
-
-/* Divider */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 20px 0;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.auth-divider span {
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-/* Email Step */
-.auth-step {
-  display: none;
-}
-
-.auth-step.active {
-  display: block;
-}
-
-.auth-step .step-label {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text);
-  margin-bottom: 6px;
-  display: block;
-}
-
-.auth-step .step-hint {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.auth-input-group {
-  margin-bottom: 14px;
-}
-
-.auth-input-group input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  font-family: var(--font-body);
-  transition: all 0.2s ease;
-  background: var(--bg);
-}
-
-.auth-input-group input:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.08);
-}
-
-.auth-input-group input.error {
-  border-color: var(--sale-red);
-  background: #fff0f0;
-}
-
-.auth-input-group input.valid {
-  border-color: var(--btn-green);
-  background: #f0fff4;
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-body);
-}
-
-.btn-primary:hover {
-  background: var(--primary-bright);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(128, 0, 0, 0.25);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.btn-primary .spinner {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 0.6s linear infinite;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-/* OTP Input */
-.otp-input {
-  text-align: center;
-  letter-spacing: 8px;
-  font-size: 1.4rem !important;
-  font-weight: 700 !important;
-}
-
-/* Resend */
-.resend-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.resend-btn {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.8rem;
-  padding: 4px 8px;
-}
-
-.resend-btn:hover {
-  text-decoration: underline;
-}
-
-.resend-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  text-decoration: none !important;
-}
-
-/* Status */
-.auth-status {
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  display: none;
-  margin-bottom: 16px;
-}
-
-.auth-status.success {
-  display: block;
-  background: #f0fff4;
-  color: #1a6b35;
-  border: 1px solid #b2dfbe;
-}
-
-.auth-status.error {
-  display: block;
-  background: #fff0f0;
-  color: #a00000;
-  border: 1px solid #f5c6c6;
-}
-
-.auth-status.info {
-  display: block;
-  background: #f0f4ff;
-  color: #1a3b6b;
-  border: 1px solid #c6d4f5;
-}
-
-/* OTP Step Transition */
-.auth-step {
-  animation: fadeSlide 0.3s ease;
-}
-
-@keyframes fadeSlide {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* Back to login link */
-.back-link {
-  display: block;
-  text-align: center;
-  margin-top: 16px;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.back-link a {
-  color: var(--primary);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.back-link a:hover {
-  text-decoration: underline;
-}
-
-/* Logged in state */
-.logged-in-section {
-  display: none;
-  text-align: center;
-  padding: 20px;
-}
-
-.logged-in-section.active {
-  display: block;
-}
-
-.logged-in-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 800;
-  margin: 0 auto 16px;
-}
-
-.logged-in-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.logged-in-email {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-bottom: 4px;
-}
-
-.logged-in-phone {
-  color: var(--muted);
-  font-size: 0.8rem;
-  margin-bottom: 16px;
-}
-
-.logout-btn {
-  padding: 10px 32px;
-  background: var(--sale-red);
-  color: white;
-  border: none;
-  border-radius: 60px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.logout-btn:hover {
-  background: #b00000;
-  transform: translateY(-2px);
-}
-</style>
-</head>
-<body>
-
-<!-- ===== OFFLINE BANNER ===== -->
-<div class="offline-banner" id="offlineBanner">You're offline. Please check your connection.</div>
-
-<!-- ===== WISHLIST MODAL ===== -->
-<div class="modal-overlay wishlist-modal" id="wishlistModal">
-  <div class="modal-card">
-    <h3>My Wishlist</h3>
-    <p>Save your favourites and add them to basket anytime.</p>
-    <div id="wishlistItems"></div>
-    <button class="modal-btn" style="background:var(--gold);color:white;margin-top:12px;padding:10px 20px;border-radius:50px;border:none;font-weight:600;cursor:pointer;" onclick="closeWishlistModal()">Close</button>
-  </div>
-</div>
-
-<!-- ===== HEADER ===== -->
-<header class="main-header">
-  <a class="logo" href="index.html">
-    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
-    <div class="logo-text">Liquor<span class="gold">Belle</span><small>Nairobi's Finest</small></div>
-  </a>
-  <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
-    <i class="ph ph-magnifying-glass"></i>
-    <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
-  </form>
-  <div class="header-icons">
-    <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
-      <i class="ph ph-shopping-cart"></i>
-      <span class="header-cart-badge" id="headerCartCount">0</span>
-    </button>
-    <button class="header-icon-btn" onclick="openMobileMenu()" aria-label="Menu">
-      <i class="ph ph-list"></i>
-    </button>
-  </div>
-</header>
-
-<!-- ===== MOBILE MENU ===== -->
-<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
-<nav class="mobile-menu" id="mobileMenu">
-  <div class="mobile-menu-head">
-    <span>Menu</span>
-    <button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="ph ph-x"></i></button>
-  </div>
-  <div class="mobile-search-inline">
-    <form onsubmit="return handleHeaderSearch(event)">
-      <i class="ph ph-magnifying-glass"></i>
-      <input id="mobileSearchInput" type="text" placeholder="Search products...">
-    </form>
-  </div>
-  <div id="mobileMenuAuth"></div>
-  <a href="index.html"><i class="ph ph-house"></i> Home</a>
-  <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
-  <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
-  <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <a href="profile.html"><i class="ph ph-user-gear"></i> My Profile</a>
-  <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
-  <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
-</nav>
-
-<!-- ============================================================
-     UNIFIED AUTH CARD - OTP + GOOGLE + RESET PIN (WITH LOGIN/SIGNUP BUTTONS)
-     ============================================================ -->
-<div class="auth-card">
-  <div class="auth-title">Welcome to <span class="gold">LiquorBelle</span></div>
-  <p class="auth-subtitle">Sign in or create your account</p>
-
-  <!-- Status -->
-  <div id="authStatus" class="auth-status"></div>
-
-  <!-- Logged In State -->
-  <div id="loggedInSection" class="logged-in-section" style="display:none;">
-    <div class="logged-in-avatar" id="userInitial">G</div>
-    <div class="logged-in-name" id="userName">Guest</div>
-    <div class="logged-in-email" id="userEmail">No email</div>
-    <div class="logged-in-phone" id="userPhone">No phone</div>
-    <button class="logout-btn" onclick="logoutUser()">
-      <i class="ph ph-sign-out"></i> Logout
-    </button>
-  </div>
-
-  <!-- Auth Forms (hidden when logged in) -->
-  <div id="authForms">
-    <!-- Google Button -->
-    <button id="googleAuthBtn" class="btn-google" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-      Continue with Google
-    </button>
-
-    <div class="auth-divider"><span>or</span></div>
-
-    <!-- EMAIL STEP -->
-    <div id="emailStep" class="auth-step active">
-      <div class="auth-input-group">
-        <label class="step-label">Email Address</label>
-        <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email">
-      </div>
-      
-      <!-- Two Buttons: Login & Sign Up -->
-      <div style="display:flex;gap:10px;margin-top:4px;">
-        <button id="sendOtpLoginBtn" class="btn-primary" style="flex:1;" onclick="sendOtp('login')">
-          <i class="ph ph-sign-in"></i> Login
-        </button>
-        <button id="sendOtpSignupBtn" class="btn-primary" style="flex:1;background:var(--gold);" onclick="sendOtp('signup')">
-          <i class="ph ph-user-plus"></i> Sign Up
-        </button>
-      </div>
-      
-      <div class="back-link" style="margin-top:12px;">
-        <span style="font-size:0.75rem;color:var(--muted);">New user? Click Sign Up to create your account.</span>
-      </div>
-      <div class="back-link" style="margin-top:4px;">
-        <a onclick="showForgotPin()" style="cursor:pointer;font-size:0.8rem;color:var(--gold);">🔑 Forgot your PIN?</a>
-      </div>
-    </div>
-
-    <!-- OTP STEP -->
-    <div id="otpStep" class="auth-step">
-      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
-        We sent a 6-digit code to <strong id="otpEmailDisplay"></strong>
-      </p>
-      <div class="auth-input-group">
-        <label class="step-label">Verification Code</label>
-        <input type="text" id="authOtp" class="otp-input" maxlength="6" placeholder="000000" inputmode="numeric" pattern="\d{6}">
-      </div>
-      <button id="verifyOtpBtn" class="btn-primary">
-        <i class="ph ph-check-circle"></i> Verify & Continue
-      </button>
-      <div class="resend-row">
-        <span>Didn't get code?</span>
-        <button id="resendOtpBtn" class="resend-btn">Resend</button>
-        <span id="otpCountdown"></span>
-      </div>
-      <div class="back-link" style="margin-top:12px;">
-        <a onclick="resetAuth()" style="cursor:pointer;">← Back</a>
-      </div>
-    </div>
-
-    <!-- FORGOT PIN - RESET PIN FLOW -->
-    <div id="forgotPinStep" class="auth-step">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h3 style="font-size:1.1rem;color:var(--primary);">Reset PIN</h3>
-        <button onclick="hideForgotPin()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);">✕</button>
-      </div>
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px;">Enter your email to receive an OTP to reset your PIN.</p>
-      
-      <div class="auth-input-group">
-        <label class="step-label">Email Address</label>
-        <input type="email" id="forgotEmail" placeholder="you@example.com" autocomplete="email">
-        <div class="input-error" id="forgotEmailError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid email</div>
-      </div>
-      
-      <button id="forgotSendOtpBtn" class="btn-primary" onclick="sendForgotOtp()">
-        <i class="ph ph-paper-plane"></i> Send Reset OTP
-      </button>
-
-      <div id="forgotOtpGroup" style="display:none;margin-top:12px;">
-        <div class="auth-input-group">
-          <label class="step-label">OTP Code (sent to your email)</label>
-          <input type="text" id="forgotOtp" class="otp-input" maxlength="6" placeholder="000000" inputmode="numeric" pattern="\d{6}">
-          <div class="input-error" id="forgotOtpError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid 6-digit OTP</div>
-        </div>
-        
-        <div class="auth-input-group">
-          <label class="step-label">New 4-Digit PIN</label>
-          <div class="pin-input-group" id="forgotPinInputGroup">
-            <input type="password" id="forgotPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="forgotPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="forgotPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="forgotPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          </div>
-          <div class="input-error" id="forgotPinError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a 4-digit PIN (numbers only)</div>
-          <button type="button" onclick="togglePinVisibility('forgot')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;margin-top:4px;">Show PIN</button>
-        </div>
-
-        <button id="resetPinBtn" class="btn-primary" onclick="resetPin()" disabled>
-          <i class="ph ph-check-circle"></i> Reset PIN
-        </button>
-        <span class="otp-timer" id="forgotOtpTimer" style="display:block;text-align:center;font-size:0.75rem;color:var(--muted);margin-top:8px;"></span>
-      </div>
-
-      <div class="back-link" style="margin-top:12px;">
-        <a onclick="hideForgotPin()" style="cursor:pointer;">← Back to login</a>
-      </div>
-    </div>
-  </div>
-</div>
-      <!-- ===== ORDERS SECTION ===== -->
-      <div class="orders-section">
-        <div class="section-title"><i class="ph ph-package"></i> My Orders</div>
-        <div class="section-subtitle">View all your past and current orders</div>
-
-        <a href="track-orders.html" class="view-all-orders-link">
-          <i class="ph ph-arrow-right"></i> View All Orders
-        </a>
-
-        <div id="ordersContainer"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== WHATSAPP FLOAT ===== -->
-<a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank">
-  <i class="ph ph-whatsapp-logo"></i>
-  <span class="tooltip">Chat with us</span>
-</a>
-
-<!-- ===== FOOTER ===== -->
-<footer class="footer">
-  <div class="footer-grid">
-    <div class="footer-col"><h4>LiquorBelle</h4><p>Nairobi's Finest Alcohol Delivery</p><p>Premium spirits, wines & beers</p><p>100% Authentic Products</p></div>
-    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="accounts.html">My Account</a></div>
-    <div class="footer-col"><h4>Support</h4><p>+254 748 894 443</p><p>WhatsApp 24/7</p></div>
-    <div class="footer-col"><h4>Contact</h4><p>Dagoretti Road</p><p>Nairobi, Kenya</p></div>
-  </div>
-  <div class="footer-bottom"><p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p><p>Over 18 only. Drink responsibly. M-PESA payments only.</p></div>
-</footer>
-
-<!-- ===== BOTTOM NAV ===== -->
-<nav class="bottom-nav">
-  <button class="nav-item" onclick="window.location.href='index.html'">
-    <i class="ph ph-house"></i><span>Home</span>
-  </button>
-  <button class="nav-item" onclick="window.location.href='shop.html'">
-    <svg class="shop-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 9.5L4 4h16l1 5.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M3 9.5a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M5 9.5V20h14V9.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M9.5 20v-5a2.5 2.5 0 0 1 5 0v5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span>Shop</span>
-  </button>
-  <button class="nav-item" onclick="openCartDrawer()">
-    <i class="ph ph-shopping-cart"></i>
-    <span>Cart</span>
-    <span class="nav-badge" id="navCartCount">0</span>
-  </button>
-  <button class="nav-item active" id="bottomNavAccount" onclick="window.location.href='accounts.html'">
-    <i class="ph ph-user-circle"></i>
-    <span id="bottomNavAccountLabel">Account</span>
-  </button>
-</nav>
-
-<!-- ===== CART DRAWER ===== -->
-<div class="overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
-<div class="cart-drawer" id="cartDrawer">
-  <div class="cart-head"><span>Your Basket</span><button class="cart-close" onclick="closeCartDrawer()"><i class="ph ph-x"></i></button></div>
-  <div class="cart-items" id="cartItemsList">
-    <div class="cart-container">
-      <div class="cart-icon-wrapper">
-        <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="9" cy="20" r="1.5" fill="#111111"/>
-          <circle cx="17" cy="20" r="1.5" fill="#111111"/>
-        </svg>
-        <span class="cart-badge" id="cartBadgeCount">0</span>
-      </div>
-      <h2 class="cart-message">Your cart is empty!</h2>
-      <a href="shop.html" class="shop-button">Start Shopping</a>
-    </div>
-  </div>
-  <div class="cart-footer" id="cartFooter" style="display:none;">
-    <div class="cart-total"><span>Total</span><span id="cartTotalAmount">KES 0</span></div>
-    <button class="btn-checkout" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
-  </div>
-</div>
-<div id="toast"></div>
-
-<!-- ===== SUPPORT MODAL ===== -->
-<div class="modal-overlay" id="supportModal" style="display:none;">
-  <div class="modal-card">
-    <h3><i class="ph ph-headset" style="color:var(--btn-green);"></i> Support Center</h3>
-    <p>How can we help you today?</p>
-    <div style="display:grid;gap:10px;margin:12px 0;">
-      <a href="mailto:timblax0@gmail.com" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);text-decoration:none;color:var(--text);border:1px solid var(--border);">
-        <i class="ph ph-envelope" style="font-size:22px;color:var(--gold);"></i>
-        <div><strong style="display:block;font-size:.85rem;">Email Support</strong><span style="font-size:.7rem;color:var(--muted);">timblax0@gmail.com</span></div>
-      </a>
-      <a href="https://wa.me/254748894443?text=Hi%20LiquorBelle%2C%20I%20need%20support" target="_blank" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);text-decoration:none;color:var(--text);border:1px solid var(--border);">
-        <i class="ph ph-whatsapp-logo" style="font-size:22px;color:#25D366;"></i>
-        <div><strong style="display:block;font-size:.85rem;">WhatsApp Support</strong><span style="font-size:.7rem;color:var(--muted);">Chat with us 24/7</span></div>
-      </a>
-      <a href="tel:+254748894443" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);text-decoration:none;color:var(--text);border:1px solid var(--border);">
-        <i class="ph ph-phone" style="font-size:22px;color:var(--btn-green);"></i>
-        <div><strong style="display:block;font-size:.85rem;">Call Us</strong><span style="font-size:.7rem;color:var(--muted);">+254 748 894 443</span></div>
-      </a>
-      <div style="padding:12px 16px;background:var(--gold-bg);border-radius:var(--radius-sm);border:1px solid var(--gold);">
-        <strong style="font-size:.8rem;">📦 Need order help?</strong>
-        <p style="font-size:.7rem;color:var(--muted);margin-top:2px;">Use <a href="track-orders.html" style="color:var(--gold);font-weight:600;">Track Orders</a> to see your order status.</p>
-      </div>
-    </div>
-    <button onclick="closeSupportModal()" style="width:100%;padding:10px;background:var(--btn-green);color:white;border:none;border-radius:50px;font-weight:700;cursor:pointer;">Close</button>
-  </div>
-</div>
-
-</body>
-</html>
-// ============================================================
-// JAVASCRIPT - ACCOUNT PAGE (UNIFIED OTP + GOOGLE + PIN)
-// ============================================================
-<script>
-// ============================================================
-// CONFIG
-// ============================================================
-const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-const CART_KEY = 'liquorbelle_cart';
-const TOAST_DURATION = 3000;
-const AUTH_MODE = {
-  LOGIN: 'login',
-  SIGNUP: 'signup',
-  RESET_PIN: 'reset'
-};
-
-// ============================================================
-// STATE
-// ============================================================
-let state = {
-  authMode: AUTH_MODE.LOGIN,
-  otpTimer: null,
-  otpCountdown: 0,
-  currentUser: null,
-  isLoading: false,
-  email: '',
-  forgotEmail: ''
-};
-
-// ============================================================
-// UTILITY FUNCTIONS
-// ============================================================
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/[&<>"']/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    if (m === '"') return '&quot;';
-    if (m === "'") return '&#39;';
-    return m;
-  });
-}
-
-function getCurrentUser() {
+function getWishlist() {
   try {
-    var user = localStorage.getItem('liquorbelle_user');
-    return user ? JSON.parse(user) : null;
+    return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '{}');
   } catch (e) {
-    return null;
+    return {};
   }
 }
 
-function isValidEmail(email) {
-  return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim());
+function saveWishlist(list) {
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
+  updateQuickStats();
 }
 
-function isValidOtp(otp) {
-  return /^\d{6}$/.test(otp.trim());
+function addToWishlist(product) {
+  if (!product || !product.id) return;
+  var list = getWishlist();
+  list[product.id] = {
+    id: product.id,
+    name: product.name || 'Item',
+    price: Number(product.price) || 0,
+    image: product.image || ''
+  };
+  saveWishlist(list);
+  toast(escapeHtml(product.name || 'Item') + ' added to wishlist', 'success');
 }
+window.addToWishlist = addToWishlist;
 
-function isValidPin(pin) {
-  return /^\d{4}$/.test(pin);
+function removeFromWishlist(id) {
+  var list = getWishlist();
+  var item = list[id];
+  delete list[id];
+  saveWishlist(list);
+  renderWishlistModal();
+  if (item) toast(escapeHtml(item.name) + ' removed from wishlist', 'success');
 }
+window.removeFromWishlist = removeFromWishlist;
 
-// ============================================================
-// UPDATE BOTTOM NAV
-// ============================================================
-function updateBottomNav() {
-  var user = getCurrentUser();
-  var accountBtn = document.getElementById('bottomNavAccount');
-  var accountLabel = document.getElementById('bottomNavAccountLabel');
-  
-  if (!accountBtn || !accountLabel) return;
-  
-  if (user && user.name) {
-    accountLabel.textContent = 'Profile';
-    accountBtn.setAttribute('onclick', "window.location.href='profile.html'");
+function addWishlistItemToCart(id) {
+  var list = getWishlist();
+  var item = list[id];
+  if (!item) return;
+
+  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+  if (cart[id]) {
+    cart[id].qty = (cart[id].qty || 1) + 1;
   } else {
-    accountLabel.textContent = 'Account';
-    accountBtn.setAttribute('onclick', "window.location.href='accounts.html'");
+    cart[id] = { id: item.id, name: item.name, price: item.price, qty: 1 };
   }
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  renderCartDrawer();
+  toast(escapeHtml(item.name) + ' added to cart', 'success');
 }
+window.addWishlistItemToCart = addWishlistItemToCart;
 
-// ============================================================
-// TOAST SYSTEM
-// ============================================================
-function toast(msg, type) {
-  var t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.className = 'toast';
-  if (type === 'error') t.classList.add('error');
-  if (type === 'success') t.classList.add('success');
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.style.opacity = '0'; }, TOAST_DURATION);
-}
+function renderWishlistModal() {
+  var container = document.getElementById('wishlistItems');
+  if (!container) return;
 
-// ============================================================
-// STATUS SYSTEM
-// ============================================================
-function showStatus(msg, type) {
-  var el = document.getElementById('authStatus');
-  if (!el) return;
-  el.textContent = msg;
-  el.className = 'auth-status ' + (type || 'info');
-  el.style.display = 'block';
-}
+  var list = getWishlist();
+  var items = Object.values(list);
 
-function hideStatus() {
-  var el = document.getElementById('authStatus');
-  if (el) { el.className = 'auth-status'; el.style.display = 'none'; }
-}
-
-// ============================================================
-// LOADING STATE
-// ============================================================
-function setLoading(btn, loading) {
-  if (!btn) return;
-  if (loading) {
-    btn.disabled = true;
-    btn._originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="spinner"></span> ' + (btn.dataset.loadingText || 'Processing...');
-  } else {
-    btn.disabled = false;
-    btn.innerHTML = btn._originalText || btn.innerHTML;
-  }
-}
-
-// ============================================================
-// PIN INPUT HELPERS
-// ============================================================
-function getPinValue(prefix) {
-  var pin = '';
-  for (var i = 1; i <= 4; i++) {
-    var input = document.getElementById(prefix + 'Pin' + i);
-    if (input) pin += input.value || '';
-  }
-  return pin;
-}
-
-function setupPinInputs(prefix) {
-  var inputs = [];
-  for (var i = 1; i <= 4; i++) {
-    inputs.push(document.getElementById(prefix + 'Pin' + i));
-  }
-
-  inputs.forEach(function(input, index) {
-    if (!input) return;
-
-    var handleInput = function() {
-      input.value = input.value.replace(/\D/g, '');
-      if (input.value.length > 1) {
-        input.value = input.value.slice(0, 1);
-      }
-      if (input.value.length === 1 && index < 3) {
-        if (inputs[index + 1]) inputs[index + 1].focus();
-      }
-      validatePinInput(prefix);
-    };
-
-    var handleKeydown = function(e) {
-      if (e.key === 'Backspace' && input.value === '' && index > 0) {
-        if (inputs[index - 1]) inputs[index - 1].focus();
-      }
-      if (e.key === 'ArrowLeft' && index > 0) {
-        if (inputs[index - 1]) inputs[index - 1].focus();
-      }
-      if (e.key === 'ArrowRight' && index < 3) {
-        if (inputs[index + 1]) inputs[index + 1].focus();
-      }
-      if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && 
-          e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab' && 
-          e.key !== 'Enter' && !e.ctrlKey && !e.metaKey) {
-        e.preventDefault();
-      }
-    };
-
-    var handlePaste = function(e) {
-      e.preventDefault();
-      var paste = (e.clipboardData || window.clipboardData).getData('text');
-      var digits = paste.replace(/\D/g, '').slice(0, 4);
-      for (var i = 0; i < digits.length && i < 4; i++) {
-        if (inputs[i]) inputs[i].value = digits[i];
-      }
-      if (digits.length > 0) {
-        var nextIndex = Math.min(digits.length, 3);
-        if (inputs[nextIndex]) inputs[nextIndex].focus();
-      }
-      validatePinInput(prefix);
-    };
-
-    var handleFocus = function() {
-      if (input.value && !/^\d$/.test(input.value)) {
-        input.value = '';
-      }
-      input.select();
-    };
-
-    input.addEventListener('input', handleInput);
-    input.addEventListener('keydown', handleKeydown);
-    input.addEventListener('paste', handlePaste);
-    input.addEventListener('focus', handleFocus);
-    input.setAttribute('autocomplete', 'off');
-    input.setAttribute('autocorrect', 'off');
-    input.setAttribute('spellcheck', 'false');
-  });
-}
-
-function validatePinInput(prefix) {
-  var pin = getPinValue(prefix);
-  var errorEl = document.getElementById(prefix + 'PinError');
-  var inputs = [];
-  for (var i = 1; i <= 4; i++) {
-    inputs.push(document.getElementById(prefix + 'Pin' + i));
-  }
-
-  var allFilled = inputs.every(function(inp) { return inp && inp.value.length === 1; });
-
-  inputs.forEach(function(inp) {
-    if (!inp) return;
-    inp.classList.remove('error', 'valid');
-  });
-
-  if (allFilled && !isValidPin(pin)) {
-    inputs.forEach(function(inp) { if (inp) inp.classList.add('error'); });
-    if (errorEl) errorEl.classList.add('show');
-    return false;
-  } else if (allFilled && isValidPin(pin)) {
-    inputs.forEach(function(inp) { if (inp) inp.classList.add('valid'); });
-    if (errorEl) errorEl.classList.remove('show');
-    return true;
-  } else {
-    if (errorEl) errorEl.classList.remove('show');
-    return false;
-  }
-}
-
-function togglePinVisibility(prefix) {
-  var inputs = [];
-  for (var i = 1; i <= 4; i++) {
-    inputs.push(document.getElementById(prefix + 'Pin' + i));
-  }
-  var isPassword = inputs[0] && inputs[0].type === 'password';
-  inputs.forEach(function(inp) {
-    if (inp) inp.type = isPassword ? 'text' : 'password';
-  });
-}
-
-// ============================================================
-// UNIFIED AUTH - SEND OTP
-// ============================================================
-function sendOtp(mode) {
-  var emailInput = document.getElementById('authEmail');
-  var email = emailInput.value.trim();
-  
-  if (!isValidEmail(email)) {
-    showStatus('❌ Please enter a valid email address', 'error');
-    emailInput.classList.add('error');
-    return;
-  }
-  emailInput.classList.remove('error');
-  
-  state.authMode = mode;
-  state.email = email;
-  
-  var btn = document.getElementById('sendOtpBtn');
-  if (mode === 'login') {
-    btn = document.getElementById('sendOtpLoginBtn');
-  } else {
-    btn = document.getElementById('sendOtpSignupBtn');
-  }
-  
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Sending...';
-  hideStatus();
-
-  // First check if user exists for login mode
-  if (mode === 'login') {
-    checkUserExists(null, email, null)
-      .then(function(checkResult) {
-        if (checkResult && !checkResult.exists) {
-          showStatus('❌ Email not registered. Please click "Sign Up" to create an account.', 'error');
-          setLoading(btn, false);
-          btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
-          return;
-        }
-        return sendOtpRequest(email);
-      })
-      .then(function() {
-        // handled in sendOtpRequest
-      })
-      .catch(function(err) {
-        showStatus('❌ ' + err.message, 'error');
-        setLoading(btn, false);
-        btn.innerHTML = '<i class="ph ph-sign-in"></i> Login';
-      });
-  } else {
-    // SIGNUP mode - check if user already exists
-    checkUserExists(null, email, null)
-      .then(function(checkResult) {
-        if (checkResult && checkResult.exists) {
-          showStatus('❌ Email already registered. Please click "Login" to sign in.', 'error');
-          setLoading(btn, false);
-          btn.innerHTML = '<i class="ph ph-user-plus"></i> Sign Up';
-          return;
-        }
-        return sendOtpRequest(email);
-      })
-      .then(function() {
-        // handled in sendOtpRequest
-      })
-      .catch(function(err) {
-        showStatus('❌ ' + err.message, 'error');
-        setLoading(btn, false);
-        btn.innerHTML = '<i class="ph ph-user-plus"></i> Sign Up';
-      });
-  }
-}
-
-function sendOtpRequest(email) {
-  return fetch(API_BASE + '/api/auth/send-email-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    var btn = document.getElementById('sendOtpBtn');
-    if (state.authMode === 'login') {
-      btn = document.getElementById('sendOtpLoginBtn');
-    } else {
-      btn = document.getElementById('sendOtpSignupBtn');
-    }
-    setLoading(btn, false);
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send OTP');
-    }
-    
-    showStatus('✅ Verification code sent to your email', 'success');
-    
-    // Switch to OTP step
-    document.getElementById('emailStep').classList.remove('active');
-    document.getElementById('otpStep').classList.add('active');
-    document.getElementById('otpEmailDisplay').textContent = email;
-    document.getElementById('authOtp').focus();
-    startOtpCountdown();
-    
-    btn.innerHTML = state.authMode === 'login' ? 
-      '<i class="ph ph-sign-in"></i> Login' : 
-      '<i class="ph ph-user-plus"></i> Sign Up';
-    
-    return data;
-  });
-}
-
-// ============================================================
-// VERIFY OTP
-// ============================================================
-function verifyOtp() {
-  var otpInput = document.getElementById('authOtp');
-  var otp = otpInput.value.trim();
-  
-  if (!isValidOtp(otp)) {
-    showStatus('❌ Please enter a valid 6-digit code', 'error');
-    otpInput.classList.add('error');
-    return;
-  }
-  otpInput.classList.remove('error');
-
-  var btn = document.getElementById('verifyOtpBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Verifying...';
-  hideStatus();
-
-  // For signup, we need to collect name and phone
-  if (state.authMode === 'signup') {
-    // Show name/phone collection modal or form
-    showSignupForm(otp);
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Verify & Continue';
+  if (!items.length) {
+    container.innerHTML = '<div class="wishlist-empty"><i class="ph ph-heart"></i>Your wishlist is empty.<br><a href="shop.html" style="color:var(--gold);font-weight:700;">Browse products →</a></div>';
     return;
   }
 
-  // LOGIN flow - just verify
-  fetch(API_BASE + '/api/auth/verify-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      email: state.email, 
-      otp: otp,
-      action: 'login'
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Verify & Continue';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Invalid or expired code');
-    }
-
-    var user = {
-      id: data.customer.id,
-      email: data.customer.email,
-      name: data.customer.name || state.email.split('@')[0],
-      phone: data.customer.phone || '',
-      token: data.token,
-      loggedIn: true,
-      loginTime: Date.now()
-    };
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', data.token);
-
-    showStatus('✅ Successfully logged in!', 'success');
-    toast('Welcome back, ' + user.name + '! 🎉', 'success');
-
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1000);
-
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Verify & Continue';
-    showStatus('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
-// SIGNUP - Show name/phone collection
-// ============================================================
-function showSignupForm(otp) {
-  var modal = document.getElementById('signupModal');
-  if (!modal) {
-    // Create modal dynamically
-    var modalHtml = `
-      <div class="modal-overlay" id="signupModal" style="display:flex;">
-        <div class="modal-card" style="max-width:440px;">
-          <h3 style="font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:4px;">Complete Your Account</h3>
-          <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">Just a few more details to create your account.</p>
-          
-          <div class="auth-input-group">
-            <label class="step-label">Full Name *</label>
-            <input type="text" id="signupName" placeholder="John Mwangi" autocomplete="name">
-            <div class="input-error" id="signupNameError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter your full name</div>
-          </div>
-          
-          <div class="auth-input-group">
-            <label class="step-label">Phone Number *</label>
-            <input type="tel" id="signupPhone" placeholder="0712345678" maxlength="10" autocomplete="tel">
-            <div class="input-error" id="signupPhoneError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid phone number</div>
-          </div>
-          
-          <div class="auth-input-group">
-            <label class="step-label">Create 4-Digit PIN *</label>
-            <div class="pin-input-group" id="signupPinGroup">
-              <input type="password" id="signupPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-              <input type="password" id="signupPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-              <input type="password" id="signupPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-              <input type="password" id="signupPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            </div>
-            <div class="input-error" id="signupPinError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a 4-digit PIN</div>
-            <button type="button" onclick="togglePinVisibility('signup')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;margin-top:4px;">Show PIN</button>
-          </div>
-          
-          <button id="completeSignupBtn" class="btn-primary" onclick="completeSignup()">
-            <i class="ph ph-user-plus"></i> Create Account
-          </button>
-          <button onclick="closeSignupModal()" style="display:block;width:100%;margin-top:8px;padding:10px;background:var(--bg2);border:none;border-radius:50px;font-weight:600;cursor:pointer;color:var(--text);">Cancel</button>
-        </div>
-      </div>
-    `;
-    var wrapper = document.createElement('div');
-    wrapper.innerHTML = modalHtml;
-    document.body.appendChild(wrapper.firstElementChild);
-    
-    // Setup pin inputs for signup
-    setupPinInputs('signup');
-  } else {
-    modal.style.display = 'flex';
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    html += '<div class="wishlist-item">'
+      + (item.image ? '<img src="' + escapeHtml(item.image) + '" alt="' + escapeHtml(item.name) + '">' : '<div class="wishlist-item-img-fallback" style="width:48px;height:48px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;"><i class="ph ph-wine" style="color:var(--gold);"></i></div>')
+      + '<div class="wishlist-item-info">'
+      + '<div class="wishlist-item-name">' + escapeHtml(item.name) + '</div>'
+      + '<div class="wishlist-item-price">KES ' + Number(item.price || 0).toLocaleString() + '</div>'
+      + '</div>'
+      + '<div class="wishlist-item-actions">'
+      + '<button class="wishlist-atc" onclick="addWishlistItemToCart(\'' + item.id + '\')">Add to Cart</button>'
+      + '<button class="wishlist-remove" onclick="removeFromWishlist(\'' + item.id + '\')" aria-label="Remove"><i class="ph ph-trash"></i></button>'
+      + '</div>'
+      + '</div>';
   }
-  
-  // Store OTP for signup completion
-  state._signupOtp = otp;
-}
-
-function closeSignupModal() {
-  var modal = document.getElementById('signupModal');
-  if (modal) modal.style.display = 'none';
-  state._signupOtp = null;
-}
-
-// ============================================================
-// COMPLETE SIGNUP
-// ============================================================
-function completeSignup() {
-  var name = document.getElementById('signupName').value.trim();
-  var phone = document.getElementById('signupPhone').value.trim();
-  var pin = getPinValue('signup');
-  var otp = state._signupOtp;
-  
-  var nameError = document.getElementById('signupNameError');
-  var phoneError = document.getElementById('signupPhoneError');
-  var pinError = document.getElementById('signupPinError');
-  
-  var valid = true;
-  
-  if (!name || name.length < 2) {
-    nameError.style.display = 'block';
-    valid = false;
-  } else {
-    nameError.style.display = 'none';
-  }
-  
-  if (!phone || phone.length < 10) {
-    phoneError.style.display = 'block';
-    valid = false;
-  } else {
-    phoneError.style.display = 'none';
-  }
-  
-  if (!isValidPin(pin)) {
-    pinError.style.display = 'block';
-    valid = false;
-  } else {
-    pinError.style.display = 'none';
-  }
-  
-  if (!valid) return;
-  
-  var btn = document.getElementById('completeSignupBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Creating Account...';
-  
-  fetch(API_BASE + '/api/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: name,
-      email: state.email,
-      phone: phone,
-      pin: pin,
-      otp: otp
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Registration failed');
-    }
-    
-    var user = {
-      id: data.customer.id,
-      email: data.customer.email,
-      name: data.customer.name,
-      phone: data.customer.phone,
-      token: data.token,
-      loggedIn: true,
-      loginTime: Date.now()
-    };
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', data.token);
-    
-    closeSignupModal();
-    showStatus('✅ Account created successfully!', 'success');
-    toast('Welcome, ' + user.name + '! 🎉', 'success');
-    
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1000);
-    
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    showStatus('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
-// OTP COUNTDOWN
-// ============================================================
-function startOtpCountdown() {
-  var resendOtpBtn = document.getElementById('resendOtpBtn');
-  var otpCountdown = document.getElementById('otpCountdown');
-  
-  state.otpCountdown = 60;
-  if (resendOtpBtn) resendOtpBtn.disabled = true;
-  if (otpCountdown) otpCountdown.textContent = '(' + state.otpCountdown + 's)';
-
-  clearInterval(state.otpTimer);
-  state.otpTimer = setInterval(function() {
-    state.otpCountdown--;
-    if (state.otpCountdown <= 0) {
-      clearInterval(state.otpTimer);
-      if (resendOtpBtn) resendOtpBtn.disabled = false;
-      if (otpCountdown) otpCountdown.textContent = '';
-    } else {
-      if (otpCountdown) otpCountdown.textContent = '(' + state.otpCountdown + 's)';
-    }
-  }, 1000);
-}
-
-// ============================================================
-// RESEND OTP
-// ============================================================
-function resendOtp() {
-  var btn = document.getElementById('resendOtpBtn');
-  if (btn.disabled) return;
-  sendOtpRequest(state.email);
-}
-
-// ============================================================
-// RESET AUTH
-// ============================================================
-function resetAuth() {
-  document.getElementById('emailStep').classList.add('active');
-  document.getElementById('otpStep').classList.remove('active');
-  document.getElementById('authOtp').value = '';
-  hideStatus();
-  clearInterval(state.otpTimer);
-  document.getElementById('resendOtpBtn').disabled = false;
-  document.getElementById('otpCountdown').textContent = '';
-  document.getElementById('authEmail').focus();
-}
-
-// ============================================================
-// FORGOT PIN - SHOW/HIDE
-// ============================================================
-function showForgotPin() {
-  // Hide all other steps
-  document.getElementById('emailStep').classList.remove('active');
-  document.getElementById('otpStep').classList.remove('active');
-  document.getElementById('forgotPinStep').classList.add('active');
-  document.getElementById('forgotOtpGroup').style.display = 'none';
-  document.getElementById('forgotPinInputGroup').style.display = 'none';
-  document.getElementById('resetPinBtn').disabled = true;
-  document.getElementById('forgotEmail').value = '';
-  document.getElementById('forgotOtp').value = '';
-  document.getElementById('forgotOtpTimer').textContent = '';
-  hideStatus();
-}
-
-function hideForgotPin() {
-  document.getElementById('forgotPinStep').classList.remove('active');
-  document.getElementById('emailStep').classList.add('active');
-  clearInterval(state.forgotOtpTimer);
-}
-
-// ============================================================
-// SEND FORGOT PIN OTP
-// ============================================================
-function sendForgotOtp() {
-  var email = document.getElementById('forgotEmail').value.trim();
-  var errorEl = document.getElementById('forgotEmailError');
-
-  if (!email || !isValidEmail(email)) {
-    errorEl.style.display = 'block';
-    return;
-  }
-  errorEl.style.display = 'none';
-
-  var btn = document.getElementById('forgotSendOtpBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Sending...';
-
-  // Check if user exists
-  checkUserExists(null, email, null)
-    .then(function(checkResult) {
-      if (checkResult && !checkResult.exists) {
-        showStatus('❌ Email not registered. Please create an account first.', 'error');
-        setLoading(btn, false);
-        btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-        return;
-      }
-      return requestResetOTP(email);
-    })
-    .then(function() {
-      showStatus('✅ OTP sent to your email', 'success');
-      document.getElementById('forgotOtpGroup').style.display = 'block';
-      document.getElementById('forgotPinInputGroup').style.display = 'block';
-      document.getElementById('resetPinBtn').disabled = false;
-      startForgotOtpTimer();
-      setLoading(btn, false);
-      btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-    })
-    .catch(function(err) {
-      showStatus('❌ ' + err.message, 'error');
-      setLoading(btn, false);
-      btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-    });
-}
-
-function requestResetOTP(email) {
-  return fetch(API_BASE + '/api/auth/forgot-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send OTP');
-    }
-    return data;
-  });
-}
-
-function startForgotOtpTimer() {
-  state.forgotOtpCountdown = 60;
-  var timerEl = document.getElementById('forgotOtpTimer');
-  var btn = document.getElementById('forgotSendOtpBtn');
-  timerEl.textContent = 'Resend in ' + state.forgotOtpCountdown + 's';
-  btn.disabled = true;
-
-  clearInterval(state.forgotOtpTimer);
-  state.forgotOtpTimer = setInterval(function() {
-    state.forgotOtpCountdown--;
-    if (state.forgotOtpCountdown <= 0) {
-      clearInterval(state.forgotOtpTimer);
-      timerEl.textContent = '';
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ph ph-paper-plane"></i> Send Reset OTP';
-    } else {
-      timerEl.textContent = 'Resend in ' + state.forgotOtpCountdown + 's';
-    }
-  }, 1000);
-}
-
-// ============================================================
-// RESET PIN
-// ============================================================
-function resetPin() {
-  var email = document.getElementById('forgotEmail').value.trim();
-  var otp = document.getElementById('forgotOtp').value.trim();
-  var newPin = getPinValue('forgot');
-
-  var otpError = document.getElementById('forgotOtpError');
-  var pinError = document.getElementById('forgotPinError');
-
-  if (!otp || !isValidOtp(otp)) {
-    otpError.style.display = 'block';
-    return;
-  }
-  otpError.style.display = 'none';
-
-  if (!newPin || !isValidPin(newPin)) {
-    pinError.style.display = 'block';
-    return;
-  }
-  pinError.style.display = 'none';
-
-  var btn = document.getElementById('resetPinBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Resetting...';
-
-  fetch(API_BASE + '/api/auth/reset-pin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, otp: otp, newPin: newPin })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Reset PIN';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to reset PIN');
-    }
-    
-    showStatus('✅ PIN reset successfully! Please login with your new PIN.', 'success');
-    setTimeout(function() {
-      hideForgotPin();
-      document.getElementById('authEmail').value = email;
-      resetAuth();
-    }, 1500);
-    
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-check-circle"></i> Reset PIN';
-    showStatus('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
-// CHECK USER EXISTS
-// ============================================================
-function checkUserExists(name, email, phone) {
-  return fetch(API_BASE + '/api/auth/check-user', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: name || undefined,
-      email: email || undefined,
-      phone: phone || undefined
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(result) {
-    return result;
-  })
-  .catch(function(error) {
-    console.error('Check user error:', error);
-    return { exists: false, error: error.message };
-  });
-}
-
-// ============================================================
-// GOOGLE LOGIN - EXCLUSIVE FOR REGISTERED USERS
-// ============================================================
-function loginWithGoogle() {
-  // Google OAuth - if user not registered, they'll be redirected to signup
-  window.location.href = API_BASE + '/api/auth/google';
-}
-
-function handleGoogleCallback() {
-  var urlParams = new URLSearchParams(window.location.search);
-  var googleAuth = urlParams.get('google_auth');
-  var token = urlParams.get('token');
-  var email = urlParams.get('email');
-  var name = urlParams.get('name');
-  var phone = urlParams.get('phone') || '';
-  var isNew = urlParams.get('is_new') === 'true';
-
-  if (googleAuth === 'success' && token) {
-    if (isNew) {
-      // New user - need to complete registration
-      showGoogleSignupModal(email, name, phone, token);
-      return;
-    }
-    
-    var user = {
-      id: Date.now().toString(),
-      email: email,
-      name: decodeURIComponent(name),
-      phone: phone,
-      token: token,
-      loggedIn: true,
-      loginTime: Date.now(),
-      authMethod: 'google'
-    };
-    
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', token);
-    
-    toast('✅ Welcome, ' + user.name + '! 👋', 'success');
-    window.location.href = 'index.html';
-  }
-}
-
-function showGoogleSignupModal(email, name, phone, token) {
-  var modalHtml = `
-    <div class="modal-overlay" id="googleSignupModal" style="display:flex;">
-      <div class="modal-card" style="max-width:440px;">
-        <h3 style="font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:4px;">Complete Your Account</h3>
-        <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">You're new here! Set up your account to continue.</p>
-        
-        <div class="auth-input-group">
-          <label class="step-label">Full Name</label>
-          <input type="text" id="googleSignupName" value="${escapeHtml(decodeURIComponent(name))}" placeholder="John Mwangi">
-        </div>
-        
-        <div class="auth-input-group">
-          <label class="step-label">Phone Number *</label>
-          <input type="tel" id="googleSignupPhone" placeholder="0712345678" maxlength="10">
-          <div class="input-error" id="googleSignupPhoneError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a valid phone number</div>
-        </div>
-        
-        <div class="auth-input-group">
-          <label class="step-label">Create 4-Digit PIN *</label>
-          <div class="pin-input-group" id="googleSignupPinGroup">
-            <input type="password" id="googleSignupPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="googleSignupPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="googleSignupPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-            <input type="password" id="googleSignupPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          </div>
-          <div class="input-error" id="googleSignupPinError" style="display:none;color:var(--sale-red);font-size:0.75rem;margin-top:4px;">Please enter a 4-digit PIN</div>
-          <button type="button" onclick="togglePinVisibility('googleSignup')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;margin-top:4px;">Show PIN</button>
-        </div>
-        
-        <button id="completeGoogleSignupBtn" class="btn-primary" onclick="completeGoogleSignup('${token}')">
-          <i class="ph ph-user-plus"></i> Create Account
-        </button>
-        <button onclick="closeGoogleSignupModal()" style="display:block;width:100%;margin-top:8px;padding:10px;background:var(--bg2);border:none;border-radius:50px;font-weight:600;cursor:pointer;color:var(--text);">Cancel</button>
-      </div>
-    </div>
-  `;
-  var wrapper = document.createElement('div');
-  wrapper.innerHTML = modalHtml;
-  document.body.appendChild(wrapper.firstElementChild);
-  setupPinInputs('googleSignup');
-}
-
-function closeGoogleSignupModal() {
-  var modal = document.getElementById('googleSignupModal');
-  if (modal) modal.remove();
-}
-
-function completeGoogleSignup(token) {
-  var name = document.getElementById('googleSignupName').value.trim();
-  var phone = document.getElementById('googleSignupPhone').value.trim();
-  var pin = getPinValue('googleSignup');
-  
-  var phoneError = document.getElementById('googleSignupPhoneError');
-  var pinError = document.getElementById('googleSignupPinError');
-  
-  var valid = true;
-  
-  if (!phone || phone.length < 10) {
-    phoneError.style.display = 'block';
-    valid = false;
-  } else {
-    phoneError.style.display = 'none';
-  }
-  
-  if (!isValidPin(pin)) {
-    pinError.style.display = 'block';
-    valid = false;
-  } else {
-    pinError.style.display = 'none';
-  }
-  
-  if (!valid) return;
-  
-  var btn = document.getElementById('completeGoogleSignupBtn');
-  setLoading(btn, true);
-  btn.dataset.loadingText = 'Creating Account...';
-  
-  // Get email from the URL params
-  var urlParams = new URLSearchParams(window.location.search);
-  var email = urlParams.get('email');
-  
-  fetch(API_BASE + '/api/auth/complete-google-registration', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: name,
-      email: email,
-      phone: phone,
-      pin: pin,
-      token: token
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Registration failed');
-    }
-    
-    var user = {
-      id: data.customer.id,
-      email: data.customer.email,
-      name: data.customer.name,
-      phone: data.customer.phone,
-      token: data.token,
-      loggedIn: true,
-      loginTime: Date.now(),
-      authMethod: 'google'
-    };
-    localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-    localStorage.setItem('liquorbelle_token', data.token);
-    
-    closeGoogleSignupModal();
-    toast('✅ Account created! Welcome, ' + user.name + '! 🎉', 'success');
-    
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1000);
-    
-  })
-  .catch(function(err) {
-    setLoading(btn, false);
-    btn.innerHTML = '<i class="ph ph-user-plus"></i> Create Account';
-    toast('❌ ' + err.message, 'error');
-  });
-}
-
-// ============================================================
-// LOGOUT
-// ============================================================
-function logoutUser() {
-  localStorage.removeItem('liquorbelle_user');
-  localStorage.removeItem('liquorbelle_token');
-  state.currentUser = null;
-  toast('Logged out successfully', 'success');
-  window.location.href = 'accounts.html';
-}
-
-// ============================================================
-// SHOW LOGGED IN STATE
-// ============================================================
-function showLoggedInState(user) {
-  var loggedInSection = document.getElementById('loggedInSection');
-  var authForms = document.getElementById('authForms');
-  var loggedInFeatures = document.getElementById('loggedInFeatures');
-  
-  if (loggedInSection) {
-    loggedInSection.style.display = 'block';
-    loggedInSection.classList.add('active');
-  }
-  if (authForms) authForms.style.display = 'none';
-  if (loggedInFeatures) loggedInFeatures.style.display = 'block';
-  
-  var nameEl = document.getElementById('userNameDisplay');
-  if (nameEl) nameEl.textContent = user.name || 'Customer';
-  var emailEl = document.getElementById('userEmailDisplay');
-  if (emailEl) emailEl.textContent = user.email || 'No email';
-  var phoneEl = document.getElementById('userPhoneDisplay');
-  if (phoneEl) phoneEl.textContent = user.phone || 'No phone';
-  
-  var initialEl = document.getElementById('userInitial');
-  if (initialEl) initialEl.textContent = (user.name || 'G').charAt(0).toUpperCase();
-  
-  loadOrders();
-  updateUserBadge();
-  updateBottomNav();
-}
-
-// ============================================================
-// LOAD ORDERS
-// ============================================================
-async function loadOrders() {
-  var container = document.getElementById('ordersContainer');
-  var token = localStorage.getItem('liquorbelle_token');
-
-  if (!token) {
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-lock"></i><p>Please login to see your orders</p></div>';
-    return;
-  }
-
-  container.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div> Loading your orders...</div>';
-
-  try {
-    var response = await fetch(API_BASE + '/api/customers/me/orders', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('Session expired');
-    }
-
-    var data = await response.json();
-    if (data.success && data.orders && data.orders.length > 0) {
-      renderOrders(data.orders);
-    } else {
-      container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
-    }
-  } catch (error) {
-    console.error('Load orders error:', error);
-    if (error.message === 'Session expired') {
-      logoutUser();
-    } else {
-      container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Could not load orders</p><small>Please check your connection and try again.</small></div>';
-    }
-  }
-}
-
-// ============================================================
-// RENDER ORDERS
-// ============================================================
-function renderOrders(orders) {
-  var container = document.getElementById('ordersContainer');
-
-  if (!orders || !orders.length) {
-    container.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>No orders found</p><small>Your orders will appear here once you place one.</small></div>';
-    return;
-  }
-
-  var html = '<div class="orders-list">';
-  for (var i = 0; i < orders.length; i++) {
-    var o = orders[i];
-    var items = o.items || [];
-    var statusText = o.status === 'pending' ? 'Pending' : o.status === 'paid' ? 'Paid' : o.status === 'delivered' ? 'Delivered' : 'Unknown';
-    var statusClass = 'status-' + (o.status || 'pending');
-
-    var itemsHtml = '';
-    for (var j = 0; j < items.length; j++) {
-      var item = items[j];
-      var name = item.product_name || item.name || 'Product';
-      var qty = item.quantity || item.qty || 1;
-      var price = item.price || 0;
-      itemsHtml += '<div class="order-item"><div><div class="order-item-name">' + escapeHtml(name) + '</div><div class="order-item-qty">Qty: ' + qty + '</div></div><div class="order-item-price">KES ' + (price * qty).toLocaleString() + '</div></div>';
-    }
-
-    var orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
-
-    html += '<div class="order-card"><div class="order-header"><div><div class="order-number">📦 Order #' + orderNumber + '</div><div class="order-date">' + new Date(o.created_at).toLocaleDateString() + ' at ' + new Date(o.created_at).toLocaleTimeString() + '</div></div><span class="order-status ' + statusClass + '">' + statusText + '</span></div><div class="order-items">' + itemsHtml + '</div><div class="order-footer"><div class="order-total-row"><span>Subtotal</span><span>KES ' + (o.subtotal || 0).toLocaleString() + '</span></div><div class="order-total-row"><span>Delivery</span><span>' + (o.delivery === 0 ? 'FREE' : 'KES ' + (o.delivery || 0).toLocaleString()) + '</span></div><div class="order-total-row"><span>Total</span><span>KES ' + (o.total || 0).toLocaleString() + '</span></div></div></div>';
-  }
-  html += '</div>';
   container.innerHTML = html;
 }
 
-// ============================================================
-// USER BADGE
-// ============================================================
-function updateUserBadge() {
-  var user = getCurrentUser();
-  var initialEl = document.getElementById('userInitial');
-  var dotEl = document.getElementById('userDot');
-  var menuAuth = document.getElementById('mobileMenuAuth');
-
-  if (user && user.name) {
-    var initial = user.name.charAt(0).toUpperCase();
-    if (initialEl) initialEl.textContent = initial;
-    if (dotEl) dotEl.className = 'user-dot';
-
-    if (menuAuth) {
-      menuAuth.innerHTML = '<div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;"><div style="font-weight:700;font-size:.85rem;color:var(--primary);"><i class="ph ph-user-circle"></i> ' + escapeHtml(user.name) + '</div><div style="font-size:.65rem;color:var(--muted);">' + escapeHtml(user.email || 'No email') + '</div><button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;"><i class="ph ph-sign-out"></i> Logout</button></div>';
-    }
-  } else {
-    if (initialEl) initialEl.textContent = 'G';
-    if (dotEl) dotEl.className = 'user-dot guest';
-
-    if (menuAuth) {
-      menuAuth.innerHTML = '<a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;"><i class="ph ph-user-circle"></i> Login / Register</a>';
-    }
-  }
-}
-
-// ============================================================
-// HEADER HELPERS
-// ============================================================
-function openMobileMenu() {
-  document.getElementById('mobileMenuOverlay').classList.add('open');
-  document.getElementById('mobileMenu').classList.add('open');
-}
-
-function closeMobileMenu() {
-  document.getElementById('mobileMenuOverlay').classList.remove('open');
-  document.getElementById('mobileMenu').classList.remove('open');
-}
-
-function handleHeaderSearch(e) {
-  e.preventDefault();
-  var q = document.getElementById('headerSearchInput').value.trim();
-  if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q);
-  return false;
-}
-
-function openCartDrawer() {
-  document.getElementById('cartOverlay').classList.add('open');
-  document.getElementById('cartDrawer').classList.add('open');
-  renderCartDrawer();
-}
-
-function closeCartDrawer() {
-  document.getElementById('cartOverlay').classList.remove('open');
-  document.getElementById('cartDrawer').classList.remove('open');
-}
-
 function openWishlistModal() {
-  document.getElementById('wishlistModal').style.display = 'flex';
+  renderWishlistModal();
+  document.getElementById('wishlistModal').classList.add('open');
 }
 
 function closeWishlistModal() {
-  document.getElementById('wishlistModal').style.display = 'none';
+  document.getElementById('wishlistModal').classList.remove('open');
+}
+
+// ============================================================
+// SUPPORT MODAL
+// ============================================================
+function openSupportModal() {
+  var m = document.getElementById('supportModal');
+  if (m) m.style.display = 'flex';
+}
+
+function closeSupportModal() {
+  document.getElementById('supportModal').style.display = 'none';
+}
+
+// ============================================================
+// QUICK STATS (cart + wishlist counts, shown everywhere)
+// ============================================================
+function updateQuickStats() {
+  var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+  var cartCount = 0;
+  Object.values(cart).forEach(function(item) { cartCount += (item.qty || 1); });
+
+  var wishlist = getWishlist();
+  var wishlistCount = Object.keys(wishlist).length;
+
+  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount, #qsCartCount').forEach(function(el) {
+    if (el) el.textContent = cartCount;
+  });
+
+  var qsWishlist = document.getElementById('qsWishlistCount');
+  if (qsWishlist) qsWishlist.textContent = wishlistCount;
+
+  var mmCart = document.getElementById('mmCartCount');
+  if (mmCart) {
+    mmCart.textContent = cartCount;
+    mmCart.style.display = cartCount > 0 ? 'flex' : 'none';
+  }
+  var mmWishlist = document.getElementById('mmWishlistCount');
+  if (mmWishlist) {
+    mmWishlist.textContent = wishlistCount;
+    mmWishlist.style.display = wishlistCount > 0 ? 'flex' : 'none';
+  }
+  var featureWishlistBadge = document.getElementById('featureWishlistBadge');
+  if (featureWishlistBadge) {
+    featureWishlistBadge.textContent = wishlistCount;
+    featureWishlistBadge.style.display = wishlistCount > 0 ? 'flex' : 'none';
+  }
 }
 
 function renderCartDrawer() {
@@ -5344,6 +1230,7 @@ function renderCartDrawer() {
   if (!items.length) {
     container.innerHTML = '<div class="cart-container"><div class="cart-icon-wrapper"><svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.5" fill="#111111"/><circle cx="17" cy="20" r="1.5" fill="#111111"/></svg><span class="cart-badge">0</span></div><h2 class="cart-message">Your cart is empty!</h2><a href="shop.html" class="shop-button">Start Shopping</a></div>';
     footer.style.display = 'none';
+    updateQuickStats();
     return;
   }
 
@@ -5362,41 +1249,31 @@ function renderCartDrawer() {
   totalEl.textContent = 'KES ' + total.toLocaleString();
   footer.style.display = 'block';
 
-  document.querySelectorAll('.header-cart-badge, .nav-badge, #navCartCount, #cartBadgeCount, #headerCartCount').forEach(function(el) {
-    if (el) el.textContent = count;
-  });
+  updateQuickStats();
 }
 
 // ============================================================
-// MODAL FUNCTIONS
+// KEYBOARD (Escape closes open overlays)
 // ============================================================
-function showSupportForm() {
-  document.getElementById('supportModal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+function closeAnyOpenOverlay() {
+  closeMobileMenu();
+  closeCartDrawer();
+  closeWishlistModal();
+  closeSupportModal();
 }
 
-function closeSupportModal() {
-  document.getElementById('supportModal').style.display = 'none';
-  document.body.style.overflow = '';
-}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAnyOpenOverlay();
+});
 
 // ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-  setupPinInputs('login');
-  setupPinInputs('reg');
-  setupPinInputs('forgot');
-
-  handleGoogleCallback();
-
+  checkSessionValidity();
   renderCartDrawer();
-  updateUserBadge();
-
-  var user = getCurrentUser();
-  if (user && user.email) {
-    showLoggedInState(user);
-  }
+  updateQuickStats();
+  updateUI();
 
   var supportModal = document.getElementById('supportModal');
   if (supportModal) {
@@ -5404,7 +1281,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.target === this) closeSupportModal();
     });
   }
-  
+
   var wishlistModal = document.getElementById('wishlistModal');
   if (wishlistModal) {
     wishlistModal.addEventListener('click', function(e) {
@@ -5415,17 +1292,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 window.addEventListener('storage', function(e) {
   if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
-    var user = getCurrentUser();
-    if (user && user.email) {
-      showLoggedInState(user);
-    } else {
-      window.location.reload();
-    }
+    updateUI();
+  }
+  if (e.key === CART_KEY || e.key === WISHLIST_KEY) {
+    renderCartDrawer();
+    updateQuickStats();
   }
 });
 
-console.log('✅ Account page loaded (Unified OTP + Google + PIN)');
+console.log('✅ Account dashboard loaded');
 </script>
 </body>
->>>>>>> 03131ad (fixed cache loading)
 </html>
