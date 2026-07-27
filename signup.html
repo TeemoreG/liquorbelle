@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<meta name="theme-color" content="#800000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sign Up — LiquorBelle</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --primary:#800000;
+  --primary-bright:#990000;
+  --primary-dark:#5C0000;
+  --sale-red:#D50000;
+  --white:#FFFFFF;
+  --bg:#F9F6F2;
+  --bg2:#F2EDE7;
+  --border:#E8E0D8;
+  --text:#1A1A1A;
+  --muted:#7A7368;
+  --gold:#B8860B;
+  --gold-light:#d4a017;
+  --gold-bg:#fdf6e3;
+  --btn-green:#22C55E;
+  --btn-green-hover:#16A34A;
+  --radius:24px;
+  --radius-sm:14px;
+  --radius-xs:10px;
+  --shadow:0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg:0 20px 50px rgba(0,0,0,0.10);
+  --font-body:'Inter',-apple-system,sans-serif;
+}
+body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh;}
+
+.top-bar{
+  background:var(--primary);padding:14px 4%;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:2px solid var(--btn-green);box-shadow:0 2px 16px rgba(0,0,0,0.15);
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-img{height:38px;width:38px;object-fit:cover;border-radius:11px;background:white;padding:3px;}
+.logo-text{font-size:1.1rem;font-weight:800;color:white;letter-spacing:-.3px;}
+.logo-text .gold{color:var(--gold-light);}
+.back-link{color:rgba(255,255,255,0.85);font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:6px;}
+.back-link:hover{color:white;}
+
+.page-wrap{display:flex;align-items:center;justify-content:center;padding:32px 4% 60px;min-height:calc(100vh - 66px);}
+
+.auth-card{
+  background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-lg);
+  padding:32px 28px;width:100%;max-width:420px;border:1px solid var(--border);
+}
+
+.auth-card .brand-icon{
+  width:64px;height:64px;background:var(--gold-bg);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+}
+.auth-card .brand-icon i{font-size:32px;color:var(--gold);}
+.auth-card h1{font-size:1.6rem;font-weight:800;text-align:center;margin-bottom:4px;color:var(--text);}
+.auth-card .lead{color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:28px;}
+
+.field-group{margin-bottom:18px;}
+.field-label{display:block;font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.3px;}
+.field-input-wrap{position:relative;}
+.field-input{
+  width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);
+  font-family:var(--font-body);font-size:.95rem;color:var(--text);outline:none;transition:.3s;background:var(--bg);
+}
+.field-input:focus{border-color:var(--primary);background:white;box-shadow:0 0 0 4px rgba(128,0,0,0.06);}
+.field-input.error{border-color:var(--sale-red);background:#fff5f5;}
+.field-input.success{border-color:var(--btn-green);background:#f0fff4;}
+.field-error{font-size:.72rem;color:var(--sale-red);margin-top:5px;font-weight:600;display:none;}
+.field-error.show{display:block;}
+
+.digit-group{display:flex;gap:12px;justify-content:center;margin:6px 0 4px;}
+.digit-box{
+  width:56px;height:64px;text-align:center;font-size:1.5rem;font-weight:800;
+  border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);
+  outline:none;transition:.3s;color:var(--text);
+}
+.digit-box:focus{border-color:var(--primary);background:white;box-shadow:0 0 0 4px rgba(128,0,0,0.06);}
+.digit-box.filled{border-color:var(--gold);background:var(--gold-bg);}
+.digit-box.error{border-color:var(--sale-red);background:#fff5f5;}
+
+.pin-toggle-row{display:flex;justify-content:flex-end;margin:-4px 0 14px;}
+.pin-toggle{background:none;border:none;color:var(--muted);font-size:.72rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;padding:6px;}
+.pin-toggle:hover{color:var(--primary);}
+
+.btn-primary{
+  width:100%;padding:15px;background:var(--primary);color:white;border:none;border-radius:50px;
+  font-weight:700;font-size:.95rem;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-primary:hover{background:var(--primary-bright);transform:translateY(-2px);box-shadow:0 8px 24px rgba(128,0,0,0.25);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-primary.google-btn{
+  background:white;color:var(--text);border:2px solid var(--border);
+}
+.btn-primary.google-btn:hover{background:var(--bg2);border-color:var(--primary);box-shadow:var(--shadow);}
+.btn-primary.google-btn img{width:20px;height:20px;}
+
+.btn-link{background:none;border:none;color:var(--primary);font-weight:700;font-size:.78rem;cursor:pointer;padding:6px;}
+.btn-link:hover{text-decoration:underline;}
+
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:.72rem;font-weight:600;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.banner{padding:12px 16px;border-radius:var(--radius-sm);font-size:.78rem;font-weight:600;margin-bottom:18px;display:none;align-items:center;gap:10px;}
+.banner.show{display:flex;}
+.banner.error{background:#FDECEC;color:var(--sale-red);border:1px solid #F5C2C2;}
+.banner.success{background:#E8F5E9;color:var(--btn-green-hover);border:1px solid #B7E4BB;}
+.banner.info{background:var(--gold-bg);color:var(--gold);border:1px solid #EAD9A8;}
+
+.footer-links{text-align:center;margin-top:18px;font-size:.8rem;color:var(--muted);}
+.footer-links a{color:var(--primary);font-weight:700;}
+
+.spinner{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.35);border-radius:50%;border-top-color:white;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:12px 24px;border-radius:60px;font-size:.8rem;opacity:0;transition:opacity .3s;z-index:900;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
+#toast.success{background:var(--btn-green-hover);}
+#toast.error{background:var(--sale-red);}
+
+.otp-timer{text-align:center;font-size:.75rem;color:var(--muted);margin-top:8px;}
+
+.otp-row{display:flex;gap:10px;align-items:center;margin-top:4px;}
+.otp-row input{flex:1;}
+.otp-row .btn-sm{padding:12px 20px;background:var(--gold);color:white;border:none;border-radius:var(--radius-sm);font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;font-family:var(--font-body);}
+
+@media(max-width:480px){
+  .auth-card{padding:24px 18px;}
+  .digit-box{width:48px;height:56px;font-size:1.3rem;}
+}
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <a class="logo" href="index.html">
+    <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle">
+    <div class="logo-text">Liquor<span class="gold">Belle</span></div>
+  </a>
+  <a class="back-link" href="accounts.html"><i class="ph ph-arrow-left"></i> Back</a>
+</header>
+
+<div class="page-wrap">
+  <div class="auth-card">
+
+    <div class="brand-icon"><i class="ph ph-user-plus"></i></div>
+    <h1>Create Account</h1>
+    <p class="lead">Join LiquorBelle and start ordering</p>
+
+    <div class="banner" id="registerBanner"></div>
+
+    <form id="registerForm">
+      <div class="field-group">
+        <label class="field-label">Full Name</label>
+        <div class="field-input-wrap">
+          <input class="field-input" id="fullNameInput" type="text" placeholder="John Mwangi" autocomplete="name">
+        </div>
+        <div class="field-error" id="fullNameError"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Email address</label>
+        <div class="field-input-wrap">
+          <input class="field-input" id="emailInput" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="field-error" id="emailError"></div>
+        <div class="field-hint" style="font-size:.7rem;color:var(--muted);margin-top:4px;">
+          <i class="ph ph-check-circle" style="color:var(--btn-green);display:none;" id="emailCheckIcon"></i>
+          <span id="emailCheckMessage"></span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Phone Number</label>
+        <div class="field-input-wrap">
+          <input class="field-input" id="phoneInput" type="tel" placeholder="0712345678" autocomplete="tel">
+        </div>
+        <div class="field-error" id="phoneError"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Create 4-Digit PIN</label>
+        <div class="digit-group" id="pinDigitGroup">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="0">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="1">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="2">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="3">
+        </div>
+        <div class="pin-toggle-row">
+          <button type="button" class="pin-toggle" id="pinToggleBtn">
+            <i class="ph ph-eye"></i> Show PIN
+          </button>
+        </div>
+        <div class="field-error" id="pinError" style="text-align:center;"></div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="registerBtn">
+        <span id="registerBtnText">Create Account</span>
+      </button>
+    </form>
+
+    <div class="divider">OR</div>
+
+    <button class="btn-primary google-btn" id="googleRegisterBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      Sign up with Google
+    </button>
+
+    <p class="footer-links">Already have an account? <a href="login.html">Sign in</a></p>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const AUTH_BASE = API_BASE + '/api/auth';
+const TOAST_DURATION = 3000;
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function isValidEmail(email) {
+  return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim());
+}
+
+function isValidKenyanPhone(phone) {
+  var cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
+  if (cleaned.length === 9 && (cleaned.startsWith('7') || cleaned.startsWith('1'))) return true;
+  if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
+  return false;
+}
+
+function decodeJWT(token) {
+  try {
+    var parts = token.split('.');
+    if (parts.length !== 3) return null;
+    var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (payload.length % 4) payload += '=';
+    return JSON.parse(atob(payload));
+  } catch (e) {
+    return null;
+  }
+}
+
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = '';
+  if (type === 'error') t.classList.add('error');
+  if (type === 'success') t.classList.add('success');
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.style.opacity = '0'; }, TOAST_DURATION);
+}
+
+function showBanner(id, msg, type) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'banner show ' + type;
+}
+
+function hideBanner(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'banner';
+}
+
+function setFieldError(id, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg || '';
+  el.classList.toggle('show', !!msg);
+}
+
+function setLoading(btnId, textId, loading, loadingText, normalText) {
+  var btn = document.getElementById(btnId);
+  var textEl = document.getElementById(textId);
+  if (!btn) return;
+  btn.disabled = loading;
+  if (textEl) textEl.innerHTML = loading ? '<span class="spinner"></span> ' + loadingText : normalText;
+}
+
+function getRedirectTarget() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('redirect') || 'accounts.html';
+}
+
+// ============================================================
+// SESSION GUARD
+// ============================================================
+(function guardExistingSession() {
+  var token = localStorage.getItem('liquorbelle_token');
+  var user = localStorage.getItem('liquorbelle_user');
+  if (!token || !user) return;
+
+  var payload = decodeJWT(token);
+  if (payload && typeof payload.exp === 'number' && Date.now() >= payload.exp * 1000) {
+    localStorage.removeItem('liquorbelle_token');
+    localStorage.removeItem('liquorbelle_user');
+    return;
+  }
+  window.location.href = getRedirectTarget();
+})();
+
+// ============================================================
+// DIGIT GROUP HELPER
+// ============================================================
+function wireDigitGroup(groupEl) {
+  var boxes = Array.prototype.slice.call(groupEl.querySelectorAll('.digit-box'));
+
+  boxes.forEach(function(box, i) {
+    box.addEventListener('input', function() {
+      box.value = box.value.replace(/\D/g, '').slice(0, 1);
+      box.classList.toggle('filled', !!box.value);
+      box.classList.remove('error');
+      if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
+    });
+
+    box.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !box.value && i > 0) {
+        boxes[i - 1].focus();
+      }
+    });
+
+    box.addEventListener('paste', function(e) {
+      e.preventDefault();
+      var pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+      for (var j = 0; j < boxes.length; j++) {
+        boxes[j].value = pasted[j] || '';
+        boxes[j].classList.toggle('filled', !!boxes[j].value);
+      }
+      var lastFilled = Math.min(pasted.length, boxes.length) - 1;
+      if (lastFilled >= 0) boxes[lastFilled].focus();
+    });
+  });
+
+  return {
+    getValue: function() { return boxes.map(function(b) { return b.value; }).join(''); },
+    clear: function() {
+      boxes.forEach(function(b) { b.value = ''; b.classList.remove('filled', 'error'); });
+      boxes[0].focus();
+    },
+    setType: function(type) { boxes.forEach(function(b) { b.type = type; }); },
+    setError: function() { boxes.forEach(function(b) { b.classList.add('error'); }); },
+    removeError: function() { boxes.forEach(function(b) { b.classList.remove('error'); }); },
+    focus: function() { boxes[0].focus(); }
+  };
+}
+
+var pinGroup = wireDigitGroup(document.getElementById('pinDigitGroup'));
+
+// ============================================================
+// TOGGLE PIN VISIBILITY
+// ============================================================
+document.getElementById('pinToggleBtn').addEventListener('click', function() {
+  var isHidden = this.dataset.hidden !== 'false';
+  pinGroup.setType(isHidden ? 'text' : 'password');
+  this.innerHTML = isHidden
+    ? '<i class="ph ph-eye-slash"></i> Hide PIN'
+    : '<i class="ph ph-eye"></i> Show PIN';
+  this.dataset.hidden = isHidden ? 'false' : 'true';
+});
+
+// ============================================================
+// CHECK IF EMAIL EXISTS - SILENT CHECK
+// ============================================================
+function checkEmailExists(email) {
+  return fetch(AUTH_BASE + '/check-user', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    return data.exists || false;
+  })
+  .catch(function() {
+    return false;
+  });
+}
+
+// ============================================================
+// EMAIL INPUT - SILENT CHECK ON BLUR
+// ============================================================
+var emailCheckTimeout = null;
+var emailRegistered = false;
+
+document.getElementById('emailInput').addEventListener('blur', function() {
+  var email = this.value.trim();
+  var icon = document.getElementById('emailCheckIcon');
+  var msg = document.getElementById('emailCheckMessage');
+
+  if (!email) {
+    this.classList.remove('error', 'success');
+    icon.style.display = 'none';
+    msg.textContent = '';
+    emailRegistered = false;
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    this.classList.add('error');
+    this.classList.remove('success');
+    icon.style.display = 'none';
+    msg.textContent = '';
+    emailRegistered = false;
+    return;
+  }
+
+  // Silent check
+  checkEmailExists(email)
+    .then(function(exists) {
+      if (exists) {
+        emailRegistered = true;
+        icon.style.display = 'inline';
+        icon.style.color = 'var(--sale-red)';
+        icon.className = 'ph ph-x-circle';
+        msg.textContent = 'This email is already registered';
+        msg.style.color = 'var(--sale-red)';
+        document.getElementById('emailInput').classList.add('error');
+        document.getElementById('emailInput').classList.remove('success');
+        showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
+      } else {
+        emailRegistered = false;
+        icon.style.display = 'inline';
+        icon.style.color = 'var(--btn-green)';
+        icon.className = 'ph ph-check-circle';
+        msg.textContent = 'Email available';
+        msg.style.color = 'var(--btn-green)';
+        document.getElementById('emailInput').classList.remove('error');
+        document.getElementById('emailInput').classList.add('success');
+        hideBanner('registerBanner');
+      }
+    })
+    .catch(function() {
+      // Silent fail - don't show error for network issues
+    });
+});
+
+document.getElementById('emailInput').addEventListener('input', function() {
+  var icon = document.getElementById('emailCheckIcon');
+  var msg = document.getElementById('emailCheckMessage');
+  var email = this.value.trim();
+
+  if (!email) {
+    this.classList.remove('error', 'success');
+    icon.style.display = 'none';
+    msg.textContent = '';
+    hideBanner('registerBanner');
+    emailRegistered = false;
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    this.classList.add('error');
+    this.classList.remove('success');
+    icon.style.display = 'none';
+    msg.textContent = '';
+    emailRegistered = false;
+    return;
+  }
+
+  // Reset state while typing
+  this.classList.remove('error');
+  icon.style.display = 'inline';
+  icon.className = 'ph ph-check-circle';
+  icon.style.color = 'var(--muted)';
+  msg.textContent = 'Checking...';
+  msg.style.color = 'var(--muted)';
+  hideBanner('registerBanner');
+
+  clearTimeout(emailCheckTimeout);
+  emailCheckTimeout = setTimeout(function() {
+    checkEmailExists(email)
+      .then(function(exists) {
+        if (exists) {
+          emailRegistered = true;
+          icon.className = 'ph ph-x-circle';
+          icon.style.color = 'var(--sale-red)';
+          msg.textContent = 'This email is already registered';
+          msg.style.color = 'var(--sale-red)';
+          document.getElementById('emailInput').classList.add('error');
+          document.getElementById('emailInput').classList.remove('success');
+          showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
+        } else {
+          emailRegistered = false;
+          icon.className = 'ph ph-check-circle';
+          icon.style.color = 'var(--btn-green)';
+          msg.textContent = 'Email available';
+          msg.style.color = 'var(--btn-green)';
+          document.getElementById('emailInput').classList.remove('error');
+          document.getElementById('emailInput').classList.add('success');
+          hideBanner('registerBanner');
+        }
+      })
+      .catch(function() {
+        // Silent fail
+        icon.style.display = 'none';
+        msg.textContent = '';
+      });
+  }, 500);
+}, 500);
+
+// ============================================================
+// PHONE INPUT VALIDATION
+// ============================================================
+document.getElementById('phoneInput').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g, '');
+  if (this.value.length >= 10) {
+    this.classList.remove('error');
+    this.classList.add('success');
+    setFieldError('phoneError', '');
+  }
+});
+
+document.getElementById('phoneInput').addEventListener('blur', function() {
+  var phone = this.value.trim();
+  if (phone && !isValidKenyanPhone(phone)) {
+    this.classList.add('error');
+    this.classList.remove('success');
+    setFieldError('phoneError', 'Please enter a valid phone number (e.g. 0712345678)');
+  } else if (phone && isValidKenyanPhone(phone)) {
+    this.classList.remove('error');
+    this.classList.add('success');
+    setFieldError('phoneError', '');
+  }
+});
+
+// ============================================================
+// FULL NAME VALIDATION
+// ============================================================
+document.getElementById('fullNameInput').addEventListener('input', function() {
+  if (this.value.trim().length >= 2) {
+    this.classList.remove('error');
+    this.classList.add('success');
+    setFieldError('fullNameError', '');
+  }
+});
+
+// ============================================================
+// REGISTER FORM SUBMIT
+// ============================================================
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  var fullName = document.getElementById('fullNameInput').value.trim();
+  var email = document.getElementById('emailInput').value.trim();
+  var phone = document.getElementById('phoneInput').value.trim();
+  var pin = pinGroup.getValue();
+
+  setFieldError('fullNameError', '');
+  setFieldError('emailError', '');
+  setFieldError('phoneError', '');
+  setFieldError('pinError', '');
+  hideBanner('registerBanner');
+
+  var valid = true;
+
+  if (!fullName || fullName.length < 2) {
+    setFieldError('fullNameError', 'Please enter your full name');
+    document.getElementById('fullNameInput').classList.add('error');
+    valid = false;
+  } else {
+    document.getElementById('fullNameInput').classList.remove('error');
+  }
+
+  if (!isValidEmail(email)) {
+    setFieldError('emailError', 'Please enter a valid email address');
+    document.getElementById('emailInput').classList.add('error');
+    valid = false;
+  } else {
+    document.getElementById('emailInput').classList.remove('error');
+  }
+
+  if (emailRegistered) {
+    showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
+    valid = false;
+  }
+
+  if (!phone || !isValidKenyanPhone(phone)) {
+    setFieldError('phoneError', 'Please enter a valid phone number (e.g. 0712345678)');
+    document.getElementById('phoneInput').classList.add('error');
+    valid = false;
+  } else {
+    document.getElementById('phoneInput').classList.remove('error');
+  }
+
+  if (pin.length !== 4) {
+    setFieldError('pinError', 'Create a 4-digit PIN');
+    pinGroup.setError();
+    valid = false;
+  } else {
+    pinGroup.removeError();
+  }
+
+  if (!valid) return;
+
+  setLoading('registerBtn', 'registerBtnText', true, 'Creating account...', 'Create Account');
+
+  // Register the user directly (OTP will be handled by backend)
+  fetch(AUTH_BASE + '/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: fullName,
+      email: email,
+      phone: phone,
+      pin: pin
+    })
+  })
+  .then(function(res) { return res.json().then(function(data) { return { status: res.status, data: data }; }); })
+  .then(function(result) {
+    setLoading('registerBtn', 'registerBtnText', false, '', 'Create Account');
+
+    if (result.status === 200 && result.data.success) {
+      localStorage.setItem('liquorbelle_token', result.data.token);
+      localStorage.setItem('liquorbelle_user', JSON.stringify(result.data.customer));
+      toast('Account created successfully! 🎉', 'success');
+      setTimeout(function() {
+        window.location.href = getRedirectTarget();
+      }, 500);
+      return;
+    }
+
+    if (result.status === 409) {
+      showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
+      return;
+    }
+
+    showBanner('registerBanner', result.data.message || 'Registration failed. Please try again.', 'error');
+  })
+  .catch(function(err) {
+    setLoading('registerBtn', 'registerBtnText', false, '', 'Create Account');
+    showBanner('registerBanner', 'Network error. Please check your connection.', 'error');
+    console.error('Register error:', err);
+  });
+});
+
+// ============================================================
+// GOOGLE SIGNUP
+// ============================================================
+document.getElementById('googleRegisterBtn').addEventListener('click', function() {
+  var btn = this;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Redirecting...';
+  window.location.href = AUTH_BASE + '/google';
+});
+
+// ============================================================
+// HANDLE GOOGLE CALLBACK
+// ============================================================
+function handleGoogleCallback() {
+  var params = new URLSearchParams(window.location.search);
+  var googleAuth = params.get('google_auth');
+  var token = params.get('token');
+  var email = params.get('email');
+  var name = params.get('name');
+  var phone = params.get('phone') || '';
+  var isNew = params.get('is_new') === 'true';
+
+  if (googleAuth !== 'success' || !token || !email) {
+    return;
+  }
+
+  var cleanUrl = window.location.pathname + window.location.search.replace(/[?&]google_auth=[^&]*/, '').replace(/[?&]token=[^&]*/, '').replace(/[?&]email=[^&]*/, '').replace(/[?&]name=[^&]*/, '').replace(/[?&]phone=[^&]*/, '').replace(/[?&]is_new=[^&]*/, '');
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
+
+  if (!isNew) {
+    toast('This email is already registered. Please sign in.', 'error');
+    setTimeout(function() {
+      window.location.href = 'login.html?email=' + encodeURIComponent(email);
+    }, 500);
+    return;
+  }
+
+  // Pre-fill form with Google data
+  document.getElementById('fullNameInput').value = decodeURIComponent(name);
+  document.getElementById('emailInput').value = decodeURIComponent(email);
+  if (phone) {
+    document.getElementById('phoneInput').value = phone;
+  }
+
+  toast('Welcome! Please set your PIN to complete registration.', 'info');
+  pinGroup.focus();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  handleGoogleCallback();
+
+  var params = new URLSearchParams(window.location.search);
+  var googleParam = params.get('google');
+  if (googleParam === '1') {
+    var pendingData = sessionStorage.getItem('liquorbelle_google_pending');
+    if (pendingData) {
+      try {
+        var data = JSON.parse(pendingData);
+        document.getElementById('fullNameInput').value = data.name || '';
+        document.getElementById('emailInput').value = data.email || '';
+        document.getElementById('phoneInput').value = data.phone || '';
+        sessionStorage.removeItem('liquorbelle_google_pending');
+        toast('Please set your PIN to complete registration.', 'info');
+        pinGroup.focus();
+      } catch (e) {}
+    }
+  }
+
+  document.getElementById('fullNameInput').focus();
+});
+
+console.log('✅ Register page loaded');
+</script>
+</body>
+</html>

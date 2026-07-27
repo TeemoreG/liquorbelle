@@ -4632,7 +4632,6 @@ function renderCartDrawer() {
     if (el) el.textContent = count;
   });
 }
-
 // ============================================================
 // UPDATE BOTTOM NAV & MOBILE MENU
 // ============================================================
@@ -4664,6 +4663,18 @@ function updateBottomNav() {
     } else {
       profileLink.style.display = 'none';
     }
+  }
+}
+
+// ============================================================
+// HANDLE ACCOUNT CLICK
+// ============================================================
+function handleAccountClick() {
+  var user = getCurrentUser();
+  if (user && user.name) {
+    window.location.href = 'profile.html';
+  } else {
+    window.location.href = 'accounts.html';
   }
 }
 
@@ -4771,4 +4782,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
->>>>>>> 03131ad (fixed cache loading)
