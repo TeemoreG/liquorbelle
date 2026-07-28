@@ -639,6 +639,7 @@ a{color:inherit;text-decoration:none;}
         <div>
           <h1 id="welcomeTitle">Welcome to <span class="gold-text">LiquorBelle</span></h1>
           <p class="sub" id="welcomeSub">Your premium alcohol delivery service</p>
+          <!-- User greeting will be inserted here by JavaScript -->
         </div>
       </div>
       <div class="badge-row" id="badgeRow"></div>
@@ -864,8 +865,6 @@ function formatDate(value) {
   }
 }
 
-// Defensive JWT decode — does NOT assume a specific payload shape.
-// Only used to soft-check an "exp" claim if one happens to be present.
 function decodeJWT(token) {
   try {
     var parts = token.split('.');
@@ -889,6 +888,42 @@ function checkSessionValidity() {
       localStorage.removeItem('liquorbelle_token');
       toast('Your session expired. Please login again.', 'error');
     }
+  }
+}
+
+// ============================================================
+// SHARED USER GREETING - Works on accounts page
+// ============================================================
+function showUserGreeting() {
+  var user = getCurrentUser();
+  var welcomeBanner = document.getElementById('welcomeBanner');
+  
+  if (!welcomeBanner) return;
+
+  var existingGreeting = welcomeBanner.querySelector('.user-greeting-banner');
+  if (existingGreeting) {
+    existingGreeting.remove();
+  }
+
+  if (user && user.name) {
+    var greetingEl = document.createElement('div');
+    greetingEl.className = 'user-greeting-banner';
+    greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
+    greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+    welcomeBanner.prepend(greetingEl);
+    
+    setTimeout(function() {
+      var el = welcomeBanner.querySelector('.user-greeting-banner');
+      if (el) {
+        el.style.transition = 'opacity 0.5s ease';
+        el.style.opacity = '0';
+        setTimeout(function() {
+          if (el.parentNode) {
+            el.remove();
+          }
+        }, 500);
+      }
+    }, 5000);
   }
 }
 
@@ -1023,6 +1058,9 @@ function updateUI() {
 
   updateUserBadge();
   updateBottomNav();
+  
+  // Show greeting after UI update
+  setTimeout(showUserGreeting, 300);
 }
 
 // ============================================================
@@ -1075,10 +1113,7 @@ function closeCartDrawer() {
 }
 
 // ============================================================
-// WISHLIST (localStorage-backed — new)
-// Shape: { [productId]: { id, name, price, image } }
-// Exposed on window so shop.html / product cards can call
-// addToWishlist(product) once wired up there.
+// WISHLIST
 // ============================================================
 function getWishlist() {
   try {
@@ -1186,7 +1221,7 @@ function closeSupportModal() {
 }
 
 // ============================================================
-// QUICK STATS (cart + wishlist counts, shown everywhere)
+// QUICK STATS
 // ============================================================
 function updateQuickStats() {
   var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
@@ -1253,7 +1288,7 @@ function renderCartDrawer() {
 }
 
 // ============================================================
-// KEYBOARD (Escape closes open overlays)
+// KEYBOARD
 // ============================================================
 function closeAnyOpenOverlay() {
   closeMobileMenu();

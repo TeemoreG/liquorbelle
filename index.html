@@ -2109,22 +2109,6 @@ function handleGoogleCallback() {
   }
 })();
 
-// ============================================================
-// USER GREETING
-// ============================================================
-function showUserGreeting(user) {
-  var heroOverlay = document.querySelector('.hero-overlay');
-  if (!heroOverlay) return;
-  
-  var existing = heroOverlay.querySelector('.user-greeting-banner');
-  if (existing) existing.remove();
-  
-  var greetingEl = document.createElement('div');
-  greetingEl.className = 'user-greeting-banner';
-  greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:10px 24px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
-  greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
-  heroOverlay.prepend(greetingEl);
-}
 
 // ============================================================
 // MOBILE MENU
@@ -2372,13 +2356,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   updateCartUI();
   updateBottomNav();
-  updateMobileMenuAuth(); // <-- ADD THIS
-  
-  var user = getCurrentUser();
-  if (user && user.name) {
-    showUserGreeting(user);
-  }
-  
+  updateMobileMenuAuth();
+
   console.log('🍾 LiquorBelle homepage loaded');
   console.log('📱 User logged in:', !!user);
 });

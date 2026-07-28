@@ -205,7 +205,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
         </div>
 
         <div class="field-group">
-          <label class="field-label">Create 4-Digit PIN</label>
+          <label class="field-label">Create PIN</label>
           <div class="digit-group" id="pinDigitGroup">
             <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="0">
             <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="1">
@@ -218,6 +218,22 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
             </button>
           </div>
           <div class="field-error" id="pinError" style="text-align:center;"></div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Confirm PIN</label>
+          <div class="digit-group" id="pinConfirmGroup">
+            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="0">
+            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="1">
+            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="2">
+            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="3">
+          </div>
+          <div class="pin-toggle-row">
+            <button type="button" class="pin-toggle" id="pinConfirmToggleBtn">
+              <i class="ph ph-eye"></i> Show PIN
+            </button>
+          </div>
+          <div class="field-error" id="pinConfirmError" style="text-align:center;"></div>
         </div>
 
         <button type="submit" class="btn-primary" id="registerBtn">
@@ -431,9 +447,11 @@ function wireDigitGroup(groupEl, onComplete) {
 }
 
 var pinGroup = wireDigitGroup(document.getElementById('pinDigitGroup'));
+var pinConfirmGroup = wireDigitGroup(document.getElementById('pinConfirmGroup'));
 var otpGroup = wireDigitGroup(document.getElementById('otpDigitGroup'), function(value) {
   if (value.length === 6) {
-    document.getElementById('verifyOtpBtn').focus();
+    // Auto-verify when all 6 digits are entered
+    document.getElementById('verifyOtpBtn').click();
   }
 });
 
@@ -449,11 +467,19 @@ document.getElementById('pinToggleBtn').addEventListener('click', function() {
   this.dataset.hidden = isHidden ? 'false' : 'true';
 });
 
+document.getElementById('pinConfirmToggleBtn').addEventListener('click', function() {
+  var isHidden = this.dataset.hidden !== 'false';
+  pinConfirmGroup.setType(isHidden ? 'text' : 'password');
+  this.innerHTML = isHidden
+    ? '<i class="ph ph-eye-slash"></i> Hide PIN'
+    : '<i class="ph ph-eye"></i> Show PIN';
+  this.dataset.hidden = isHidden ? 'false' : 'true';
+});
+
 // ============================================================
-// CHECK IF EMAIL EXISTS - SILENT CHECK (FIXED - Uses /check-email)
+// CHECK IF EMAIL EXISTS - SILENT CHECK
 // ============================================================
 function checkEmailExists(email) {
-  // Clean and format email
   var cleanEmail = email.toLowerCase().trim();
   
   return fetch(AUTH_BASE + '/check-email', {
@@ -463,28 +489,25 @@ function checkEmailExists(email) {
   })
   .then(function(res) {
     if (!res.ok) {
-      // If server returns error, treat as not exists to avoid blocking user
       console.warn('Check email returned status:', res.status);
       return { exists: false };
     }
     return res.json();
   })
   .then(function(data) {
-    // Handle both { exists: true/false } and { success: true, exists: true/false }
     if (data && typeof data.exists === 'boolean') {
       return data.exists;
     }
     return false;
   })
   .catch(function(err) {
-    // On network error, don't block registration - assume email is available
     console.warn('Check email network error:', err);
     return false;
   });
 }
 
 // ============================================================
-// EMAIL INPUT - SILENT CHECK (FIXED)
+// EMAIL INPUT - SILENT CHECK
 // ============================================================
 var emailCheckTimeout = null;
 var emailRegistered = false;
@@ -553,7 +576,6 @@ document.getElementById('emailInput').addEventListener('input', function() {
         updateEmailStatus(true, exists);
       })
       .catch(function() {
-        // Silently fail - don't show errors to user
         var icon = document.getElementById('emailCheckIcon');
         var msg = document.getElementById('emailCheckMessage');
         icon.style.display = 'none';
@@ -599,7 +621,7 @@ document.getElementById('fullNameInput').addEventListener('input', function() {
 });
 
 // ============================================================
-// SEND OTP - FIXED
+// SEND OTP
 // ============================================================
 function sendOtp(email) {
   var cleanEmail = email.toLowerCase().trim();
@@ -631,7 +653,7 @@ function sendOtp(email) {
 }
 
 // ============================================================
-// REGISTER FORM SUBMIT - FIXED
+// REGISTER FORM SUBMIT
 // ============================================================
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -640,11 +662,13 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
   var email = document.getElementById('emailInput').value.trim();
   var phone = document.getElementById('phoneInput').value.trim();
   var pin = pinGroup.getValue();
+  var pinConfirm = pinConfirmGroup.getValue();
 
   setFieldError('fullNameError', '');
   setFieldError('emailError', '');
   setFieldError('phoneError', '');
   setFieldError('pinError', '');
+  setFieldError('pinConfirmError', '');
   hideBanner('registerBanner');
 
   var valid = true;
@@ -686,6 +710,23 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     pinGroup.removeError();
   }
 
+  if (pinConfirm.length !== 4) {
+    setFieldError('pinConfirmError', 'Confirm your 4-digit PIN');
+    pinConfirmGroup.setError();
+    valid = false;
+  } else {
+    pinConfirmGroup.removeError();
+  }
+
+  if (pin !== pinConfirm) {
+    setFieldError('pinConfirmError', 'PINs do not match. Please try again.');
+    pinConfirmGroup.setError();
+    pinGroup.setError();
+    pinGroup.clear();
+    pinConfirmGroup.clear();
+    valid = false;
+  }
+
   if (!valid) return;
 
   // Store registration data
@@ -719,7 +760,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 });
 
 // ============================================================
-// VERIFY OTP - FIXED
+// VERIFY OTP - FIXED (with auto-verify)
 // ============================================================
 document.getElementById('verifyOtpBtn').addEventListener('click', function() {
   var otp = otpGroup.getValue();
@@ -763,7 +804,6 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
       return;
     }
 
-    // Handle specific error codes
     if (result.status === 400) {
       var errorMsg = result.data.message || 'Validation error. Please check your input.';
       if (result.data.errors) {
@@ -806,7 +846,7 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
 });
 
 // ============================================================
-// RESEND OTP - FIXED
+// RESEND OTP
 // ============================================================
 document.getElementById('resendOtpBtn').addEventListener('click', function() {
   if (this.disabled) return;
@@ -867,7 +907,7 @@ document.getElementById('backToRegisterBtn').addEventListener('click', function(
 });
 
 // ============================================================
-// GOOGLE SIGNUP - FIXED
+// GOOGLE SIGNUP
 // ============================================================
 document.getElementById('googleRegisterBtn').addEventListener('click', function() {
   var btn = this;
@@ -877,7 +917,7 @@ document.getElementById('googleRegisterBtn').addEventListener('click', function(
 });
 
 // ============================================================
-// HANDLE GOOGLE CALLBACK - FIXED
+// HANDLE GOOGLE CALLBACK
 // ============================================================
 function handleGoogleCallback() {
   var params = new URLSearchParams(window.location.search);
@@ -892,7 +932,6 @@ function handleGoogleCallback() {
     return;
   }
 
-  // Clean URL params
   var cleanUrl = window.location.pathname + window.location.search
     .replace(/[?&]google_auth=[^&]*/, '')
     .replace(/[?&]token=[^&]*/, '')
@@ -905,7 +944,6 @@ function handleGoogleCallback() {
     window.history.replaceState({}, document.title, cleanUrl);
   }
 
-  // If user already exists (not new), redirect to login
   if (!isNew) {
     toast('This email is already registered. Please sign in.', 'error');
     setTimeout(function() {
@@ -914,7 +952,6 @@ function handleGoogleCallback() {
     return;
   }
 
-  // New user - pre-fill form with Google data
   var decodedName = decodeURIComponent(name);
   var decodedEmail = decodeURIComponent(email);
   
@@ -924,13 +961,11 @@ function handleGoogleCallback() {
     document.getElementById('phoneInput').value = phone;
   }
 
-  // Trigger email check to show valid status
   var event = new Event('input');
   document.getElementById('emailInput').dispatchEvent(event);
 
   toast('Welcome! Please set your PIN to complete registration.', 'info');
   
-  // Switch to register step if on OTP step
   document.getElementById('stepOtp').classList.remove('active');
   document.getElementById('stepRegister').classList.add('active');
   

@@ -74,6 +74,66 @@ function renderStars(rating) {
 }
 
 // ============================================================
+// SHARED USER GREETING - Works on any page
+// ============================================================
+function showUserGreeting() {
+  var user = getCurrentUser();
+  
+  // Find any welcome banner/container on the page
+  var welcomeBanner = document.querySelector('.welcome-banner, .welcome-section, .hero-overlay, .account-dashboard .welcome-banner, #welcomeBanner');
+  
+  // If no welcome banner found, try to find hero section
+  if (!welcomeBanner) {
+    welcomeBanner = document.querySelector('.hero-overlay, .hero-section, .page-hero');
+  }
+  
+  // If still no banner, don't show greeting
+  if (!welcomeBanner) return;
+
+  // Remove any existing greeting first (prevents duplicates)
+  var existingGreeting = welcomeBanner.querySelector('.user-greeting-banner');
+  if (existingGreeting) {
+    existingGreeting.remove();
+  }
+
+  if (user && user.name) {
+    // User is logged in - show welcome back
+    var greetingEl = document.createElement('div');
+    greetingEl.className = 'user-greeting-banner';
+    greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
+    greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+    welcomeBanner.prepend(greetingEl);
+    
+    // Auto-hide after 5 seconds
+    setTimeout(function() {
+      var el = welcomeBanner.querySelector('.user-greeting-banner');
+      if (el) {
+        el.style.transition = 'opacity 0.5s ease';
+        el.style.opacity = '0';
+        setTimeout(function() {
+          if (el.parentNode) {
+            el.remove();
+          }
+        }, 500);
+      }
+    }, 5000);
+  }
+}
+
+// Auto-show greeting on page load for ALL pages
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure DOM is fully ready
+  setTimeout(showUserGreeting, 200);
+});
+
+// Also show greeting when user logs in (storage change)
+window.addEventListener('storage', function(e) {
+  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
+    setTimeout(showUserGreeting, 300);
+  }
+});
+
+// ============================================================
 // STOCK STATUS HELPER
 // ============================================================
 function getStockStatus(variants) {
@@ -883,22 +943,6 @@ window.populateCategoryDropdown = function(selectId) {
 };
 
 var allProductsCache = [];
-
-  // ============================================================
-  // USER GREETING ON INDEX PAGE
-  // ============================================================
-  (function showUserGreeting() {
-    var user = getCurrentUser();
-    if (user && user.name) {
-      var heroOverlay = document.querySelector('.hero-overlay');
-      if (heroOverlay) {
-        var greetingEl = document.createElement('div');
-        greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
-        greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
-        heroOverlay.prepend(greetingEl);
-      }
-    }
-  })();
 
   // ============================================================
   // SESSION CHECK
