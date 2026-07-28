@@ -199,6 +199,40 @@ function getCurrentUser() {
   }
 }
 
+// ============================================================
+// VALIDATE USER SESSION - Check if user still exists in DB
+// ============================================================
+function validateUserSession() {
+  var token = getAuthToken();
+  var user = getCurrentUser();
+  
+  if (!token || !user) return;
+
+  fetch(API_BASE + '/api/customers/me', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(function(res) {
+    if (res.status === 401 || res.status === 403 || res.status === 404) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      toast('Your account has been deactivated. Please contact support.', 'error');
+      window.location.href = 'accounts.html';
+      return null;
+    }
+    return res.json();
+  })
+  .then(function(data) {
+    if (data && !data.success) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      window.location.href = 'accounts.html';
+    }
+  })
+  .catch(function() {
+    // Network error - don't logout, just silently fail
+  });
+}
+
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
@@ -214,11 +248,28 @@ function fetchWithAuth(url, options) {
   if (!token) {
     return Promise.reject(new Error('Not authenticated'));
   }
+  
   options = options || {};
   options.headers = options.headers || {};
   options.headers['Content-Type'] = 'application/json';
   options.headers['Authorization'] = 'Bearer ' + token;
-  return fetch(url, options);
+
+  return fetch(url, options)
+    .then(function(res) {
+      if (res.status === 403 || res.status === 404) {
+        return res.json().then(function(data) {
+          if (data.message && (data.message.includes('deactivated') || data.message.includes('deleted'))) {
+            localStorage.removeItem('liquorbelle_user');
+            localStorage.removeItem('liquorbelle_token');
+            toast('Your account has been deactivated. Please contact support.', 'error');
+            window.location.href = 'accounts.html';
+            return Promise.reject(new Error('Account deactivated'));
+          }
+          return Promise.reject(new Error(data.message || 'Request failed'));
+        });
+      }
+      return res;
+    });
 }
 
 function isTokenExpired(token) {
