@@ -23,8 +23,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
-<style>
-/* ===== RESET & VARIABLES ===== */
+
+   <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --primary:#800000;
@@ -35,11 +35,12 @@
   --bg:#F9F6F2;
   --bg2:#F2EDE7;
   --border:#E8E0D8;
+  --border-light:#F0EBE5;
   --text:#1A1A1A;
   --muted:#7A7368;
   --gold:#B8860B;
-  --gold-light:#d4a017;  /* ADD THIS */
-  --gold-bg:#fdf6e3;      /* ADD THIS */
+  --gold-light:#d4a017;
+  --gold-bg:#fdf6e3;
   --radius:24px;
   --radius-sm:14px;
   --radius-xs:10px;
@@ -53,30 +54,28 @@
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 
-/* Add gold utility classes */
+/* ===== UTILITY CLASSES ===== */
 .gold{color:var(--gold);}
 .gold-text{color:var(--gold);}
 .gold-border{border-color:var(--gold);}
 .gold-bg{background:var(--gold-bg);}
 .gold-gradient{background:linear-gradient(135deg, var(--gold), var(--gold-light));}
 
+/* ===== BASE ===== */
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));overflow-x:hidden;}
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
 .shop-svg{width:22px;height:22px;color:currentColor;display:block;}
 
-/* ===== GOLD ACCENTS ===== */
-.gold{color:var(--gold);}
-.gold-text{color:var(--gold);}
-.gold-border{border-color:var(--gold);}
-.gold-bg{background:var(--gold-bg);}
-.gold-gradient{background:linear-gradient(135deg, var(--gold), var(--gold-light));}
-
-/* ===== OFFLINE BANNER ===== */
+/* ============================================================
+   OFFLINE BANNER
+   ============================================================ */
 .offline-banner{background:var(--sale-red);color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;display:none;position:sticky;top:0;z-index:150;}
 .offline-banner.show{display:block;}
 
-/* ===== WHATSAPP FLOAT ===== */
+/* ============================================================
+   WHATSAPP FLOAT
+   ============================================================ */
 .whatsapp-float{
   position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;
   width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -93,7 +92,9 @@ a{color:inherit;text-decoration:none;}
 .whatsapp-float:hover .tooltip{opacity:1;right:62px;}
 @media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:20px;right:24px;}}
 
-/* ===== BOTTOM NAV ===== */
+/* ============================================================
+   BOTTOM NAV
+   ============================================================ */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;height:calc(var(--bottom-nav-height) + var(--safe-bottom));
   background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
@@ -119,7 +120,9 @@ a{color:inherit;text-decoration:none;}
 }
 .nav-item:active{transform:scale(0.92);}
 
-/* ===== HEADER - LARGER SIZE ===== */
+/* ============================================================
+   HEADER
+   ============================================================ */
 .main-header{
   background:var(--primary);
   padding:16px 5%;
@@ -166,7 +169,9 @@ a{color:inherit;text-decoration:none;}
   border:2.5px solid var(--primary);
 }
 
-/* ===== MOBILE MENU ===== */
+/* ============================================================
+   MOBILE MENU
+   ============================================================ */
 .mobile-menu-overlay {
   position: fixed;
   inset: 0;
@@ -277,9 +282,8 @@ a{color:inherit;text-decoration:none;}
 }
 
 /* ============================================================
-   AGE GATE - LIQUORBELLE BRANDED (Gold & Maroon) - TRANSPARENT
+   AGE GATE
    ============================================================ */
-
 .age-gate {
   position: fixed;
   inset: 0;
@@ -295,17 +299,14 @@ a{color:inherit;text-decoration:none;}
   padding: 20px;
   box-sizing: border-box;
 }
-
 .age-gate.active {
   display: flex !important;
   opacity: 1 !important;
 }
-
 .age-gate:not(.active) {
   display: none !important;
   pointer-events: none !important;
 }
-
 .age-gate-card {
   background: #ffffff;
   border-radius: 20px;
@@ -321,12 +322,10 @@ a{color:inherit;text-decoration:none;}
   overflow: hidden;
   border: 2px solid #d4a843;
 }
-
 .age-gate.active .age-gate-card {
   transform: scale(1) translateY(0);
   opacity: 1;
 }
-
 .age-gate-card::before {
   content: '';
   position: absolute;
@@ -338,12 +337,10 @@ a{color:inherit;text-decoration:none;}
   background-size: 300% 100%;
   animation: shimmer 4s ease-in-out infinite;
 }
-
 @keyframes shimmer {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
 }
-
 .age-gate-card::after {
   content: '';
   position: absolute;
@@ -355,11 +352,9 @@ a{color:inherit;text-decoration:none;}
   pointer-events: none;
   border-radius: 0 20px 0 0;
 }
-
 .age-gate-logo {
   margin-bottom: 16px;
 }
-
 .age-gate-logo img {
   width: 80px;
   height: 80px;
@@ -370,7 +365,6 @@ a{color:inherit;text-decoration:none;}
   box-shadow: 0 4px 16px rgba(139, 0, 0, 0.2);
   border: 2px solid #d4a843;
 }
-
 .age-gate-card h2 {
   font-size: 1.8rem;
   font-weight: 800;
@@ -378,7 +372,6 @@ a{color:inherit;text-decoration:none;}
   margin: 0 0 4px 0;
   letter-spacing: -0.5px;
 }
-
 .age-gate-card h2 .gold {
   color: #d4a843;
   background: linear-gradient(135deg, #d4a843, #b8860b);
@@ -386,7 +379,6 @@ a{color:inherit;text-decoration:none;}
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 .age-gate-text {
   color: #666666;
   font-size: 0.9rem;
@@ -396,13 +388,11 @@ a{color:inherit;text-decoration:none;}
   margin-left: auto;
   margin-right: auto;
 }
-
 .age-gate-btns {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .age-gate-btns button {
   flex: 1;
   min-width: 120px;
@@ -419,38 +409,31 @@ a{color:inherit;text-decoration:none;}
   justify-content: center;
   gap: 8px;
 }
-
 .age-yes {
   background: #d4a843;
   color: #ffffff;
   box-shadow: 0 4px 16px rgba(212, 168, 67, 0.3);
 }
-
 .age-yes:hover {
   background: #e8c96a;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(212, 168, 67, 0.4);
 }
-
 .age-yes:active {
   transform: translateY(0px);
 }
-
 .age-no {
   background: #800000;
   color: #ffffff;
 }
-
 .age-no:hover {
   background: #a00000;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(139, 0, 0, 0.3);
 }
-
 .age-no:active {
   transform: translateY(0px);
 }
-
 .age-gate-footer {
   margin-top: 20px;
   font-size: 0.7rem;
@@ -458,20 +441,17 @@ a{color:inherit;text-decoration:none;}
   line-height: 1.4;
   opacity: 0.7;
 }
-
 body.age-gate-active {
   overflow: hidden !important;
   height: 100vh !important;
   position: fixed !important;
   width: 100% !important;
 }
-
 body:not(.age-gate-active) {
   overflow: auto !important;
   height: auto !important;
   position: relative !important;
 }
-
 @media (max-width: 480px) {
   .age-gate-card {
     padding: 32px 24px 28px;
@@ -495,7 +475,6 @@ body:not(.age-gate-active) {
     font-size: 0.85rem;
   }
 }
-
 @media (max-width: 380px) {
   .age-gate-card {
     padding: 24px 16px 20px;
@@ -504,7 +483,6 @@ body:not(.age-gate-active) {
     font-size: 1.2rem;
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
   .age-gate,
   .age-gate-card,
@@ -517,14 +495,18 @@ body:not(.age-gate-active) {
   }
 }
 
-/* ===== MARQUEE ===== */
+/* ============================================================
+   MARQUEE
+   ============================================================ */
 .marquee-strip{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:8px 0;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.08);}
 .marquee-content{display:flex;width:max-content;animation:marquee 30s linear infinite;}
 .marquee-content span{display:inline-block;padding:0 30px;white-space:nowrap;font-size:.65rem;font-weight:500;}
 .marquee-content span i{margin-right:4px;}
 @keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-/* ===== HERO - CLEAN BACKGROUND ===== */
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
 .hero-section{
   background:url('https://res.cloudinary.com/dvqjgbdhp/image/upload/v1783111200/wines-and-spirits-in-Kenya_jkzauf.jpg');
   background-size:cover;background-position:center;
@@ -550,7 +532,9 @@ body:not(.age-gate-active) {
 }
 .hero-cta:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(184,134,11,0.5);}
 
-/* ===== SEARCH SECTION ===== */
+/* ============================================================
+   SEARCH SECTION
+   ============================================================ */
 .search-section{padding:20px 5%;background:var(--bg);}
 .search-box{
   max-width:600px;margin:0 auto;display:flex;align-items:center;
@@ -561,7 +545,9 @@ body:not(.age-gate-active) {
 .search-box input{flex:1;border:none;outline:none;padding:14px 14px;font-size:.95rem;font-family:var(--font-body);background:transparent;}
 .search-box input::placeholder{color:var(--muted);font-weight:400;}
 
-/* ===== SECTION HEADER ===== */
+/* ============================================================
+   SECTION HEADER
+   ============================================================ */
 .section-header{
   display:flex;justify-content:space-between;align-items:center;
   padding:28px 5% 14px;
@@ -569,7 +555,9 @@ body:not(.age-gate-active) {
 .section-header h2{font-size:1.4rem;font-weight:800;color:var(--text);}
 .section-header a{font-size:.8rem;font-weight:600;color:var(--gold);text-decoration:none;}
 
-/* ===== CATEGORY GRID ===== */
+/* ============================================================
+   CATEGORY GRID
+   ============================================================ */
 .category-grid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
   gap:10px;padding:0 4% 20px;
@@ -583,7 +571,9 @@ body:not(.age-gate-active) {
 .cat-card img{width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:var(--radius-xs);background:var(--bg);margin-bottom:8px;}
 .cat-card span{font-size:.75rem;font-weight:600;display:block;}
 
-/* ===== PRODUCT GRIDS - MATCHING SHOP PAGE STYLES ===== */
+/* ============================================================
+   PRODUCT GRIDS
+   ============================================================ */
 .products-grid,
 .trending-grid,
 .new-arrivals-grid{
@@ -668,14 +658,13 @@ body:not(.age-gate-active) {
 }
 .pc-wishlist.wishlisted:hover i{
   transform:scale(1.2);
-  }
+}
 .pc-body {
   padding: 8px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
-
 .pc-name {
   font-weight: 700;
   font-size: .7rem;
@@ -752,7 +741,9 @@ body:not(.age-gate-active) {
   .pc-name{font-size:.8rem;}
 }
 
-/* ===== SKELETON ===== */
+/* ============================================================
+   SKELETON LOADING
+   ============================================================ */
 .skeleton-card{background:var(--white);border-radius:var(--radius-sm);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
 .skeleton-img{width:100%;aspect-ratio:1/1;background:var(--bg2);animation:pulse 1.5s infinite;}
 .skeleton-text{height:12px;background:var(--bg2);margin:8px 12px;border-radius:4px;animation:pulse 1.5s infinite;}
@@ -760,7 +751,9 @@ body:not(.age-gate-active) {
 .skeleton-btn{height:36px;background:var(--bg2);margin:8px 12px 12px;border-radius:60px;animation:pulse 1.5s infinite;}
 @keyframes pulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
 
-/* ===== QUICK SHORTCUTS ===== */
+/* ============================================================
+   QUICK SHORTCUTS
+   ============================================================ */
 .quick-shortcuts{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
   gap:14px;padding:10px 4% 24px;
@@ -775,7 +768,9 @@ body:not(.age-gate-active) {
 .shortcut-card span{font-weight:700;font-size:.8rem;display:block;}
 .shortcut-card small{font-size:.65rem;color:var(--muted);display:block;}
 
-/* ===== REMINDER ===== */
+/* ============================================================
+   REMINDER SECTION
+   ============================================================ */
 .reminder-section{
   display:flex;align-items:center;gap:16px;
   background:var(--gold-bg);border:1px solid var(--border);
@@ -792,7 +787,9 @@ body:not(.age-gate-active) {
 }
 .reminder-btn:hover{background:var(--primary-bright);}
 
-/* ===== TRUST BADGES ===== */
+/* ============================================================
+   TRUST BADGES
+   ============================================================ */
 .trust-badges-row{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
   gap:14px;padding:18px 4%;
@@ -806,7 +803,9 @@ body:not(.age-gate-active) {
 .trust-badge-content strong{font-size:.8rem;display:block;}
 .trust-badge-content p{font-size:.65rem;color:var(--muted);}
 
-/* ===== STORE PROMO ===== */
+/* ============================================================
+   STORE PROMO
+   ============================================================ */
 .store-promo{
   display:grid;grid-template-columns:1fr 1fr;gap:20px;
   background:var(--primary-dark);color:white;border-radius:var(--radius);
@@ -826,7 +825,7 @@ body:not(.age-gate-active) {
 @media(max-width:700px){.store-promo{grid-template-columns:1fr;}}
 
 /* ============================================================
-   AD POSTER - MODERN STYLING
+   AD POSTER
    ============================================================ */
 .ad-poster-wrapper {
   position: relative;
@@ -838,7 +837,6 @@ body:not(.age-gate-active) {
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   transition: background 0.8s ease;
 }
-
 .ad-poster-wrapper::before {
   content: '';
   position: absolute;
@@ -850,7 +848,6 @@ body:not(.age-gate-active) {
   opacity: 0.15;
   pointer-events: none;
 }
-
 .ad-poster-inner {
   position: relative;
   z-index: 2;
@@ -864,14 +861,12 @@ body:not(.age-gate-active) {
   min-height: 120px;
   backdrop-filter: blur(4px);
 }
-
 .ad-poster-left {
   display: flex;
   align-items: center;
   gap: 20px;
   flex: 1;
 }
-
 .ad-poster-icon {
   width: 56px;
   height: 56px;
@@ -887,11 +882,9 @@ body:not(.age-gate-active) {
   border: 2px solid rgba(255,255,255,0.2);
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-
 .ad-poster-content {
   flex: 1;
 }
-
 .ad-poster-title {
   font-size: 1.1rem;
   font-weight: 800;
@@ -899,14 +892,12 @@ body:not(.age-gate-active) {
   margin-bottom: 2px;
   letter-spacing: -0.3px;
 }
-
 .ad-poster-desc {
   font-size: 0.8rem;
   color: rgba(255,255,255,0.85);
   opacity: 0.9;
   line-height: 1.4;
 }
-
 .ad-poster-badge {
   display: inline-block;
   padding: 4px 14px;
@@ -921,7 +912,6 @@ body:not(.age-gate-active) {
   border: 1px solid rgba(255,255,255,0.15);
   transition: all 0.4s ease;
 }
-
 .ad-poster-right {
   display: flex;
   flex-direction: column;
@@ -929,12 +919,10 @@ body:not(.age-gate-active) {
   gap: 8px;
   flex-shrink: 0;
 }
-
 .ad-dots {
   display: flex;
   gap: 8px;
 }
-
 .ad-dot {
   width: 8px;
   height: 8px;
@@ -945,24 +933,20 @@ body:not(.age-gate-active) {
   border: none;
   padding: 0;
 }
-
 .ad-dot.active {
   background: white;
   width: 24px;
   border-radius: 4px;
   box-shadow: 0 0 20px rgba(255,255,255,0.3);
 }
-
 .ad-dot:hover {
   background: rgba(255,255,255,0.6);
   transform: scale(1.2);
 }
-
 .ad-dot.active:hover {
   background: white;
   transform: scale(1);
 }
-
 @media (max-width: 768px) {
   .ad-poster-inner {
     flex-direction: column;
@@ -988,7 +972,6 @@ body:not(.age-gate-active) {
     font-size: 0.7rem;
   }
 }
-
 @media (max-width: 480px) {
   .ad-poster-inner {
     padding: 16px 18px;
@@ -1014,7 +997,9 @@ body:not(.age-gate-active) {
   }
 }
 
-/* ===== REVIEW ===== */
+/* ============================================================
+   REVIEW SECTION
+   ============================================================ */
 .review-section{
   display:flex;align-items:center;justify-content:space-between;
   background:var(--white);border-radius:var(--radius-sm);padding:18px 24px;
@@ -1029,7 +1014,9 @@ body:not(.age-gate-active) {
 }
 .review-btn:hover{background:var(--primary-bright);}
 
-/* ===== STOCK BADGE ===== */
+/* ============================================================
+   STOCK BADGES
+   ============================================================ */
 .stock-badge {
     position: absolute;
     bottom: 6px;
@@ -1051,7 +1038,6 @@ body:not(.age-gate-active) {
 .stock-badge.unknown { background: #6B7280; color: white; }
 .stock-badge i { font-size: 8px; }
 
-/* ===== STOCK TEXT ===== */
 .pc-stock {
     font-size: 10px;
     font-weight: 600;
@@ -1064,7 +1050,6 @@ body:not(.age-gate-active) {
 .pc-stock.low-stock { color: #F59E0B; }
 .pc-stock.out-of-stock { color: #DC2626; }
 
-/* ===== OUT OF STOCK BUTTON ===== */
 .atc-btn.out-of-stock {
     background: #6B7280 !important;
     cursor: not-allowed !important;
@@ -1075,7 +1060,9 @@ body:not(.age-gate-active) {
     transform: none !important;
 }
 
-/* ===== ZONES ===== */
+/* ============================================================
+   ZONES
+   ============================================================ */
 .zones-grid{
   display:flex;flex-wrap:wrap;gap:8px;
   padding:0 4% 20px;justify-content:center;
@@ -1087,15 +1074,140 @@ body:not(.age-gate-active) {
 }
 .zone-dot{width:8px;height:8px;border-radius:50%;background:var(--btn-green);}
 
-/* ===== FOOTER ===== */
-.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:40px 5% 28px;margin-top:20px;}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px;margin-bottom:28px;}
-.footer-col h4{font-size:.85rem;font-weight:700;margin-bottom:14px;color:#fff;opacity:.9;}
-.footer-col p,.footer-col a{display:block;font-size:.75rem;margin-bottom:8px;opacity:.7;color:#fff;text-decoration:none;}
-.footer-col a:hover{opacity:1;color:var(--gold);}
-.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:.7rem;opacity:.6;}
+/* ============================================================
+   FOOTER - ENHANCED
+   ============================================================ */
+.footer {
+    background: var(--primary-dark);
+    color: rgba(255,255,255,.85);
+    padding: 40px 5% 28px;
+    margin-top: 20px;
+    border-top: 2px solid var(--gold);
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 28px;
+    margin-bottom: 28px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.footer-col h4 {
+    font-size: .85rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #fff;
+    opacity: .9;
+    position: relative;
+    padding-bottom: 8px;
+}
+.footer-col h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+}
+.footer-col p,
+.footer-col a {
+    display: block;
+    font-size: .75rem;
+    margin-bottom: 8px;
+    opacity: .7;
+    color: #fff;
+    text-decoration: none;
+    transition: all .2s;
+}
+.footer-col a:hover {
+    opacity: 1;
+    color: var(--gold);
+    transform: translateX(4px);
+}
+.footer-col span {
+    display: block;
+    font-size: .75rem;
+    margin-bottom: 8px;
+    opacity: .7;
+    color: #fff;
+}
+.footer-col .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .75rem;
+    opacity: .7;
+    color: #fff;
+    margin-bottom: 8px;
+}
+.footer-col .contact-item i {
+    color: var(--gold);
+    font-size: 14px;
+    width: 20px;
+}
+.footer-col .contact-item a {
+    display: inline;
+    margin-bottom: 0;
+    opacity: .7;
+}
+.footer-col .contact-item a:hover {
+    opacity: 1;
+    transform: none;
+}
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    font-size: .7rem;
+    opacity: .6;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.footer-bottom p {
+    margin-bottom: 4px;
+}
+.footer-bottom .legal-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+}
+.footer-bottom .legal-links a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-size: .7rem;
+    transition: all .2s;
+}
+.footer-bottom .legal-links a:hover {
+    color: var(--gold);
+}
+.footer-bottom .divider {
+    color: rgba(255,255,255,0.2);
+}
+@media(max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    .footer {
+        padding: 28px 4% 20px;
+    }
+}
+@media(max-width: 360px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
 
-/* ===== SCROLL TOP ===== */
+/* ============================================================
+   SCROLL TOP
+   ============================================================ */
 .scroll-top{
   position:fixed;bottom:calc(var(--bottom-nav-height) + 80px);right:16px;
   width:46px;height:46px;border-radius:50%;background:var(--gold);color:white;
@@ -1106,7 +1218,9 @@ body:not(.age-gate-active) {
 .scroll-top.show{opacity:1;visibility:visible;}
 .scroll-top:hover{transform:translateY(-2px);}
 
-/* ===== CART DRAWER ===== */
+/* ============================================================
+   CART DRAWER
+   ============================================================ */
 .cart-container {
   display: flex;
   flex-direction: column;
@@ -1117,19 +1231,16 @@ body:not(.age-gate-active) {
   text-align: center;
   min-height: 300px;
 }
-
 .cart-icon-wrapper {
   position: relative;
   margin-bottom: 25px;
   width: 90px;
   height: 80px;
 }
-
 .cart-svg {
   width: 100%;
   height: 100%;
 }
-
 .cart-badge {
   position: absolute;
   top: -2px;
@@ -1145,7 +1256,6 @@ body:not(.age-gate-active) {
   align-items: center;
   justify-content: center;
 }
-
 .cart-message {
   color: #111;
   font-size: 24px;
@@ -1153,7 +1263,6 @@ body:not(.age-gate-active) {
   margin: 0 0 20px;
   letter-spacing: -0.5px;
 }
-
 .shop-button {
   display: inline-block;
   background: var(--primary);
@@ -1166,13 +1275,11 @@ body:not(.age-gate-active) {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .shop-button:hover {
   background: var(--primary-bright);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(128, 0, 0, 0.25);
 }
-
 .shop-button:active {
   transform: scale(0.96);
 }
@@ -1188,7 +1295,6 @@ body:not(.age-gate-active) {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
-
 .overlay.open {
   opacity: 1;
   pointer-events: auto;
@@ -1207,11 +1313,9 @@ body:not(.age-gate-active) {
   overflow-y: auto;
   box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.15);
 }
-
 .cart-drawer.open {
   bottom: 0;
 }
-
 .cart-head {
   display: flex;
   justify-content: space-between;
@@ -1224,7 +1328,6 @@ body:not(.age-gate-active) {
   z-index: 2;
   border-radius: 24px 24px 0 0;
 }
-
 .cart-head span {
   font-weight: 800;
   font-size: 1.1rem;
@@ -1232,7 +1335,6 @@ body:not(.age-gate-active) {
   align-items: center;
   gap: 8px;
 }
-
 .cart-head span .count {
   background: var(--gold-bg);
   color: var(--gold);
@@ -1241,7 +1343,6 @@ body:not(.age-gate-active) {
   border-radius: 30px;
   font-weight: 700;
 }
-
 .cart-close {
   width: 36px;
   height: 36px;
@@ -1255,37 +1356,30 @@ body:not(.age-gate-active) {
   align-items: center;
   justify-content: center;
 }
-
 .cart-close:hover {
   background: var(--sale-red);
   color: white;
   transform: rotate(90deg);
 }
-
 .cart-close:active {
   transform: scale(0.92);
 }
-
 .cart-items {
   padding: 8px 16px 16px;
   max-height: 50vh;
   overflow-y: auto;
 }
-
 .cart-items::-webkit-scrollbar {
   width: 4px;
 }
-
 .cart-items::-webkit-scrollbar-track {
   background: var(--bg2);
   border-radius: 10px;
 }
-
 .cart-items::-webkit-scrollbar-thumb {
   background: var(--gold);
   border-radius: 10px;
 }
-
 .cart-item {
   display: flex;
   justify-content: space-between;
@@ -1295,19 +1389,16 @@ body:not(.age-gate-active) {
   gap: 12px;
   transition: all 0.2s ease;
 }
-
 .cart-item:hover {
   background: var(--gold-bg);
   margin: 0 -8px;
   padding: 14px 8px;
   border-radius: var(--radius-xs);
 }
-
 .cart-item-info {
   flex: 1;
   min-width: 0;
 }
-
 .cart-item-name {
   font-weight: 700;
   font-size: 0.85rem;
@@ -1318,33 +1409,28 @@ body:not(.age-gate-active) {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .cart-item-size {
   font-size: 0.65rem;
   color: var(--muted);
   display: block;
 }
-
 .cart-item-price {
   color: var(--sale-red);
   font-weight: 700;
   font-size: 0.9rem;
   white-space: nowrap;
 }
-
 .cart-item-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 4px;
 }
-
 .cart-qty {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-
 .cart-qty button {
   width: 28px;
   height: 28px;
@@ -1360,25 +1446,21 @@ body:not(.age-gate-active) {
   font-weight: 600;
   color: var(--text);
 }
-
 .cart-qty button:hover {
   background: var(--gold);
   color: white;
   border-color: var(--gold);
   transform: scale(1.05);
 }
-
 .cart-qty button:active {
   transform: scale(0.92);
 }
-
 .cart-qty .qty-number {
   font-weight: 700;
   font-size: 0.95rem;
   min-width: 24px;
   text-align: center;
 }
-
 .cart-remove-btn {
   background: none;
   border: none;
@@ -1388,12 +1470,10 @@ body:not(.age-gate-active) {
   transition: all 0.2s ease;
   padding: 2px;
 }
-
 .cart-remove-btn:hover {
   color: var(--sale-red);
   transform: scale(1.1);
 }
-
 .cart-empty {
   display: flex;
   flex-direction: column;
@@ -1402,30 +1482,25 @@ body:not(.age-gate-active) {
   padding: 60px 20px;
   text-align: center;
 }
-
 .cart-empty-icon {
   font-size: 56px;
   color: var(--border);
   margin-bottom: 16px;
 }
-
 .cart-empty-icon i {
   display: block;
 }
-
 .cart-empty-title {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 4px;
 }
-
 .cart-empty-sub {
   font-size: 0.85rem;
   color: var(--muted);
   margin-bottom: 20px;
 }
-
 .cart-footer {
   padding: 16px 20px 24px;
   border-top: 1px solid var(--border);
@@ -1435,11 +1510,9 @@ body:not(.age-gate-active) {
   bottom: 0;
   z-index: 2;
 }
-
 .cart-footer-inner {
   max-width: 100%;
 }
-
 .cart-total {
   display: flex;
   justify-content: space-between;
@@ -1448,15 +1521,12 @@ body:not(.age-gate-active) {
   font-size: 1.1rem;
   margin-bottom: 2px;
 }
-
 .cart-total .total-label {
   color: var(--text);
 }
-
 .cart-total .total-amount {
   color: var(--sale-red);
 }
-
 .cart-delivery-note {
   font-size: 0.65rem;
   color: var(--muted);
@@ -1465,15 +1535,12 @@ body:not(.age-gate-active) {
   align-items: center;
   gap: 4px;
 }
-
 .cart-delivery-note i {
   font-size: 12px;
 }
-
 .cart-free-delivery-progress {
   margin-bottom: 12px;
 }
-
 .cart-progress-bar {
   height: 4px;
   background: var(--bg2);
@@ -1481,14 +1548,12 @@ body:not(.age-gate-active) {
   overflow: hidden;
   margin-top: 4px;
 }
-
 .cart-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--gold), var(--gold-light));
   border-radius: 10px;
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .cart-progress-text {
   font-size: 0.6rem;
   color: var(--muted);
@@ -1496,12 +1561,10 @@ body:not(.age-gate-active) {
   justify-content: space-between;
   margin-bottom: 2px;
 }
-
 .cart-progress-text .highlight {
   color: var(--gold);
   font-weight: 700;
 }
-
 .btn-checkout {
   width: 100%;
   padding: 14px;
@@ -1518,27 +1581,22 @@ body:not(.age-gate-active) {
   justify-content: center;
   gap: 10px;
 }
-
 .btn-checkout:hover {
   background: linear-gradient(135deg, var(--primary-bright), var(--primary));
   transform: translateY(-2px);
   box-shadow: 0 8px 30px rgba(128, 0, 0, 0.3);
 }
-
 .btn-checkout:active {
   transform: scale(0.97);
 }
-
 .btn-checkout:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none !important;
 }
-
 .btn-checkout i {
   font-size: 18px;
 }
-
 .header-cart-badge {
   position: absolute;
   top: -2px;
@@ -1557,17 +1615,14 @@ body:not(.age-gate-active) {
   border: 2px solid var(--primary);
   transition: transform 0.2s ease;
 }
-
 .header-cart-badge.pulse {
   animation: cartPulse 0.4s ease;
 }
-
 @keyframes cartPulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.3); }
   100% { transform: scale(1); }
 }
-
 .cart-item-img {
   width: 48px;
   height: 48px;
@@ -1576,7 +1631,6 @@ body:not(.age-gate-active) {
   background: var(--bg2);
   flex-shrink: 0;
 }
-
 @media (max-width: 480px) {
   .cart-head {
     padding: 14px 16px;
@@ -1617,7 +1671,9 @@ body:not(.age-gate-active) {
   }
 }
 
-/* ===== WISHLIST MODAL ===== */
+/* ============================================================
+   WISHLIST MODAL
+   ============================================================ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-card{background:var(--white);border-radius:var(--radius);padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease;}
 .modal-card h3{font-size:1.1rem;font-weight:800;margin-bottom:4px;color:var(--primary);}
@@ -1634,7 +1690,9 @@ body:not(.age-gate-active) {
 .wishlist-modal{display:none;}
 .wishlist-modal.open{display:flex;}
 
-/* ===== QUICK VIEW ===== */
+/* ============================================================
+   QUICK VIEW
+   ============================================================ */
 .quickview-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);
   z-index:900;display:flex;align-items:center;justify-content:center;
@@ -1689,10 +1747,14 @@ body:not(.age-gate-active) {
 .quickview-actions .buy-btn{background:var(--gold);color:white;}
 .quickview-actions .buy-btn:hover{background:var(--gold-light);}
 
-/* ===== TOAST ===== */
+/* ============================================================
+   TOAST
+   ============================================================ */
 #toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:60px;font-size:.75rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
 
-/* ===== RESPONSIVE ===== */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media(max-width:480px){
   .hero-overlay h1{font-size:2.4rem;}
   .hero-section{min-height:240px;padding:60px 5%;}
@@ -1705,7 +1767,10 @@ body:not(.age-gate-active) {
   .main-header{min-height:68px;padding:12px 4%;}
 }
 @media(min-width:768px){.bottom-nav{display:none;}body{padding-bottom:0;}.whatsapp-float{bottom:20px;right:24px;}}
-/* ===== SEARCH SUGGESTIONS & WISHLIST BADGE ===== */
+
+/* ============================================================
+   SEARCH SUGGESTIONS & WISHLIST BADGE
+   ============================================================ */
 .search-suggestion:hover{background:var(--gold-bg)!important;}
 .search-suggestion:last-child{border-bottom:none!important;}
 .wishlist-badge{position:absolute;top:-4px;right:-4px;background:var(--sale-red);color:#fff;font-size:9px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--primary);display:none;}
@@ -1733,7 +1798,7 @@ body:not(.age-gate-active) {
         <i class="ph ph-x-circle"></i> No, I'm under 18
       </button>
     </div>
-    <p class="age-gate-footer">By continuing, you agree to our Terms of Service and Privacy Policy.</p>
+    <p class="age-gate-footer">By continuing, you agree to our <a href="terms.html" style="color:var(--gold);text-decoration:underline;">Terms of Service</a> and <a href="privacy.html" style="color:var(--gold);text-decoration:underline;">Privacy Policy</a>.</p>
   </div>
 </div>
 
@@ -1776,9 +1841,10 @@ body:not(.age-gate-active) {
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
   <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
-  <!-- MY PROFILE - Will be dynamically shown/hidden via JavaScript -->
   <a href="profile.html" id="mobileMenuProfile"><i class="ph ph-user-gear"></i> My Profile</a>
   <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
+  <a href="terms.html"><i class="ph ph-file-text"></i> Terms &amp; Conditions</a>
+  <a href="privacy.html"><i class="ph ph-lock"></i> Privacy Policy</a>
   <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
 </nav>
 
@@ -1917,7 +1983,7 @@ body:not(.age-gate-active) {
     <div class="footer-col">
       <h4>LiquorBelle</h4>
       <p>Nairobi's Finest Alcohol Delivery</p>
-      <p>Premium spirits, wines & beers</p>
+      <p>Premium spirits, wines &amp; beers</p>
       <p>100% Authentic Products</p>
       <p>M‑PESA &amp; Pay on Delivery</p>
     </div>
@@ -1929,20 +1995,37 @@ body:not(.age-gate-active) {
       <a href="track-orders.html">Track Orders</a>
     </div>
     <div class="footer-col">
-      <h4>Support</h4>
-      <p>+254 748 894 443</p>
-      <p>WhatsApp 24/7</p>
+      <h4>Legal</h4>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <span style="display:block;font-size:.65rem;color:rgba(255,255,255,0.5);margin-top:4px;"></span>
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
-      <p>Dagoretti Road</p>
-      <p>Nairobi, Kenya</p>
+      <div class="contact-item">
+        <i class="ph ph-whatsapp-logo"></i>
+        <a href="tel:+254748894443">+254 748 894 443</a>
+      </div>
+      <div class="contact-item">
+        <i class="ph ph-envelope"></i>
+        <a href="mailto:info@liquorbelle.shop">info@liquorbelle.co.ke</a>
+      </div>
+      <div class="contact-item">
+        <i class="ph ph-map-pin"></i>
+        <span>Dagoretti Road, Nairobi</span>
+      </div>
     </div>
   </div>
   <div class="footer-bottom">
+    <div class="legal-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <span class="divider">•</span>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <span class="divider">•</span>
+      <span style="color:rgba(255,255,255,0.3);">18+ Only</span>
+    </div>
     <p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p>
-    <p>Over 18 only. Drink responsibly. M‑PESA &amp; Pay on Delivery accepted.</p>
-    <p style="margin-top:8px;opacity:0.6;font-size:0.65rem;">Developed by <a href="#" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:none;">BizDevNairobi</a></p>
+    <p style="font-size:0.65rem;opacity:0.5;margin-top:4px;">Drink responsibly. M‑PESA &amp; Pay on Delivery accepted.</p>
   </div>
 </footer>
 

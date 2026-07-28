@@ -1724,7 +1724,7 @@ if (document.getElementById('catChips')) {
   var ALL_PRODUCTS = [];
   var filteredProducts = [];
   var currentPage = 1;
-  var PAGE_SIZE = 12;
+  var PAGE_SIZE = 24;
   var currentSort = 'featured';
   var currentFilters = { 
     category: 'all', 
