@@ -126,13 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(showUserGreeting, 200);
 });
 
-// Also show greeting when user logs in (storage change)
-window.addEventListener('storage', function(e) {
-  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
-    setTimeout(showUserGreeting, 300);
-  }
-});
-
 // ============================================================
 // STOCK STATUS HELPER
 // ============================================================
