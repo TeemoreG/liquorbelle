@@ -532,7 +532,7 @@ function updateEmailStatus(isValid, isRegistered) {
     msg.style.color = 'var(--sale-red)';
     input.classList.add('error');
     input.classList.remove('success');
-    showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
+    showBanner('registerBanner', 'This email is already registered.', 'error');
   } else {
     icon.style.display = 'inline';
     icon.className = 'ph ph-check-circle';
