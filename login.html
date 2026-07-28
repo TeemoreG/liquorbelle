@@ -134,6 +134,17 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 #toast.success{background:var(--btn-green-hover);}
 #toast.error{background:var(--sale-red);}
 
+.email-status-icon{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:18px;display:none;
+}
+.email-status-icon.show{display:block;}
+.email-status-icon.valid{color:var(--btn-green);}
+.email-status-icon.invalid{color:var(--sale-red);}
+.email-status-icon.loading{color:var(--gold);animation:spin 1s linear infinite;}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+
 @media(max-width:480px){
   .auth-card{padding:24px 18px;}
   .digit-box{width:48px;height:56px;font-size:1.3rem;}
@@ -164,8 +175,10 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
         <label class="field-label">Email address</label>
         <div class="field-input-wrap">
           <input class="field-input" id="emailInput" type="email" placeholder="you@example.com" autocomplete="email">
+          <span class="email-status-icon" id="emailCheckIcon"></span>
         </div>
         <div class="field-error" id="emailError"></div>
+        <div class="field-hint" id="emailCheckMessage" style="font-size:.7rem;color:var(--muted);margin-top:4px;"></div>
       </div>
 
       <div class="field-group">
@@ -214,6 +227,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const AUTH_BASE = API_BASE + '/api/auth';
 const TOAST_DURATION = 3000;
+const DEBOUNCE_DELAY = 500;
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -355,7 +369,7 @@ document.getElementById('pinToggleBtn').addEventListener('click', function() {
 });
 
 // ============================================================
-// CHECK IF EMAIL EXISTS IN DATABASE - SILENT
+// CHECK IF EMAIL EXISTS - SILENT
 // ============================================================
 function checkEmailExists(email) {
   return fetch(AUTH_BASE + '/check-user', {
@@ -371,6 +385,91 @@ function checkEmailExists(email) {
     return false;
   });
 }
+
+// ============================================================
+// EMAIL INPUT - SILENT CHECK
+// ============================================================
+var emailCheckTimeout = null;
+var emailExists = false;
+
+function updateEmailStatus(isValid, isRegistered) {
+  var icon = document.getElementById('emailCheckIcon');
+  var msg = document.getElementById('emailCheckMessage');
+  var input = document.getElementById('emailInput');
+
+  if (!isValid) {
+    icon.style.display = 'none';
+    msg.textContent = '';
+    input.classList.remove('success', 'error');
+    return;
+  }
+
+  if (isRegistered) {
+    icon.style.display = 'inline';
+    icon.className = 'ph ph-check-circle';
+    icon.style.color = 'var(--btn-green)';
+    msg.textContent = '';
+    input.classList.remove('error');
+    input.classList.add('success');
+  } else {
+    icon.style.display = 'inline';
+    icon.className = 'ph ph-x-circle';
+    icon.style.color = 'var(--sale-red)';
+    msg.textContent = 'Email not registered';
+    msg.style.color = 'var(--sale-red)';
+    input.classList.add('error');
+    input.classList.remove('success');
+  }
+}
+
+document.getElementById('emailInput').addEventListener('input', function() {
+  var email = this.value.trim();
+  var icon = document.getElementById('emailCheckIcon');
+  var msg = document.getElementById('emailCheckMessage');
+
+  this.classList.remove('error', 'success');
+  icon.style.display = 'none';
+  msg.textContent = '';
+  hideBanner('loginBanner');
+  emailExists = false;
+
+  if (!email) return;
+
+  if (!isValidEmail(email)) {
+    this.classList.add('error');
+    return;
+  }
+
+  icon.style.display = 'inline';
+  icon.className = 'ph ph-spinner';
+  icon.style.color = 'var(--gold)';
+  msg.textContent = 'Checking...';
+  msg.style.color = 'var(--muted)';
+
+  clearTimeout(emailCheckTimeout);
+  emailCheckTimeout = setTimeout(function() {
+    checkEmailExists(email)
+      .then(function(exists) {
+        emailExists = exists;
+        var input = document.getElementById('emailInput');
+        updateEmailStatus(true, exists);
+      })
+      .catch(function() {
+        var input = document.getElementById('emailInput');
+        icon.style.display = 'none';
+        msg.textContent = '';
+      });
+  }, DEBOUNCE_DELAY);
+});
+
+document.getElementById('emailInput').addEventListener('blur', function() {
+  var email = this.value.trim();
+  if (email && !isValidEmail(email)) {
+    this.classList.add('error');
+    this.classList.remove('success');
+    setFieldError('emailError', 'Please enter a valid email address');
+  }
+});
 
 // ============================================================
 // LOGIN FORM SUBMIT
@@ -394,6 +493,13 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   }
   document.getElementById('emailInput').classList.remove('error');
 
+  if (!emailExists) {
+    setFieldError('emailError', 'This email is not registered. Please create an account.');
+    document.getElementById('emailInput').classList.add('error');
+    document.getElementById('emailInput').focus();
+    return;
+  }
+
   if (pin.length !== 4) {
     setFieldError('pinError', 'Enter your 4-digit PIN');
     pinGroup.setError();
@@ -402,7 +508,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
   setLoading('loginBtn', 'loginBtnText', true, 'Signing in...', 'Sign In');
 
-  // Single request to login
   fetch(AUTH_BASE + '/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -454,30 +559,30 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 });
 
 // ============================================================
-// GOOGLE LOGIN - Checks if email is registered first
+// GOOGLE LOGIN - Redirect to backend OAuth
 // ============================================================
 document.getElementById('googleLoginBtn').addEventListener('click', function() {
   var btn = this;
   var email = document.getElementById('emailInput').value.trim();
   
+  // If email is empty, still allow Google without email param
   if (!email) {
-    setFieldError('emailError', 'Please enter your email address first');
-    document.getElementById('emailInput').classList.add('error');
-    document.getElementById('emailInput').focus();
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Redirecting...';
+    window.location.href = AUTH_BASE + '/google';
     return;
   }
 
   if (!isValidEmail(email)) {
     setFieldError('emailError', 'Please enter a valid email address');
     document.getElementById('emailInput').classList.add('error');
-    document.getElementById('emailInput').focus();
     return;
   }
 
+  // Check if email exists before redirecting
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Checking...';
 
-  // Check if email exists in database
   checkEmailExists(email)
     .then(function(exists) {
       if (!exists) {
@@ -513,20 +618,13 @@ document.getElementById('forgotPinBtn').addEventListener('click', function() {
     return;
   }
 
-  // Check if email exists
-  checkEmailExists(email)
-    .then(function(exists) {
-      if (!exists) {
-        setFieldError('emailError', 'This email is not registered. Please create an account.');
-        document.getElementById('emailInput').classList.add('error');
-        return;
-      }
-      
-      toast('A PIN reset link has been sent to ' + email, 'info');
-    })
-    .catch(function() {
-      toast('Network error. Please try again.', 'error');
-    });
+  if (!emailExists) {
+    setFieldError('emailError', 'This email is not registered. Please create an account.');
+    document.getElementById('emailInput').classList.add('error');
+    return;
+  }
+  
+  toast('A PIN reset link has been sent to ' + email, 'info');
 });
 
 // ============================================================
@@ -545,7 +643,6 @@ function handleGoogleCallback() {
     return;
   }
 
-  // Clean URL params
   var cleanUrl = window.location.pathname + window.location.search.replace(/[?&]google_auth=[^&]*/, '').replace(/[?&]token=[^&]*/, '').replace(/[?&]email=[^&]*/, '').replace(/[?&]name=[^&]*/, '').replace(/[?&]phone=[^&]*/, '').replace(/[?&]is_new=[^&]*/, '');
   if (window.history && window.history.replaceState) {
     window.history.replaceState({}, document.title, cleanUrl);
@@ -565,7 +662,6 @@ function handleGoogleCallback() {
     return;
   }
 
-  // Existing user - save session and redirect
   var user = {
     id: Date.now().toString(),
     email: decodeURIComponent(email),
@@ -587,32 +683,6 @@ function handleGoogleCallback() {
 }
 
 // ============================================================
-// EMAIL INPUT VALIDATION
-// ============================================================
-document.getElementById('emailInput').addEventListener('blur', function() {
-  var email = this.value.trim();
-  if (email && !isValidEmail(email)) {
-    this.classList.add('error');
-    this.classList.remove('success');
-    setFieldError('emailError', 'Please enter a valid email address');
-  } else if (email && isValidEmail(email)) {
-    this.classList.remove('error');
-    this.classList.add('success');
-    setFieldError('emailError', '');
-  }
-});
-
-document.getElementById('emailInput').addEventListener('input', function() {
-  if (this.value.trim() && isValidEmail(this.value.trim())) {
-    this.classList.remove('error');
-    this.classList.add('success');
-    setFieldError('emailError', '');
-  } else {
-    this.classList.remove('success');
-  }
-});
-
-// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
@@ -623,7 +693,9 @@ document.addEventListener('DOMContentLoaded', function() {
   var prefillEmail = params.get('email');
   if (prefillEmail && isValidEmail(prefillEmail)) {
     document.getElementById('emailInput').value = prefillEmail;
-    document.getElementById('emailInput').classList.add('success');
+    // Trigger silent check
+    var event = new Event('input');
+    document.getElementById('emailInput').dispatchEvent(event);
   }
 });
 
