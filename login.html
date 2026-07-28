@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#800000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Sign Up — LiquorBelle</title>
+<title>Login — LiquorBelle</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,17 +102,21 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 .btn-primary:hover{background:var(--primary-bright);transform:translateY(-2px);box-shadow:0 8px 24px rgba(128,0,0,0.25);}
 .btn-primary:active{transform:scale(0.97);}
 .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
-.btn-primary.google-btn{
-  background:white;color:var(--text);border:2px solid var(--border);
-}
-.btn-primary.google-btn:hover{background:var(--bg2);border-color:var(--primary);box-shadow:var(--shadow);}
-.btn-primary.google-btn img{width:20px;height:20px;}
-
 .btn-link{background:none;border:none;color:var(--primary);font-weight:700;font-size:.78rem;cursor:pointer;padding:6px;}
 .btn-link:hover{text-decoration:underline;}
 
 .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:.72rem;font-weight:600;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.google-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
+  padding:14px;background:white;border:2px solid var(--border);border-radius:50px;
+  font-weight:600;font-size:.9rem;color:var(--text);cursor:pointer;transition:.3s;
+}
+.google-btn:hover{background:var(--bg2);border-color:var(--primary);box-shadow:var(--shadow);transform:translateY(-2px);}
+.google-btn:active{transform:scale(0.97);}
+.google-btn img{width:20px;height:20px;}
+.google-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 
 .banner{padding:12px 16px;border-radius:var(--radius-sm);font-size:.78rem;font-weight:600;margin-bottom:18px;display:none;align-items:center;gap:10px;}
 .banner.show{display:flex;}
@@ -129,8 +133,6 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:12px 24px;border-radius:60px;font-size:.8rem;opacity:0;transition:opacity .3s;z-index:900;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
 #toast.success{background:var(--btn-green-hover);}
 #toast.error{background:var(--sale-red);}
-
-.otp-timer{text-align:center;font-size:.75rem;color:var(--muted);margin-top:8px;}
 
 @media(max-width:480px){
   .auth-card{padding:24px 18px;}
@@ -151,102 +153,54 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 <div class="page-wrap">
   <div class="auth-card">
 
-    <div class="brand-icon"><i class="ph ph-user-plus"></i></div>
-    <h1>Create Account</h1>
-    <p class="lead">Join LiquorBelle and start ordering</p>
+    <div class="brand-icon"><i class="ph ph-wine"></i></div>
+    <h1>Welcome Back</h1>
+    <p class="lead">Sign in to your LiquorBelle account</p>
 
-    <div class="banner" id="registerBanner"></div>
+    <div class="banner" id="loginBanner"></div>
 
-    <!-- STEP 1: Registration Form -->
-    <div class="step active" id="stepRegister">
-      <form id="registerForm">
-        <div class="field-group">
-          <label class="field-label">Full Name</label>
-          <div class="field-input-wrap">
-            <input class="field-input" id="fullNameInput" type="text" placeholder="John Mwangi" autocomplete="name">
-          </div>
-          <div class="field-error" id="fullNameError"></div>
+    <form id="loginForm">
+      <div class="field-group">
+        <label class="field-label">Email address</label>
+        <div class="field-input-wrap">
+          <input class="field-input" id="emailInput" type="email" placeholder="you@example.com" autocomplete="email">
         </div>
-
-        <div class="field-group">
-          <label class="field-label">Email address</label>
-          <div class="field-input-wrap">
-            <input class="field-input" id="emailInput" type="email" placeholder="you@example.com" autocomplete="email">
-          </div>
-          <div class="field-error" id="emailError"></div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Phone Number</label>
-          <div class="field-input-wrap">
-            <input class="field-input" id="phoneInput" type="tel" placeholder="0712345678" autocomplete="tel">
-          </div>
-          <div class="field-error" id="phoneError"></div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Create 4-Digit PIN</label>
-          <div class="digit-group" id="pinDigitGroup">
-            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="0">
-            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="1">
-            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="2">
-            <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="3">
-          </div>
-          <div class="pin-toggle-row">
-            <button type="button" class="pin-toggle" id="pinToggleBtn">
-              <i class="ph ph-eye"></i> Show PIN
-            </button>
-          </div>
-          <div class="field-error" id="pinError" style="text-align:center;"></div>
-        </div>
-
-        <button type="submit" class="btn-primary" id="registerBtn">
-          <span id="registerBtnText">Create Account</span>
-        </button>
-      </form>
-
-      <div class="divider">OR</div>
-
-      <button class="btn-primary google-btn" id="googleRegisterBtn">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-        Sign up with Google
-      </button>
-
-      <p class="footer-links">Already have an account? <a href="login.html">Sign in</a></p>
-    </div>
-
-    <!-- STEP 2: OTP Verification -->
-    <div class="step" id="stepOtp">
-      <h1 style="font-size:1.2rem;">Verify Your Email</h1>
-      <p class="lead">We sent a 6-digit code to <strong id="otpEmailDisplay"></strong></p>
+        <div class="field-error" id="emailError"></div>
+      </div>
 
       <div class="field-group">
-        <label class="field-label">Verification Code</label>
-        <div class="digit-group otp" id="otpDigitGroup">
-          <input class="digit-box" type="text" inputmode="numeric" maxlength="1" data-index="0">
-          <input class="digit-box" type="text" inputmode="numeric" maxlength="1" data-index="1">
-          <input class="digit-box" type="text" inputmode="numeric" maxlength="1" data-index="2">
-          <input class="digit-box" type="text" inputmode="numeric" maxlength="1" data-index="3">
-          <input class="digit-box" type="text" inputmode="numeric" maxlength="1" data-index="4">
-          <input class="digit-box" type="text" inputmode="numeric" maxlength="1" data-index="5">
+        <label class="field-label">PIN</label>
+        <div class="digit-group" id="pinDigitGroup">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="0">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="1">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="2">
+          <input class="digit-box" type="password" inputmode="numeric" maxlength="1" data-index="3">
         </div>
-        <div class="field-error" id="otpError" style="text-align:center;"></div>
+        <div class="pin-toggle-row">
+          <button type="button" class="pin-toggle" id="pinToggleBtn">
+            <i class="ph ph-eye"></i> Show PIN
+          </button>
+        </div>
+        <div class="field-error" id="pinError" style="text-align:center;"></div>
       </div>
 
-      <button type="button" class="btn-primary" id="verifyOtpBtn">
-        <span id="verifyOtpBtnText">Verify & Create Account</span>
+      <button type="submit" class="btn-primary" id="loginBtn">
+        <span id="loginBtnText">Sign In</span>
       </button>
+    </form>
 
-      <div style="text-align:center;margin-top:12px;">
-        <span style="font-size:.75rem;color:var(--muted);">Didn't get the code? </span>
-        <button type="button" class="btn-link" id="resendOtpBtn" style="font-size:.75rem;">Resend</button>
-        <span class="otp-timer" id="otpTimer"></span>
-      </div>
-
-      <div style="text-align:center;margin-top:14px;">
-        <button type="button" class="btn-link" id="backToRegisterBtn" style="font-size:.75rem;">← Back to registration</button>
-      </div>
+    <div style="text-align:center;margin-top:10px;">
+      <button type="button" class="btn-link" id="forgotPinBtn">Forgot PIN?</button>
     </div>
+
+    <div class="divider">OR</div>
+
+    <button class="google-btn" id="googleLoginBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      Continue with Google
+    </button>
+
+    <p class="footer-links">Don't have an account? <a href="signup.html">Create one</a></p>
 
   </div>
 </div>
@@ -260,29 +214,12 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const AUTH_BASE = API_BASE + '/api/auth';
 const TOAST_DURATION = 3000;
-const OTP_RESEND_COOLDOWN = 60;
-
-// ============================================================
-// STATE
-// ============================================================
-let registrationData = {};
-let otpTimer = null;
-let otpCountdown = 0;
-let isGoogleSignup = false;
 
 // ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
 function isValidEmail(email) {
   return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email.trim());
-}
-
-function isValidKenyanPhone(phone) {
-  var cleaned = phone.replace(/\D/g, '');
-  if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
-  if (cleaned.length === 9 && (cleaned.startsWith('7') || cleaned.startsWith('1'))) return true;
-  if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
-  return false;
 }
 
 function decodeJWT(token) {
@@ -295,6 +232,11 @@ function decodeJWT(token) {
   } catch (e) {
     return null;
   }
+}
+
+function getRedirectTarget() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('redirect') || 'accounts.html';
 }
 
 function toast(msg, type) {
@@ -337,11 +279,6 @@ function setLoading(btnId, textId, loading, loadingText, normalText) {
   if (textEl) textEl.innerHTML = loading ? '<span class="spinner"></span> ' + loadingText : normalText;
 }
 
-function getRedirectTarget() {
-  var params = new URLSearchParams(window.location.search);
-  return params.get('redirect') || 'accounts.html';
-}
-
 // ============================================================
 // SESSION GUARD
 // ============================================================
@@ -360,9 +297,9 @@ function getRedirectTarget() {
 })();
 
 // ============================================================
-// DIGIT GROUP HELPERS
+// DIGIT GROUP HELPER
 // ============================================================
-function wireDigitGroup(groupEl, onComplete) {
+function wireDigitGroup(groupEl) {
   var boxes = Array.prototype.slice.call(groupEl.querySelectorAll('.digit-box'));
 
   boxes.forEach(function(box, i) {
@@ -371,7 +308,6 @@ function wireDigitGroup(groupEl, onComplete) {
       box.classList.toggle('filled', !!box.value);
       box.classList.remove('error');
       if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
-      checkComplete();
     });
 
     box.addEventListener('keydown', function(e) {
@@ -389,14 +325,8 @@ function wireDigitGroup(groupEl, onComplete) {
       }
       var lastFilled = Math.min(pasted.length, boxes.length) - 1;
       if (lastFilled >= 0) boxes[lastFilled].focus();
-      checkComplete();
     });
   });
-
-  function checkComplete() {
-    var value = boxes.map(function(b) { return b.value; }).join('');
-    if (value.length === boxes.length && onComplete) onComplete(value);
-  }
 
   return {
     getValue: function() { return boxes.map(function(b) { return b.value; }).join(''); },
@@ -406,17 +336,11 @@ function wireDigitGroup(groupEl, onComplete) {
     },
     setType: function(type) { boxes.forEach(function(b) { b.type = type; }); },
     setError: function() { boxes.forEach(function(b) { b.classList.add('error'); }); },
-    removeError: function() { boxes.forEach(function(b) { b.classList.remove('error'); }); },
-    focus: function() { boxes[0].focus(); }
+    removeError: function() { boxes.forEach(function(b) { b.classList.remove('error'); }); }
   };
 }
 
 var pinGroup = wireDigitGroup(document.getElementById('pinDigitGroup'));
-var otpGroup = wireDigitGroup(document.getElementById('otpDigitGroup'), function(value) {
-  if (value.length === 6) {
-    document.getElementById('verifyOtpBtn').focus();
-  }
-});
 
 // ============================================================
 // TOGGLE PIN VISIBILITY
@@ -431,7 +355,7 @@ document.getElementById('pinToggleBtn').addEventListener('click', function() {
 });
 
 // ============================================================
-// CHECK IF EMAIL EXISTS
+// CHECK IF EMAIL EXISTS IN DATABASE - SILENT
 // ============================================================
 function checkEmailExists(email) {
   return fetch(AUTH_BASE + '/check-user', {
@@ -449,258 +373,164 @@ function checkEmailExists(email) {
 }
 
 // ============================================================
-// SEND OTP
+// LOGIN FORM SUBMIT
 // ============================================================
-function sendOtp(email) {
-  return fetch(AUTH_BASE + '/send-email-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send OTP');
-    }
-    return data;
-  });
-}
-
-// ============================================================
-// REGISTER FORM SUBMIT
-// ============================================================
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
 
-  var fullName = document.getElementById('fullNameInput').value.trim();
   var email = document.getElementById('emailInput').value.trim();
-  var phone = document.getElementById('phoneInput').value.trim();
   var pin = pinGroup.getValue();
 
-  setFieldError('fullNameError', '');
   setFieldError('emailError', '');
-  setFieldError('phoneError', '');
   setFieldError('pinError', '');
-  hideBanner('registerBanner');
+  hideBanner('loginBanner');
+  pinGroup.removeError();
 
-  var valid = true;
+  if (!isValidEmail(email)) {
+    setFieldError('emailError', 'Please enter a valid email address');
+    document.getElementById('emailInput').classList.add('error');
+    document.getElementById('emailInput').focus();
+    return;
+  }
+  document.getElementById('emailInput').classList.remove('error');
 
-  if (!fullName || fullName.length < 2) {
-    setFieldError('fullNameError', 'Please enter your full name');
-    document.getElementById('fullNameInput').classList.add('error');
-    valid = false;
-  } else {
-    document.getElementById('fullNameInput').classList.remove('error');
+  if (pin.length !== 4) {
+    setFieldError('pinError', 'Enter your 4-digit PIN');
+    pinGroup.setError();
+    return;
+  }
+
+  setLoading('loginBtn', 'loginBtnText', true, 'Signing in...', 'Sign In');
+
+  // Single request to login
+  fetch(AUTH_BASE + '/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, pin: pin })
+  })
+  .then(function(res) { return res.json().then(function(data) { return { status: res.status, data: data }; }); })
+  .then(function(result) {
+    setLoading('loginBtn', 'loginBtnText', false, '', 'Sign In');
+
+    if (result.status === 200 && result.data.success) {
+      localStorage.setItem('liquorbelle_token', result.data.token);
+      localStorage.setItem('liquorbelle_user', JSON.stringify(result.data.customer));
+      toast('Welcome back! 🎉', 'success');
+      setTimeout(function() {
+        window.location.href = getRedirectTarget();
+      }, 400);
+      return;
+    }
+
+    if (result.status === 404) {
+      setFieldError('emailError', 'This email is not registered. Please create an account.');
+      document.getElementById('emailInput').classList.add('error');
+      return;
+    }
+
+    if (result.status === 429) {
+      setFieldError('pinError', result.data.message || 'Too many attempts. Please try again later.');
+      pinGroup.setError();
+      return;
+    }
+
+    if (result.status === 401) {
+      setFieldError('pinError', result.data.message || 'Invalid PIN. Please try again.');
+      pinGroup.setError();
+      pinGroup.clear();
+      document.querySelector('.digit-box').focus();
+      return;
+    }
+
+    setFieldError('pinError', result.data.message || 'Login failed. Please try again.');
+    pinGroup.setError();
+    pinGroup.clear();
+  })
+  .catch(function(err) {
+    setLoading('loginBtn', 'loginBtnText', false, '', 'Sign In');
+    setFieldError('pinError', 'Network error. Please check your connection.');
+    console.error('Login error:', err);
+  });
+});
+
+// ============================================================
+// GOOGLE LOGIN - Checks if email is registered first
+// ============================================================
+document.getElementById('googleLoginBtn').addEventListener('click', function() {
+  var btn = this;
+  var email = document.getElementById('emailInput').value.trim();
+  
+  if (!email) {
+    setFieldError('emailError', 'Please enter your email address first');
+    document.getElementById('emailInput').classList.add('error');
+    document.getElementById('emailInput').focus();
+    return;
   }
 
   if (!isValidEmail(email)) {
     setFieldError('emailError', 'Please enter a valid email address');
     document.getElementById('emailInput').classList.add('error');
-    valid = false;
-  } else {
-    document.getElementById('emailInput').classList.remove('error');
+    document.getElementById('emailInput').focus();
+    return;
   }
 
-  if (!phone || !isValidKenyanPhone(phone)) {
-    setFieldError('phoneError', 'Please enter a valid phone number (e.g. 0712345678)');
-    document.getElementById('phoneInput').classList.add('error');
-    valid = false;
-  } else {
-    document.getElementById('phoneInput').classList.remove('error');
-  }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Checking...';
 
-  if (pin.length !== 4) {
-    setFieldError('pinError', 'Create a 4-digit PIN');
-    pinGroup.setError();
-    valid = false;
-  } else {
-    pinGroup.removeError();
-  }
-
-  if (!valid) return;
-
-  setLoading('registerBtn', 'registerBtnText', true, 'Checking email...', 'Create Account');
-
-  // STEP 1: Check if email already exists
+  // Check if email exists in database
   checkEmailExists(email)
     .then(function(exists) {
-      if (exists) {
-        setLoading('registerBtn', 'registerBtnText', false, '', 'Create Account');
-        showBanner('registerBanner', 'This email is already registered. Please <a href="login.html" style="color:var(--primary);font-weight:700;">sign in</a> instead.', 'error');
+      if (!exists) {
+        btn.disabled = false;
+        btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Continue with Google';
+        setFieldError('emailError', 'This email is not registered. Please create an account first.');
         document.getElementById('emailInput').classList.add('error');
         return;
       }
 
-      // STEP 2: Email not registered - send OTP
-      setLoading('registerBtn', 'registerBtnText', true, 'Sending OTP...', 'Create Account');
-
-      return sendOtp(email)
-        .then(function() {
-          // Store registration data
-          registrationData = {
-            name: fullName,
-            email: email,
-            phone: phone,
-            pin: pin
-          };
-
-          setLoading('registerBtn', 'registerBtnText', false, '', 'Create Account');
-          
-          // Switch to OTP step
-          document.getElementById('stepRegister').classList.remove('active');
-          document.getElementById('stepOtp').classList.add('active');
-          document.getElementById('otpEmailDisplay').textContent = email;
-          otpGroup.clear();
-          startOtpTimer();
-          toast('Verification code sent to your email', 'success');
-        });
+      // Email exists - redirect to Google OAuth
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Redirecting...';
+      window.location.href = AUTH_BASE + '/google?email=' + encodeURIComponent(email);
     })
-    .catch(function(err) {
-      setLoading('registerBtn', 'registerBtnText', false, '', 'Create Account');
-      showBanner('registerBanner', err.message || 'Something went wrong. Please try again.', 'error');
+    .catch(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Continue with Google';
+      toast('Network error. Please try again.', 'error');
     });
 });
 
 // ============================================================
-// VERIFY OTP
+// FORGOT PIN
 // ============================================================
-document.getElementById('verifyOtpBtn').addEventListener('click', function() {
-  var otp = otpGroup.getValue();
-  setFieldError('otpError', '');
-
-  if (otp.length !== 6) {
-    setFieldError('otpError', 'Enter the 6-digit verification code');
-    otpGroup.setError();
+document.getElementById('forgotPinBtn').addEventListener('click', function() {
+  var email = document.getElementById('emailInput').value.trim();
+  
+  if (!email || !isValidEmail(email)) {
+    setFieldError('emailError', 'Please enter your email address first');
+    document.getElementById('emailInput').classList.add('error');
+    document.getElementById('emailInput').focus();
     return;
   }
 
-  setLoading('verifyOtpBtn', 'verifyOtpBtnText', true, 'Verifying...', 'Verify & Create Account');
-
-  // STEP 1: Verify OTP
-  fetch(AUTH_BASE + '/verify-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: registrationData.email,
-      otp: otp,
-      action: 'register'
-    })
-  })
-  .then(function(res) { return res.json().then(function(data) { return { status: res.status, data: data }; }); })
-  .then(function(result) {
-    if (!result.data.success) {
-      throw new Error(result.data.message || 'Invalid verification code');
-    }
-
-    // STEP 2: Create account
-    setLoading('verifyOtpBtn', 'verifyOtpBtnText', true, 'Creating account...', 'Verify & Create Account');
-
-    return fetch(AUTH_BASE + '/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: registrationData.name,
-        email: registrationData.email,
-        phone: registrationData.phone,
-        pin: registrationData.pin,
-        otp: otp
-      })
-    })
-    .then(function(res) { return res.json().then(function(data) { return { status: res.status, data: data }; }); })
-    .then(function(registerResult) {
-      setLoading('verifyOtpBtn', 'verifyOtpBtnText', false, '', 'Verify & Create Account');
-
-      if (registerResult.status === 200 && registerResult.data.success) {
-        localStorage.setItem('liquorbelle_token', registerResult.data.token);
-        localStorage.setItem('liquorbelle_user', JSON.stringify(registerResult.data.customer));
-        toast('Account created successfully! 🎉', 'success');
-        setTimeout(function() {
-          window.location.href = getRedirectTarget();
-        }, 500);
+  // Check if email exists
+  checkEmailExists(email)
+    .then(function(exists) {
+      if (!exists) {
+        setFieldError('emailError', 'This email is not registered. Please create an account.');
+        document.getElementById('emailInput').classList.add('error');
         return;
       }
-
-      throw new Error(registerResult.data.message || 'Registration failed');
-    });
-  })
-  .catch(function(err) {
-    setLoading('verifyOtpBtn', 'verifyOtpBtnText', false, '', 'Verify & Create Account');
-    setFieldError('otpError', err.message || 'Verification failed. Please try again.');
-    otpGroup.setError();
-    otpGroup.clear();
-  });
-});
-
-// ============================================================
-// RESEND OTP
-// ============================================================
-document.getElementById('resendOtpBtn').addEventListener('click', function() {
-  if (this.disabled) return;
-
-  setFieldError('otpError', '');
-  this.disabled = true;
-  this.textContent = 'Sending...';
-
-  sendOtp(registrationData.email)
-    .then(function() {
-      toast('New verification code sent', 'success');
-      startOtpTimer();
+      
+      toast('A PIN reset link has been sent to ' + email, 'info');
     })
-    .catch(function(err) {
-      toast(err.message || 'Failed to resend code', 'error');
-    })
-    .finally(function() {
-      document.getElementById('resendOtpBtn').textContent = 'Resend';
+    .catch(function() {
+      toast('Network error. Please try again.', 'error');
     });
 });
 
 // ============================================================
-// OTP TIMER
-// ============================================================
-function startOtpTimer() {
-  var btn = document.getElementById('resendOtpBtn');
-  var timerEl = document.getElementById('otpTimer');
-  otpCountdown = OTP_RESEND_COOLDOWN;
-  btn.disabled = true;
-  timerEl.textContent = '(' + otpCountdown + 's)';
-
-  clearInterval(otpTimer);
-  otpTimer = setInterval(function() {
-    otpCountdown--;
-    if (otpCountdown <= 0) {
-      clearInterval(otpTimer);
-      btn.disabled = false;
-      timerEl.textContent = '';
-    } else {
-      timerEl.textContent = '(' + otpCountdown + 's)';
-    }
-  }, 1000);
-}
-
-// ============================================================
-// BACK TO REGISTER
-// ============================================================
-document.getElementById('backToRegisterBtn').addEventListener('click', function() {
-  document.getElementById('stepOtp').classList.remove('active');
-  document.getElementById('stepRegister').classList.add('active');
-  clearInterval(otpTimer);
-  document.getElementById('resendOtpBtn').disabled = false;
-  document.getElementById('otpTimer').textContent = '';
-  hideBanner('registerBanner');
-});
-
-// ============================================================
-// GOOGLE SIGNUP
-// ============================================================
-document.getElementById('googleRegisterBtn').addEventListener('click', function() {
-  var btn = this;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Redirecting...';
-  window.location.href = AUTH_BASE + '/google';
-});
-
-// ============================================================
-// HANDLE GOOGLE CALLBACK
+// HANDLE GOOGLE CALLBACK FROM BACKEND
 // ============================================================
 function handleGoogleCallback() {
   var params = new URLSearchParams(window.location.search);
@@ -715,33 +545,45 @@ function handleGoogleCallback() {
     return;
   }
 
+  // Clean URL params
   var cleanUrl = window.location.pathname + window.location.search.replace(/[?&]google_auth=[^&]*/, '').replace(/[?&]token=[^&]*/, '').replace(/[?&]email=[^&]*/, '').replace(/[?&]name=[^&]*/, '').replace(/[?&]phone=[^&]*/, '').replace(/[?&]is_new=[^&]*/, '');
   if (window.history && window.history.replaceState) {
     window.history.replaceState({}, document.title, cleanUrl);
   }
 
-  // If user already exists, redirect to login
-  if (!isNew) {
-    toast('This email is already registered. Please sign in.', 'error');
+  if (isNew) {
+    sessionStorage.setItem('liquorbelle_google_pending', JSON.stringify({
+      token: token,
+      email: decodeURIComponent(email),
+      name: decodeURIComponent(name),
+      phone: phone
+    }));
+    toast('Welcome! Please complete your registration.', 'success');
     setTimeout(function() {
-      window.location.href = 'login.html?email=' + encodeURIComponent(email);
+      window.location.href = 'signup.html?google=1';
     }, 500);
     return;
   }
 
-  // New user - pre-fill registration form with Google data
-  var decodedName = decodeURIComponent(name);
-  document.getElementById('fullNameInput').value = decodedName;
-  document.getElementById('emailInput').value = decodeURIComponent(email);
-  if (phone) {
-    document.getElementById('phoneInput').value = phone;
-  }
+  // Existing user - save session and redirect
+  var user = {
+    id: Date.now().toString(),
+    email: decodeURIComponent(email),
+    name: decodeURIComponent(name),
+    phone: phone,
+    token: token,
+    loggedIn: true,
+    loginTime: Date.now(),
+    authMethod: 'google'
+  };
 
-  isGoogleSignup = true;
-  toast('Welcome! Please set your PIN to complete registration.', 'info');
-  
-  // Focus on PIN field
-  pinGroup.focus();
+  localStorage.setItem('liquorbelle_user', JSON.stringify(user));
+  localStorage.setItem('liquorbelle_token', token);
+
+  toast('Welcome back, ' + user.name + '! 👋', 'success');
+  setTimeout(function() {
+    window.location.href = getRedirectTarget();
+  }, 500);
 }
 
 // ============================================================
@@ -771,69 +613,21 @@ document.getElementById('emailInput').addEventListener('input', function() {
 });
 
 // ============================================================
-// PHONE INPUT VALIDATION
-// ============================================================
-document.getElementById('phoneInput').addEventListener('input', function() {
-  this.value = this.value.replace(/\D/g, '');
-  if (this.value.length >= 10) {
-    this.classList.remove('error');
-    this.classList.add('success');
-    setFieldError('phoneError', '');
-  }
-});
-
-document.getElementById('phoneInput').addEventListener('blur', function() {
-  var phone = this.value.trim();
-  if (phone && !isValidKenyanPhone(phone)) {
-    this.classList.add('error');
-    this.classList.remove('success');
-    setFieldError('phoneError', 'Please enter a valid phone number (e.g. 0712345678)');
-  } else if (phone && isValidKenyanPhone(phone)) {
-    this.classList.remove('error');
-    this.classList.add('success');
-    setFieldError('phoneError', '');
-  }
-});
-
-// ============================================================
-// FULL NAME VALIDATION
-// ============================================================
-document.getElementById('fullNameInput').addEventListener('input', function() {
-  if (this.value.trim().length >= 2) {
-    this.classList.remove('error');
-    this.classList.add('success');
-    setFieldError('fullNameError', '');
-  }
-});
-
-// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
   handleGoogleCallback();
+  document.getElementById('emailInput').focus();
 
   var params = new URLSearchParams(window.location.search);
-  var googleParam = params.get('google');
-  if (googleParam === '1') {
-    var pendingData = sessionStorage.getItem('liquorbelle_google_pending');
-    if (pendingData) {
-      try {
-        var data = JSON.parse(pendingData);
-        document.getElementById('fullNameInput').value = data.name || '';
-        document.getElementById('emailInput').value = data.email || '';
-        document.getElementById('phoneInput').value = data.phone || '';
-        sessionStorage.removeItem('liquorbelle_google_pending');
-        toast('Please set your PIN to complete registration.', 'info');
-        pinGroup.focus();
-      } catch (e) {}
-    }
+  var prefillEmail = params.get('email');
+  if (prefillEmail && isValidEmail(prefillEmail)) {
+    document.getElementById('emailInput').value = prefillEmail;
+    document.getElementById('emailInput').classList.add('success');
   }
-
-  // Auto-focus first field
-  document.getElementById('fullNameInput').focus();
 });
 
-console.log('✅ Register page loaded');
+console.log('✅ Login page loaded');
 </script>
 </body>
 </html>
