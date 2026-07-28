@@ -1025,6 +1025,7 @@ a{color:inherit;text-decoration:none;}
 
 <div class="snack" id="snack"></div>
 
+
 <script>
 // ============================================================
 // LIQUORBELLE CHECKOUT - COMPLETE FIXED VERSION
@@ -1464,6 +1465,124 @@ function renderSummary() {
       progressContainer.innerHTML = '';
     }
   }
+}
+
+// ============================================================
+// AUTO-FILL SAVED ADDRESS - NEW FUNCTION
+// ============================================================
+function autoFillSavedAddress() {
+  var user = getCurrentUser();
+  if (!user) return;
+  
+  console.log('👤 User logged in, checking for saved addresses...');
+  
+  // Try to get saved addresses from localStorage
+  var storageKey = 'liquorbelle_addresses_' + user.email.toLowerCase();
+  var savedAddresses = [];
+  try {
+    var stored = localStorage.getItem(storageKey);
+    if (stored) {
+      savedAddresses = JSON.parse(stored);
+      console.log('📦 Found ' + savedAddresses.length + ' saved address(es)');
+    }
+  } catch(e) {
+    console.warn('Could not load saved addresses:', e);
+  }
+  
+  if (savedAddresses.length === 0) {
+    // Try legacy storage format
+    try {
+      var legacy = localStorage.getItem('liquorbelle_addresses');
+      if (legacy) {
+        var parsed = JSON.parse(legacy);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          savedAddresses = parsed;
+          console.log('📦 Found ' + savedAddresses.length + ' legacy saved address(es)');
+        }
+      }
+    } catch(e) {
+      console.warn('Could not load legacy addresses:', e);
+    }
+  }
+  
+  if (savedAddresses.length === 0) {
+    console.log('ℹ️ No saved addresses found');
+    return false;
+  }
+  
+  // Find default address or use first one
+  var defaultAddr = null;
+  for (var i = 0; i < savedAddresses.length; i++) {
+    if (savedAddresses[i].isDefault) {
+      defaultAddr = savedAddresses[i];
+      break;
+    }
+  }
+  if (!defaultAddr) {
+    defaultAddr = savedAddresses[0];
+  }
+  
+  console.log('📌 Using address:', defaultAddr);
+  
+  // Auto-fill form fields
+  var nameInput = document.getElementById('fullName');
+  var phoneInput = document.getElementById('phone');
+  var streetInput = document.getElementById('street');
+  var buildingInput = document.getElementById('building');
+  var areaSelect = document.getElementById('deliveryArea');
+  
+  if (nameInput && user.name) {
+    nameInput.value = user.name;
+    nameInput.style.borderColor = '#2ecc71';
+    nameInput.style.background = '#f0fff4';
+  }
+  
+  if (phoneInput && user.phone) {
+    phoneInput.value = user.phone;
+    phoneInput.style.borderColor = '#2ecc71';
+    phoneInput.style.background = '#f0fff4';
+  }
+  
+  if (streetInput && defaultAddr.line1) {
+    streetInput.value = defaultAddr.line1;
+    streetInput.style.borderColor = '#2ecc71';
+    streetInput.style.background = '#f0fff4';
+  }
+  
+  if (buildingInput && defaultAddr.landmark) {
+    buildingInput.value = defaultAddr.landmark;
+    buildingInput.style.borderColor = '#2ecc71';
+    buildingInput.style.background = '#f0fff4';
+  }
+  
+  if (areaSelect && defaultAddr.area) {
+    var found = false;
+    for (var j = 0; j < areaSelect.options.length; j++) {
+      if (areaSelect.options[j].value === defaultAddr.area) {
+        areaSelect.value = defaultAddr.area;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      // Try to find a partial match
+      for (var k = 0; k < areaSelect.options.length; k++) {
+        if (areaSelect.options[k].value.toLowerCase().indexOf(defaultAddr.area.toLowerCase()) !== -1) {
+          areaSelect.value = areaSelect.options[k].value;
+          found = true;
+          break;
+        }
+      }
+    }
+    if (found) {
+      // Trigger change event to update delivery fee
+      var event = new Event('change');
+      areaSelect.dispatchEvent(event);
+    }
+  }
+  
+  toast('📦 Saved address loaded!', 'success');
+  return true;
 }
 
 // ============================================================
@@ -1996,6 +2115,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Delivery area change listener attached');
       }
       
+      // ===== AUTO-FILL SAVED ADDRESS =====
+      autoFillSavedAddress();
+      
       renderSummary();
       updateCartBadges();
       updateUserBadge();
@@ -2033,7 +2155,6 @@ window.addEventListener('storage', function(e) {
 
 console.log('✅ Checkout script loaded successfully');
 </script>
-
 <script src="js/utils.js"></script>
 
 </body>

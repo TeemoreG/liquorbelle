@@ -39,6 +39,7 @@
   --radius-sm:14px;
   --radius-xs:10px;
   --shadow:0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lift:0 12px 32px rgba(128,0,0,0.12);
   --font-body:'Inter',-apple-system,sans-serif;
   --bottom-nav-height:70px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
@@ -46,31 +47,49 @@
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bottom-nav-height) + var(--safe-bottom));}
 
 .profile-container{
-  max-width: 700px;
+  max-width: 760px;
   margin: 20px auto 32px;
   padding: 0 4%;
 }
+
+.auth-gate{
+  display:none;
+  text-align:center;
+  padding:60px 20px;
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.auth-gate.show{display:block;}
+.auth-gate i{font-size:48px;color:var(--gold);margin-bottom:12px;display:block;}
+.auth-gate h2{font-size:1.2rem;margin-bottom:6px;}
+.auth-gate p{color:var(--muted);font-size:.85rem;margin-bottom:20px;}
+
 .profile-card{
   background:var(--white);
   border-radius:var(--radius);
   border:1px solid var(--border);
-  padding: 32px;
+  padding: 28px 28px 8px;
   box-shadow:var(--shadow);
   border-top:4px solid var(--gold);
+  opacity:0;
+  transform:translateY(8px);
+  animation:cardIn .5s ease forwards;
 }
+@keyframes cardIn{to{opacity:1;transform:translateY(0);}}
+
 .profile-header{
   display:flex;
   align-items:center;
-  gap:16px;
-  margin-bottom:24px;
-  padding-bottom:16px;
-  border-bottom:2px solid var(--border);
+  gap:18px;
+  margin-bottom:18px;
 }
 .profile-avatar{
-  width:72px;
-  height:72px;
+  width:76px;
+  height:76px;
   border-radius:50%;
-  background:var(--primary);
+  background:linear-gradient(135deg,var(--primary),var(--primary-bright));
   color:white;
   display:flex;
   align-items:center;
@@ -78,116 +97,150 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
   font-size:32px;
   font-weight:800;
   flex-shrink:0;
+  box-shadow:0 6px 18px rgba(128,0,0,0.25);
 }
+.profile-header-info{min-width:0;}
 .profile-header-info h1{
-  font-size:1.4rem;
+  font-size:1.35rem;
   font-weight:800;
   color:var(--text);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .profile-header-info p{
   color:var(--muted);
-  font-size:.85rem;
+  font-size:.82rem;
+  margin-bottom:6px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
+.badge-row{display:flex;flex-wrap:wrap;gap:6px;}
+.badge-pill{font-size:11px;padding:3px 11px;border-radius:30px;font-weight:600;display:inline-flex;align-items:center;gap:4px;}
 
-.form-group{
-  margin-bottom:16px;
+/* ===== STATS ROW - 2 columns (removed Total Spent) ===== */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:20px;
 }
-.form-group label{
-  display:block;
-  margin-bottom:4px;
-  font-weight:600;
-  font-size:11px;
+.stat-chip{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:12px 10px;
+  text-align:center;
+}
+.stat-chip .stat-value{font-size:1.05rem;font-weight:800;color:var(--primary);}
+.stat-chip .stat-label{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+
+.tabs{
+  display:flex;
+  gap:4px;
+  background:var(--bg2);
+  padding:4px;
+  border-radius:30px;
+  margin-bottom:20px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{
+  flex:1;
+  white-space:nowrap;
+  padding:10px 14px;
+  border:none;
+  background:transparent;
+  border-radius:26px;
+  font-family:var(--font-body);
+  font-weight:700;
+  font-size:.78rem;
   color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.3px;
+  cursor:pointer;
+  transition:all .25s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.tab-btn i{font-size:15px;}
+.tab-btn.active{background:var(--white);color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.tab-btn .tab-count{background:var(--gold);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:20px;display:none;}
+.tab-btn .tab-count.show{display:inline-block;}
+
+.tab-panel{display:none;padding-bottom:24px;animation:panelIn .3s ease;}
+.tab-panel.active{display:block;}
+@keyframes panelIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.panel-heading{font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:2px;display:flex;align-items:center;gap:8px;}
+.panel-sub{font-size:.72rem;color:var(--muted);margin-bottom:16px;}
+
+.form-group{margin-bottom:16px;}
+.form-group label{
+  display:block;margin-bottom:4px;font-weight:600;font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.3px;
 }
 .form-group input{
-  width:100%;
-  padding:12px 16px;
-  background:var(--bg);
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-family:var(--font-body);
-  font-size:14px;
-  transition:all .2s;
+  width:100%;padding:12px 16px;background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;transition:all .2s;
 }
 .form-group input:focus{
-  outline:none;
-  border-color:var(--gold);
-  box-shadow:0 0 0 3px rgba(184,134,11,0.08);
-  background:var(--white);
+  outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,0.08);background:var(--white);
 }
-.form-group input:disabled{
-  opacity:0.6;
-  cursor:not-allowed;
-}
-.form-group input.error{
-  border-color:var(--sale-red);
-  background:#FFF5F5;
-}
-.form-group input.valid{
-  border-color:var(--btn-green);
-  background:#F0FFF4;
-}
-.input-error{
-  color:var(--sale-red);
-  font-size:10px;
-  margin-top:4px;
-  display:none;
-}
+.form-group input:disabled{opacity:0.6;cursor:not-allowed;}
+.form-group input.error{border-color:var(--sale-red);background:#FFF5F5;}
+.form-group input.valid{border-color:var(--btn-green);background:#F0FFF4;}
+.input-error{color:var(--sale-red);font-size:10px;margin-top:4px;display:none;}
 .input-error.show{display:block;}
 
 .btn-primary{
-  width:100%;
-  padding:14px;
-  background:var(--gold);
-  color:white;
-  border:none;
-  border-radius:var(--radius-sm);
-  font-weight:700;
-  font-size:1rem;
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
+  width:100%;padding:14px;background:var(--gold);color:white;border:none;border-radius:var(--radius-sm);
+  font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;font-family:var(--font-body);
 }
 .btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 4px 20px rgba(184,134,11,0.3);}
 .btn-primary:active{transform:scale(0.97);}
 .btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
 
 .btn-secondary{
-  width:100%;
-  padding:14px;
-  background:var(--bg2);
-  color:var(--text);
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-weight:700;
-  font-size:1rem;
-  cursor:pointer;
-  transition:all .2s;
-  font-family:var(--font-body);
-  margin-top:8px;
+  width:100%;padding:14px;background:var(--bg2);color:var(--text);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;
+  font-family:var(--font-body);margin-top:8px;
 }
 .btn-secondary:hover{background:var(--border);}
 
+.btn-outline-gold{
+  padding:10px 16px;background:transparent;color:var(--gold);border:1.5px solid var(--gold);
+  border-radius:var(--radius-sm);font-weight:700;font-size:.8rem;cursor:pointer;transition:all .2s;
+  font-family:var(--font-body);display:inline-flex;align-items:center;gap:6px;
+}
+.btn-outline-gold:hover{background:var(--gold-bg);}
+
+.btn-danger{
+  width:100%;padding:14px;background:var(--sale-red);color:white;border:none;border-radius:var(--radius-sm);
+  font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;font-family:var(--font-body);margin-top:8px;
+}
+.btn-danger:hover{background:#B71C1C;transform:translateY(-2px);}
+.btn-danger:active{transform:scale(0.97);}
+.btn-danger:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+
+.btn-icon-sm{
+  width:32px;height:32px;border-radius:10px;border:1px solid var(--border);background:var(--white);
+  color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  transition:all .2s;font-size:14px;
+}
+.btn-icon-sm:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-bg);}
+.btn-icon-sm.danger:hover{border-color:var(--sale-red);color:var(--sale-red);background:#FFF5F5;}
+
 .auth-status{
-  padding:10px 14px;
-  border-radius:var(--radius-xs);
-  font-size:.85rem;
-  font-weight:600;
-  margin-bottom:12px;
-  display:none;
+  padding:10px 14px;border-radius:var(--radius-xs);font-size:.85rem;font-weight:600;margin-bottom:12px;display:none;
 }
 .auth-status.error{display:block;background:#FFEBEE;color:#D32F2F;border:1px solid #FFCDD2;}
 .auth-status.success{display:block;background:#E8F5E9;color:#1A8A3E;border:1px solid #C8E6C9;}
 .auth-status.info{display:block;background:#FFF3E0;color:#E67E22;border:1px solid #FFE0B2;}
 
-.section-divider{
-  margin:24px 0;
-  border:none;
-  height:2px;
-  background:var(--border);
-}
+.section-divider{margin:24px 0;border:none;height:2px;background:var(--border);}
 
 .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:white;animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -196,358 +249,417 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 .toast.error{background:var(--sale-red);}
 .toast.success{background:var(--btn-green);}
 
-.back-link{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  color:var(--primary);
-  text-decoration:none;
-  margin-bottom:16px;
-  font-weight:600;
-  font-size:.9rem;
-}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--primary);text-decoration:none;margin-bottom:16px;font-weight:600;font-size:.9rem;}
 .back-link:hover{color:var(--gold);}
 
-.pin-input-group{
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin:8px 0 12px;
-}
+.pin-input-group{display:flex;gap:8px;justify-content:center;margin:8px 0 12px;}
 .pin-input-group input{
-  width:48px !important;
-  height:56px !important;
-  text-align:center;
-  font-size:22px !important;
-  font-weight:700;
-  letter-spacing:4px;
-  border-radius:12px !important;
-  padding:0 !important;
-  background:var(--bg);
-  border:2px solid var(--border);
-  transition:all .2s;
-  font-family:monospace;
+  width:48px !important;height:56px !important;text-align:center;font-size:22px !important;font-weight:700;
+  letter-spacing:4px;border-radius:12px !important;padding:0 !important;background:var(--bg);
+  border:2px solid var(--border);transition:all .2s;font-family:monospace;
 }
-.pin-input-group input:focus{
-  border-color:var(--gold);
-  background:var(--white);
-  box-shadow:0 0 0 3px rgba(184,134,11,0.1);
-}
-.pin-input-group input.error{
-  border-color:var(--sale-red);
-  background:#FFF5F5;
-}
-.pin-input-group input.valid{
-  border-color:var(--btn-green);
-  background:#F0FFF4;
-}
+.pin-input-group input:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 3px rgba(184,134,11,0.1);}
+.pin-input-group input.error{border-color:var(--sale-red);background:#FFF5F5;}
+.pin-input-group input.valid{border-color:var(--btn-green);background:#F0FFF4;}
+.pin-hint{font-size:.65rem;color:var(--muted);text-align:center;margin-top:-4px;margin-bottom:8px;}
 
 @media(max-width:600px){
   .profile-container{padding:0 3%;margin:12px auto 20px;}
-  .profile-card{padding:20px 16px;}
-  .profile-header{flex-direction:column;text-align:center;}
+  .profile-card{padding:20px 16px 4px;}
   .profile-avatar{width:60px;height:60px;font-size:26px;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
 }
 
-/* ============================================================
-   ORDERS SECTION STYLES
-   ============================================================ */
-.orders-section {
-  margin-top: 8px;
-}
+.skeleton{background:linear-gradient(90deg,var(--bg2) 25%,#e9e2d8 37%,var(--bg2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:var(--radius-sm);}
+@keyframes shimmer{0%{background-position:100% 0;}100%{background-position:0 0;}}
+.skeleton-line{height:14px;margin-bottom:8px;}
+.skeleton-card{height:96px;margin-bottom:12px;}
 
-.orders-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2px;
-}
+/* ===== ORDERS ===== */
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-bar .search-input-wrap{flex:1 1 160px;position:relative;}
+.filter-bar .search-input-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;}
+.filter-bar input[type="text"]{width:100%;padding:10px 12px 10px 34px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);font-family:var(--font-body);font-size:.8rem;}
+.filter-bar input[type="text"]:focus{outline:none;border-color:var(--gold);background:var(--white);}
+.filter-bar select{padding:10px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);font-family:var(--font-body);font-size:.75rem;color:var(--text);font-weight:600;}
+.filter-bar select:focus{outline:none;border-color:var(--gold);}
+.filter-result-note{font-size:.68rem;color:var(--muted);margin-bottom:10px;display:none;}
 
-.orders-header h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.orders-section{margin-top:8px;}
+.orders-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;}
+.orders-header h3{font-size:1rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:8px;}
+.orders-header h3 i{color:var(--gold);font-size:20px;}
+.order-count{font-size:0.7rem;font-weight:600;color:var(--muted);background:var(--bg2);padding:2px 12px;border-radius:30px;}
+.orders-subtitle{font-size:0.75rem;color:var(--muted);margin-bottom:12px;}
+#ordersContainer{min-height:60px;}
+.orders-loading{display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;color:var(--muted);font-size:0.85rem;}
+.orders-loading .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block;}
 
-.orders-header h3 i {
-  color: var(--gold);
-  font-size: 20px;
-}
+.order-card{background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;transition:all 0.2s ease;}
+.order-card:hover{border-color:var(--gold);box-shadow:var(--shadow);}
+.order-header{background:var(--gold-bg);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.order-number{font-weight:700;color:var(--primary);font-size:0.8rem;display:inline-flex;align-items:center;gap:6px;}
+.order-number .copy-btn{background:none;border:none;color:var(--gold);cursor:pointer;font-size:13px;padding:2px;}
+.order-date{font-size:0.65rem;color:var(--muted);}
+.order-status{padding:3px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;}
+.status-pending{background:#FFF3E0;color:#E67E22;}
+.status-paid{background:#E8F5E9;color:#1A8A3E;}
+.status-delivered{background:#E3F2FD;color:#2196F3;}
+.status-cancelled{background:#FFEBEE;color:#D32F2F;}
+.order-items{padding:8px 16px;max-height:160px;overflow-y:auto;}
+.order-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.75rem;}
+.order-item:last-child{border-bottom:none;}
+.order-item-name{font-weight:600;color:var(--text);}
+.order-item-qty{font-size:0.65rem;color:var(--muted);}
+.order-item-price{font-weight:700;color:var(--sale-red);font-size:0.75rem;}
+.order-footer{background:var(--bg2);padding:8px 16px;border-top:1px solid var(--border);}
+.order-total-row{display:flex;justify-content:space-between;font-weight:700;font-size:0.75rem;padding:3px 0;}
+.order-total-row:last-child{font-weight:800;font-size:0.85rem;color:var(--primary);border-top:1px solid var(--border);padding-top:6px;margin-top:2px;}
+.order-total-row .delivery-free{color:var(--btn-green);}
+.orders-empty{text-align:center;padding:30px 20px;color:var(--muted);}
+.orders-empty i{font-size:40px;display:block;margin-bottom:10px;color:var(--border);}
+.orders-empty p{font-size:0.85rem;margin-bottom:2px;}
+.orders-empty small{font-size:0.7rem;opacity:0.7;}
 
-.order-count {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--muted);
-  background: var(--bg2);
-  padding: 2px 12px;
-  border-radius: 30px;
-}
+/* ===== ADDRESSES ===== */
+.address-source-note{font-size:.65rem;color:var(--muted);background:var(--bg2);padding:6px 12px;border-radius:30px;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;}
+.address-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;transition:all .2s;}
+.address-card:hover{border-color:var(--gold);}
+.address-card.is-default{border-color:var(--gold);background:var(--gold-bg);}
+.address-card-body{min-width:0;}
+.address-label-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;}
+.address-label-tag{font-size:.65rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.3px;background:var(--white);border:1px solid var(--border);padding:2px 9px;border-radius:20px;}
+.address-default-tag{font-size:.6rem;font-weight:800;color:var(--gold);background:var(--white);border:1px solid var(--gold);padding:2px 9px;border-radius:20px;}
+.address-text{font-size:.82rem;font-weight:600;color:var(--text);}
+.address-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.address-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+.add-address-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:1.5px dashed var(--gold);border-radius:var(--radius-sm);background:var(--gold-bg);color:var(--gold);font-weight:700;font-size:.85rem;cursor:pointer;font-family:var(--font-body);transition:all .2s;margin-bottom:14px;}
+.add-address-btn:hover{background:#fbeecb;}
 
-.orders-subtitle {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
+.label-chip-row{display:flex;gap:8px;margin-bottom:16px;}
+.label-chip{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;background:var(--bg);}
+.label-chip.selected{border-color:var(--gold);background:var(--gold-bg);color:var(--gold);}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:.8rem;font-weight:600;color:var(--text);}
+.checkbox-row input{width:auto;accent-color:var(--gold);}
 
-#ordersContainer {
-  min-height: 60px;
-}
+.activity-list{margin-bottom:4px;}
+.activity-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-icon{width:34px;height:34px;border-radius:50%;background:var(--gold-bg);color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
+.activity-icon.i-login{background:var(--green-light);color:var(--btn-green-hover);}
+.activity-icon.i-danger{background:#FFEBEE;color:var(--sale-red);}
+.activity-body{min-width:0;}
+.activity-msg{font-size:.8rem;font-weight:600;color:var(--text);}
+.activity-time{font-size:.65rem;color:var(--muted);margin-top:1px;}
+.activity-empty{text-align:center;padding:20px;color:var(--muted);font-size:.78rem;}
 
-.orders-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 20px;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
+.session-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:18px;}
+.session-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:.78rem;}
+.session-row span:first-child{color:var(--muted);font-weight:600;}
+.session-row span:last-child{font-weight:700;color:var(--text);text-align:right;}
 
-.orders-loading .spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-  display: inline-block;
-}
+.local-note{font-size:.65rem;color:var(--muted);margin-top:6px;line-height:1.5;}
 
-/* Order Cards */
-.order-card {
-  background: var(--bg);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  margin-bottom: 12px;
-  transition: all 0.2s ease;
-}
+.delete-section{margin-top:8px;padding-top:16px;border-top:2px solid var(--border);}
+.delete-section .btn-danger{margin-top:0;font-size:0.85rem;padding:12px;}
 
-.order-card:hover {
-  border-color: var(--gold);
-  box-shadow: var(--shadow);
-}
-
-.order-header {
-  background: var(--gold-bg);
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.order-number {
-  font-weight: 700;
-  color: var(--primary);
-  font-size: 0.8rem;
-}
-
-.order-date {
-  font-size: 0.65rem;
-  color: var(--muted);
-}
-
-.order-status {
-  padding: 3px 12px;
-  border-radius: 30px;
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.status-pending {
-  background: #FFF3E0;
-  color: #E67E22;
-}
-
-.status-paid {
-  background: #E8F5E9;
-  color: #1A8A3E;
-}
-
-.status-delivered {
-  background: #E3F2FD;
-  color: #2196F3;
-}
-
-.status-cancelled {
-  background: #FFEBEE;
-  color: #D32F2F;
-}
-
-.order-items {
-  padding: 8px 16px;
-  max-height: 160px;
-  overflow-y: auto;
-}
-
-.order-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.75rem;
-}
-
-.order-item:last-child {
-  border-bottom: none;
-}
-
-.order-item-name {
-  font-weight: 600;
-  color: var(--text);
-}
-
-.order-item-qty {
-  font-size: 0.65rem;
-  color: var(--muted);
-}
-
-.order-item-price {
-  font-weight: 700;
-  color: var(--sale-red);
-  font-size: 0.75rem;
-}
-
-.order-footer {
-  background: var(--bg2);
-  padding: 8px 16px;
-  border-top: 1px solid var(--border);
-}
-
-.order-total-row {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 700;
-  font-size: 0.75rem;
-  padding: 3px 0;
-}
-
-.order-total-row:last-child {
-  font-weight: 800;
-  font-size: 0.85rem;
-  color: var(--primary);
-  border-top: 1px solid var(--border);
-  padding-top: 6px;
-  margin-top: 2px;
-}
-
-.order-total-row .delivery-free {
-  color: var(--btn-green);
-}
-
-/* Empty State */
-.orders-empty {
-  text-align: center;
-  padding: 30px 20px;
-  color: var(--muted);
-}
-
-.orders-empty i {
-  font-size: 40px;
-  display: block;
-  margin-bottom: 10px;
-  color: var(--border);
-}
-
-.orders-empty p {
-  font-size: 0.85rem;
-  margin-bottom: 2px;
-}
-
-.orders-empty small {
-  font-size: 0.7rem;
-  opacity: 0.7;
-}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:700;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-card{background:var(--white);border-radius:var(--radius);padding:28px 24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:modalIn 0.3s ease;max-height:90vh;overflow-y:auto;}
+@keyframes modalIn{from{opacity:0;transform:scale(0.9) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-card h3{font-size:1.2rem;font-weight:800;color:var(--sale-red);margin-bottom:4px;}
+.modal-card.neutral h3{color:var(--primary);}
+.modal-card p{font-size:0.85rem;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.modal-card .warning-text{background:#FFEBEE;padding:10px 14px;border-radius:var(--radius-xs);color:var(--sale-red);font-size:0.75rem;font-weight:600;margin-bottom:16px;}
+.modal-card .pin-required-text{background:#FFF3E0;padding:10px 14px;border-radius:var(--radius-xs);color:#E67E22;font-size:0.75rem;font-weight:600;margin-bottom:16px;text-align:center;display:none;}
+.modal-pin-input{display:flex;gap:10px;justify-content:center;margin:12px 0 16px;}
+.modal-pin-input input{width:50px !important;height:60px !important;text-align:center;font-size:24px !important;font-weight:700;letter-spacing:4px;border-radius:12px !important;padding:0 !important;background:var(--bg);border:2px solid var(--border);transition:all .2s;font-family:monospace;}
+.modal-pin-input input:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 3px rgba(184,134,11,0.1);}
+.modal-pin-input input.error{border-color:var(--sale-red);background:#FFF5F5;}
+.modal-pin-input input.valid{border-color:var(--btn-green);background:#F0FFF4;}
+.modal-pin-error{color:var(--sale-red);font-size:0.7rem;text-align:center;display:none;margin-bottom:12px;}
+.modal-pin-error.show{display:block;}
+.modal-actions{display:flex;gap:10px;}
+.modal-actions button{flex:1;padding:12px;border:none;border-radius:var(--radius-sm);font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-body);}
+.modal-actions .cancel-btn{background:var(--bg2);color:var(--text);}
+.modal-actions .cancel-btn:hover{background:var(--border);}
+.modal-actions .confirm-delete-btn{background:var(--sale-red);color:white;}
+.modal-actions .confirm-delete-btn:hover{background:#B71C1C;}
+.modal-actions .confirm-delete-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.modal-actions .save-btn{background:var(--gold);color:white;}
+.modal-actions .save-btn:hover{background:var(--gold-light);}
 </style>
 </head>
 <body>
 
 <div class="profile-container">
   <a href="accounts.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Account</a>
-  
-  <div class="profile-card">
-    <div class="profile-header">
-      <div class="profile-avatar" id="profileAvatar">G</div>
-      <div class="profile-header-info">
-        <h1 id="profileName">Loading...</h1>
-        <p id="profileEmail">Loading...</p>
-        <span id="authMethodBadge" style="font-size:11px;padding:2px 10px;border-radius:30px;background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold);display:inline-block;margin-top:4px;">Email + PIN</span>
+
+  <div class="auth-gate" id="authGate">
+    <i class="ph ph-lock-key"></i>
+    <h2>You're not logged in</h2>
+    <p>Redirecting you to login…</p>
+  </div>
+
+  <div id="profileContent">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar">G</div>
+        <div class="profile-header-info">
+          <h1 id="profileName">Loading...</h1>
+          <p id="profileEmail">Loading...</p>
+          <div class="badge-row">
+            <span id="authMethodBadge" class="badge-pill" style="background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold);">Email + PIN</span>
+            <span id="pinStatusBadge" class="badge-pill" style="background:#E8F5E9;color:#1A8A3E;border:1px solid #C8E6C9;">✅ PIN Set</span>
+          </div>
+        </div>
       </div>
+
+      <!-- ===== STATS ROW - 2 columns (Removed Total Spent) ===== -->
+      <div class="stats-row">
+        <div class="stat-chip">
+          <div class="stat-value" id="statOrders">–</div>
+          <div class="stat-label">Orders</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-value" id="statSince">–</div>
+          <div class="stat-label">Member Since</div>
+        </div>
+      </div>
+
+      <!-- ===== TABS ===== -->
+      <div class="tabs" id="profileTabs" role="tablist">
+        <button class="tab-btn active" data-tab="profile" role="tab"><i class="ph ph-user"></i> Profile</button>
+        <button class="tab-btn" data-tab="security" role="tab"><i class="ph ph-shield-check"></i> Security</button>
+        <button class="tab-btn" data-tab="addresses" role="tab"><i class="ph ph-map-pin"></i> Addresses <span class="tab-count" id="addressTabCount">0</span></button>
+        <button class="tab-btn" data-tab="orders" role="tab"><i class="ph ph-package"></i> Orders <span class="tab-count" id="ordersTabCount">0</span></button>
+      </div>
+
+      <div class="auth-status" id="profileStatus"></div>
+
+      <!-- PROFILE TAB -->
+      <div class="tab-panel active" id="panel-profile">
+        <div class="panel-heading"><i class="ph ph-identification-card" style="color:var(--gold);"></i> Personal details</div>
+        <p class="panel-sub">Keep your name and phone number up to date for smooth deliveries.</p>
+        <form id="profileForm">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="editName" placeholder="Your full name">
+            <div class="input-error" id="editNameError">Name must be at least 2 characters</div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="editPhone" placeholder="0712345678" maxlength="10">
+            <div class="input-error" id="editPhoneError">Please enter a valid phone number</div>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="editEmail" placeholder="you@example.com" disabled>
+            <small style="color:var(--muted);font-size:.65rem;">Email cannot be changed</small>
+          </div>
+          <button type="submit" class="btn-primary" id="updateProfileBtn">Update Profile</button>
+        </form>
+      </div>
+
+      <!-- SECURITY TAB -->
+      <div class="tab-panel" id="panel-security">
+        <div class="panel-heading"><i class="ph ph-lock-key" style="color:var(--gold);"></i> <span id="pinSectionTitle">Change PIN</span></div>
+        <p class="panel-sub" id="pinSectionDesc">Enter your current PIN and choose a new one</p>
+
+        <form id="pinForm">
+          <div class="form-group" id="currentPinGroupWrapper">
+            <label id="currentPinLabel">Current PIN</label>
+            <div class="pin-input-group" id="currentPinGroup">
+              <input type="password" id="currentPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="currentPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="currentPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="currentPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="input-error" id="currentPinError">Please enter your current 4-digit PIN</div>
+          </div>
+
+          <div class="form-group">
+            <label>New PIN</label>
+            <div class="pin-input-group" id="newPinGroup">
+              <input type="password" id="newPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="newPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="newPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="newPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="input-error" id="newPinError">Please enter a new 4-digit PIN</div>
+          </div>
+
+          <div class="form-group">
+            <label>Confirm New PIN</label>
+            <div class="pin-input-group" id="confirmPinGroup">
+              <input type="password" id="confirmPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="confirmPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="confirmPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+              <input type="password" id="confirmPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="input-error" id="confirmPinError">PINs do not match</div>
+          </div>
+
+          <button type="submit" class="btn-secondary" id="updatePinBtn">Update PIN</button>
+        </form>
+
+        <hr class="section-divider">
+
+        <div class="panel-heading"><i class="ph ph-device-mobile" style="color:var(--gold);"></i> This session</div>
+        <p class="panel-sub">The device and sign-in method currently in use.</p>
+        <div class="session-card">
+          <div class="session-row"><span>Signed in with</span><span id="sessionAuthMethod">–</span></div>
+          <div class="session-row"><span>Device</span><span id="sessionDevice">–</span></div>
+          <div class="session-row"><span>Browser</span><span id="sessionBrowser">–</span></div>
+        </div>
+        <button class="btn-outline-gold" id="logoutSessionBtn" style="width:100%;justify-content:center;margin-bottom:24px;">
+          <i class="ph ph-sign-out"></i> Log out of this device
+        </button>
+
+        <div class="panel-heading"><i class="ph ph-clock-counter-clockwise" style="color:var(--gold);"></i> Recent activity</div>
+        <p class="panel-sub">Actions taken on your account, most recent first.</p>
+        <div class="activity-list" id="activityList">
+          <div class="activity-empty">Loading activity…</div>
+        </div>
+        <p class="local-note"><i class="ph ph-info"></i> Activity is tracked on this device/browser. Clearing your browser data will clear this list.</p>
+        <button class="btn-outline-gold" id="clearActivityBtn" style="margin-top:10px;">
+          <i class="ph ph-trash"></i> Clear activity log
+        </button>
+
+        <div class="delete-section">
+          <h3 style="font-size:0.9rem;font-weight:700;color:var(--sale-red);margin-bottom:4px;">⚠️ Delete Account</h3>
+          <p style="font-size:.7rem;color:var(--muted);margin-bottom:10px;">This action cannot be undone. All your data will be permanently removed.</p>
+          <button class="btn-danger" id="deleteAccountBtn">Delete My Account</button>
+        </div>
+      </div>
+
+      <!-- ADDRESSES TAB -->
+      <div class="tab-panel" id="panel-addresses">
+        <div class="panel-heading"><i class="ph ph-map-pin-line" style="color:var(--gold);"></i> Delivery addresses</div>
+        <p class="panel-sub">Save addresses so checkout only takes a couple of taps.</p>
+        <div id="addressSourceNote"></div>
+        <button class="add-address-btn" id="addAddressBtn"><i class="ph ph-plus-circle"></i> Add a new address</button>
+        <div id="addressesContainer">
+          <div class="skeleton skeleton-card"></div>
+          <div class="skeleton skeleton-card"></div>
+        </div>
+      </div>
+
+      <!-- ORDERS TAB -->
+      <div class="tab-panel" id="panel-orders">
+        <div class="orders-section">
+          <div class="orders-header">
+            <h3><i class="ph ph-package"></i> My Orders</h3>
+            <span class="order-count" id="orderCount">0 orders</span>
+          </div>
+          <p class="orders-subtitle">View, search and filter all your past and current orders.</p>
+
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <i class="ph ph-magnifying-glass"></i>
+              <input type="text" id="orderSearchInput" placeholder="Search order # or product...">
+            </div>
+            <select id="orderStatusFilter">
+              <option value="all">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <select id="orderSortFilter">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="highest">Highest total</option>
+              <option value="lowest">Lowest total</option>
+            </select>
+          </div>
+          <div class="filter-result-note" id="orderFilterNote"></div>
+
+          <div id="ordersContainer">
+            <div class="orders-loading">
+              <div class="spinner"></div>
+              <span>Loading your orders...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DELETE ACCOUNT MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-card">
+    <h3>⚠️ Delete Account</h3>
+    <p>Are you sure you want to delete your LiquorBelle account?</p>
+
+    <div class="warning-text">
+      <i class="ph ph-warning"></i> This action is permanent. All your data, orders, and preferences will be deleted.
     </div>
 
-    <div class="auth-status" id="profileStatus"></div>
+    <div class="pin-required-text" id="pinRequiredText">
+      <i class="ph ph-lock"></i> You must set a PIN first before deleting your account.
+      <br><small style="font-weight:400;">Please go back and set a PIN in the Security tab.</small>
+    </div>
 
-    <!-- Profile Edit Form -->
-    <form id="profileForm">
+    <div id="pinDeleteSection">
+      <p style="font-size:0.75rem;color:var(--muted);text-align:center;margin-bottom:4px;">Enter your PIN to confirm deletion</p>
+      <div class="modal-pin-input" id="deletePinGroup">
+        <input type="password" id="deletePin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+        <input type="password" id="deletePin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+        <input type="password" id="deletePin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+        <input type="password" id="deletePin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="modal-pin-error" id="deletePinError">Invalid PIN. Please try again.</div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+      <button class="confirm-delete-btn" id="confirmDeleteBtn">Yes, Delete My Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADDRESS MODAL -->
+<div class="modal-overlay" id="addressModal">
+  <div class="modal-card neutral">
+    <h3 id="addressModalTitle">Add Address</h3>
+    <p>Give it a label and the details our riders need to find you.</p>
+
+    <div class="label-chip-row">
+      <div class="label-chip selected" data-label="Home">🏠 Home</div>
+      <div class="label-chip" data-label="Work">💼 Work</div>
+      <div class="label-chip" data-label="Other">📍 Other</div>
+    </div>
+
+    <form id="addressForm">
       <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="editName" placeholder="Your full name">
-        <div class="input-error" id="editNameError">Name must be at least 2 characters</div>
+        <label>Address line</label>
+        <input type="text" id="addrLine1" placeholder="Street, building, apartment no.">
+        <div class="input-error" id="addrLine1Error">Please enter your address</div>
       </div>
       <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" id="editPhone" placeholder="0712345678" maxlength="10">
-        <div class="input-error" id="editPhoneError">Please enter a valid phone number</div>
+        <label>Area / Estate</label>
+        <input type="text" id="addrArea" placeholder="e.g. Kilimani">
       </div>
       <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" id="editEmail" placeholder="you@example.com" disabled>
-        <small style="color:var(--muted);font-size:.65rem;">Email cannot be changed</small>
+        <label>Landmark (optional)</label>
+        <input type="text" id="addrLandmark" placeholder="e.g. Near Java House">
       </div>
-      <button type="submit" class="btn-primary" id="updateProfileBtn">Update Profile</button>
+      <div class="form-group">
+        <label>Phone for this address (optional)</label>
+        <input type="tel" id="addrPhone" placeholder="0712345678" maxlength="10">
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="addrIsDefault">
+        <label for="addrIsDefault" style="margin:0;text-transform:none;font-size:.8rem;color:var(--text);">Set as default address</label>
+      </div>
     </form>
 
-    <hr class="section-divider">
-
-    <!-- Change PIN Section - For ALL users -->
-    <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--primary);">Change PIN</h3>
-    <form id="pinForm">
-      <div class="form-group">
-        <label>Current PIN</label>
-        <div class="pin-input-group" id="currentPinGroup">
-          <input type="password" id="currentPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          <input type="password" id="currentPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          <input type="password" id="currentPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          <input type="password" id="currentPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-        </div>
-        <div class="input-error" id="currentPinError">Please enter your current 4-digit PIN</div>
-      </div>
-      <div class="form-group">
-        <label>New PIN</label>
-        <div class="pin-input-group" id="newPinGroup">
-          <input type="password" id="newPin1" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          <input type="password" id="newPin2" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          <input type="password" id="newPin3" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-          <input type="password" id="newPin4" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="off">
-        </div>
-        <div class="input-error" id="newPinError">Please enter a new 4-digit PIN</div>
-      </div>
-      <button type="submit" class="btn-secondary" id="updatePinBtn">Change PIN</button>
-    </form>
-
-    <hr class="section-divider">
-
-    <!-- ===== ORDERS SECTION ===== -->
-    <div class="orders-section">
-      <div class="orders-header">
-        <h3><i class="ph ph-package"></i> My Orders</h3>
-        <span class="order-count" id="orderCount">0 orders</span>
-      </div>
-      <p class="orders-subtitle">View all your past and current orders</p>
-
-      <div id="ordersContainer">
-        <div class="orders-loading">
-          <div class="spinner"></div>
-          <span>Loading your orders...</span>
-        </div>
-      </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeAddressModal()">Cancel</button>
+      <button class="save-btn" id="saveAddressBtn">Save Address</button>
     </div>
   </div>
 </div>
@@ -556,17 +668,27 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 
 <script>
 // ============================================================
-// PROFILE PAGE JAVASCRIPT
+// PROFILE PAGE - COMPLETE JAVASCRIPT
 // ============================================================
 
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const TOAST_DURATION = 3000;
+const ACTIVITY_LIMIT = 15;
+
+let currentUser = null;
+let isGoogleUser = false;
+let hasPin = false;
+let allOrders = [];
+let addresses = [];
+let addressSource = 'server';
+let editingAddressId = null;
+let selectedAddressLabel = 'Home';
 
 // ============================================================
 // TOAST SYSTEM
 // ============================================================
 function toast(msg, type) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.className = 'toast';
@@ -574,11 +696,11 @@ function toast(msg, type) {
   if (type === 'success') t.classList.add('success');
   t.style.opacity = '1';
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, TOAST_DURATION);
+  t._timer = setTimeout(function() { t.style.opacity = '0'; }, TOAST_DURATION);
 }
 
 function showStatus(msg, type) {
-  const el = document.getElementById('profileStatus');
+  var el = document.getElementById('profileStatus');
   if (!el) return;
   el.textContent = msg;
   el.className = 'auth-status ' + (type || 'info');
@@ -586,287 +708,100 @@ function showStatus(msg, type) {
 }
 
 function hideStatus() {
-  const el = document.getElementById('profileStatus');
+  var el = document.getElementById('profileStatus');
   if (el) { el.className = 'auth-status'; el.style.display = 'none'; }
 }
 
 // ============================================================
-// GET CURRENT USER
+// AUTH HELPERS
 // ============================================================
 function getCurrentUser() {
   try {
-    const user = localStorage.getItem('liquorbelle_user');
+    var user = localStorage.getItem('liquorbelle_user');
     return user ? JSON.parse(user) : null;
-  } catch { return null; }
+  } catch (e) { return null; }
 }
 
 function getAuthToken() {
   return localStorage.getItem('liquorbelle_token') || null;
 }
 
+function userKeyPart() {
+  return (currentUser && currentUser.email) ? currentUser.email.toLowerCase() : 'guest';
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function setupTabs() {
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      var tabName = this.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.tab-panel').forEach(function(p) {
+        p.classList.toggle('active', p.id === 'panel-' + tabName);
+      });
+    });
+  }
+}
+
 // ============================================================
 // PIN INPUT HELPERS
 // ============================================================
 function getPinValue(prefix) {
-  let pin = '';
-  for (let i = 1; i <= 4; i++) {
-    const input = document.getElementById(prefix + i);
+  var pin = '';
+  for (var i = 1; i <= 4; i++) {
+    var input = document.getElementById(prefix + i);
     if (input) pin += input.value || '';
   }
   return pin;
 }
 
+function clearPinInputs(prefix) {
+  for (var i = 1; i <= 4; i++) {
+    var input = document.getElementById(prefix + i);
+    if (input) { input.value = ''; input.classList.remove('valid', 'error'); }
+  }
+}
+
 function setupPinInputs(prefix) {
-  const inputs = [];
-  for (let i = 1; i <= 4; i++) {
+  var inputs = [];
+  for (var i = 1; i <= 4; i++) {
     inputs.push(document.getElementById(prefix + i));
   }
 
-  inputs.forEach((input, index) => {
-    if (!input) return;
-    
-    input.addEventListener('input', function() {
-      this.value = this.value.replace(/\D/g, '');
-      if (this.value.length > 1) this.value = this.value.slice(0, 1);
-      if (this.value.length === 1 && index < 3) {
-        if (inputs[index + 1]) inputs[index + 1].focus();
-      }
-    });
-    
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Backspace' && this.value === '' && index > 0) {
-        if (inputs[index - 1]) inputs[index - 1].focus();
-      }
-      if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && 
-          e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab') {
-        e.preventDefault();
-      }
-    });
-    
+  for (var idx = 0; idx < inputs.length; idx++) {
+    var input = inputs[idx];
+    if (!input) continue;
+
+    input.addEventListener('input', function(index, inputEl) {
+      return function() {
+        this.value = this.value.replace(/\D/g, '');
+        if (this.value.length > 1) this.value = this.value.slice(0, 1);
+        if (this.value.length === 1 && index < 3) {
+          if (inputs[index + 1]) inputs[index + 1].focus();
+        }
+        this.classList.remove('error', 'valid');
+      };
+    }(idx, input));
+
+    input.addEventListener('keydown', function(index) {
+      return function(e) {
+        if (e.key === 'Backspace' && this.value === '' && index > 0) {
+          if (inputs[index - 1]) inputs[index - 1].focus();
+        }
+        if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' &&
+            e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab') {
+          e.preventDefault();
+        }
+      };
+    }(idx));
+
     input.setAttribute('autocomplete', 'off');
-  });
-}
-
-// ============================================================
-// LOAD PROFILE
-// ============================================================
-async function loadProfile() {
-  const token = getAuthToken();
-  if (!token) {
-    toast('Please login first', 'error');
-    window.location.href = 'accounts.html';
-    return;
   }
-
-  try {
-    const response = await fetch(API_BASE + '/api/customers/me', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    
-    const data = await response.json();
-    
-    if (response.status === 401 || response.status === 403) {
-      localStorage.removeItem('liquorbelle_user');
-      localStorage.removeItem('liquorbelle_token');
-      window.location.href = 'accounts.html';
-      return;
-    }
-    
-    if (data.success) {
-      const user = data.customer;
-      document.getElementById('profileName').textContent = user.name;
-      document.getElementById('profileEmail').textContent = user.email;
-      document.getElementById('profileAvatar').textContent = user.name.charAt(0).toUpperCase();
-      document.getElementById('editName').value = user.name;
-      document.getElementById('editPhone').value = user.phone || '';
-      document.getElementById('editEmail').value = user.email;
-      
-      // Show auth method
-      if (user.googleId) {
-        document.getElementById('authMethodBadge').textContent = 'Google';
-        document.getElementById('authMethodBadge').style.background = '#4285F4';
-        document.getElementById('authMethodBadge').style.color = 'white';
-        document.getElementById('authMethodBadge').style.border = 'none';
-      } else {
-        document.getElementById('authMethodBadge').textContent = 'Email + PIN';
-        document.getElementById('authMethodBadge').style.background = 'var(--gold-bg)';
-        document.getElementById('authMethodBadge').style.color = 'var(--gold)';
-        document.getElementById('authMethodBadge').style.border = '1px solid var(--gold)';
-      }
-      
-      // Update local storage
-      localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-      
-      // Load orders after profile
-      loadOrders();
-    }
-  } catch (error) {
-    console.error('Load profile error:', error);
-    toast('Failed to load profile', 'error');
-  }
-}
-
-// ============================================================
-// LOAD ORDERS
-// ============================================================
-async function loadOrders() {
-  const container = document.getElementById('ordersContainer');
-  const orderCount = document.getElementById('orderCount');
-  const token = getAuthToken();
-
-  if (!token) {
-    container.innerHTML = `
-      <div class="orders-empty">
-        <i class="ph ph-lock"></i>
-        <p>Please login to see your orders</p>
-        <small><a href="login.html" style="color:var(--gold);font-weight:600;">Login here</a></small>
-      </div>
-    `;
-    if (orderCount) orderCount.textContent = '0 orders';
-    return;
-  }
-
-  container.innerHTML = `
-    <div class="orders-loading">
-      <div class="spinner"></div>
-      <span>Loading your orders...</span>
-    </div>
-  `;
-
-  try {
-    const response = await fetch(API_BASE + '/api/customers/me/orders', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('Session expired');
-    }
-
-    const data = await response.json();
-
-    if (data.success && data.orders && data.orders.length > 0) {
-      renderOrders(data.orders);
-      if (orderCount) orderCount.textContent = data.orders.length + ' order' + (data.orders.length > 1 ? 's' : '');
-    } else {
-      container.innerHTML = `
-        <div class="orders-empty">
-          <i class="ph ph-package"></i>
-          <p>No orders yet</p>
-          <small>Your orders will appear here once you place one.</small>
-        </div>
-      `;
-      if (orderCount) orderCount.textContent = '0 orders';
-    }
-  } catch (error) {
-    console.error('Load orders error:', error);
-    if (error.message === 'Session expired') {
-      logoutUser();
-    } else {
-      container.innerHTML = `
-        <div class="orders-empty">
-          <i class="ph ph-wifi-slash"></i>
-          <p>Could not load orders</p>
-          <small>Please check your connection and try again.</small>
-        </div>
-      `;
-    }
-  }
-}
-
-// ============================================================
-// RENDER ORDERS
-// ============================================================
-function renderOrders(orders) {
-  const container = document.getElementById('ordersContainer');
-
-  if (!orders || !orders.length) {
-    container.innerHTML = `
-      <div class="orders-empty">
-        <i class="ph ph-package"></i>
-        <p>No orders found</p>
-        <small>Your orders will appear here once you place one.</small>
-      </div>
-    `;
-    return;
-  }
-
-  let html = '';
-  for (let i = 0; i < orders.length; i++) {
-    const o = orders[i];
-    const items = o.items || [];
-    
-    let statusText = 'Unknown';
-    let statusClass = '';
-    
-    if (o.status === 'pending') {
-      statusText = 'Pending';
-      statusClass = 'status-pending';
-    } else if (o.status === 'paid') {
-      statusText = 'Paid';
-      statusClass = 'status-paid';
-    } else if (o.status === 'delivered') {
-      statusText = 'Delivered';
-      statusClass = 'status-delivered';
-    } else if (o.status === 'cancelled') {
-      statusText = 'Cancelled';
-      statusClass = 'status-cancelled';
-    }
-
-    let itemsHtml = '';
-    for (let j = 0; j < items.length; j++) {
-      const item = items[j];
-      const name = item.product_name || item.name || 'Product';
-      const qty = item.quantity || item.qty || 1;
-      const price = item.price || 0;
-      const size = item.size || '';
-      
-      itemsHtml += `
-        <div class="order-item">
-          <div>
-            <div class="order-item-name">${escapeHtml(name)} ${size ? '(' + escapeHtml(size) + ')' : ''}</div>
-            <div class="order-item-qty">Qty: ${qty}</div>
-          </div>
-          <div class="order-item-price">KES ${(price * qty).toLocaleString()}</div>
-        </div>
-      `;
-    }
-
-    const orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
-    const createdDate = o.created_at ? new Date(o.created_at) : new Date();
-    const deliveryFee = o.delivery || 0;
-    const subtotal = o.subtotal || (o.total - deliveryFee);
-
-    html += `
-      <div class="order-card">
-        <div class="order-header">
-          <div>
-            <div class="order-number">📦 Order #${escapeHtml(orderNumber)}</div>
-            <div class="order-date">${createdDate.toLocaleDateString()} at ${createdDate.toLocaleTimeString()}</div>
-          </div>
-          <span class="order-status ${statusClass}">${statusText}</span>
-        </div>
-        <div class="order-items">
-          ${itemsHtml}
-        </div>
-        <div class="order-footer">
-          <div class="order-total-row">
-            <span>Subtotal</span>
-            <span>KES ${(subtotal || 0).toLocaleString()}</span>
-          </div>
-          <div class="order-total-row">
-            <span>Delivery</span>
-            <span class="${deliveryFee === 0 ? 'delivery-free' : ''}">${deliveryFee === 0 ? 'FREE' : 'KES ' + deliveryFee.toLocaleString()}</span>
-          </div>
-          <div class="order-total-row">
-            <span>Total</span>
-            <span>KES ${(o.total || 0).toLocaleString()}</span>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  container.innerHTML = html;
 }
 
 // ============================================================
@@ -875,62 +810,708 @@ function renderOrders(orders) {
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/[&<>"']/g, function(m) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return map[m] || m;
   });
 }
 
 // ============================================================
-// UPDATE PROFILE - ALL USERS
+// SESSION INFO
+// ============================================================
+function parseUserAgent() {
+  var ua = navigator.userAgent || '';
+  var device = 'Desktop';
+  if (/iPhone|iPad|iPod/.test(ua)) device = 'iOS device';
+  else if (/Android/.test(ua)) device = 'Android device';
+  else if (/Mobile/.test(ua)) device = 'Mobile device';
+
+  var browser = 'Unknown browser';
+  if (/Edg\//.test(ua)) browser = 'Edge';
+  else if (/Chrome\//.test(ua) && !/Chromium/.test(ua)) browser = 'Chrome';
+  else if (/Firefox\//.test(ua)) browser = 'Firefox';
+  else if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) browser = 'Safari';
+
+  return { device: device, browser: browser };
+}
+
+function renderSessionCard() {
+  var info = parseUserAgent();
+  var methodEl = document.getElementById('sessionAuthMethod');
+  var deviceEl = document.getElementById('sessionDevice');
+  var browserEl = document.getElementById('sessionBrowser');
+  if (methodEl) methodEl.textContent = isGoogleUser ? 'Google' : 'Email + PIN';
+  if (deviceEl) deviceEl.textContent = info.device;
+  if (browserEl) browserEl.textContent = info.browser;
+}
+
+// ============================================================
+// ACTIVITY LOG
+// ============================================================
+function activityStorageKey() { return 'liquorbelle_activity_' + userKeyPart(); }
+
+function loadActivityLog() {
+  try {
+    var raw = localStorage.getItem(activityStorageKey());
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+
+function saveActivityLog(list) {
+  try { localStorage.setItem(activityStorageKey(), JSON.stringify(list.slice(0, ACTIVITY_LIMIT))); } catch (e) {}
+}
+
+function logActivity(type, message) {
+  var list = loadActivityLog();
+  list.unshift({ type: type, message: message, ts: Date.now() });
+  saveActivityLog(list);
+  renderActivityLog();
+}
+
+function renderActivityLog() {
+  var container = document.getElementById('activityList');
+  if (!container) return;
+  var list = loadActivityLog();
+  if (!list.length) {
+    container.innerHTML = '<div class="activity-empty">No activity recorded yet on this device.</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var iconMap = {
+      login: { icon: 'ph-sign-in', cls: 'i-login' },
+      profile_update: { icon: 'ph-user-circle-gear', cls: '' },
+      pin_update: { icon: 'ph-lock-key', cls: '' },
+      address_added: { icon: 'ph-map-pin-plus', cls: '' },
+      address_updated: { icon: 'ph-map-pin-line', cls: '' },
+      address_removed: { icon: 'ph-map-pin', cls: 'i-danger' },
+      default_changed: { icon: 'ph-star', cls: '' }
+    };
+    var meta = iconMap[item.type] || { icon: 'ph-dot', cls: '' };
+    var timeDiff = Date.now() - item.ts;
+    var timeAgo = 'Just now';
+    if (timeDiff > 60000) {
+      var mins = Math.floor(timeDiff / 60000);
+      if (mins < 60) timeAgo = mins + 'm ago';
+      else {
+        var hrs = Math.floor(mins / 60);
+        if (hrs < 24) timeAgo = hrs + 'h ago';
+        else {
+          var days = Math.floor(hrs / 24);
+          if (days < 30) timeAgo = days + 'd ago';
+          else timeAgo = new Date(item.ts).toLocaleDateString();
+        }
+      }
+    }
+    html += '<div class="activity-item">' +
+      '<div class="activity-icon ' + meta.cls + '"><i class="ph ' + meta.icon + '"></i></div>' +
+      '<div class="activity-body">' +
+      '<div class="activity-msg">' + escapeHtml(item.message) + '</div>' +
+      '<div class="activity-time">' + timeAgo + '</div>' +
+      '</div></div>';
+  }
+  container.innerHTML = html;
+}
+
+// ============================================================
+// STATS - UPDATED (removed Total Spent)
+// ============================================================
+function updateStatsRow() {
+  var statOrders = document.getElementById('statOrders');
+  var statSince = document.getElementById('statSince');
+
+  if (statOrders) statOrders.textContent = allOrders.length;
+
+  if (statSince) {
+    var raw = currentUser && (currentUser.created_at || currentUser.createdAt);
+    if (raw) {
+      var d = new Date(raw);
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      statSince.textContent = months[d.getMonth()] + ' ' + d.getFullYear();
+    } else {
+      statSince.textContent = '—';
+    }
+  }
+
+  var ordersTabCount = document.getElementById('ordersTabCount');
+  if (ordersTabCount) {
+    if (allOrders.length > 0) {
+      ordersTabCount.style.display = 'inline-block';
+      ordersTabCount.textContent = allOrders.length;
+    } else {
+      ordersTabCount.style.display = 'none';
+    }
+  }
+}
+
+// ============================================================
+// LOAD PROFILE
+// ============================================================
+async function loadProfile() {
+  var token = getAuthToken();
+  if (!token) {
+    var gate = document.getElementById('authGate');
+    var content = document.getElementById('profileContent');
+    if (gate) gate.classList.add('show');
+    if (content) content.style.display = 'none';
+    toast('Please login first', 'error');
+    setTimeout(function() { window.location.href = 'accounts.html'; }, 600);
+    return;
+  }
+
+  try {
+    var response = await fetch(API_BASE + '/api/customers/me', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    var data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      window.location.href = 'accounts.html';
+      return;
+    }
+
+    if (data.success) {
+      currentUser = data.customer;
+      isGoogleUser = !!currentUser.googleId;
+      hasPin = !!currentUser.hasPin;
+
+      document.getElementById('profileName').textContent = currentUser.name;
+      document.getElementById('profileEmail').textContent = currentUser.email;
+      document.getElementById('profileAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+      document.getElementById('editName').value = currentUser.name;
+      document.getElementById('editPhone').value = currentUser.phone || '';
+      document.getElementById('editEmail').value = currentUser.email;
+
+      var methodBadge = document.getElementById('authMethodBadge');
+      if (isGoogleUser) {
+        methodBadge.textContent = 'Google';
+        methodBadge.style.background = '#4285F4';
+        methodBadge.style.color = 'white';
+        methodBadge.style.border = 'none';
+      } else {
+        methodBadge.textContent = 'Email + PIN';
+        methodBadge.style.background = 'var(--gold-bg)';
+        methodBadge.style.color = 'var(--gold)';
+        methodBadge.style.border = '1px solid var(--gold)';
+      }
+
+      var pinBadge = document.getElementById('pinStatusBadge');
+      if (hasPin) {
+        pinBadge.textContent = '✅ PIN Set';
+        pinBadge.style.background = '#E8F5E9';
+        pinBadge.style.color = '#1A8A3E';
+        pinBadge.style.border = '1px solid #C8E6C9';
+        document.getElementById('pinSectionTitle').textContent = 'Change PIN';
+        document.getElementById('pinSectionDesc').textContent = 'Enter your current PIN and choose a new one';
+        document.getElementById('currentPinGroupWrapper').style.display = 'block';
+        document.getElementById('currentPinLabel').textContent = 'Current PIN';
+      } else {
+        pinBadge.textContent = '⚠️ PIN Not Set';
+        pinBadge.style.background = '#FFF3E0';
+        pinBadge.style.color = '#E67E22';
+        pinBadge.style.border = '1px solid #FFE0B2';
+        document.getElementById('pinSectionTitle').textContent = 'Set PIN';
+        document.getElementById('pinSectionDesc').textContent = isGoogleUser ? 'Set a PIN to secure your account' : 'You need to set a PIN to complete your registration';
+        document.getElementById('currentPinGroupWrapper').style.display = 'none';
+      }
+
+      localStorage.setItem('liquorbelle_user', JSON.stringify(currentUser));
+
+      renderSessionCard();
+      loadOrders();
+      loadAddresses();
+    }
+  } catch (error) {
+    console.error('Load profile error:', error);
+    toast('Failed to load profile', 'error');
+  }
+}
+
+// ============================================================
+// ORDERS
+// ============================================================
+async function loadOrders() {
+  var container = document.getElementById('ordersContainer');
+  var orderCount = document.getElementById('orderCount');
+  var token = getAuthToken();
+
+  if (!token) return;
+
+  container.innerHTML = '<div class="orders-loading"><div class="spinner"></div><span>Loading your orders...</span></div>';
+
+  try {
+    var response = await fetch(API_BASE + '/api/customers/me/orders', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    if (response.status === 401 || response.status === 403) throw new Error('Session expired');
+
+    var data = await response.json();
+
+    if (data.success && data.orders && data.orders.length > 0) {
+      allOrders = data.orders;
+      applyOrderFilters();
+      if (orderCount) orderCount.textContent = allOrders.length + ' order' + (allOrders.length > 1 ? 's' : '');
+    } else {
+      allOrders = [];
+      container.innerHTML = '<div class="orders-empty"><i class="ph ph-package"></i><p>No orders yet</p><small>Your orders will appear here once you place one.</small></div>';
+      if (orderCount) orderCount.textContent = '0 orders';
+    }
+    updateStatsRow();
+  } catch (error) {
+    console.error('Load orders error:', error);
+    if (error.message === 'Session expired') {
+      logoutUser();
+    } else {
+      container.innerHTML = '<div class="orders-empty"><i class="ph ph-wifi-slash"></i><p>Could not load orders</p><small>Please check your connection and try again.</small></div>';
+    }
+  }
+}
+
+function applyOrderFilters() {
+  var searchEl = document.getElementById('orderSearchInput');
+  var statusEl = document.getElementById('orderStatusFilter');
+  var sortEl = document.getElementById('orderSortFilter');
+  var noteEl = document.getElementById('orderFilterNote');
+
+  var q = (searchEl && searchEl.value.trim().toLowerCase()) || '';
+  var statusFilter = (statusEl && statusEl.value) || 'all';
+  var sortMode = (sortEl && sortEl.value) || 'newest';
+
+  var filtered = allOrders.slice();
+
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter(function(o) { return o.status === statusFilter; });
+  }
+
+  if (q) {
+    filtered = filtered.filter(function(o) {
+      var orderNumber = (o.order_number || (o._id || '')).toString().toLowerCase();
+      var itemsMatch = (o.items || []).some(function(it) {
+        var name = (it.product_name || it.name || '').toLowerCase();
+        return name.indexOf(q) !== -1;
+      });
+      return orderNumber.indexOf(q) !== -1 || itemsMatch;
+    });
+  }
+
+  filtered.sort(function(a, b) {
+    if (sortMode === 'oldest') return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+    if (sortMode === 'highest') return (b.total || 0) - (a.total || 0);
+    if (sortMode === 'lowest') return (a.total || 0) - (b.total || 0);
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+  });
+
+  if (noteEl) {
+    if (q || statusFilter !== 'all') {
+      noteEl.style.display = 'block';
+      noteEl.textContent = 'Showing ' + filtered.length + ' of ' + allOrders.length + ' order' + (allOrders.length !== 1 ? 's' : '');
+    } else {
+      noteEl.style.display = 'none';
+    }
+  }
+
+  renderOrders(filtered);
+}
+
+function renderOrders(orders) {
+  var container = document.getElementById('ordersContainer');
+
+  if (!orders || !orders.length) {
+    var hasAnyOrders = allOrders.length > 0;
+    container.innerHTML = hasAnyOrders ?
+      '<div class="orders-empty"><i class="ph ph-funnel-x"></i><p>No orders match your filters</p><small>Try clearing the search or changing the status filter.</small></div>' :
+      '<div class="orders-empty"><i class="ph ph-package"></i><p>No orders yet</p><small>Your orders will appear here once you place one.</small></div>';
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < orders.length; i++) {
+    var o = orders[i];
+    var items = o.items || [];
+
+    var statusText = 'Unknown';
+    var statusClass = '';
+    if (o.status === 'pending') { statusText = 'Pending'; statusClass = 'status-pending'; }
+    else if (o.status === 'paid') { statusText = 'Paid'; statusClass = 'status-paid'; }
+    else if (o.status === 'delivered') { statusText = 'Delivered'; statusClass = 'status-delivered'; }
+    else if (o.status === 'cancelled') { statusText = 'Cancelled'; statusClass = 'status-cancelled'; }
+
+    var itemsHtml = '';
+    for (var j = 0; j < items.length; j++) {
+      var item = items[j];
+      var name = item.product_name || item.name || 'Product';
+      var qty = item.quantity || item.qty || 1;
+      var price = item.price || 0;
+      var size = item.size || '';
+
+      itemsHtml += '<div class="order-item"><div><div class="order-item-name">' + escapeHtml(name) + (size ? ' (' + escapeHtml(size) + ')' : '') + '</div><div class="order-item-qty">Qty: ' + qty + '</div></div><div class="order-item-price">KES ' + (price * qty).toLocaleString() + '</div></div>';
+    }
+
+    var orderNumber = o.order_number || (o._id ? 'LB-' + o._id.slice(-8).toUpperCase() : 'N/A');
+    var createdDate = o.created_at ? new Date(o.created_at) : new Date();
+    var deliveryFee = o.delivery || 0;
+    var subtotal = o.subtotal || (o.total - deliveryFee);
+
+    html += '<div class="order-card">' +
+      '<div class="order-header">' +
+      '<div><div class="order-number">📦 Order #' + escapeHtml(orderNumber) +
+      '<button class="copy-btn" title="Copy order number" onclick="copyOrderNumber(\'' + escapeHtml(orderNumber).replace(/'/g, "\\'") + '\')"><i class="ph ph-copy"></i></button>' +
+      '</div><div class="order-date">' + createdDate.toLocaleDateString() + ' at ' + createdDate.toLocaleTimeString() + '</div></div>' +
+      '<span class="order-status ' + statusClass + '">' + statusText + '</span></div>' +
+      '<div class="order-items">' + itemsHtml + '</div>' +
+      '<div class="order-footer">' +
+      '<div class="order-total-row"><span>Subtotal</span><span>KES ' + (subtotal || 0).toLocaleString() + '</span></div>' +
+      '<div class="order-total-row"><span>Delivery</span><span class="' + (deliveryFee === 0 ? 'delivery-free' : '') + '">' + (deliveryFee === 0 ? 'FREE' : 'KES ' + deliveryFee.toLocaleString()) + '</span></div>' +
+      '<div class="order-total-row"><span>Total</span><span>KES ' + (o.total || 0).toLocaleString() + '</span></div>' +
+      '</div></div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function copyOrderNumber(orderNumber) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(orderNumber).then(function() {
+      toast('Order number copied', 'success');
+    }).catch(function() {
+      toast('Could not copy', 'error');
+    });
+  }
+}
+
+// ============================================================
+// ADDRESSES
+// ============================================================
+function addressStorageKey() { return 'liquorbelle_addresses_' + userKeyPart(); }
+
+function getLocalAddresses() {
+  try { return JSON.parse(localStorage.getItem(addressStorageKey()) || '[]'); } catch (e) { return []; }
+}
+
+function setLocalAddresses(list) {
+  try { localStorage.setItem(addressStorageKey(), JSON.stringify(list)); } catch (e) {}
+}
+
+async function loadAddresses() {
+  var container = document.getElementById('addressesContainer');
+  var token = getAuthToken();
+
+  try {
+    var res = await fetch(API_BASE + '/api/customers/me/addresses', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.status === 404) throw new Error('no-endpoint');
+    var data = await res.json();
+    if (data && data.success && Array.isArray(data.addresses)) {
+      addresses = data.addresses;
+      addressSource = 'server';
+    } else {
+      throw new Error('bad-response');
+    }
+  } catch (e) {
+    addresses = getLocalAddresses();
+    addressSource = 'local';
+  }
+
+  renderAddressSourceNote();
+  renderAddresses();
+  updateAddressTabCount();
+}
+
+function renderAddressSourceNote() {
+  var note = document.getElementById('addressSourceNote');
+  if (!note) return;
+  if (addressSource === 'local') {
+    note.innerHTML = '<span class="address-source-note"><i class="ph ph-device-mobile"></i> Saved on this device only</span>';
+  } else {
+    note.innerHTML = '<span class="address-source-note"><i class="ph ph-cloud-check"></i> Synced to your account</span>';
+  }
+}
+
+function updateAddressTabCount() {
+  var el = document.getElementById('addressTabCount');
+  if (!el) return;
+  if (addresses.length > 0) {
+    el.style.display = 'inline-block';
+    el.textContent = addresses.length;
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function renderAddresses() {
+  var container = document.getElementById('addressesContainer');
+  if (!container) return;
+
+  if (!addresses.length) {
+    container.innerHTML = '<div class="orders-empty"><i class="ph ph-map-pin"></i><p>No addresses saved yet</p><small>Add one so checkout is faster next time.</small></div>';
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < addresses.length; i++) {
+    var addr = addresses[i];
+    var id = addr.id || addr._id;
+    html += '<div class="address-card' + (addr.isDefault ? ' is-default' : '') + '">' +
+      '<div class="address-card-body">' +
+      '<div class="address-label-row">' +
+      '<span class="address-label-tag">' + escapeHtml(addr.label || 'Other') + '</span>' +
+      (addr.isDefault ? '<span class="address-default-tag">★ Default</span>' : '') +
+      '</div>' +
+      '<div class="address-text">' + escapeHtml(addr.line1 || '') + (addr.area ? ', ' + escapeHtml(addr.area) : '') + '</div>' +
+      '<div class="address-sub">' + (addr.landmark ? 'Near ' + escapeHtml(addr.landmark) + ' · ' : '') + (addr.phone ? escapeHtml(addr.phone) : '') + '</div>' +
+      '</div>' +
+      '<div class="address-actions">' +
+      '<button class="btn-icon-sm" title="Edit" onclick="openAddressModal(\'' + id + '\')"><i class="ph ph-pencil-simple"></i></button>' +
+      '<button class="btn-icon-sm danger" title="Delete" onclick="deleteAddress(\'' + id + '\')"><i class="ph ph-trash"></i></button>' +
+      (!addr.isDefault ? '<button class="btn-icon-sm" title="Set default" onclick="setDefaultAddress(\'' + id + '\')"><i class="ph ph-star"></i></button>' : '') +
+      '</div></div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function openAddressModal(id) {
+  editingAddressId = id || null;
+  var title = document.getElementById('addressModalTitle');
+  document.getElementById('addrLine1').value = '';
+  document.getElementById('addrArea').value = '';
+  document.getElementById('addrLandmark').value = '';
+  document.getElementById('addrPhone').value = '';
+  document.getElementById('addrIsDefault').checked = false;
+  selectedAddressLabel = 'Home';
+  var chips = document.querySelectorAll('.label-chip');
+  for (var i = 0; i < chips.length; i++) {
+    chips[i].classList.toggle('selected', chips[i].dataset.label === 'Home');
+  }
+  document.getElementById('addrLine1').classList.remove('error');
+  document.getElementById('addrLine1Error').classList.remove('show');
+
+  if (id) {
+    var addr = null;
+    for (var a = 0; a < addresses.length; a++) {
+      if ((addresses[a].id || addresses[a]._id) === id) { addr = addresses[a]; break; }
+    }
+    if (addr) {
+      title.textContent = 'Edit Address';
+      document.getElementById('addrLine1').value = addr.line1 || '';
+      document.getElementById('addrArea').value = addr.area || '';
+      document.getElementById('addrLandmark').value = addr.landmark || '';
+      document.getElementById('addrPhone').value = addr.phone || '';
+      document.getElementById('addrIsDefault').checked = !!addr.isDefault;
+      selectedAddressLabel = addr.label || 'Home';
+      var chips2 = document.querySelectorAll('.label-chip');
+      for (var c = 0; c < chips2.length; c++) {
+        chips2[c].classList.toggle('selected', chips2[c].dataset.label === selectedAddressLabel);
+      }
+    }
+  } else {
+    title.textContent = 'Add Address';
+  }
+
+  document.getElementById('addressModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAddressModal() {
+  document.getElementById('addressModal').classList.remove('open');
+  document.body.style.overflow = '';
+  editingAddressId = null;
+}
+
+async function saveAddress() {
+  var line1 = document.getElementById('addrLine1').value.trim();
+  var area = document.getElementById('addrArea').value.trim();
+  var landmark = document.getElementById('addrLandmark').value.trim();
+  var phone = document.getElementById('addrPhone').value.trim();
+  var isDefault = document.getElementById('addrIsDefault').checked;
+
+  if (!line1) {
+    document.getElementById('addrLine1').classList.add('error');
+    document.getElementById('addrLine1Error').classList.add('show');
+    return;
+  }
+
+  var payload = { label: selectedAddressLabel, line1: line1, area: area, landmark: landmark, phone: phone, isDefault: isDefault };
+  var btn = document.getElementById('saveAddressBtn');
+  btn.disabled = true;
+  var originalText = btn.textContent;
+  btn.innerHTML = '<span class="spinner" style="border-top-color:var(--white);"></span> Saving...';
+
+  var token = getAuthToken();
+  var isEdit = !!editingAddressId;
+
+  if (addressSource === 'server') {
+    try {
+      var url = API_BASE + '/api/customers/me/addresses' + (isEdit ? '/' + editingAddressId : '');
+      var res = await fetch(url, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(payload)
+      });
+      if (res.status === 404) throw new Error('no-endpoint');
+      var data = await res.json();
+      if (!data.success) throw new Error(data.message || 'failed');
+
+      await loadAddresses();
+      toast(isEdit ? 'Address updated' : 'Address saved', 'success');
+      logActivity(isEdit ? 'address_updated' : 'address_added', (isEdit ? 'Updated address: ' : 'Added address: ') + selectedAddressLabel);
+      closeAddressModal();
+      btn.disabled = false;
+      btn.textContent = originalText;
+      return;
+    } catch (e) {
+      addressSource = 'local';
+      addresses = getLocalAddresses();
+    }
+  }
+
+  // Local fallback
+  if (isDefault) {
+    for (var d = 0; d < addresses.length; d++) addresses[d].isDefault = false;
+  }
+  if (isEdit) {
+    var idx = -1;
+    for (var e = 0; e < addresses.length; e++) {
+      if ((addresses[e].id || addresses[e]._id) === editingAddressId) { idx = e; break; }
+    }
+    if (idx > -1) addresses[idx] = { id: editingAddressId, label: payload.label, line1: payload.line1, area: payload.area, landmark: payload.landmark, phone: payload.phone, isDefault: payload.isDefault };
+  } else {
+    addresses.push({ id: 'local_' + Date.now(), label: payload.label, line1: payload.line1, area: payload.area, landmark: payload.landmark, phone: payload.phone, isDefault: payload.isDefault });
+  }
+  setLocalAddresses(addresses);
+  renderAddressSourceNote();
+  renderAddresses();
+  updateAddressTabCount();
+  toast(isEdit ? 'Address updated' : 'Address saved', 'success');
+  logActivity(isEdit ? 'address_updated' : 'address_added', (isEdit ? 'Updated address: ' : 'Added address: ') + selectedAddressLabel);
+  closeAddressModal();
+  btn.disabled = false;
+  btn.textContent = originalText;
+}
+
+async function deleteAddress(id) {
+  var addr = null;
+  for (var a = 0; a < addresses.length; a++) {
+    if ((addresses[a].id || addresses[a]._id) === id) { addr = addresses[a]; break; }
+  }
+  var label = addr ? addr.label : 'address';
+
+  if (addressSource === 'server') {
+    try {
+      var token = getAuthToken();
+      var res = await fetch(API_BASE + '/api/customers/me/addresses/' + id, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (res.status === 404) throw new Error('no-endpoint');
+      var data = await res.json();
+      if (!data.success) throw new Error(data.message || 'failed');
+      await loadAddresses();
+      toast('Address removed', 'success');
+      logActivity('address_removed', 'Removed address: ' + label);
+      return;
+    } catch (e) {
+      addressSource = 'local';
+      addresses = getLocalAddresses();
+    }
+  }
+
+  var newAddresses = [];
+  for (var i = 0; i < addresses.length; i++) {
+    if ((addresses[i].id || addresses[i]._id) !== id) newAddresses.push(addresses[i]);
+  }
+  addresses = newAddresses;
+  setLocalAddresses(addresses);
+  renderAddressSourceNote();
+  renderAddresses();
+  updateAddressTabCount();
+  toast('Address removed', 'success');
+  logActivity('address_removed', 'Removed address: ' + label);
+}
+
+async function setDefaultAddress(id) {
+  var addr = null;
+  for (var a = 0; a < addresses.length; a++) {
+    if ((addresses[a].id || addresses[a]._id) === id) { addr = addresses[a]; break; }
+  }
+  var label = addr ? addr.label : 'address';
+
+  if (addressSource === 'server') {
+    try {
+      var token = getAuthToken();
+      var res = await fetch(API_BASE + '/api/customers/me/addresses/' + id + '/default', {
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (res.status === 404) throw new Error('no-endpoint');
+      var data = await res.json();
+      if (!data.success) throw new Error(data.message || 'failed');
+      await loadAddresses();
+      toast('Default address updated', 'success');
+      logActivity('default_changed', 'Set default address: ' + label);
+      return;
+    } catch (e) {
+      addressSource = 'local';
+      addresses = getLocalAddresses();
+    }
+  }
+
+  for (var i = 0; i < addresses.length; i++) {
+    addresses[i].isDefault = ((addresses[i].id || addresses[i]._id) === id);
+  }
+  setLocalAddresses(addresses);
+  renderAddresses();
+  toast('Default address updated', 'success');
+  logActivity('default_changed', 'Set default address: ' + label);
+}
+
+// ============================================================
+// UPDATE PROFILE
 // ============================================================
 async function updateProfile(e) {
   e.preventDefault();
   hideStatus();
-  
-  const name = document.getElementById('editName').value.trim();
-  const phone = document.getElementById('editPhone').value.trim();
-  
+
+  var name = document.getElementById('editName').value.trim();
+  var phone = document.getElementById('editPhone').value.trim();
+
   if (name.length < 2) {
     showStatus('Name must be at least 2 characters', 'error');
     document.getElementById('editName').focus();
     return;
   }
-  
-  const btn = document.getElementById('updateProfileBtn');
+
+  var btn = document.getElementById('updateProfileBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Updating...';
-  
+
   try {
-    const token = getAuthToken();
-    const response = await fetch(API_BASE + '/api/customers/me', {
+    var token = getAuthToken();
+    var response = await fetch(API_BASE + '/api/customers/me', {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify({ name, phone })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ name: name, phone: phone })
     });
-    
-    const data = await response.json();
-    
-    if (response.status === 401 || response.status === 403) {
-      logoutUser();
-      return;
-    }
-    
+
+    var data = await response.json();
+
+    if (response.status === 401 || response.status === 403) { logoutUser(); return; }
+
     if (data.success) {
       showStatus('✅ Profile updated successfully!', 'success');
       toast('Profile updated successfully', 'success');
-      
-      // Update local user
-      const user = getCurrentUser();
-      if (user) {
-        user.name = name;
-        user.phone = phone;
-        localStorage.setItem('liquorbelle_user', JSON.stringify(user));
-      }
-      
+
+      var user = getCurrentUser();
+      if (user) { user.name = name; user.phone = phone; localStorage.setItem('liquorbelle_user', JSON.stringify(user)); }
+
       document.getElementById('profileName').textContent = name;
       document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
+      logActivity('profile_update', 'Updated profile details');
     } else {
       showStatus('❌ ' + (data.message || 'Update failed'), 'error');
     }
@@ -943,73 +1524,81 @@ async function updateProfile(e) {
 }
 
 // ============================================================
-// UPDATE PIN - FOR ALL USERS (Email + PIN & Google users with PIN)
+// UPDATE / SET PIN
 // ============================================================
 async function updatePin(e) {
   e.preventDefault();
   hideStatus();
-  
-  const currentPin = getPinValue('currentPin');
-  const newPin = getPinValue('newPin');
-  
-  if (currentPin.length !== 4) {
-    showStatus('Please enter your current PIN', 'error');
+
+  var currentPin = getPinValue('currentPin');
+  var newPin = getPinValue('newPin');
+  var confirmPin = getPinValue('confirmPin');
+
+  if (!hasPin && isGoogleUser) {
+    // Skip current pin check
+  } else {
+    if (currentPin.length !== 4) { showStatus('Please enter your current PIN', 'error'); return; }
+  }
+
+  if (newPin.length !== 4) { showStatus('Please enter a new 4-digit PIN', 'error'); return; }
+
+  if (newPin !== confirmPin) {
+    showStatus('New PIN and Confirm PIN do not match', 'error');
+    document.getElementById('confirmPinError').classList.add('show');
     return;
   }
-  
-  if (newPin.length !== 4) {
-    showStatus('Please enter a new 4-digit PIN', 'error');
-    return;
-  }
-  
-  const btn = document.getElementById('updatePinBtn');
-  const originalText = btn.innerHTML;
+
+  var btn = document.getElementById('updatePinBtn');
+  var originalText = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Updating...';
-  
+  btn.innerHTML = '<span class="spinner"></span> ' + (hasPin ? 'Updating...' : 'Setting PIN...');
+
   try {
-    const token = getAuthToken();
-    const response = await fetch(API_BASE + '/api/customers/me/pin', {
+    var token = getAuthToken();
+    var endpoint = hasPin ? '/api/customers/me/pin' : '/api/customers/me/set-pin';
+    var body = hasPin ? { currentPin: currentPin, newPin: newPin } : { pin: newPin };
+
+    var response = await fetch(API_BASE + endpoint, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify({ 
-        currentPin: currentPin, 
-        newPin: newPin 
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(body)
     });
-    
-    const data = await response.json();
-    
+
+    var data = await response.json();
+
     if (response.status === 401 || response.status === 403) {
       toast('Session expired. Please login again.', 'error');
       logoutUser();
       return;
     }
-    
+
     if (data.success) {
-      showStatus('✅ PIN updated successfully!', 'success');
-      toast('PIN updated successfully', 'success');
-      
-      // Clear PIN inputs
-      for (let i = 1; i <= 4; i++) {
-        document.getElementById('currentPin' + i).value = '';
-        document.getElementById('newPin' + i).value = '';
-        document.getElementById('currentPin' + i).classList.remove('valid', 'error');
-        document.getElementById('newPin' + i).classList.remove('valid', 'error');
-      }
+      var wasSet = hasPin;
+      showStatus('✅ ' + (hasPin ? 'PIN updated' : 'PIN set') + ' successfully!', 'success');
+      toast((hasPin ? 'PIN updated' : 'PIN set') + ' successfully', 'success');
+
+      hasPin = true;
+      var pinBadge = document.getElementById('pinStatusBadge');
+      pinBadge.textContent = '✅ PIN Set';
+      pinBadge.style.background = '#E8F5E9';
+      pinBadge.style.color = '#1A8A3E';
+      pinBadge.style.border = '1px solid #C8E6C9';
+      document.getElementById('pinSectionTitle').textContent = 'Change PIN';
+      document.getElementById('pinSectionDesc').textContent = 'Enter your current PIN and choose a new one';
+      document.getElementById('currentPinGroupWrapper').style.display = 'block';
+      document.getElementById('currentPinLabel').textContent = 'Current PIN';
+
+      clearPinInputs('currentPin');
+      clearPinInputs('newPin');
+      clearPinInputs('confirmPin');
       document.getElementById('currentPin1').focus();
+
+      logActivity('pin_update', wasSet ? 'Changed account PIN' : 'Set account PIN');
     } else {
-      const errorMsg = data.message || 'Update failed';
+      var errorMsg = data.message || 'Update failed';
       showStatus('❌ ' + errorMsg, 'error');
-      
-      // If current PIN is wrong, highlight current PIN inputs
-      if (errorMsg.toLowerCase().includes('current pin') || errorMsg.toLowerCase().includes('incorrect')) {
-        for (let i = 1; i <= 4; i++) {
-          document.getElementById('currentPin' + i).classList.add('error');
-        }
+      if (errorMsg.toLowerCase().indexOf('current pin') !== -1 || errorMsg.toLowerCase().indexOf('incorrect') !== -1) {
+        for (var i = 1; i <= 4; i++) document.getElementById('currentPin' + i).classList.add('error');
       }
     }
   } catch (error) {
@@ -1018,6 +1607,102 @@ async function updatePin(e) {
   } finally {
     btn.disabled = false;
     btn.innerHTML = originalText;
+  }
+}
+
+// ============================================================
+// DELETE ACCOUNT
+// ============================================================
+function openDeleteModal() {
+  if (!hasPin) {
+    document.getElementById('pinRequiredText').style.display = 'block';
+    document.getElementById('pinDeleteSection').style.display = 'none';
+    document.getElementById('confirmDeleteBtn').disabled = true;
+    document.getElementById('confirmDeleteBtn').style.opacity = '0.5';
+    document.getElementById('confirmDeleteBtn').style.cursor = 'not-allowed';
+  } else {
+    document.getElementById('pinRequiredText').style.display = 'none';
+    document.getElementById('pinDeleteSection').style.display = 'block';
+    document.getElementById('confirmDeleteBtn').disabled = false;
+    document.getElementById('confirmDeleteBtn').style.opacity = '1';
+    document.getElementById('confirmDeleteBtn').style.cursor = 'pointer';
+    clearPinInputs('deletePin');
+    setTimeout(function() { document.getElementById('deletePin1').focus(); }, 300);
+    document.getElementById('deletePinError').classList.remove('show');
+  }
+
+  document.getElementById('deleteModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+  document.body.style.overflow = '';
+  clearPinInputs('deletePin');
+  document.getElementById('deletePinError').classList.remove('show');
+}
+
+async function confirmDeleteAccount() {
+  if (!hasPin) { toast('Please set a PIN first before deleting your account', 'error'); return; }
+
+  var pin = getPinValue('deletePin');
+  if (pin.length !== 4) {
+    document.getElementById('deletePinError').textContent = 'Please enter your 4-digit PIN';
+    document.getElementById('deletePinError').classList.add('show');
+    return;
+  }
+
+  var btn = document.getElementById('confirmDeleteBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Verifying PIN...';
+
+  try {
+    var token = getAuthToken();
+    var verifyResponse = await fetch(API_BASE + '/api/auth/verify-pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ pin: pin })
+    });
+
+    var verifyData = await verifyResponse.json();
+
+    if (!verifyData.success) {
+      document.getElementById('deletePinError').textContent = 'Invalid PIN. Please try again.';
+      document.getElementById('deletePinError').classList.add('show');
+      for (var i = 1; i <= 4; i++) document.getElementById('deletePin' + i).classList.add('error');
+      btn.disabled = false;
+      btn.innerHTML = 'Yes, Delete My Account';
+      return;
+    }
+
+    btn.innerHTML = '<span class="spinner"></span> Deleting account...';
+
+    var deleteResponse = await fetch(API_BASE + '/api/customers/me', {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    var deleteData = await deleteResponse.json();
+
+    if (deleteData.success) {
+      toast('Account deleted successfully', 'success');
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem(activityStorageKey());
+      localStorage.removeItem(addressStorageKey());
+      closeDeleteModal();
+      setTimeout(function() { window.location.href = 'accounts.html'; }, 1000);
+    } else {
+      toast(deleteData.message || 'Failed to delete account', 'error');
+      closeDeleteModal();
+    }
+  } catch (error) {
+    console.error('Delete account error:', error);
+    toast('Network error. Please try again.', 'error');
+    closeDeleteModal();
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Yes, Delete My Account';
   }
 }
 
@@ -1034,38 +1719,120 @@ function logoutUser() {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-  // Setup PIN inputs
+  setupTabs();
   setupPinInputs('currentPin');
   setupPinInputs('newPin');
-  
-  // Load profile
+  setupPinInputs('confirmPin');
+  setupPinInputs('deletePin');
+
   loadProfile();
-  
-  // Form submissions
+
   document.getElementById('profileForm').addEventListener('submit', updateProfile);
   document.getElementById('pinForm').addEventListener('submit', updatePin);
-  
-  // Real-time validation
+
+  document.getElementById('deleteAccountBtn').addEventListener('click', openDeleteModal);
+  document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDeleteAccount);
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+  });
+
+  document.getElementById('addAddressBtn').addEventListener('click', function() { openAddressModal(null); });
+  document.getElementById('saveAddressBtn').addEventListener('click', saveAddress);
+  document.getElementById('addressModal').addEventListener('click', function(e) {
+    if (e.target === this) closeAddressModal();
+  });
+
+  var chips = document.querySelectorAll('.label-chip');
+  for (var ci = 0; ci < chips.length; ci++) {
+    chips[ci].addEventListener('click', function() {
+      selectedAddressLabel = this.dataset.label;
+      var allChips = document.querySelectorAll('.label-chip');
+      for (var cj = 0; cj < allChips.length; cj++) {
+        allChips[cj].classList.toggle('selected', allChips[cj] === this);
+      }
+    });
+  }
+
+  document.getElementById('orderSearchInput').addEventListener('input', applyOrderFilters);
+  document.getElementById('orderStatusFilter').addEventListener('change', applyOrderFilters);
+  document.getElementById('orderSortFilter').addEventListener('change', applyOrderFilters);
+
+  document.getElementById('clearActivityBtn').addEventListener('click', function() {
+    saveActivityLog([]);
+    renderActivityLog();
+    toast('Activity log cleared', 'success');
+  });
+
+  document.getElementById('logoutSessionBtn').addEventListener('click', function() {
+    logActivity('login', 'Logged out of this device');
+    setTimeout(logoutUser, 200);
+  });
+
+  // Confirm PIN validation
+  var confirmInputs = document.querySelectorAll('#confirmPinGroup input');
+  for (var c = 0; c < confirmInputs.length; c++) {
+    confirmInputs[c].addEventListener('input', function() {
+      var newPin = getPinValue('newPin');
+      var confirmPin = getPinValue('confirmPin');
+      var errorEl = document.getElementById('confirmPinError');
+
+      if (confirmPin.length === 4 && newPin.length === 4) {
+        if (newPin !== confirmPin) {
+          errorEl.classList.add('show');
+          var allConfirm = document.querySelectorAll('#confirmPinGroup input');
+          for (var a = 0; a < allConfirm.length; a++) allConfirm[a].classList.add('error');
+        } else {
+          errorEl.classList.remove('show');
+          var allConfirm2 = document.querySelectorAll('#confirmPinGroup input');
+          for (var b = 0; b < allConfirm2.length; b++) allConfirm2[b].classList.add('valid');
+        }
+      } else {
+        errorEl.classList.remove('show');
+        var allConfirm3 = document.querySelectorAll('#confirmPinGroup input');
+        for (var d = 0; d < allConfirm3.length; d++) allConfirm3[d].classList.remove('error', 'valid');
+      }
+    });
+  }
+
+  // Delete PIN auto-focus
+  var deletePinInputs = document.querySelectorAll('#deletePinGroup input');
+  for (var dp = 0; dp < deletePinInputs.length; dp++) {
+    deletePinInputs[dp].addEventListener('input', function() {
+      var allDelete = document.querySelectorAll('#deletePinGroup input');
+      for (var d = 0; d < allDelete.length; d++) allDelete[d].classList.remove('error');
+      document.getElementById('deletePinError').classList.remove('show');
+      var idx = -1;
+      for (var x = 0; x < allDelete.length; x++) {
+        if (allDelete[x] === this) { idx = x; break; }
+      }
+      if (this.value.length === 1 && idx < 3) {
+        if (allDelete[idx + 1]) allDelete[idx + 1].focus();
+      }
+    });
+  }
+
+  // Real-time validation for name
   document.getElementById('editName').addEventListener('input', function() {
-    const errorEl = document.getElementById('editNameError');
-    const isValid = this.value.trim().length >= 2;
+    var errorEl = document.getElementById('editNameError');
+    var isValid = this.value.trim().length >= 2;
     this.classList.toggle('error', this.value.length > 0 && !isValid);
     this.classList.toggle('valid', isValid);
     if (errorEl) errorEl.classList.toggle('show', this.value.length > 0 && !isValid);
   });
-  
+
+  // Real-time validation for phone
   document.getElementById('editPhone').addEventListener('input', function() {
-    const errorEl = document.getElementById('editPhoneError');
-    const phone = this.value.replace(/\D/g, '');
+    var errorEl = document.getElementById('editPhoneError');
+    var phone = this.value.replace(/\D/g, '');
     this.value = phone;
-    const isValid = phone.length === 10;
+    var isValid = phone.length === 10;
     this.classList.toggle('error', phone.length > 0 && phone.length < 10);
     this.classList.toggle('valid', isValid);
     if (errorEl) errorEl.classList.toggle('show', phone.length > 0 && phone.length < 10);
   });
 });
 
-console.log('👤 Profile page loaded');
+console.log('👤 Profile page loaded (v3 - removed Total Spent)');
 </script>
 </body>
 </html>
