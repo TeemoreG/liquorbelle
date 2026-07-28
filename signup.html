@@ -450,25 +450,41 @@ document.getElementById('pinToggleBtn').addEventListener('click', function() {
 });
 
 // ============================================================
-// CHECK IF EMAIL EXISTS - SILENT CHECK
+// CHECK IF EMAIL EXISTS - SILENT CHECK (FIXED - Uses /check-email)
 // ============================================================
 function checkEmailExists(email) {
-  return fetch(AUTH_BASE + '/check-user', {
+  // Clean and format email
+  var cleanEmail = email.toLowerCase().trim();
+  
+  return fetch(AUTH_BASE + '/check-email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
+    body: JSON.stringify({ email: cleanEmail })
   })
-  .then(function(res) { return res.json(); })
+  .then(function(res) {
+    if (!res.ok) {
+      // If server returns error, treat as not exists to avoid blocking user
+      console.warn('Check email returned status:', res.status);
+      return { exists: false };
+    }
+    return res.json();
+  })
   .then(function(data) {
-    return data.exists || false;
+    // Handle both { exists: true/false } and { success: true, exists: true/false }
+    if (data && typeof data.exists === 'boolean') {
+      return data.exists;
+    }
+    return false;
   })
-  .catch(function() {
+  .catch(function(err) {
+    // On network error, don't block registration - assume email is available
+    console.warn('Check email network error:', err);
     return false;
   });
 }
 
 // ============================================================
-// EMAIL INPUT - SILENT CHECK
+// EMAIL INPUT - SILENT CHECK (FIXED)
 // ============================================================
 var emailCheckTimeout = null;
 var emailRegistered = false;
@@ -534,11 +550,12 @@ document.getElementById('emailInput').addEventListener('input', function() {
     checkEmailExists(email)
       .then(function(exists) {
         emailRegistered = exists;
-        var input = document.getElementById('emailInput');
         updateEmailStatus(true, exists);
       })
       .catch(function() {
-        var input = document.getElementById('emailInput');
+        // Silently fail - don't show errors to user
+        var icon = document.getElementById('emailCheckIcon');
+        var msg = document.getElementById('emailCheckMessage');
         icon.style.display = 'none';
         msg.textContent = '';
       });
@@ -582,25 +599,39 @@ document.getElementById('fullNameInput').addEventListener('input', function() {
 });
 
 // ============================================================
-// SEND OTP
+// SEND OTP - FIXED
 // ============================================================
 function sendOtp(email) {
+  var cleanEmail = email.toLowerCase().trim();
+  
   return fetch(AUTH_BASE + '/send-email-otp', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
+    body: JSON.stringify({ email: cleanEmail })
   })
-  .then(function(res) { return res.json(); })
+  .then(function(res) {
+    if (!res.ok) {
+      return res.json().then(function(data) {
+        console.error('Send OTP error response:', data);
+        throw new Error(data.message || 'Failed to send OTP');
+      });
+    }
+    return res.json();
+  })
   .then(function(data) {
     if (!data.success) {
       throw new Error(data.message || 'Failed to send OTP');
     }
     return data;
+  })
+  .catch(function(err) {
+    console.error('Send OTP error:', err);
+    throw err;
   });
 }
 
 // ============================================================
-// REGISTER FORM SUBMIT
+// REGISTER FORM SUBMIT - FIXED
 // ============================================================
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -660,7 +691,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
   // Store registration data
   registrationData = {
     name: fullName,
-    email: email,
+    email: email.toLowerCase().trim(),
     phone: phone,
     pin: pin
   };
@@ -688,7 +719,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 });
 
 // ============================================================
-// VERIFY OTP
+// VERIFY OTP - FIXED
 // ============================================================
 document.getElementById('verifyOtpBtn').addEventListener('click', function() {
   var otp = otpGroup.getValue();
@@ -708,13 +739,17 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name: registrationData.name,
-      email: registrationData.email,
+      email: registrationData.email.toLowerCase().trim(),
       phone: registrationData.phone,
       pin: registrationData.pin,
       otp: otp
     })
   })
-  .then(function(res) { return res.json().then(function(data) { return { status: res.status, data: data }; }); })
+  .then(function(res) { 
+    return res.json().then(function(data) { 
+      return { status: res.status, data: data }; 
+    }); 
+  })
   .then(function(result) {
     setLoading('verifyOtpBtn', 'verifyOtpBtnText', false, '', 'Verify & Create Account');
 
@@ -735,6 +770,7 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
         errorMsg = result.data.errors.map(function(e) { return e.msg; }).join(', ');
       }
       setFieldError('otpError', errorMsg);
+      otpGroup.clear();
       return;
     }
 
@@ -742,11 +778,19 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
       setFieldError('otpError', result.data.message || 'Invalid OTP. Please try again.');
       otpGroup.setError();
       otpGroup.clear();
+      otpGroup.focus();
       return;
     }
 
     if (result.status === 409) {
       showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
+      return;
+    }
+
+    if (result.status === 429) {
+      setFieldError('otpError', result.data.message || 'Too many attempts. Please try again later.');
+      otpGroup.setError();
+      otpGroup.clear();
       return;
     }
 
@@ -762,7 +806,7 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
 });
 
 // ============================================================
-// RESEND OTP
+// RESEND OTP - FIXED
 // ============================================================
 document.getElementById('resendOtpBtn').addEventListener('click', function() {
   if (this.disabled) return;
@@ -775,6 +819,8 @@ document.getElementById('resendOtpBtn').addEventListener('click', function() {
     .then(function() {
       toast('New verification code sent', 'success');
       startOtpTimer();
+      otpGroup.clear();
+      otpGroup.focus();
     })
     .catch(function(err) {
       toast(err.message || 'Failed to resend code', 'error');
@@ -817,10 +863,11 @@ document.getElementById('backToRegisterBtn').addEventListener('click', function(
   document.getElementById('resendOtpBtn').disabled = false;
   document.getElementById('otpTimer').textContent = '';
   hideBanner('registerBanner');
+  otpGroup.clear();
 });
 
 // ============================================================
-// GOOGLE SIGNUP
+// GOOGLE SIGNUP - FIXED
 // ============================================================
 document.getElementById('googleRegisterBtn').addEventListener('click', function() {
   var btn = this;
@@ -830,7 +877,7 @@ document.getElementById('googleRegisterBtn').addEventListener('click', function(
 });
 
 // ============================================================
-// HANDLE GOOGLE CALLBACK
+// HANDLE GOOGLE CALLBACK - FIXED
 // ============================================================
 function handleGoogleCallback() {
   var params = new URLSearchParams(window.location.search);
@@ -845,11 +892,20 @@ function handleGoogleCallback() {
     return;
   }
 
-  var cleanUrl = window.location.pathname + window.location.search.replace(/[?&]google_auth=[^&]*/, '').replace(/[?&]token=[^&]*/, '').replace(/[?&]email=[^&]*/, '').replace(/[?&]name=[^&]*/, '').replace(/[?&]phone=[^&]*/, '').replace(/[?&]is_new=[^&]*/, '');
+  // Clean URL params
+  var cleanUrl = window.location.pathname + window.location.search
+    .replace(/[?&]google_auth=[^&]*/, '')
+    .replace(/[?&]token=[^&]*/, '')
+    .replace(/[?&]email=[^&]*/, '')
+    .replace(/[?&]name=[^&]*/, '')
+    .replace(/[?&]phone=[^&]*/, '')
+    .replace(/[?&]is_new=[^&]*/, '');
+  
   if (window.history && window.history.replaceState) {
     window.history.replaceState({}, document.title, cleanUrl);
   }
 
+  // If user already exists (not new), redirect to login
   if (!isNew) {
     toast('This email is already registered. Please sign in.', 'error');
     setTimeout(function() {
@@ -858,14 +914,26 @@ function handleGoogleCallback() {
     return;
   }
 
-  // Pre-fill form with Google data
-  document.getElementById('fullNameInput').value = decodeURIComponent(name);
-  document.getElementById('emailInput').value = decodeURIComponent(email);
+  // New user - pre-fill form with Google data
+  var decodedName = decodeURIComponent(name);
+  var decodedEmail = decodeURIComponent(email);
+  
+  document.getElementById('fullNameInput').value = decodedName;
+  document.getElementById('emailInput').value = decodedEmail;
   if (phone) {
     document.getElementById('phoneInput').value = phone;
   }
 
+  // Trigger email check to show valid status
+  var event = new Event('input');
+  document.getElementById('emailInput').dispatchEvent(event);
+
   toast('Welcome! Please set your PIN to complete registration.', 'info');
+  
+  // Switch to register step if on OTP step
+  document.getElementById('stepOtp').classList.remove('active');
+  document.getElementById('stepRegister').classList.add('active');
+  
   pinGroup.focus();
 }
 
