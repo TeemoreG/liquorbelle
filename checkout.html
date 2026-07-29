@@ -2065,7 +2065,7 @@ function updateMobileMenuAuth() {
 }
 
 // ============================================================
-// PLACE ORDER
+// PLACE ORDER - FIXED
 // ============================================================
 async function placeOrder() {
   var btn = document.getElementById('placeOrderBtn');
@@ -2127,30 +2127,47 @@ async function placeOrder() {
   var orderNumber = 'LB-' + Date.now().toString(36).toUpperCase();
   var paymentMethod = document.getElementById('selectedPaymentMethod').value;
 
-  var payload = {
-    orderNumber: orderNumber,
-    customerName: name,
-    customerEmail: email,
-    phone: phone,
-    address: address,
-    notes: '',
-    subtotal: subtotal,
-    delivery: delivery,
-    total: total,
-    items: items
-  };
+  // ✅ FIX: Build payload based on payment method
+  var payload;
+  var endpoint;
+
+  if (paymentMethod === 'pod') {
+    // POD expects orderNumber
+    payload = {
+      orderNumber: orderNumber,
+      customerName: name,
+      customerEmail: email,
+      phone: phone,
+      address: address,
+      notes: '',
+      subtotal: subtotal,
+      delivery: delivery,
+      total: total,
+      items: items
+    };
+    endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/orders/pod';
+  } else {
+    // ✅ M-PESA expects orderId (NOT orderNumber)
+    payload = {
+      orderId: orderNumber,        // ← FIX: Use orderId, not orderNumber
+      customerName: name,
+      customerEmail: email,
+      phone: phone,
+      address: address,
+      subtotal: subtotal,
+      delivery: delivery,
+      total: total,
+      items: items
+    };
+    endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/stkpush';
+  }
+
+  console.log('📦 Sending payload:', payload); // Debug log
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Processing...';
 
   try {
-    var endpoint;
-    if (paymentMethod === 'pod') {
-      endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/orders/pod';
-    } else {
-      endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/stkpush';
-    }
-
     var response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2175,16 +2192,12 @@ async function placeOrder() {
       showSnack(data.message || 'Order failed. Please try again.', true);
     }
   } catch (err) {
+    console.error('Order error:', err);
     showSnack('Network error. Please check your connection.', true);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="ph ph-check-circle"></i> Place Order';
   }
-}
-
-function closeSuccessModal() {
-  document.getElementById('successModal').classList.remove('active');
-  window.location.href = 'accounts.html';
 }
 
 // ============================================================
