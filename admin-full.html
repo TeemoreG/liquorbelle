@@ -1690,8 +1690,10 @@ async function loadOrders() {
     if (data.success && data.orders) {
       allOrders = data.orders;
       applyFilters();
+      updateOrderStats(); // ✅ Add this line
     } else if (!allOrders || allOrders.length === 0) {
       list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>';
+      updateOrderStats(); // ✅ Add this line
     }
   } catch (error) {
     console.error('Error loading orders:', error);
@@ -1701,6 +1703,28 @@ async function loadOrders() {
       showToast('❌ Failed to refresh orders', 'error');
     }
   }
+}
+
+// ==================== UPDATE ORDER STATS ====================
+function updateOrderStats() {
+  const totalEl = document.getElementById('totalOrders');
+  const pendingEl = document.getElementById('pendingOrders');
+  const paidEl = document.getElementById('paidOrders');
+  const deliveredEl = document.getElementById('deliveredOrders');
+
+  if (!totalEl) return;
+
+  const total = allOrders.length;
+  const pending = allOrders.filter(o => o.status === 'pending' || o.status === 'PENDING').length;
+  const paid = allOrders.filter(o => o.status === 'paid' || o.status === 'PAID').length;
+  const delivered = allOrders.filter(o => o.status === 'delivered' || o.status === 'DELIVERED').length;
+
+  totalEl.textContent = total;
+  pendingEl.textContent = pending;
+  paidEl.textContent = paid;
+  deliveredEl.textContent = delivered;
+
+  console.log('📊 Order stats updated:', { total, pending, paid, delivered });
 }
 
 window.applyFilters = function() {
@@ -1729,6 +1753,7 @@ function renderOrders(orders) {
   if (!orders || orders.length === 0) {
     list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders match your filters</p></div>';
     if (countDisplay) countDisplay.textContent = '0 orders';
+    updateOrderStats(); // ✅ Update stats when filtering
     return;
   }
   if (countDisplay) countDisplay.textContent = orders.length + ' orders';
@@ -1738,6 +1763,7 @@ function renderOrders(orders) {
     const statusText = o.status === 'pending' ? '⏳ Pending' : o.status === 'paid' ? '✅ Paid' : o.status === 'delivered' ? '🚚 Delivered' : o.status || 'Unknown';
     return '<div class="order-card"><div class="order-header"><div><div class="order-id">#' + (o.order_number || o._id) + '</div><div class="order-customer">' + (o.customer_name || 'Guest') + '</div><div class="order-meta-row"><span class="order-meta-chip"><i class="ph ph-phone"></i> ' + (o.phone || 'N/A') + '</span><span class="order-meta-chip"><i class="ph ph-envelope"></i> ' + (o.customer_email || 'N/A') + '</span><span class="order-meta-chip"><i class="ph ph-calendar"></i> ' + new Date(o.created_at).toLocaleDateString() + ' ' + new Date(o.created_at).toLocaleTimeString() + '</span></div></div><div class="order-header-right"><span class="order-status ' + statusClass + '">' + statusText + '</span><div class="contact-buttons">' + (o.phone ? '<a href="tel:' + o.phone + '" class="btn btn-xs btn-call"><i class="ph ph-phone"></i> Call</a>' : '') + (o.phone ? '<a href="https://wa.me/254' + o.phone.replace(/\D/g, '') + '" target="_blank" class="btn btn-xs btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>' : '') + '</div></div></div><div class="order-items">' + items.map(item => '<div class="order-item"><div class="order-item-details"><div class="order-item-name">' + (item.product_name || item.name || 'Product') + '</div>' + (item.size ? '<div class="order-item-size">' + item.size + '</div>' : '') + '<div class="order-item-qty">Qty: ' + (item.quantity || item.qty || 1) + '</div></div><div class="order-item-price">KES ' + (item.price || 0).toLocaleString() + '</div></div>').join('') + '</div><div class="order-footer"><div class="order-total">KES ' + (o.total || 0).toLocaleString() + '</div><div class="order-actions">' + (o.status !== 'delivered' ? '<button class="btn btn-green btn-sm" onclick="markDelivered(\'' + o._id + '\')"><i class="ph ph-check-circle"></i> Mark Delivered</button>' : '<span class="completed-chip"><i class="ph ph-check-circle"></i> Completed</span>') + '</div></div></div>';
   }).join('');
+  updateOrderStats(); // ✅ Update stats after rendering
 }
 
 window.markDelivered = async function(orderId) {
@@ -1745,12 +1771,21 @@ window.markDelivered = async function(orderId) {
   try {
     const response = await adminFetch(API_BASE + '/api/db/orders/' + orderId, { method: 'PUT', body: JSON.stringify({ status: 'delivered' }) });
     const data = await response.json();
-    if (data.success) { showToast('✅ Order marked as delivered!', 'success'); preserveScroll(loadOrders); }
+    if (data.success) { 
+      showToast('✅ Order marked as delivered!', 'success'); 
+      preserveScroll(loadOrders); 
+    }
     else { showToast('❌ ' + (data.message || 'Failed to update order'), 'error'); }
-  } catch (error) { console.error('Error updating order:', error); showToast('❌ Network error. Please try again.', 'error'); }
+  } catch (error) { 
+    console.error('Error updating order:', error); 
+    showToast('❌ Network error. Please try again.', 'error'); 
+  }
 };
 
-window.refreshOrders = function() { preserveScroll(loadOrders); showToast('🔄 Refreshing orders...', ''); };
+window.refreshOrders = function() { 
+  preserveScroll(loadOrders); 
+  showToast('🔄 Refreshing orders...', ''); 
+};
 
 // ==================== ANALYTICS ====================
 async function loadAnalytics() {
