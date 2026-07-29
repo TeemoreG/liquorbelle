@@ -1317,52 +1317,224 @@ window.bulkDeleteProducts = async function() {
   await preserveScroll(loadProducts);
 };
 
-// ==================== ADD PRODUCT ====================
+// ==================== ADD PRODUCT - FIXED ====================
 window.addProduct = async function() {
-  const name = document.getElementById('prodName').value.trim();
-  const category = document.getElementById('prodCategory').value;
-  const badge = document.getElementById('prodBadge').value;
-  const image = document.getElementById('prodImage').value.trim();
-  const description = document.getElementById('prodDesc').value.trim();
-  const isTrending = document.getElementById('prodTrending').checked;
-  const isNew = document.getElementById('prodNew').checked;
-  const rating = parseFloat(document.getElementById('prodRating').value);
-  if (!name) { showToast('❌ Please enter a product name', 'error'); return; }
+  // Get all form elements with proper validation
+  const nameInput = document.getElementById('prodName');
+  const categorySelect = document.getElementById('prodCategory');
+  const badgeInput = document.getElementById('prodBadge');
+  const imageInput = document.getElementById('prodImage');
+  const descInput = document.getElementById('prodDesc');
+  const trendingCheck = document.getElementById('prodTrending');
+  const newCheck = document.getElementById('prodNew');
+  const ratingInput = document.getElementById('prodRating');
+  const addBtn = document.getElementById('addProductBtn');
+  
+  // Validate required elements exist
+  if (!nameInput || !categorySelect || !imageInput) {
+    showToast('❌ Form elements not found. Please refresh the page.', 'error');
+    return;
+  }
+
+  // Get values with proper validation
+  const name = nameInput.value.trim();
+  const category = categorySelect.value;
+  const badge = badgeInput ? badgeInput.value.trim() : '';
+  const image = imageInput.value.trim();
+  const description = descInput ? descInput.value.trim() : '';
+  const isTrending = trendingCheck ? trendingCheck.checked : false;
+  const isNew = newCheck ? newCheck.checked : false;
+  const rating = ratingInput ? parseFloat(ratingInput.value) || 4.0 : 4.0;
+  
+  // Validate required fields
+  if (!name) {
+    showToast('❌ Please enter a product name', 'error');
+    nameInput.focus();
+    return;
+  }
+  
+  if (!category || category === '') {
+    showToast('❌ Please select a category', 'error');
+    categorySelect.focus();
+    return;
+  }
+  
+  if (!image) {
+    showToast('❌ Please enter an image URL', 'error');
+    imageInput.focus();
+    return;
+  }
+
+  // Get variants from the variants table
   const variantRows = document.querySelectorAll('#variantsBody .variant-row');
+  
+  if (variantRows.length === 0) {
+    showToast('❌ Please add at least one variant', 'error');
+    return;
+  }
+
   const variants = [];
-  variantRows.forEach(row => {
+  let hasValidVariant = false;
+  
+  variantRows.forEach((row, index) => {
     const sizeSelect = row.querySelector('.variant-size');
     const sizeOther = row.querySelector('.variant-size-other');
-    const price = parseFloat(row.querySelector('.variant-price').value);
-    const discount = parseInt(row.querySelector('.variant-discount').value) || 0;
-    const flavour = row.querySelector('.variant-flavour').value.trim();
-    const stock = row.querySelector('.variant-stock').value;
-    const stockQuantity = parseInt(row.querySelector('.variant-quantity').value) || 0;
-    let size = sizeSelect.value;
-    if (size === 'OTHER') size = sizeOther ? sizeOther.value.trim() : '';
-    if (size && price && price > 0) variants.push({ size, price, discount, flavour, stock, stockQuantity });
+    const priceInput = row.querySelector('.variant-price');
+    const discountInput = row.querySelector('.variant-discount');
+    const flavourInput = row.querySelector('.variant-flavour');
+    const stockSelect = row.querySelector('.variant-stock');
+    const quantityInput = row.querySelector('.variant-quantity');
+    
+    // Get size (handle OTHER option)
+    let size = sizeSelect ? sizeSelect.value : '';
+    if (size === 'OTHER' && sizeOther) {
+      size = sizeOther.value.trim();
+    }
+    
+    // Get other values with proper parsing
+    const price = priceInput ? parseFloat(priceInput.value) : 0;
+    const discount = discountInput ? parseInt(discountInput.value) || 0 : 0;
+    const flavour = flavourInput ? flavourInput.value.trim() : '';
+    const stock = stockSelect ? stockSelect.value : 'inStock';
+    const stockQuantity = quantityInput ? parseInt(quantityInput.value) || 0 : 20;
+    
+    // Validate variant
+    if (size && price > 0) {
+      variants.push({
+        size: size,
+        price: price,
+        discount: discount,
+        flavour: flavour || 'Original',
+        stock: stock,
+        stockQuantity: stockQuantity
+      });
+      hasValidVariant = true;
+    } else {
+      console.warn(`Variant ${index + 1} skipped: size="${size}", price=${price}`);
+    }
   });
-  if (variants.length === 0) { showToast('❌ Please add at least one valid variant', 'error'); return; }
-  const productData = { name, category, badge: badge || '', image: image || '', description: description || '', isTrending, isNew, rating, variants };
-  const btn = document.getElementById('addProductBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+
+  if (!hasValidVariant || variants.length === 0) {
+    showToast('❌ Please add at least one valid variant with size and price', 'error');
+    return;
+  }
+
+  // Prepare product data
+  const productData = {
+    name: name,
+    category: category,
+    badge: badge || '',
+    image: image || '',
+    description: description || '',
+    isTrending: isTrending,
+    isNew: isNew,
+    rating: rating,
+    variants: variants,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  console.log('📦 Sending product data:', productData);
+
+  // Disable button and show loading
+  if (addBtn) {
+    addBtn.disabled = true;
+    addBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+  }
+
   try {
-    const response = await adminFetch(API_BASE + '/api/db/products', { method: 'POST', body: JSON.stringify(productData) });
+    const response = await adminFetch(API_BASE + '/api/db/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(productData)
+    });
+    
     const data = await response.json();
+    console.log('📥 Server response:', data);
+    
     if (data.success) {
       showToast('✅ Product added successfully!', 'success');
-      document.getElementById('prodName').value = '';
-      document.getElementById('prodImage').value = '';
-      document.getElementById('prodDesc').value = '';
-      document.getElementById('prodTrending').checked = false;
-      document.getElementById('prodNew').checked = false;
-      document.getElementById('variantsBody').innerHTML = '<tr class="variant-row"><td><select class="variant-size" onchange="toggleVariantOther(this)"><optgroup label="🍺 Beer"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option></optgroup><optgroup label="🥃 Spirits"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></optgroup><optgroup label="🧃 Juice &amp; Soda"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option></optgroup><option value="OTHER">✏️ Other (Type custom)</option></select><input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;"></td><td><input type="number" class="variant-price" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td><td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><select class="variant-stock" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><option value="inStock">✅ In Stock</option><option value="outOfStock">❌ Out of Stock</option></select></td><td><input type="number" class="variant-quantity" placeholder="Qty" value="20" min="0" step="1" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td></tr>';
-      preserveScroll(loadProducts);
-    } else { showToast('❌ ' + (data.message || 'Failed to add product'), 'error'); }
-  } catch (error) { console.error('Error adding product:', error); showToast('❌ Network error. Please try again.', 'error'); }
-  btn.disabled = false;
-  btn.innerHTML = '<i class="ph ph-floppy-disk"></i> Save Product';
+      
+      // Reset form
+      if (nameInput) nameInput.value = '';
+      if (imageInput) imageInput.value = '';
+      if (descInput) descInput.value = '';
+      if (trendingCheck) trendingCheck.checked = false;
+      if (newCheck) newCheck.checked = false;
+      if (ratingInput) ratingInput.value = 4.0;
+      if (badgeInput) badgeInput.value = '';
+      
+      // Reset variants to single row
+      const variantsBody = document.getElementById('variantsBody');
+      if (variantsBody) {
+        variantsBody.innerHTML = `
+          <tr class="variant-row">
+            <td>
+              <select class="variant-size" onchange="toggleVariantOther(this)">
+                <optgroup label="🍺 Beer">
+                  <option value="250ml">250ml</option>
+                  <option value="330ml">330ml</option>
+                  <option value="350ml">350ml</option>
+                  <option value="500ml">500ml</option>
+                  <option value="750ml" selected>750ml</option>
+                  <option value="1L">1L</option>
+                </optgroup>
+                <optgroup label="🥃 Spirits">
+                  <option value="250ml">250ml</option>
+                  <option value="350ml">350ml</option>
+                  <option value="500ml">500ml</option>
+                  <option value="700ml">700ml</option>
+                  <option value="750ml">750ml</option>
+                  <option value="1L">1L</option>
+                  <option value="1.5L">1.5L</option>
+                </optgroup>
+                <optgroup label="🧃 Juice &amp; Soda">
+                  <option value="250ml">250ml</option>
+                  <option value="330ml">330ml</option>
+                  <option value="350ml">350ml</option>
+                  <option value="500ml">500ml</option>
+                  <option value="1L">1L</option>
+                  <option value="1.5L">1.5L</option>
+                  <option value="2L">2L</option>
+                </optgroup>
+                <option value="OTHER">✏️ Other (Type custom)</option>
+              </select>
+              <input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">
+            </td>
+            <td><input type="number" class="variant-price" placeholder="Price" step="1"></td>
+            <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
+            <td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
+            <td>
+              <select class="variant-stock" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+                <option value="inStock">✅ In Stock</option>
+                <option value="outOfStock">❌ Out of Stock</option>
+              </select>
+            </td>
+            <td><input type="number" class="variant-quantity" placeholder="Qty" value="20" min="0" step="1" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
+            <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
+          </tr>
+        `;
+      }
+      
+      // Refresh the product list
+      await preserveScroll(loadProducts);
+      
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to add product'), 'error');
+      console.error('Server error:', data);
+    }
+  } catch (error) {
+    console.error('❌ Error adding product:', error);
+    showToast('❌ Network error. Please try again.', 'error');
+  }
+  
+  // Re-enable button
+  if (addBtn) {
+    addBtn.disabled = false;
+    addBtn.innerHTML = '<i class="ph ph-floppy-disk"></i> Save Product';
+  }
 };
 
 // ==================== VARIANT HELPERS ====================
