@@ -758,6 +758,86 @@ a{color:inherit;text-decoration:none;}
   .cart-message{font-size:18px;}
   .shop-button{font-size:14px;padding:8px 24px;}
 }
+
+/* ===== LOCATION PIN - ENHANCED VISUAL FEEDBACK ===== */
+.location-status {
+  font-size: 13px;
+  margin-top: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: none;
+  font-weight: 500;
+  line-height: 1.4;
+  animation: fadeSlideDown 0.3s ease;
+}
+.location-status.show {
+  display: block;
+}
+.location-status.loading {
+  background: rgba(184, 134, 11, 0.12);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.location-status.success {
+  background: rgba(46, 204, 113, 0.12);
+  border: 1px solid #2ecc71;
+  color: #2ecc71;
+}
+.location-status.error {
+  background: rgba(224, 49, 49, 0.12);
+  border: 1px solid #e03131;
+  color: #e03131;
+}
+
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pin-squircle.loading {
+  animation: pulseGold 1.2s ease-in-out infinite;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light)) !important;
+  box-shadow: 0 0 0 0 rgba(184, 134, 11, 0.4);
+}
+
+@keyframes pulseGold {
+  0% { 
+    transform: scale(1); 
+    box-shadow: 0 0 0 0 rgba(184, 134, 11, 0.4);
+  }
+  50% { 
+    transform: scale(1.08); 
+    box-shadow: 0 0 30px 10px rgba(184, 134, 11, 0.15);
+  }
+  100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 0 0 rgba(184, 134, 11, 0);
+  }
+}
+
+/* Spinner for location status */
+.location-status .spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(184, 134, 11, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--gold);
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
@@ -1025,6 +1105,7 @@ a{color:inherit;text-decoration:none;}
 
 <div class="snack" id="snack"></div>
 
+
 <script>
 // ============================================================
 // LIQUORBELLE CHECKOUT - COMPLETE FIXED VERSION
@@ -1182,7 +1263,7 @@ async function loadDeliveryZones() {
 }
 
 // ============================================================
-// LOCATION PIN - GET ADDRESS FROM GPS
+// LOCATION PIN - GET ADDRESS FROM GPS (UPDATED)
 // ============================================================
 function getAddressFromCoords(lat, lng) {
   return fetch('https://liquorbelle-mpesa-backend.onrender.com/api/geocode/reverse', {
@@ -1208,48 +1289,204 @@ function getAddressFromCoords(lat, lng) {
   .catch(function() { return null; });
 }
 
-// ===== PIN BUTTON EVENT LISTENER =====
+// ===== PIN BUTTON EVENT LISTENER - FIXED WITH VISUAL FEEDBACK =====
 document.addEventListener('DOMContentLoaded', function() {
   var pinBtn = document.getElementById('getLocationBtn');
   if (pinBtn) {
-    pinBtn.addEventListener('click', function() {
+    pinBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
       var statusDiv = document.getElementById('locationStatus');
-      statusDiv.innerHTML = '<span class="spinner"></span> Getting your exact location...';
-      statusDiv.style.color = '#666';
+      var streetInput = document.getElementById('street');
+      var areaSelect = document.getElementById('deliveryArea');
+      var pinSquircle = this.querySelector('.pin-squircle');
+      
+      // Reset any previous state
+      statusDiv.className = 'location-status';
+      statusDiv.style.display = 'block';
+      
+      // Show loading state with gold color
+      statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>';
+      statusDiv.className = 'location-status loading';
+      
+      // Add loading animation to PIN button
+      if (pinSquircle) {
+        pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
+        pinSquircle.style.transform = 'scale(1.05)';
+        pinSquircle.style.transition = 'all 0.3s ease';
+        pinSquircle.classList.add('loading');
+      }
 
+      // Check if geolocation is supported
       if (!navigator.geolocation) {
-        statusDiv.innerHTML = '❌ Geolocation not supported';
-        statusDiv.style.color = '#e03131';
+        statusDiv.innerHTML = '❌ Geolocation not supported on this device';
+        statusDiv.className = 'location-status error';
+        if (pinSquircle) {
+          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+          pinSquircle.style.transform = 'scale(1)';
+          pinSquircle.classList.remove('loading');
+        }
+        setTimeout(function() { 
+          statusDiv.style.display = 'none'; 
+        }, 5000);
         return;
       }
 
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var lat = position.coords.latitude;
-        var lng = position.coords.longitude;
-        statusDiv.innerHTML = '<span class="spinner"></span> Finding your street address...';
+      // Set timeout for geolocation (10 seconds)
+      var locationTimeout = setTimeout(function() {
+        statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.';
+        statusDiv.className = 'location-status error';
+        if (pinSquircle) {
+          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+          pinSquircle.style.transform = 'scale(1)';
+          pinSquircle.classList.remove('loading');
+        }
+        setTimeout(function() { 
+          statusDiv.style.display = 'none'; 
+        }, 5000);
+      }, 10000);
 
-        getAddressFromCoords(lat, lng).then(function(result) {
-          if (result) {
-            document.getElementById('street').value = result.street;
-            document.getElementById('deliveryArea').value = result.area;
-            statusDiv.innerHTML = '✅ Location found: ' + result.area;
-            statusDiv.style.color = '#2ecc71';
-            setTimeout(function() { statusDiv.innerHTML = ''; }, 4000);
-            renderSummary();
-          } else {
-            statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
-            statusDiv.style.color = '#e03131';
+      // Get current position
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          clearTimeout(locationTimeout);
+          
+          var lat = position.coords.latitude;
+          var lng = position.coords.longitude;
+          
+          statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Finding your street address...</span>';
+          statusDiv.className = 'location-status loading';
+
+          getAddressFromCoords(lat, lng).then(function(result) {
+            if (result && result.street) {
+              // ✅ AUTO-FILL STREET INPUT
+              streetInput.value = result.street;
+              streetInput.style.borderColor = '#2ecc71';
+              streetInput.style.background = '#f0fff4';
+              streetInput.style.transition = 'all 0.3s ease';
+              
+              // Trigger input event to update validation
+              var inputEvent = new Event('input', { bubbles: true });
+              streetInput.dispatchEvent(inputEvent);
+              
+              // ✅ AUTO-FILL AREA IF AVAILABLE
+              if (result.area) {
+                var found = false;
+                // Try to find matching zone by partial match
+                for (var i = 0; i < areaSelect.options.length; i++) {
+                  var optionValue = areaSelect.options[i].value;
+                  if (optionValue && optionValue.toLowerCase().indexOf(result.area.toLowerCase()) !== -1) {
+                    areaSelect.value = optionValue;
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  // Try exact match
+                  for (var j = 0; j < areaSelect.options.length; j++) {
+                    if (areaSelect.options[j].value.toLowerCase() === result.area.toLowerCase()) {
+                      areaSelect.value = areaSelect.options[j].value;
+                      found = true;
+                      break;
+                    }
+                  }
+                }
+                if (found) {
+                  // Trigger change event to update delivery fee
+                  var changeEvent = new Event('change', { bubbles: true });
+                  areaSelect.dispatchEvent(changeEvent);
+                  areaSelect.style.borderColor = '#2ecc71';
+                  areaSelect.style.background = '#f0fff4';
+                }
+              }
+              
+              // ✅ SUCCESS MESSAGE WITH ACTUAL LOCATION
+              var displayStreet = result.street || 'Location found';
+              var displayArea = result.area || 'Nairobi';
+              statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>';
+              statusDiv.className = 'location-status success';
+              
+              // Reset PIN button
+              if (pinSquircle) {
+                pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
+                pinSquircle.style.transform = 'scale(1)';
+                pinSquircle.classList.remove('loading');
+              }
+              
+              // Hide status after 5 seconds
+              setTimeout(function() {
+                statusDiv.style.display = 'none';
+              }, 5000);
+              
+              // Update summary
+              if (typeof renderSummary === 'function') {
+                renderSummary();
+              }
+              
+              // Show success toast
+              if (typeof showSnack === 'function') {
+                showSnack('📍 Location set: ' + displayStreet, false);
+              } else if (typeof toast === 'function') {
+                toast('📍 Location found: ' + displayStreet);
+              }
+              
+            } else {
+              statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
+              statusDiv.className = 'location-status error';
+              if (pinSquircle) {
+                pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+                pinSquircle.style.transform = 'scale(1)';
+                pinSquircle.classList.remove('loading');
+              }
+              setTimeout(function() {
+                statusDiv.style.display = 'none';
+              }, 5000);
+            }
+          }).catch(function(err) {
+            console.error('Geocode error:', err);
+            statusDiv.innerHTML = '⚠️ Error finding address. Please enter manually.';
+            statusDiv.className = 'location-status error';
+            if (pinSquircle) {
+              pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+              pinSquircle.style.transform = 'scale(1)';
+              pinSquircle.classList.remove('loading');
+            }
+            setTimeout(function() {
+              statusDiv.style.display = 'none';
+            }, 5000);
+          });
+        },
+        function(error) {
+          clearTimeout(locationTimeout);
+          
+          var errorMsg = '❌ Location access denied. Please enter manually.';
+          if (error.code === 1) {
+            errorMsg = '❌ Please allow location access in your browser settings';
+          } else if (error.code === 2) {
+            errorMsg = '❌ Location unavailable. Please enter manually.';
+          } else if (error.code === 3) {
+            errorMsg = '❌ Location request timed out. Please enter manually.';
           }
-        });
-      }, function(error) {
-        var errorMsg = '❌ Location access denied. Please enter address manually.';
-        if (error.code === 1) errorMsg = '❌ Please allow location access to use this feature';
-        else if (error.code === 2) errorMsg = '❌ Location unavailable. Please enter manually.';
-        else if (error.code === 3) errorMsg = '❌ Location request timed out. Please enter manually.';
-        statusDiv.innerHTML = errorMsg;
-        statusDiv.style.color = '#e03131';
-        setTimeout(function() { statusDiv.innerHTML = ''; }, 5000);
-      });
+          
+          statusDiv.innerHTML = errorMsg;
+          statusDiv.className = 'location-status error';
+          
+          if (pinSquircle) {
+            pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+            pinSquircle.style.transform = 'scale(1)';
+            pinSquircle.classList.remove('loading');
+          }
+          
+          setTimeout(function() {
+            statusDiv.style.display = 'none';
+          }, 6000);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
     });
   }
 });
@@ -1464,6 +1701,124 @@ function renderSummary() {
       progressContainer.innerHTML = '';
     }
   }
+}
+
+// ============================================================
+// AUTO-FILL SAVED ADDRESS - NEW FUNCTION
+// ============================================================
+function autoFillSavedAddress() {
+  var user = getCurrentUser();
+  if (!user) return;
+  
+  console.log('👤 User logged in, checking for saved addresses...');
+  
+  // Try to get saved addresses from localStorage
+  var storageKey = 'liquorbelle_addresses_' + user.email.toLowerCase();
+  var savedAddresses = [];
+  try {
+    var stored = localStorage.getItem(storageKey);
+    if (stored) {
+      savedAddresses = JSON.parse(stored);
+      console.log('📦 Found ' + savedAddresses.length + ' saved address(es)');
+    }
+  } catch(e) {
+    console.warn('Could not load saved addresses:', e);
+  }
+  
+  if (savedAddresses.length === 0) {
+    // Try legacy storage format
+    try {
+      var legacy = localStorage.getItem('liquorbelle_addresses');
+      if (legacy) {
+        var parsed = JSON.parse(legacy);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          savedAddresses = parsed;
+          console.log('📦 Found ' + savedAddresses.length + ' legacy saved address(es)');
+        }
+      }
+    } catch(e) {
+      console.warn('Could not load legacy addresses:', e);
+    }
+  }
+  
+  if (savedAddresses.length === 0) {
+    console.log('ℹ️ No saved addresses found');
+    return false;
+  }
+  
+  // Find default address or use first one
+  var defaultAddr = null;
+  for (var i = 0; i < savedAddresses.length; i++) {
+    if (savedAddresses[i].isDefault) {
+      defaultAddr = savedAddresses[i];
+      break;
+    }
+  }
+  if (!defaultAddr) {
+    defaultAddr = savedAddresses[0];
+  }
+  
+  console.log('📌 Using address:', defaultAddr);
+  
+  // Auto-fill form fields
+  var nameInput = document.getElementById('fullName');
+  var phoneInput = document.getElementById('phone');
+  var streetInput = document.getElementById('street');
+  var buildingInput = document.getElementById('building');
+  var areaSelect = document.getElementById('deliveryArea');
+  
+  if (nameInput && user.name) {
+    nameInput.value = user.name;
+    nameInput.style.borderColor = '#2ecc71';
+    nameInput.style.background = '#f0fff4';
+  }
+  
+  if (phoneInput && user.phone) {
+    phoneInput.value = user.phone;
+    phoneInput.style.borderColor = '#2ecc71';
+    phoneInput.style.background = '#f0fff4';
+  }
+  
+  if (streetInput && defaultAddr.line1) {
+    streetInput.value = defaultAddr.line1;
+    streetInput.style.borderColor = '#2ecc71';
+    streetInput.style.background = '#f0fff4';
+  }
+  
+  if (buildingInput && defaultAddr.landmark) {
+    buildingInput.value = defaultAddr.landmark;
+    buildingInput.style.borderColor = '#2ecc71';
+    buildingInput.style.background = '#f0fff4';
+  }
+  
+  if (areaSelect && defaultAddr.area) {
+    var found = false;
+    for (var j = 0; j < areaSelect.options.length; j++) {
+      if (areaSelect.options[j].value === defaultAddr.area) {
+        areaSelect.value = defaultAddr.area;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      // Try to find a partial match
+      for (var k = 0; k < areaSelect.options.length; k++) {
+        if (areaSelect.options[k].value.toLowerCase().indexOf(defaultAddr.area.toLowerCase()) !== -1) {
+          areaSelect.value = areaSelect.options[k].value;
+          found = true;
+          break;
+        }
+      }
+    }
+    if (found) {
+      // Trigger change event to update delivery fee
+      var event = new Event('change');
+      areaSelect.dispatchEvent(event);
+    }
+  }
+  
+  toast('📦 Saved address loaded!', 'success');
+  return true;
 }
 
 // ============================================================
@@ -1996,6 +2351,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Delivery area change listener attached');
       }
       
+      // ===== AUTO-FILL SAVED ADDRESS =====
+      autoFillSavedAddress();
+      
       renderSummary();
       updateCartBadges();
       updateUserBadge();
@@ -2033,7 +2391,6 @@ window.addEventListener('storage', function(e) {
 
 console.log('✅ Checkout script loaded successfully');
 </script>
-
 <script src="js/utils.js"></script>
 
 </body>

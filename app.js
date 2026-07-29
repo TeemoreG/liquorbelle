@@ -74,6 +74,59 @@ function renderStars(rating) {
 }
 
 // ============================================================
+// SHARED USER GREETING - Works on any page
+// ============================================================
+function showUserGreeting() {
+  var user = getCurrentUser();
+  
+  // Find any welcome banner/container on the page
+  var welcomeBanner = document.querySelector('.welcome-banner, .welcome-section, .hero-overlay, .account-dashboard .welcome-banner, #welcomeBanner');
+  
+  // If no welcome banner found, try to find hero section
+  if (!welcomeBanner) {
+    welcomeBanner = document.querySelector('.hero-overlay, .hero-section, .page-hero');
+  }
+  
+  // If still no banner, don't show greeting
+  if (!welcomeBanner) return;
+
+  // Remove any existing greeting first (prevents duplicates)
+  var existingGreeting = welcomeBanner.querySelector('.user-greeting-banner');
+  if (existingGreeting) {
+    existingGreeting.remove();
+  }
+
+  if (user && user.name) {
+    // User is logged in - show welcome back
+    var greetingEl = document.createElement('div');
+    greetingEl.className = 'user-greeting-banner';
+    greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
+    greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+    welcomeBanner.prepend(greetingEl);
+    
+    // Auto-hide after 5 seconds
+    setTimeout(function() {
+      var el = welcomeBanner.querySelector('.user-greeting-banner');
+      if (el) {
+        el.style.transition = 'opacity 0.5s ease';
+        el.style.opacity = '0';
+        setTimeout(function() {
+          if (el.parentNode) {
+            el.remove();
+          }
+        }, 500);
+      }
+    }, 5000);
+  }
+}
+
+// Auto-show greeting on page load for ALL pages
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure DOM is fully ready
+  setTimeout(showUserGreeting, 200);
+});
+
+// ============================================================
 // STOCK STATUS HELPER
 // ============================================================
 function getStockStatus(variants) {
@@ -146,6 +199,40 @@ function getCurrentUser() {
   }
 }
 
+// ============================================================
+// VALIDATE USER SESSION - Check if user still exists in DB
+// ============================================================
+function validateUserSession() {
+  var token = getAuthToken();
+  var user = getCurrentUser();
+  
+  if (!token || !user) return;
+
+  fetch(API_BASE + '/api/customers/me', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(function(res) {
+    if (res.status === 401 || res.status === 403 || res.status === 404) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      toast('Your account has been deactivated. Please contact support.', 'error');
+      window.location.href = 'accounts.html';
+      return null;
+    }
+    return res.json();
+  })
+  .then(function(data) {
+    if (data && !data.success) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      window.location.href = 'accounts.html';
+    }
+  })
+  .catch(function() {
+    // Network error - don't logout, just silently fail
+  });
+}
+
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
@@ -161,11 +248,28 @@ function fetchWithAuth(url, options) {
   if (!token) {
     return Promise.reject(new Error('Not authenticated'));
   }
+  
   options = options || {};
   options.headers = options.headers || {};
   options.headers['Content-Type'] = 'application/json';
   options.headers['Authorization'] = 'Bearer ' + token;
-  return fetch(url, options);
+
+  return fetch(url, options)
+    .then(function(res) {
+      if (res.status === 403 || res.status === 404) {
+        return res.json().then(function(data) {
+          if (data.message && (data.message.includes('deactivated') || data.message.includes('deleted'))) {
+            localStorage.removeItem('liquorbelle_user');
+            localStorage.removeItem('liquorbelle_token');
+            toast('Your account has been deactivated. Please contact support.', 'error');
+            window.location.href = 'accounts.html';
+            return Promise.reject(new Error('Account deactivated'));
+          }
+          return Promise.reject(new Error(data.message || 'Request failed'));
+        });
+      }
+      return res;
+    });
 }
 
 function isTokenExpired(token) {
@@ -789,19 +893,19 @@ if (document.getElementById('categoryGrid')) {
 var categories = [
   { name: "All", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
   // ===== WHISKY =====
-  { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+  { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316354/pngtree-tasty-whisky-glass-ice-cubes-png-image_14437708_kherqc.png" },
   // ===== WINE =====
-  { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316386/how-many-ounces-in-a-glass-of-wine_rxqtve.jpg" },
   // ===== VODKA =====
-  { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+  { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
   // ===== GIN =====
-  { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+  { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316501/0008954033349_tsnaq5.jpg" },
   // ===== COGNAC =====
   { name: "Cognac", cat: "cognac", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
   // ===== CREAMS =====
-  { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
+  { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316567/Bourbon-Cream-Rundown-Jim-Beam-Ezra-Brooks-Paddleford-Creek-Nooku_znbqqy.webp" },
   // ===== BEER =====
-  { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316616/00085000004180_gaduqf.png" },
   // ===== BRANDY =====
   { name: "Brandy", cat: "brandy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
   // ===== BOURBON =====
@@ -809,9 +913,9 @@ var categories = [
   // ===== RUM =====
   { name: "Rum", cat: "rum", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
   // ===== SPIRITS =====
-  { name: "Spirits", cat: "spirits", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+  { name: "Spirits", cat: "spirits", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316742/party-pack-spirits-copy_qehwpt.jpg" },
   // ===== LIQUEUR =====
-  { name: "Liqueur", cat: "liqueur", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
+  { name: "Liqueur", cat: "liqueur", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316799/the-genuine-curacao-liqeur-blue-curacao_vzpzbz.jpg" },
   // ===== JUICE =====
   { name: "Juice", cat: "juice", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318835/Cold_Tea_in_Kenya_600x600_q0ik5i.jpg" },
   // ===== SODA =====
@@ -825,9 +929,9 @@ var categories = [
   // ===== ACCESSORY =====
   { name: "Accessory", cat: "accessory", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319473/51PDVK6sQzL._AC_UF1000_1000_QL80__cn0azd.jpg" },
   // ===== CIDER =====
-  { name: "Cider", cat: "cider", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  { name: "Cider", cat: "cider", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316884/APPLE-CIDER-APEROL-SPRITZ-FT-RECIPE0923-7ed1ed5a5bbb49ae85b8db3eabc97341_z3jk3f.jpg" },
   // ===== VERMOUTH =====
-  { name: "Vermouth", cat: "vermouth", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" }
+  { name: "Vermouth", cat: "vermouth", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1784648088/MRSWEETVERMOUTHL_so7dtt.jpg" }
 ];
 
 window.renderCategories = function() {
@@ -883,22 +987,6 @@ window.populateCategoryDropdown = function(selectId) {
 };
 
 var allProductsCache = [];
-
-  // ============================================================
-  // USER GREETING ON INDEX PAGE
-  // ============================================================
-  (function showUserGreeting() {
-    var user = getCurrentUser();
-    if (user && user.name) {
-      var heroOverlay = document.querySelector('.hero-overlay');
-      if (heroOverlay) {
-        var greetingEl = document.createElement('div');
-        greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
-        greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
-        heroOverlay.prepend(greetingEl);
-      }
-    }
-  })();
 
   // ============================================================
   // SESSION CHECK
@@ -1636,7 +1724,7 @@ if (document.getElementById('catChips')) {
   var ALL_PRODUCTS = [];
   var filteredProducts = [];
   var currentPage = 1;
-  var PAGE_SIZE = 12;
+  var PAGE_SIZE = 24;
   var currentSort = 'featured';
   var currentFilters = { 
     category: 'all', 

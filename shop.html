@@ -38,6 +38,7 @@
   --bg:#F9F6F2;
   --bg2:#F2EDE7;
   --border:#E8E0D8;
+  --border-light:#F0EBE5;
   --text:#1A1A1A;
   --muted:#7A7368;
   --gold:#B8860B;
@@ -60,6 +61,10 @@ img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
 .shop-svg{width:22px;height:22px;color:currentColor;display:block;}
 .gold{color:var(--gold);}
+.gold-text{color:var(--gold);}
+.gold-border{border-color:var(--gold);}
+.gold-bg{background:var(--gold-bg);}
+.gold-gradient{background:linear-gradient(135deg, var(--gold), var(--gold-light));}
 
 /* ===== HEADER - MOBILE FIRST ===== */
 .main-header {
@@ -402,6 +407,7 @@ a{color:inherit;text-decoration:none;}
   font-size: .85rem;
   color: var(--text);
 }
+
 /* ===== SHOP TITLE BAR ===== */
 .shop-titlebar {
   padding: 16px 4% 10px;
@@ -472,19 +478,6 @@ a{color:inherit;text-decoration:none;}
     font-size: 1.6rem;
     letter-spacing: -0.5px;
     margin-bottom: 2px;
-  }
-}
-
-#resultCount {
-  font-size: 0.65rem;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-@media (min-width: 768px) {
-  #resultCount {
-    font-size: 0.7rem;
-    margin-top: 4px;
   }
 }
 
@@ -1354,20 +1347,241 @@ a{color:inherit;text-decoration:none;}
 .scroll-top:hover{transform:scale(1.1);}
 .scroll-top.show{display:flex;}
 
-/* ===== FOOTER ===== */
-.footer{background:var(--primary-dark);color:rgba(255,255,255,.85);padding:20px 4% 16px;margin-top:20px;}
-@media(min-width:768px){.footer{padding:24px 4% 20px;margin-top:24px;}}
-@media(min-width:1024px){.footer{padding:32px 5% 24px;}}
-.footer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px;}
-@media(min-width:600px){.footer-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:16px;}}
-@media(min-width:1024px){.footer-grid{gap:20px;margin-bottom:20px;}}
-.footer-col h4{font-size:.65rem;font-weight:700;margin-bottom:6px;color:#fff;opacity:.9;}
-@media(min-width:768px){.footer-col h4{font-size:.7rem;margin-bottom:8px;}}
-.footer-col p,.footer-col a{display:block;font-size:.55rem;margin-bottom:3px;opacity:.7;color:#fff;text-decoration:none;}
-@media(min-width:768px){.footer-col p,.footer-col a{font-size:.6rem;margin-bottom:4px;}}
-.footer-col a:hover{opacity:1;}
-.footer-bottom{text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.15);font-size:.55rem;opacity:.6;}
-@media(min-width:768px){.footer-bottom{padding-top:12px;font-size:.6rem;}}
+/* ============================================================
+   FOOTER - ENHANCED
+   ============================================================ */
+.footer {
+    background: var(--primary-dark);
+    color: rgba(255,255,255,.85);
+    padding: 24px 4% 20px;
+    margin-top: 20px;
+    border-top: 2px solid var(--gold);
+}
+
+@media (min-width: 768px) {
+    .footer {
+        padding: 32px 5% 24px;
+        margin-top: 24px;
+    }
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (min-width: 600px) {
+    .footer-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .footer-grid {
+        gap: 30px;
+        margin-bottom: 24px;
+    }
+}
+
+.footer-col h4 {
+    font-size: .7rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #fff;
+    opacity: .9;
+    position: relative;
+    padding-bottom: 6px;
+}
+
+.footer-col h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 24px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+}
+
+@media (min-width: 768px) {
+    .footer-col h4 {
+        font-size: .8rem;
+        padding-bottom: 8px;
+    }
+    .footer-col h4::after {
+        width: 30px;
+    }
+}
+
+.footer-col p,
+.footer-col a {
+    display: block;
+    font-size: .6rem;
+    margin-bottom: 4px;
+    opacity: .7;
+    color: #fff;
+    text-decoration: none;
+    transition: all .2s;
+}
+
+@media (min-width: 768px) {
+    .footer-col p,
+    .footer-col a {
+        font-size: .7rem;
+        margin-bottom: 6px;
+    }
+}
+
+.footer-col a:hover {
+    opacity: 1;
+    color: var(--gold);
+    transform: translateX(4px);
+}
+
+.footer-col span {
+    display: block;
+    font-size: .6rem;
+    margin-bottom: 4px;
+    opacity: .7;
+    color: #fff;
+}
+
+@media (min-width: 768px) {
+    .footer-col span {
+        font-size: .7rem;
+    }
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .6rem;
+    opacity: .7;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+    .contact-item {
+        font-size: .7rem;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+}
+
+.contact-item i {
+    color: var(--gold);
+    font-size: 12px;
+    width: 16px;
+}
+
+@media (min-width: 768px) {
+    .contact-item i {
+        font-size: 14px;
+        width: 20px;
+    }
+}
+
+.contact-item a {
+    display: inline;
+    margin-bottom: 0;
+    opacity: .7;
+}
+
+.contact-item a:hover {
+    opacity: 1;
+    transform: none;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.12);
+    font-size: .55rem;
+    opacity: .6;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (min-width: 768px) {
+    .footer-bottom {
+        padding-top: 18px;
+        font-size: .65rem;
+    }
+}
+
+.footer-bottom p {
+    margin-bottom: 3px;
+}
+
+@media (min-width: 768px) {
+    .footer-bottom p {
+        margin-bottom: 4px;
+    }
+}
+
+.legal-links {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 6px 0 10px;
+}
+
+@media (min-width: 768px) {
+    .legal-links {
+        gap: 16px;
+        margin: 8px 0 12px;
+    }
+}
+
+.legal-links a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-size: .55rem;
+    transition: all .2s;
+}
+
+@media (min-width: 768px) {
+    .legal-links a {
+        font-size: .65rem;
+    }
+}
+
+.legal-links a:hover {
+    color: var(--gold);
+}
+
+.legal-links .divider {
+    color: rgba(255,255,255,0.2);
+}
+
+@media (max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
 #toast{position:fixed;bottom:calc(var(--bottom-nav-height) + 16px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:6px 14px;border-radius:60px;font-size:.65rem;opacity:0;transition:opacity .2s;z-index:600;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:90%;text-align:center;}
 @media(min-width:768px){#toast{bottom:calc(var(--bottom-nav-height) + 20px);padding:8px 16px;font-size:.7rem;}}
 .empty-state{text-align:center;padding:30px 16px;color:var(--muted);grid-column:1/-1;}
@@ -1451,6 +1665,7 @@ a{color:inherit;text-decoration:none;}
   box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.12);
 }
 </style>
+
 </head>
 <body>
 
@@ -1479,30 +1694,30 @@ a{color:inherit;text-decoration:none;}
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
     <div class="logo-text">Liquor<span class="gold">Belle</span><small>Nairobi's Finest</small></div>
   </a>
-  <form class="header-search-form" id="headerSearchForm" onsubmit="return window.handleHeaderSearch(event)">
+  <form class="header-search-form" id="headerSearchForm" onsubmit="return handleHeaderSearch(event)">
     <i class="ph ph-magnifying-glass"></i>
     <input class="header-search-input" id="headerSearchInput" type="text" placeholder="Search whisky, vodka, gin...">
   </form>
   <div class="header-icons">
-    <button class="header-icon-btn" onclick="window.openCartDrawer()" aria-label="Cart">
+    <button class="header-icon-btn" onclick="openCartDrawer()" aria-label="Cart">
       <i class="ph ph-shopping-cart"></i>
       <span class="header-cart-badge" id="headerCartCount">0</span>
     </button>
-    <button class="header-icon-btn" onclick="window.openMobileMenu()" aria-label="Menu">
+    <button class="header-icon-btn" onclick="openMobileMenu()" aria-label="Menu">
       <i class="ph ph-list"></i>
     </button>
   </div>
 </header>
 
-<!-- ===== MOBILE MENU ===== -->
-<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="window.closeMobileMenu()"></div>
+<!-- ===== MOBILE MENU (Updated - Removed WhatsApp & Track Orders) ===== -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
 <nav class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-head">
     <span>Menu</span>
-    <button class="mobile-menu-close" onclick="window.closeMobileMenu()"><i class="ph ph-x"></i></button>
+    <button class="mobile-menu-close" onclick="closeMobileMenu()"><i class="ph ph-x"></i></button>
   </div>
   <div class="mobile-search-inline">
-    <form onsubmit="return window.handleHeaderSearch(event)">
+    <form onsubmit="return handleHeaderSearch(event)">
       <i class="ph ph-magnifying-glass"></i>
       <input id="mobileSearchInput" type="text" placeholder="Search products...">
     </form>
@@ -1510,11 +1725,12 @@ a{color:inherit;text-decoration:none;}
   <div id="mobileMenuAuth"></div>
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
-  <button class="mm-link" onclick="window.closeMobileMenu();window.openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
-  <button class="mm-link" onclick="window.closeMobileMenu();window.openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
+  <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
+  <button class="mm-link" onclick="closeMobileMenu();openWishlistModal();"><i class="ph ph-heart"></i> Wishlist</button>
   <a href="profile.html" id="mobileMenuProfile"><i class="ph ph-user-gear"></i> My Profile</a>
-  <a href="track-orders.html"><i class="ph ph-clipboard-text"></i> Track Orders</a>
-  <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank"><i class="ph ph-whatsapp-logo"></i> WhatsApp Us</a>
+  <!-- ===== TERMS & PRIVACY - ALWAYS VISIBLE ===== -->
+  <a href="terms.html"><i class="ph ph-file-text"></i> Terms &amp; Conditions</a>
+  <a href="privacy.html"><i class="ph ph-lock"></i> Privacy Policy</a>
 </nav>
 
 <!-- ===== FEATURED SECTIONS (Hidden - fixes app.js error) ===== -->
@@ -1627,11 +1843,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-        <!-- Title shown here (no count) -->
-    <div class="shop-result-header">
-      <h2 class="shop-result-title" id="shopResultTitle">All Products</h2>
-    </div>
-
     <div class="active-filters" id="activeFilters"></div>
 
     <div class="shop-grid" id="shopGrid"></div>
@@ -1664,47 +1875,284 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ===== FOOTER ===== -->
+<!-- ===== FOOTER (UPDATED with Legal section) ===== -->
 <footer class="footer">
   <div class="footer-grid">
     <div class="footer-col">
       <h4>LiquorBelle</h4>
       <p>Nairobi's Finest Alcohol Delivery</p>
-      <p>Premium spirits, wines & beers</p>
+      <p>Premium spirits, wines &amp; beers</p>
       <p>100% Authentic Products</p>
-      <p>M-PESA Payments Only</p>
+      <p>M‑PESA &amp; Pay on Delivery</p>
     </div>
     <div class="footer-col">
       <h4>Quick Links</h4>
       <a href="index.html">Home</a>
       <a href="shop.html">Shop</a>
+      <a href="accounts.html">My Account</a>
       <a href="track-orders.html">Track Orders</a>
     </div>
     <div class="footer-col">
-      <h4>Support</h4>
-      <p>+254 748 894 443</p>
-      <p>WhatsApp 24/7</p>
+      <h4>Legal</h4>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <span style="display:block;font-size:.65rem;color:rgba(255,255,255,0.5);margin-top:4px;"></span>
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
-      <p>Dagoretti Road</p>
-      <p>Nairobi, Kenya</p>
+      <div class="contact-item">
+        <i class="ph ph-whatsapp-logo"></i>
+        <a href="tel:+254748894443">+254 748 894 443</a>
+      </div>
+      <div class="contact-item">
+        <i class="ph ph-envelope"></i>
+        <a href="mailto:info@liquorbelle.shop">info@liquorbelle.co.ke</a>
+      </div>
+      <div class="contact-item">
+        <i class="ph ph-map-pin"></i>
+        <span>Dagoretti Road, Nairobi</span>
+      </div>
     </div>
   </div>
   <div class="footer-bottom">
+    <div class="legal-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <span class="divider">•</span>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <span class="divider">•</span>
+      <span style="color:rgba(255,255,255,0.3);">18+ Only</span>
+    </div>
     <p>© 2026 LiquorBelle — Nairobi's Finest Alcohol Delivery</p>
-    <p>Over 18 only. Drink responsibly. M-PESA payments only.</p>
+    <p style="font-size:0.65rem;opacity:0.5;margin-top:4px;">Drink responsibly. M‑PESA &amp; Pay on Delivery accepted.</p>
   </div>
 </footer>
 
 <!-- ===== SCROLL TO TOP ===== -->
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="ph ph-arrow-up"></i></button>
 
-<!-- ===== WHATSAPP FLOAT ===== -->
-<a href="https://wa.me/254748894443?text=I want to place an order" class="whatsapp-float" target="_blank">
-  <i class="ph ph-whatsapp-logo"></i>
-  <span class="tooltip">Chat with us</span>
-</a>
+<!-- ===== MOVABLE WHATSAPP FLOAT ===== -->
+<div class="whatsapp-float" id="whatsappFloat" style="position:fixed;bottom:calc(var(--bottom-nav-height) + 20px);right:16px;background:#25D366;color:white;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:grab;z-index:1000;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:box-shadow .3s;border:none;text-decoration:none;touch-action:none;user-select:none;">
+  <a href="https://wa.me/254748894443?text=I want to place an order" target="_blank" style="color:white;text-decoration:none;display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;">
+    <i class="ph ph-whatsapp-logo" style="font-size:28px;pointer-events:none;"></i>
+  </a>
+  <span class="tooltip" style="position:absolute;right:68px;background:rgba(0,0,0,0.85);color:white;padding:6px 14px;border-radius:30px;font-size:11px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .3s;font-weight:500;">Chat with us</span>
+</div>
+
+<script>
+// ============================================================
+// DRAGGABLE WHATSAPP FLOAT
+// ============================================================
+(function initDraggableWhatsApp() {
+  var floatBtn = document.getElementById('whatsappFloat');
+  if (!floatBtn) return;
+  
+  var isDragging = false;
+  var startX, startY, offsetX, offsetY;
+  var hasMoved = false;
+  
+  // Prevent default touch behavior
+  floatBtn.addEventListener('touchstart', function(e) {
+    var touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    var rect = floatBtn.getBoundingClientRect();
+    offsetX = startX - rect.left;
+    offsetY = startY - rect.top;
+    isDragging = true;
+    hasMoved = false;
+    floatBtn.style.cursor = 'grabbing';
+    floatBtn.style.transition = 'none';
+    e.preventDefault();
+  }, { passive: false });
+  
+  floatBtn.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    var touch = e.touches[0];
+    var newX = touch.clientX - offsetX;
+    var newY = touch.clientY - offsetY;
+    
+    // Keep within viewport bounds
+    var rect = floatBtn.getBoundingClientRect();
+    var maxX = window.innerWidth - rect.width;
+    var maxY = window.innerHeight - rect.height - 20;
+    newX = Math.max(0, Math.min(newX, maxX));
+    newY = Math.max(0, Math.min(newY, maxY));
+    
+    floatBtn.style.left = newX + 'px';
+    floatBtn.style.right = 'auto';
+    floatBtn.style.bottom = 'auto';
+    floatBtn.style.top = newY + 'px';
+    
+    if (Math.abs(touch.clientX - startX) > 5 || Math.abs(touch.clientY - startY) > 5) {
+      hasMoved = true;
+    }
+    e.preventDefault();
+  }, { passive: false });
+  
+  floatBtn.addEventListener('touchend', function(e) {
+    isDragging = false;
+    floatBtn.style.cursor = 'grab';
+    floatBtn.style.transition = 'box-shadow 0.3s, transform 0.2s';
+    
+    // If user didn't move, let the click/tap through to the link
+    if (!hasMoved) {
+      // The <a> tag inside will handle the click
+    }
+    // Prevent the click event from firing if dragged
+    if (hasMoved) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+  
+  // Mouse events for desktop
+  floatBtn.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    startX = e.clientX;
+    startY = e.clientY;
+    var rect = floatBtn.getBoundingClientRect();
+    offsetX = startX - rect.left;
+    offsetY = startY - rect.top;
+    isDragging = true;
+    hasMoved = false;
+    floatBtn.style.cursor = 'grabbing';
+    floatBtn.style.transition = 'none';
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    var newX = e.clientX - offsetX;
+    var newY = e.clientY - offsetY;
+    
+    var rect = floatBtn.getBoundingClientRect();
+    var maxX = window.innerWidth - rect.width;
+    var maxY = window.innerHeight - rect.height - 20;
+    newX = Math.max(0, Math.min(newX, maxX));
+    newY = Math.max(0, Math.min(newY, maxY));
+    
+    floatBtn.style.left = newX + 'px';
+    floatBtn.style.right = 'auto';
+    floatBtn.style.bottom = 'auto';
+    floatBtn.style.top = newY + 'px';
+    
+    if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
+      hasMoved = true;
+    }
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mouseup', function(e) {
+    if (isDragging) {
+      isDragging = false;
+      floatBtn.style.cursor = 'grab';
+      floatBtn.style.transition = 'box-shadow 0.3s, transform 0.2s';
+      
+      // If user didn't move, let the click through
+      if (hasMoved) {
+        e.preventDefault();
+      }
+    }
+  });
+  
+  // Tooltip show/hide
+  floatBtn.addEventListener('mouseenter', function() {
+    var tooltip = this.querySelector('.tooltip');
+    if (tooltip) {
+      tooltip.style.opacity = '1';
+      tooltip.style.right = '62px';
+    }
+  });
+  
+  floatBtn.addEventListener('mouseleave', function() {
+    var tooltip = this.querySelector('.tooltip');
+    if (tooltip) {
+      tooltip.style.opacity = '0';
+      tooltip.style.right = '68px';
+    }
+  });
+  
+  // Touch tooltip (show on long press)
+  var tooltipTimer;
+  floatBtn.addEventListener('touchstart', function(e) {
+    var tooltip = this.querySelector('.tooltip');
+    if (tooltip) {
+      tooltipTimer = setTimeout(function() {
+        tooltip.style.opacity = '1';
+        tooltip.style.right = '62px';
+      }, 500);
+    }
+  });
+  
+  floatBtn.addEventListener('touchend', function() {
+    clearTimeout(tooltipTimer);
+    var tooltip = this.querySelector('.tooltip');
+    if (tooltip) {
+      setTimeout(function() {
+        tooltip.style.opacity = '0';
+        tooltip.style.right = '68px';
+      }, 1000);
+    }
+  });
+  
+  // Save position to localStorage
+  function savePosition() {
+    var rect = floatBtn.getBoundingClientRect();
+    var data = {
+      left: rect.left,
+      top: rect.top,
+      right: window.innerWidth - rect.right,
+      bottom: window.innerHeight - rect.bottom
+    };
+    try {
+      localStorage.setItem('liquorbelle_whatsapp_position', JSON.stringify(data));
+    } catch(e) {}
+  }
+  
+  // Load saved position
+  function loadPosition() {
+    try {
+      var saved = localStorage.getItem('liquorbelle_whatsapp_position');
+      if (saved) {
+        var data = JSON.parse(saved);
+        // Only restore if position is within viewport
+        if (data.left > 0 && data.left < window.innerWidth - 60 &&
+            data.top > 0 && data.top < window.innerHeight - 60) {
+          floatBtn.style.left = data.left + 'px';
+          floatBtn.style.right = 'auto';
+          floatBtn.style.bottom = 'auto';
+          floatBtn.style.top = data.top + 'px';
+        }
+      }
+    } catch(e) {}
+  }
+  
+  // Save position on drag end
+  var saveTimeout;
+  document.addEventListener('mouseup', function() {
+    if (isDragging) {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(savePosition, 200);
+    }
+  });
+  
+  floatBtn.addEventListener('touchend', function() {
+    if (isDragging) {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(savePosition, 200);
+    }
+  });
+  
+  // Load saved position after a short delay
+  setTimeout(loadPosition, 300);
+  
+  // Save position on window resize
+  window.addEventListener('resize', function() {
+    setTimeout(savePosition, 500);
+  });
+  
+  console.log('✅ WhatsApp float is draggable!');
+})();
+</script>
 
 <!-- ===== BOTTOM NAV ===== -->
 <nav class="bottom-nav">
@@ -1758,5 +2206,58 @@ a{color:inherit;text-decoration:none;}
 <div id="toast"></div>
 
 <script src="app.js"></script>
+
+<script>
+// ============================================================
+// SHOP PAGE - MOBILE MENU FUNCTIONS
+// ============================================================
+function openMobileMenu() {
+  var overlay = document.getElementById('mobileMenuOverlay');
+  var menu = document.getElementById('mobileMenu');
+  if (overlay) overlay.classList.add('open');
+  if (menu) menu.classList.add('open');
+}
+
+function closeMobileMenu() {
+  var overlay = document.getElementById('mobileMenuOverlay');
+  var menu = document.getElementById('mobileMenu');
+  if (overlay) overlay.classList.remove('open');
+  if (menu) menu.classList.remove('open');
+}
+
+function openCartDrawer() {
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+}
+
+function closeCartDrawer() {
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function openWishlistModal() {
+  var modal = document.getElementById('wishlistModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeWishlistModal() {
+  var modal = document.getElementById('wishlistModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleHeaderSearch(e) {
+  e.preventDefault();
+  var input = document.getElementById('headerSearchInput') || document.getElementById('mobileSearchInput');
+  var val = input ? input.value.trim() : '';
+  if (val) {
+    window.location.href = 'shop.html?search=' + encodeURIComponent(val);
+  }
+  return false;
+}
+</script>
 </body>
 </html>
