@@ -1689,15 +1689,7 @@ async function loadOrders() {
     const data = await response.json();
     if (data.success && data.orders) {
       allOrders = data.orders;
-      // ✅ FIX: Use the correct function name - applyFilters (not window.applyFilters)
-      if (typeof applyFilters === 'function') {
-        applyFilters();
-      } else if (typeof window.applyFilters === 'function') {
-        window.applyFilters();
-      } else {
-        // Fallback: manually filter and render
-        filterAndRenderOrders();
-      }
+      filterAndRenderOrders();
       updateOrderStats();
     } else if (!allOrders || allOrders.length === 0) {
       list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>';
@@ -1713,7 +1705,85 @@ async function loadOrders() {
   }
 }
 
-// ✅ ADD THIS FALLBACK FUNCTION
+// ✅ RENDER ORDERS FUNCTION
+function renderOrders(orders) {
+  const list = document.getElementById('ordersList');
+  const countDisplay = document.getElementById('orderCountDisplay');
+  if (!list) return;
+  
+  if (!orders || orders.length === 0) {
+    list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders match your filters</p></div>';
+    if (countDisplay) countDisplay.textContent = '0 orders';
+    updateOrderStats();
+    return;
+  }
+  
+  if (countDisplay) countDisplay.textContent = orders.length + ' orders';
+  
+  list.innerHTML = orders.map(function(o) {
+    const items = o.items || [];
+    const statusClass = o.status === 'pending' ? 'status-pending' : 
+                        o.status === 'paid' ? 'status-paid' : 
+                        o.status === 'delivered' ? 'status-delivered' : '';
+    const statusText = o.status === 'pending' ? '⏳ Pending' : 
+                       o.status === 'paid' ? '✅ Paid' : 
+                       o.status === 'delivered' ? '🚚 Delivered' : 
+                       o.status || 'Unknown';
+    
+    const phone = o.phone || '';
+    const cleanPhone = phone.replace(/\D/g, '');
+    const waLink = 'https://wa.me/' + (cleanPhone.startsWith('254') ? cleanPhone : '254' + cleanPhone);
+    
+    let itemsHtml = '';
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var itemName = item.product_name || item.name || 'Product';
+      var itemQty = item.quantity || item.qty || 1;
+      var itemPrice = item.price || 0;
+      var itemSize = item.size || '';
+      itemsHtml += '<div class="order-item">' +
+        '<div class="order-item-details">' +
+        '<div class="order-item-name">' + escapeHtml(itemName) + '</div>' +
+        (itemSize ? '<div class="order-item-size">' + escapeHtml(itemSize) + '</div>' : '') +
+        '<div class="order-item-qty">Qty: ' + itemQty + '</div>' +
+        '</div>' +
+        '<div class="order-item-price">KES ' + (itemPrice * itemQty).toLocaleString() + '</div>' +
+        '</div>';
+    }
+    
+    return '<div class="order-card">' +
+      '<div class="order-header">' +
+      '<div>' +
+      '<div class="order-id">#' + (o.order_number || o._id) + '</div>' +
+      '<div class="order-customer">' + escapeHtml(o.customer_name || 'Guest') + '</div>' +
+      '<div class="order-meta-row">' +
+      '<span class="order-meta-chip"><i class="ph ph-phone"></i> ' + escapeHtml(phone || 'N/A') + '</span>' +
+      '<span class="order-meta-chip"><i class="ph ph-envelope"></i> ' + escapeHtml(o.customer_email || 'N/A') + '</span>' +
+      '<span class="order-meta-chip"><i class="ph ph-calendar"></i> ' + new Date(o.created_at).toLocaleDateString() + ' ' + new Date(o.created_at).toLocaleTimeString() + '</span>' +
+      '</div>' +
+      '</div>' +
+      '<div class="order-header-right">' +
+      '<span class="order-status ' + statusClass + '">' + statusText + '</span>' +
+      '<div class="contact-buttons">' +
+      (phone ? '<a href="tel:' + phone + '" class="btn btn-xs btn-call"><i class="ph ph-phone"></i> Call</a>' : '') +
+      (phone ? '<a href="' + waLink + '" target="_blank" class="btn btn-xs btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>' : '') +
+      '</div>' +
+      '</div>' +
+      '</div>' +
+      '<div class="order-items">' + itemsHtml + '</div>' +
+      '<div class="order-footer">' +
+      '<div class="order-total">KES ' + (o.total || 0).toLocaleString() + '</div>' +
+      '<div class="order-actions">' +
+      (o.status !== 'delivered' ? '<button class="btn btn-green btn-sm" onclick="markDelivered(\'' + o._id + '\')"><i class="ph ph-check-circle"></i> Mark Delivered</button>' : '<span class="completed-chip"><i class="ph ph-check-circle"></i> Completed</span>') +
+      '</div>' +
+      '</div>' +
+      '</div>';
+  }).join('');
+  
+  updateOrderStats();
+}
+
+// ✅ FILTER AND RENDER
 function filterAndRenderOrders() {
   const dateFilter = document.getElementById('dateFilter');
   const statusFilter = document.getElementById('statusFilter');
@@ -1726,21 +1796,32 @@ function filterAndRenderOrders() {
     const days = parseInt(dateFilter.value);
     if (!isNaN(days)) {
       cutoff.setDate(now.getDate() - days);
-      filtered = filtered.filter(o => new Date(o.created_at) >= cutoff);
+      filtered = filtered.filter(function(o) {
+        return new Date(o.created_at) >= cutoff;
+      });
     }
   }
   
   if (statusFilter && statusFilter.value !== 'all') {
-    filtered = filtered.filter(o => o.status === statusFilter.value);
+    filtered = filtered.filter(function(o) {
+      return o.status === statusFilter.value;
+    });
   }
   
-  filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  filtered.sort(function(a, b) {
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+  
   renderOrders(filtered);
 }
 
-// ==================== UPDATE ORDER STATS ====================
+// ✅ APPLY FILTERS (for the filter buttons to call)
+window.applyFilters = function() {
+  filterAndRenderOrders();
+};
+
+// ✅ UPDATE ORDER STATS
 function updateOrderStats() {
-  // ✅ CORRECT IDs matching your HTML
   const totalEl = document.getElementById('totalOrdersCount');
   const pendingEl = document.getElementById('pendingOrdersCount');
   const paidEl = document.getElementById('paidOrdersCount');
@@ -1752,9 +1833,15 @@ function updateOrderStats() {
   }
 
   const total = allOrders.length;
-  const pending = allOrders.filter(o => o.status === 'pending' || o.status === 'PENDING').length;
-  const paid = allOrders.filter(o => o.status === 'paid' || o.status === 'PAID').length;
-  const delivered = allOrders.filter(o => o.status === 'delivered' || o.status === 'DELIVERED').length;
+  const pending = allOrders.filter(function(o) {
+    return o.status === 'pending' || o.status === 'PENDING';
+  }).length;
+  const paid = allOrders.filter(function(o) {
+    return o.status === 'paid' || o.status === 'PAID';
+  }).length;
+  const delivered = allOrders.filter(function(o) {
+    return o.status === 'delivered' || o.status === 'DELIVERED';
+  }).length;
 
   totalEl.textContent = total;
   if (pendingEl) pendingEl.textContent = pending;
@@ -1762,6 +1849,41 @@ function updateOrderStats() {
   if (deliveredEl) deliveredEl.textContent = delivered;
 
   console.log('📊 Order stats updated:', { total, pending, paid, delivered });
+}
+
+// ✅ MARK DELIVERED
+window.markDelivered = async function(orderId) {
+  if (!confirm('Mark this order as delivered?')) return;
+  try {
+    const response = await adminFetch(API_BASE + '/api/db/orders/' + orderId, {
+      method: 'PUT',
+      body: JSON.stringify({ status: 'delivered' })
+    });
+    const data = await response.json();
+    if (data.success) {
+      showToast('✅ Order marked as delivered!', 'success');
+      loadOrders();
+    } else {
+      showToast('❌ ' + (data.message || 'Failed to update order'), 'error');
+    }
+  } catch (error) {
+    console.error('Error updating order:', error);
+    showToast('❌ Network error. Please try again.', 'error');
+  }
+};
+
+// ✅ REFRESH ORDERS
+window.refreshOrders = function() {
+  showToast('🔄 Refreshing orders...', '');
+  loadOrders();
+};
+
+// ✅ UTILITY: escapeHtml
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, function(m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+  });
 }
 
 // ==================== ANALYTICS ====================
