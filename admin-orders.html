@@ -870,7 +870,477 @@ body {
 <!-- ============================================
      SINGLE EXTERNAL SCRIPT — all logic in app.js
      ============================================ -->
-<script src="app.js"></script>
+    <script>
+      // ============================================================
+// LIQUORBELLE — ADMIN ORDERS (Complete Inline Script)
+// ============================================================
+
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
+const ADMIN_TOKEN_KEY = 'liquorbelle_admin_token';
+
+// ============================================================
+// AUTH
+// ============================================================
+function getAdminToken() {
+    return localStorage.getItem(ADMIN_TOKEN_KEY);
+}
+
+function setAdminToken(token) {
+    localStorage.setItem(ADMIN_TOKEN_KEY, token);
+}
+
+function removeAdminToken() {
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
+}
+
+function adminFetch(url, options) {
+    options = options || {};
+    var token = getAdminToken();
+    if (!token) {
+        return Promise.reject(new Error('Not authenticated'));
+    }
+    options.headers = options.headers || {};
+    options.headers['Authorization'] = 'Bearer ' + token;
+    options.headers['Content-Type'] = 'application/json';
+    return fetch(url, options);
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, isError) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.innerText = msg;
+    t.className = 'toast';
+    if (isError) t.classList.add('error');
+    t.style.opacity = '1';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() { t.style.opacity = '0'; }, 3000);
+}
+
+// ============================================================
+// CASHIER LOGIN
+// ============================================================
+window.submitCashierLogin = function() {
+    var password = document.getElementById('cashierPassword');
+    var errorDiv = document.getElementById('loginError');
+    var btn = document.getElementById('loginBtn');
+
+    if (!password || !password.value) {
+        if (errorDiv) errorDiv.innerText = 'Please enter your password.';
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
+    }
+
+    if (errorDiv) errorDiv.innerText = '';
+
+    fetch(API_BASE + '/api/admin/cashier/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password.value })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Login';
+        }
+
+        if (data.success && data.token) {
+            setAdminToken(data.token);
+            document.getElementById('cashierLoginModal').style.display = 'none';
+            toast('✅ Login successful!', false);
+            initializeOrders();
+        } else {
+            if (errorDiv) {
+                errorDiv.innerText = 'Invalid password. Try again.';
+            }
+            if (password) {
+                password.value = '';
+                password.focus();
+            }
+            toast('❌ Invalid password', true);
+        }
+    })
+    .catch(function(err) {
+        console.error('Login error:', err);
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Login';
+        }
+        if (errorDiv) {
+            errorDiv.innerText = 'Network error. Please try again.';
+        }
+        toast('❌ Network error', true);
+    });
+};
+
+window.togglePasswordVisibility = function() {
+    var input = document.getElementById('cashierPassword');
+    var icon = document.getElementById('togglePasswordIcon');
+    if (!input || !icon) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'ph ph-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'ph ph-eye';
+    }
+};
+
+window.logout = function() {
+    removeAdminToken();
+    document.getElementById('cashierLoginModal').style.display = 'flex';
+    document.getElementById('ordersContainer').innerHTML = '';
+    toast('Logged out', false);
+};
+
+// ============================================================
+// ORDERS DATA
+// ============================================================
+var allOrders = [];
+
+// ============================================================
+// INITIALIZE
+// ============================================================
+function initializeOrders() {
+    var token = getAdminToken();
+    if (!token) {
+        document.getElementById('cashierLoginModal').style.display = 'flex';
+        return;
+    }
+    document.getElementById('cashierLoginModal').style.display = 'none';
+    loadOrders();
+    // Auto-refresh every 30 seconds
+    setInterval(loadOrders, 30000);
+}
+
+// ============================================================
+// LOAD ORDERS
+// ============================================================
+function loadOrders() {
+    var container = document.getElementById('ordersContainer');
+    if (!container) return;
+
+    container.innerHTML = '<div class="empty-state"><i class="ph ph-spinner"></i><p>Loading orders...</p></div>';
+
+    adminFetch(API_BASE + '/api/orders/all?limit=500')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.success && data.orders) {
+                allOrders = data.orders;
+                applyFilters();
+                updateStats();
+            } else {
+                container.innerHTML = '<div class="empty-state"><i class="ph ph-warning-circle"></i><p>No orders found</p></div>';
+                updateStats();
+            }
+        })
+        .catch(function(err) {
+            console.error('Error loading orders:', err);
+            container.innerHTML = '<div class="empty-state"><i class="ph ph-wifi-slash"></i><p>Failed to load orders. <button onclick="loadOrders()" style="background:var(--primary);color:white;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;">Retry</button></p></div>';
+        });
+}
+
+// ============================================================
+// UPDATE STATS
+// ============================================================
+function updateStats() {
+    var total = allOrders.length;
+    var pending = allOrders.filter(function(o) {
+        return o.status === 'pending' || o.status === 'PENDING';
+    }).length;
+    var paid = allOrders.filter(function(o) {
+        return o.status === 'paid' || o.status === 'PAID';
+    }).length;
+    var delivered = allOrders.filter(function(o) {
+        return o.status === 'delivered' || o.status === 'DELIVERED';
+    }).length;
+
+    var statsGrid = document.getElementById('statsGrid');
+    if (statsGrid) {
+        statsGrid.innerHTML = `
+            <div class="stat-card" style="border-left:3px solid var(--gold);">
+                <h4>Total Orders</h4>
+                <div class="value">${total}</div>
+                <div class="sub">All time</div>
+                <div class="icon">📋</div>
+            </div>
+            <div class="stat-card" style="border-left:3px solid #F59E0B;">
+                <h4>Pending</h4>
+                <div class="value">${pending}</div>
+                <div class="sub">⏳ Awaiting delivery</div>
+                <div class="icon">⏳</div>
+            </div>
+            <div class="stat-card" style="border-left:3px solid #22C55E;">
+                <h4>Paid</h4>
+                <div class="value">${paid}</div>
+                <div class="sub">✅ Confirmed</div>
+                <div class="icon">✅</div>
+            </div>
+            <div class="stat-card" style="border-left:3px solid #3B82F6;">
+                <h4>Delivered</h4>
+                <div class="value">${delivered}</div>
+                <div class="sub">🚚 Completed</div>
+                <div class="icon">🚚</div>
+            </div>
+        `;
+    }
+
+    var countDisplay = document.getElementById('orderCountDisplay');
+    if (countDisplay) {
+        countDisplay.textContent = '📦 ' + total + ' orders';
+    }
+}
+
+// ============================================================
+// APPLY FILTERS
+// ============================================================
+window.applyFilters = function() {
+    var dateFilter = document.getElementById('dateFilter').value;
+    var statusFilter = document.getElementById('statusFilter').value;
+    var searchQuery = document.getElementById('orderSearch').value.toLowerCase().trim();
+
+    var filtered = allOrders.slice();
+
+    if (dateFilter !== 'all') {
+        var now = new Date();
+        var cutoff = new Date(now);
+        if (dateFilter === '1') cutoff.setHours(now.getHours() - 24);
+        else if (dateFilter === '7') cutoff.setDate(now.getDate() - 7);
+        else if (dateFilter === '30') cutoff.setDate(now.getDate() - 30);
+        else if (dateFilter === '90') cutoff.setDate(now.getDate() - 90);
+        else if (dateFilter === '365') cutoff.setFullYear(now.getFullYear() - 1);
+        filtered = filtered.filter(function(o) {
+            return new Date(o.created_at) >= cutoff;
+        });
+    }
+
+    if (statusFilter !== 'all') {
+        filtered = filtered.filter(function(o) {
+            return o.status === statusFilter;
+        });
+    }
+
+    if (searchQuery) {
+        filtered = filtered.filter(function(o) {
+            var customerName = (o.customer_name || '').toLowerCase();
+            var customerEmail = (o.customer_email || '').toLowerCase();
+            var phone = (o.phone || '').toLowerCase();
+            var orderNumber = (o.order_number || '').toLowerCase();
+            return customerName.indexOf(searchQuery) !== -1 ||
+                   customerEmail.indexOf(searchQuery) !== -1 ||
+                   phone.indexOf(searchQuery) !== -1 ||
+                   orderNumber.indexOf(searchQuery) !== -1;
+        });
+    }
+
+    renderOrders(filtered);
+};
+
+// ============================================================
+// RENDER ORDERS
+// ============================================================
+function renderOrders(orders) {
+    var container = document.getElementById('ordersContainer');
+    if (!container) return;
+
+    if (!orders || orders.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders match your filters</p></div>';
+        return;
+    }
+
+    var html = '';
+    for (var i = 0; i < orders.length; i++) {
+        var o = orders[i];
+        var items = o.items || [];
+        if (typeof items === 'string') {
+            try { items = JSON.parse(items); } catch(e) { items = []; }
+        }
+        if (!Array.isArray(items)) items = [];
+
+        var statusClass = o.status === 'pending' ? 'status-pending' :
+                         o.status === 'paid' ? 'status-paid' :
+                         o.status === 'delivered' ? 'status-delivered' : '';
+        var statusText = o.status === 'pending' ? '⏳ Pending' :
+                        o.status === 'paid' ? '✅ Paid' :
+                        o.status === 'delivered' ? '🚚 Delivered' : o.status || 'Unknown';
+
+        var phone = o.phone || '';
+        var cleanPhone = phone.replace(/\D/g, '');
+        var waLink = 'https://wa.me/' + (cleanPhone.startsWith('254') ? cleanPhone : '254' + cleanPhone);
+
+        html += '<div class="order-card">';
+        html += '<div class="order-header">';
+        html += '<div>';
+        html += '<div class="order-id">#' + (o.order_number || o._id) + '</div>';
+        html += '<div class="order-customer">' + escapeHtml(o.customer_name || 'Guest') + '</div>';
+        html += '<div class="order-meta-row">';
+        html += '<span class="order-meta-chip"><i class="ph ph-phone"></i> ' + escapeHtml(phone || 'N/A') + '</span>';
+        html += '<span class="order-meta-chip"><i class="ph ph-envelope"></i> ' + escapeHtml(o.customer_email || 'N/A') + '</span>';
+        html += '<span class="order-meta-chip"><i class="ph ph-calendar"></i> ' + new Date(o.created_at).toLocaleDateString() + ' ' + new Date(o.created_at).toLocaleTimeString() + '</span>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="order-header-right">';
+        html += '<span class="order-status ' + statusClass + '">' + statusText + '</span>';
+        html += '<div class="contact-buttons">';
+        if (phone) {
+            html += '<a href="tel:' + phone + '" class="btn btn-sm btn-call"><i class="ph ph-phone"></i> Call</a>';
+            html += '<a href="' + waLink + '" target="_blank" class="btn btn-sm btn-wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>';
+        }
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="order-items">';
+        for (var j = 0; j < items.length; j++) {
+            var item = items[j];
+            var itemName = item.product_name || item.name || 'Product';
+            var itemQty = item.quantity || item.qty || 1;
+            var itemPrice = item.price || 0;
+            var itemSize = item.size || '';
+            html += '<div class="order-item">';
+            html += '<div class="order-item-details">';
+            html += '<div class="order-item-name">' + escapeHtml(itemName) + '</div>';
+            if (itemSize) html += '<div class="order-item-qty">' + escapeHtml(itemSize) + '</div>';
+            html += '<div class="order-item-qty">Qty: ' + itemQty + '</div>';
+            html += '</div>';
+            html += '<div class="order-item-price">KES ' + (itemPrice * itemQty).toLocaleString() + '</div>';
+            html += '</div>';
+        }
+        html += '</div>';
+
+        html += '<div class="order-footer">';
+        html += '<div class="order-total">KES ' + (o.total || 0).toLocaleString() + '</div>';
+        html += '<div class="order-actions">';
+        if (o.status !== 'delivered' && o.status !== 'DELIVERED') {
+            html += '<button class="btn btn-green btn-sm" onclick="markDelivered(\'' + o._id + '\')"><i class="ph ph-check-circle"></i> Mark Delivered</button>';
+        } else {
+            html += '<span class="completed-chip"><i class="ph ph-check-circle"></i> Completed</span>';
+        }
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>';
+    }
+
+    container.innerHTML = html;
+}
+
+// ============================================================
+// MARK DELIVERED
+// ============================================================
+window.markDelivered = function(orderId) {
+    if (!confirm('Mark this order as delivered?')) return;
+
+    adminFetch(API_BASE + '/api/orders/' + orderId + '/status', {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'delivered' })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.success) {
+            toast('✅ Order marked as delivered!', false);
+            loadOrders();
+        } else {
+            toast('❌ ' + (data.message || 'Failed to update order'), true);
+        }
+    })
+    .catch(function(err) {
+        console.error('Error updating order:', err);
+        toast('❌ Network error. Please try again.', true);
+    });
+};
+
+// ============================================================
+// SEARCH
+// ============================================================
+window.clearSearch = function() {
+    document.getElementById('orderSearch').value = '';
+    applyFilters();
+};
+
+window.manualRefresh = function() {
+    toast('🔄 Refreshing orders...', false);
+    loadOrders();
+};
+
+// ============================================================
+// UTILITY
+// ============================================================
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    var token = getAdminToken();
+    if (token) {
+        initializeOrders();
+    } else {
+        document.getElementById('cashierLoginModal').style.display = 'flex';
+    }
+
+    var searchInput = document.getElementById('orderSearch');
+    if (searchInput) {
+        var debounceTimer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function() {
+                applyFilters();
+            }, 300);
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyFilters();
+            }
+        });
+    }
+
+    // Enter key on login
+    var passwordInput = document.getElementById('cashierPassword');
+    if (passwordInput) {
+        passwordInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitCashierLogin();
+            }
+        });
+    }
+});
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var searchInput = document.getElementById('orderSearch');
+        if (searchInput && document.activeElement === searchInput) {
+            searchInput.value = '';
+            applyFilters();
+            searchInput.blur();
+        }
+    }
+    if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        manualRefresh();
+    }
+});
+
+console.log('🍾 LiquorBelle Order Manager loaded');
+    </script>
 
 </body>
 </html>
