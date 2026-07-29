@@ -893,19 +893,19 @@ if (document.getElementById('categoryGrid')) {
 var categories = [
   { name: "All", cat: "all", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
   // ===== WHISKY =====
-  { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
+  { name: "Whisky", cat: "whisky", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316354/pngtree-tasty-whisky-glass-ice-cubes-png-image_14437708_kherqc.png" },
   // ===== WINE =====
-  { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  { name: "Wine", cat: "wine", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316386/how-many-ounces-in-a-glass-of-wine_rxqtve.jpg" },
   // ===== VODKA =====
-  { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1781861620/360_F_1968789415_ryoi6Go4jg91plfDJTcIIjSWJoQebHb5_ftjnxo.jpg" },
+  { name: "Vodka", cat: "vodka", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
   // ===== GIN =====
-  { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+  { name: "Gin", cat: "gin", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316501/0008954033349_tsnaq5.jpg" },
   // ===== COGNAC =====
   { name: "Cognac", cat: "cognac", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
   // ===== CREAMS =====
-  { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
+  { name: "Creams", cat: "cream", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316567/Bourbon-Cream-Rundown-Jim-Beam-Ezra-Brooks-Paddleford-Creek-Nooku_znbqqy.webp" },
   // ===== BEER =====
-  { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  { name: "Beer", cat: "beer", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316616/00085000004180_gaduqf.png" },
   // ===== BRANDY =====
   { name: "Brandy", cat: "brandy", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" },
   // ===== BOURBON =====
@@ -913,9 +913,9 @@ var categories = [
   // ===== RUM =====
   { name: "Rum", cat: "rum", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048542/ARZLR-0_rmmte9.jpg" },
   // ===== SPIRITS =====
-  { name: "Spirits", cat: "spirits", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048367/CHCAS-0_w3c0de.jpg" },
+  { name: "Spirits", cat: "spirits", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316742/party-pack-spirits-copy_qehwpt.jpg" },
   // ===== LIQUEUR =====
-  { name: "Liqueur", cat: "liqueur", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318741/What-Is-Drambuie-FT-BLOG0823-a15766cd40da434a8145fe33552e5a9c_i0h8wg.jpg" },
+  { name: "Liqueur", cat: "liqueur", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316799/the-genuine-curacao-liqeur-blue-curacao_vzpzbz.jpg" },
   // ===== JUICE =====
   { name: "Juice", cat: "juice", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782318835/Cold_Tea_in_Kenya_600x600_q0ik5i.jpg" },
   // ===== SODA =====
@@ -929,9 +929,9 @@ var categories = [
   // ===== ACCESSORY =====
   { name: "Accessory", cat: "accessory", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782319473/51PDVK6sQzL._AC_UF1000_1000_QL80__cn0azd.jpg" },
   // ===== CIDER =====
-  { name: "Cider", cat: "cider", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1782048744/Most-popular-beers-in-Kenya-Guinness_a2ggz6.jpg" },
+  { name: "Cider", cat: "cider", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785316884/APPLE-CIDER-APEROL-SPRITZ-FT-RECIPE0923-7ed1ed5a5bbb49ae85b8db3eabc97341_z3jk3f.jpg" },
   // ===== VERMOUTH =====
-  { name: "Vermouth", cat: "vermouth", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1782318392/ej-vs-brandy__24539.1752495285.1280.1280__71304.1_bvxpwn.jpg" }
+  { name: "Vermouth", cat: "vermouth", image: "https://res.cloudinary.com/dvqjgbdhp/image/upload/v1784648088/MRSWEETVERMOUTHL_so7dtt.jpg" }
 ];
 
 window.renderCategories = function() {
