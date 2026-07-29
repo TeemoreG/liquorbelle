@@ -2439,5 +2439,81 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('🍾 LiquorBelle homepage loaded');
 });
 </script>
+<!-- ===== COOKIE CONSENT BANNER ===== -->
+<div id="cookieBanner" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #5C0000;
+    color: white;
+    padding: 16px 20px;
+    z-index: 9999;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: 'Inter', sans-serif;
+    transform: translateY(0);
+    transition: transform 0.4s ease;
+">
+    <div style="flex: 1; min-width: 200px;">
+        <p style="margin: 0; font-size: 0.85rem; line-height: 1.5;">
+            🍪 We use cookies to improve your experience, remember your cart, and analyze traffic. 
+            By clicking "Accept All", you consent to our use of cookies.
+            <a href="privacy.html" style="color: #d4a017; text-decoration: underline; font-weight: 600;">Learn more</a>
+        </p>
+    </div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button onclick="acceptCookies()" style="
+            background: #22C55E;
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        ">Accept All</button>
+        <button onclick="rejectCookies()" style="
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        ">Reject</button>
+    </div>
+</div>
+
+<script>
+    // Check if user already made a choice
+    if (localStorage.getItem('cookieConsent')) {
+        document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
+    }
+
+    function acceptCookies() {
+        localStorage.setItem('cookieConsent', 'accepted');
+        document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
+        // Your existing toast function if you have one
+        if (typeof toast === 'function') {
+            toast('🍪 Thanks! Cookies enabled.', 'success');
+        }
+    }
+
+    function rejectCookies() {
+        localStorage.setItem('cookieConsent', 'rejected');
+        document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
+        if (typeof toast === 'function') {
+            toast('🍪 Only essential cookies will be used.', 'info');
+        }
+    }
+</script>
 </body>
 </html>
