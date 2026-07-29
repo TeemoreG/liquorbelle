@@ -1689,11 +1689,19 @@ async function loadOrders() {
     const data = await response.json();
     if (data.success && data.orders) {
       allOrders = data.orders;
-      applyFilters();
-      updateOrderStats(); // ✅ Add this line
+      // ✅ FIX: Use the correct function name - applyFilters (not window.applyFilters)
+      if (typeof applyFilters === 'function') {
+        applyFilters();
+      } else if (typeof window.applyFilters === 'function') {
+        window.applyFilters();
+      } else {
+        // Fallback: manually filter and render
+        filterAndRenderOrders();
+      }
+      updateOrderStats();
     } else if (!allOrders || allOrders.length === 0) {
       list.innerHTML = '<div class="empty-state"><i class="ph ph-clipboard-text"></i><p>No orders found</p></div>';
-      updateOrderStats(); // ✅ Add this line
+      updateOrderStats();
     }
   } catch (error) {
     console.error('Error loading orders:', error);
@@ -1703,6 +1711,31 @@ async function loadOrders() {
       showToast('❌ Failed to refresh orders', 'error');
     }
   }
+}
+
+// ✅ ADD THIS FALLBACK FUNCTION
+function filterAndRenderOrders() {
+  const dateFilter = document.getElementById('dateFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  
+  let filtered = [...allOrders];
+  
+  if (dateFilter && dateFilter.value !== 'all') {
+    const now = new Date();
+    const cutoff = new Date(now);
+    const days = parseInt(dateFilter.value);
+    if (!isNaN(days)) {
+      cutoff.setDate(now.getDate() - days);
+      filtered = filtered.filter(o => new Date(o.created_at) >= cutoff);
+    }
+  }
+  
+  if (statusFilter && statusFilter.value !== 'all') {
+    filtered = filtered.filter(o => o.status === statusFilter.value);
+  }
+  
+  filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  renderOrders(filtered);
 }
 
 // ==================== UPDATE ORDER STATS ====================
