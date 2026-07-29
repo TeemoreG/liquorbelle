@@ -2065,7 +2065,7 @@ function updateMobileMenuAuth() {
 }
 
 // ============================================================
-// PLACE ORDER - FIXED
+// PLACE ORDER - FIXED WITH PAYMENT STATUS POLLING
 // ============================================================
 async function placeOrder() {
   var btn = document.getElementById('placeOrderBtn');
@@ -2127,12 +2127,11 @@ async function placeOrder() {
   var orderNumber = 'LB-' + Date.now().toString(36).toUpperCase();
   var paymentMethod = document.getElementById('selectedPaymentMethod').value;
 
-  // ✅ FIX: Build payload based on payment method
+  // Build payload based on payment method
   var payload;
   var endpoint;
 
   if (paymentMethod === 'pod') {
-    // POD expects orderNumber
     payload = {
       orderNumber: orderNumber,
       customerName: name,
@@ -2147,9 +2146,8 @@ async function placeOrder() {
     };
     endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/orders/pod';
   } else {
-    // ✅ M-PESA expects orderId (NOT orderNumber)
     payload = {
-      orderId: orderNumber,        // ← FIX: Use orderId, not orderNumber
+      orderId: orderNumber,
       customerName: name,
       customerEmail: email,
       phone: phone,
@@ -2162,7 +2160,7 @@ async function placeOrder() {
     endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/stkpush';
   }
 
-  console.log('📦 Sending payload:', payload); // Debug log
+  console.log('📦 Sending payload:', payload);
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Processing...';
@@ -2177,27 +2175,112 @@ async function placeOrder() {
     var data = await response.json();
 
     if (data.success) {
-      localStorage.removeItem('liquorbelle_cart');
-      document.getElementById('successOrderId').textContent = orderNumber;
       if (paymentMethod === 'pod') {
+        // ✅ POD - Show success immediately
+        localStorage.removeItem('liquorbelle_cart');
+        document.getElementById('successOrderId').textContent = orderNumber;
         document.getElementById('successMessage').textContent = 'Your order has been confirmed. Please have cash ready upon delivery.';
+        document.getElementById('successModal').classList.add('active');
+        updateCartBadges();
+        renderSummary();
+        if (typeof updateCartUI === 'function') updateCartUI();
       } else {
-        document.getElementById('successMessage').textContent = 'Check your phone for the M-PESA STK push prompt.';
+        // ✅ M-PESA - Show waiting message, then poll for status
+        showSnack('📱 M-PESA prompt sent to your phone. Please enter your PIN.', false);
+        
+        // Show waiting modal
+        document.getElementById('successOrderId').textContent = orderNumber;
+        document.getElementById('successMessage').innerHTML = '⏳ <strong>Waiting for payment confirmation...</strong><br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt and enter your PIN.</span>';
+        document.getElementById('successModal').classList.add('active');
+        
+        // ✅ Poll for payment status
+        var paid = await pollPaymentStatus(orderNumber);
+        
+        if (paid) {
+          // ✅ Payment successful!
+          localStorage.removeItem('liquorbelle_cart');
+          document.getElementById('successOrderId').textContent = orderNumber;
+          document.getElementById('successMessage').innerHTML = '✅ <strong>Payment confirmed!</strong><br><span style="font-size:0.85rem;color:var(--muted);">Your order has been placed successfully.</span>';
+          updateCartBadges();
+          renderSummary();
+          if (typeof updateCartUI === 'function') updateCartUI();
+        } else {
+          // ❌ Payment failed or cancelled
+          document.getElementById('successModal').classList.remove('active');
+          // Don't clear cart - user can try again
+        }
       }
-      document.getElementById('successModal').classList.add('active');
-      updateCartBadges();
-      renderSummary();
-      if (typeof updateCartUI === 'function') updateCartUI();
     } else {
       showSnack(data.message || 'Order failed. Please try again.', true);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-check-circle"></i> Place Order';
     }
   } catch (err) {
     console.error('Order error:', err);
     showSnack('Network error. Please check your connection.', true);
-  } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="ph ph-check-circle"></i> Place Order';
   }
+}
+
+// ==================== POLL PAYMENT STATUS ====================
+async function pollPaymentStatus(orderId) {
+  var maxAttempts = 30; // 30 * 3 seconds = 90 seconds
+  var attempts = 0;
+  var interval = 3000; // 3 seconds
+
+  return new Promise(function(resolve) {
+    var checkInterval = setInterval(async function() {
+      attempts++;
+      
+      try {
+        var response = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/status/' + orderId);
+        var data = await response.json();
+        
+        console.log('📊 Payment status check #' + attempts + ':', data);
+        
+        // Update the modal with progress
+        var statusEl = document.getElementById('successMessage');
+        if (statusEl) {
+          var dots = '.'.repeat(attempts % 4);
+          statusEl.innerHTML = '⏳ <strong>Waiting for payment confirmation</strong>' + dots + '<br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt.</span>';
+        }
+        
+        if (data.status === 'paid') {
+          clearInterval(checkInterval);
+          resolve(true);
+          return;
+        } else if (data.status === 'failed' || data.status === 'cancelled' || data.status === 'not_found') {
+          clearInterval(checkInterval);
+          resolve(false);
+          return;
+        } else if (attempts >= maxAttempts) {
+          clearInterval(checkInterval);
+          // Timeout - check if order exists in orders collection
+          try {
+            var orderCheck = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/status/' + orderId);
+            var orderData = await orderCheck.json();
+            if (orderData.status === 'paid') {
+              resolve(true);
+              return;
+            }
+          } catch (e) {
+            // Ignore
+          }
+          resolve(false);
+          return;
+        }
+        // Otherwise, keep waiting
+      } catch (err) {
+        console.error('Status check error:', err);
+        // Don't stop on network errors, keep trying
+        if (attempts >= maxAttempts) {
+          clearInterval(checkInterval);
+          resolve(false);
+        }
+      }
+    }, interval);
+  });
 }
 
 // ============================================================
