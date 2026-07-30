@@ -1517,10 +1517,10 @@ function populateDeliveryAreas(selectId) {
   select.appendChild(defaultOption);
   
   if (!deliveryZones || deliveryZones.length === 0) {
-    var loadingOption = document.createElement('option');
-    loadingOption.value = '';
-    loadingOption.textContent = 'Loading areas...';
-    select.appendChild(loadingOption);
+    var noZoneOption = document.createElement('option');
+    noZoneOption.value = '';
+    noZoneOption.textContent = 'No delivery areas available';
+    select.appendChild(noZoneOption);
     return;
   }
   
@@ -1530,13 +1530,12 @@ function populateDeliveryAreas(selectId) {
     var option = document.createElement('option');
     option.value = zone.name;
     option.textContent = zone.name;
-    option.dataset.fee = zone.fee; // ✅ CRITICAL: Store the fee per zone
+    option.dataset.fee = zone.fee;
     select.appendChild(option);
   }
   
   if (sortedZones.length > 0) {
     select.value = sortedZones[0].name;
-    // ✅ Immediately trigger change to set the correct fee
     handleDeliveryChange();
   }
 }
@@ -1554,29 +1553,24 @@ function handleDeliveryChange() {
     return;
   }
   
-  // ✅ READ THE FEE DIRECTLY FROM THE HTML DATA-FEE ATTRIBUTE
   var fee = parseInt(selectedOption.dataset.fee);
   
-  // ✅ FALLBACK: Search deliveryZones array if data-fee is missing
-  if (!fee || isNaN(fee) || fee === 0) {
+  if (isNaN(fee) || fee === 0) {
     var zone = deliveryZones.find(function(z) {
       return z.name === selectedOption.value;
     });
-    fee = zone ? zone.fee : 150; // fallback to 150 only if truly missing
+    fee = zone ? zone.fee : 150;
   }
 
-  // ✅ UPDATE THE GLOBAL VARIABLE
   selectedZoneFee = fee;
   
   console.log('📍 Zone selected:', selectedOption.value, '| Fee:', selectedZoneFee);
   
-  // ✅ UPDATE THE UI IMMEDIATELY
   var deliveryEl = document.getElementById('deliveryFee');
   if (deliveryEl) {
     deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
   }
   
-  // ✅ RECALCULATE THE WHOLE SUMMARY
   if (typeof renderSummary === 'function') {
     renderSummary();
   }
@@ -1646,7 +1640,6 @@ function renderSummary() {
   deliveryEl.textContent = delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString();
   totalEl.textContent = 'KES ' + total.toLocaleString();
 
-  // ✅ VAT text removed from free delivery note as requested
   if (delivery === 0 && subtotal > 0) {
     freeNote.textContent = '🎉 Free delivery applied!';
   } else if (subtotal > 0 && deliveryEnabled) {
@@ -1670,7 +1663,6 @@ function renderSummary() {
     }
   }
 }
-
 // ============================================================
 // PLACE ORDER
 // ============================================================
