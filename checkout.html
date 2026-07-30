@@ -1313,13 +1313,6 @@ let selectedZoneFee = 150;
 let customerLat = null;
 let customerLng = null;
 
-/**
- * FIX: Loose truthy checks (`|| 5000`, `!== false`) silently break when the
- * backend serializes numbers/booleans as strings (e.g. "0", "false").
- * "0" is truthy in JS, so `"0" || 5000` kept the broken "0" value, and any
- * subtotal >= "0" is always true — forcing free delivery on every order.
- * We now explicitly coerce to Number/Boolean and validate before trusting them.
- */
 async function loadDeliverySettings() {
   try {
     const res = await fetch(API_BASE + '/api/delivery-settings');
@@ -1426,6 +1419,9 @@ function getFeeByDistance(distance) {
   return DELIVERY_TIERS[DELIVERY_TIERS.length - 1].fee;
 }
 
+// ============================================================
+// CALCULATE DELIVERY FEE FROM BACKEND (GPS -> Zone API)
+// ============================================================
 async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
   try {
     const response = await fetch(API_BASE + '/api/calculate-fee', {
@@ -1435,40 +1431,50 @@ async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
     });
     const data = await response.json();
     if (data.success) return data;
-  } catch (error) { console.error('calculate-fee API error:', error); }
+  } catch (error) { 
+    console.error('calculate-fee API error:', error); 
+  }
+  
   // Fallback: compute locally from straight-line distance
   const distance = calculateDistance(SHOP_LOCATION.lat, SHOP_LOCATION.lng, lat, lng);
   return { fee: getFeeByDistance(distance), distance: distance, isFree: false, reason: 'Distance-based fallback' };
 }
 
-/**
- * RESTORED: this function was called from the PIN click handler
- * (`calculateAndUpdateDeliveryFee(lat, lng)`) but was never defined,
- * which threw "ReferenceError: calculateAndUpdateDeliveryFee is not defined"
- * and killed the rest of the success callback before the UI could update.
- */
+// ============================================================
+// CALCULATE AND UPDATE UI (Dropdown Priority Fix)
+// ============================================================
 async function calculateAndUpdateDeliveryFee(lat, lng) {
   var subtotal = getCartTotal(getCart());
   try {
     var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
-    if (result) {
+    
+    // ✅ CRITICAL FIX: Check if dropdown already has a valid fee
+    var select = document.getElementById('deliveryArea');
+    var currentDropdownFee = parseInt(select.options[select.selectedIndex]?.dataset?.fee);
+    
+    if (!isNaN(currentDropdownFee) && currentDropdownFee > 0) {
+      // 🛑 If dropdown is already set, PRESERVE it and ignore backend fee
+      console.log('🛑 Preserving dropdown fee:', currentDropdownFee, '| Ignoring backend fee:', result?.fee);
+      selectedZoneFee = currentDropdownFee;
+    } else if (result) {
+      // Only use backend if dropdown is empty
       var fee = Number(result.fee);
       selectedZoneFee = (!isNaN(fee) && fee >= 0) ? fee : selectedZoneFee;
-
-      var distance = result.distance ? Number(result.distance).toFixed(1) : '?';
-      console.log('📍 Distance from shop:', distance + 'km', '| Fee:', selectedZoneFee);
-
-      var deliveryEl = document.getElementById('deliveryFee');
-      if (deliveryEl) {
-        deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
-      }
-      renderSummary();
     }
+
+    var distance = result?.distance ? Number(result.distance).toFixed(1) : '?';
+    console.log('📍 Distance from shop:', distance + 'km', '| Final Fee:', selectedZoneFee);
+
+    var deliveryEl = document.getElementById('deliveryFee');
+    if (deliveryEl) {
+      deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
+    }
+    renderSummary();
+    
   } catch (error) {
     console.error('Failed to calculate delivery fee:', error);
   }
 }
-
 // ============================================================
 // CART FUNCTIONS
 // ============================================================
