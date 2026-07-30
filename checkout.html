@@ -1574,6 +1574,9 @@ function handleDeliveryChange() {
   if (typeof renderSummary === 'function') {
     renderSummary();
   }
+  
+  // ✅ Force the progress bar and delivery note to update instantly
+  updateDeliveryProgress();
 }
 
 async function calculateAndUpdateDeliveryFee(lat, lng) {
@@ -1585,6 +1588,8 @@ async function calculateAndUpdateDeliveryFee(lat, lng) {
       var deliveryEl = document.getElementById('deliveryFee');
       if (deliveryEl) deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
       renderSummary();
+      // ✅ Force the progress bar and delivery note to update instantly
+      updateDeliveryProgress();
     }
   } catch (error) { console.error('Failed to calculate delivery fee:', error); }
 }
@@ -1613,6 +1618,7 @@ function renderSummary() {
 
   var html = '';
   var subtotal = 0;
+  
   for (var i = 0; i < cart.length; i++) {
     var item = cart[i];
     var name = item.name || 'Product';
@@ -1621,10 +1627,15 @@ function renderSummary() {
     var itemTotal = price * qty;
     subtotal += itemTotal;
     var size = item.size || '750ml';
+    var itemId = item.id || item._id || 'item_' + i; // ✅ Get the item ID
     
+    // ✅ ADDED THE REMOVE BUTTON HERE
     html += '<div class="cart-item-checkout">' +
       '<div class="item-name">' + escapeHtml(name) + ' <small>' + escapeHtml(size) + '</small></div>' +
       '<div class="item-price">KES ' + itemTotal.toLocaleString() + '</div>' +
+      '<div style="margin-top:4px;">' +
+        '<button onclick="removeCartItem(\'' + itemId + '\')" style="background:none;border:none;color:var(--sale-red);cursor:pointer;font-size:11px;font-weight:600;padding:0;text-decoration:underline;">Remove</button>' +
+      '</div>' +
       '</div>';
   }
   summaryItems.innerHTML = html;
@@ -1663,6 +1674,7 @@ function renderSummary() {
     }
   }
 }
+
 // ============================================================
 // PLACE ORDER
 // ============================================================
