@@ -1221,16 +1221,15 @@ a{color:inherit;text-decoration:none;}
 // ============================================================
 
 // ===== TAX CONFIGURATION =====
+// ✅ VAT is calculated on DELIVERY FEE only (16% of delivery fee)
+// ✅ NO VAT on products
 const TAX_CONFIG = {
-  vatRate: 0.16, // 16% VAT
-  alcoholicCategories: [
-    'whisky', 'wine', 'vodka', 'gin', 'cognac', 'cream',
-    'beer', 'brandy', 'bourbon', 'rum', 'spirits', 'liqueur',
-    'cider', 'vermouth'
-  ]
+  vatRate: 0.16 // 16% VAT on delivery only
 };
 
 // ===== DELIVERY TIERS (Distance-based) =====
+// 0-5km: KES 150 | 5-10km: KES 180 | 10-15km: KES 220
+// 15-20km: KES 280 | 20-30km: KES 350 | 30+km: KES 405
 const DELIVERY_TIERS = [
   { minDistance: 0, maxDistance: 5, fee: 150 },
   { minDistance: 5, maxDistance: 10, fee: 180 },
@@ -1245,6 +1244,9 @@ const SHOP_LOCATION = {
   lat: -1.2832,
   lng: 36.7254
 };
+
+// ===== API BASE =====
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 
 // ===== PAYMENT METHOD SELECTION =====
 function selectPayment(method) {
@@ -1334,16 +1336,13 @@ let customerLng = null;
 
 async function loadDeliverySettings() {
   try {
-    const res = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/delivery-settings');
+    const res = await fetch(API_BASE + '/api/delivery-settings');
     const data = await res.json();
     if (data.success && data.settings) {
       deliveryFee = data.settings.delivery_fee || 150;
       freeDeliveryThreshold = data.settings.free_delivery_threshold || 5000;
       deliveryEnabled = data.settings.delivery_enabled !== false;
     }
-    deliveryFee = 150;
-    freeDeliveryThreshold = 5000;
-    deliveryEnabled = true;
     console.log('✅ Delivery settings:', { deliveryFee, freeDeliveryThreshold, deliveryEnabled });
     return { deliveryFee, freeDeliveryThreshold, deliveryEnabled };
   } catch (e) {
@@ -1357,7 +1356,7 @@ async function loadDeliverySettings() {
 
 async function loadDeliveryZones() {
   try {
-    const res = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/delivery-zones');
+    const res = await fetch(API_BASE + '/api/delivery-zones');
     const data = await res.json();
     if (data.success && data.zones) {
       deliveryZones = data.zones;
@@ -1366,7 +1365,9 @@ async function loadDeliveryZones() {
       }
       return deliveryZones;
     }
+    // Default zones matching your backend
     deliveryZones = [
+      // 0–5 km — KES 150
       { name: 'Dagoretti Road', fee: 150 },
       { name: 'Naivasha Road', fee: 150 },
       { name: 'Kikuyu Road', fee: 150 },
@@ -1377,12 +1378,14 @@ async function loadDeliveryZones() {
       { name: 'Hurlingham', fee: 150 },
       { name: 'Upper Hill', fee: 150 },
       { name: 'Nairobi CBD', fee: 150 },
+      // 5–10 km — KES 180
       { name: 'Westlands', fee: 180 },
       { name: 'Parklands', fee: 180 },
       { name: 'Muthaiga', fee: 180 },
       { name: 'Karen', fee: 180 },
       { name: 'Langata', fee: 180 },
       { name: 'Waiyaki Way', fee: 180 },
+      // 10–15 km — KES 220
       { name: 'Rongai', fee: 220 },
       { name: 'South B', fee: 220 },
       { name: 'Waithaka', fee: 220 },
@@ -1390,6 +1393,7 @@ async function loadDeliveryZones() {
       { name: 'Gigiri', fee: 220 },
       { name: 'Loresho', fee: 220 },
       { name: 'Kiambu Road', fee: 220 },
+      // 15–20 km — KES 280
       { name: 'Ruaka', fee: 280 },
       { name: 'Kikuyu', fee: 280 }
     ];
@@ -1430,49 +1434,10 @@ async function loadDeliveryZones() {
 }
 
 // ============================================================
-// TAX CALCULATION
-// ============================================================
-function calculateVAT(price, category) {
-  if (!TAX_CONFIG.alcoholicCategories.includes(category)) {
-    return 0;
-  }
-  return Math.round(price * TAX_CONFIG.vatRate);
-}
-
-function calculateCartTaxes(cartItems) {
-  var totalVAT = 0;
-  var taxableItems = [];
-  
-  for (var i = 0; i < cartItems.length; i++) {
-    var item = cartItems[i];
-    var category = item.category || 'spirits';
-    var price = parseFloat(item.price) || 0;
-    var qty = parseInt(item.quantity) || parseInt(item.qty) || 1;
-    var itemPrice = price * qty;
-    
-    var vat = calculateVAT(itemPrice, category);
-    totalVAT += vat;
-    
-    taxableItems.push({
-      name: item.name,
-      category: category,
-      price: itemPrice,
-      vat: vat,
-      isAlcoholic: TAX_CONFIG.alcoholicCategories.includes(category)
-    });
-  }
-  
-  return {
-    totalVAT: Math.round(totalVAT),
-    items: taxableItems
-  };
-}
-
-// ============================================================
-// LOCATION PIN - GET ADDRESS FROM GPS
+// LOCATION PIN - GET ADDRESS FROM GPS (USING BACKEND API)
 // ============================================================
 function getAddressFromCoords(lat, lng) {
-  return fetch('https://liquorbelle-mpesa-backend.onrender.com/api/geocode/reverse', {
+  return fetch(API_BASE + '/api/geocode/reverse', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ lat: lat, lng: lng })
@@ -1496,63 +1461,7 @@ function getAddressFromCoords(lat, lng) {
 }
 
 // ============================================================
-// CALCULATE DISTANCE (Haversine formula)
-// ============================================================
-function calculateDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLng/2) * Math.sin(dLng/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
-}
-
-// ============================================================
-// GET FEE BY DISTANCE
-// ============================================================
-function getFeeByDistance(distance) {
-  for (var i = 0; i < DELIVERY_TIERS.length; i++) {
-    var tier = DELIVERY_TIERS[i];
-    if (distance >= tier.minDistance && distance < tier.maxDistance) {
-      return tier.fee;
-    }
-  }
-  return DELIVERY_TIERS[DELIVERY_TIERS.length - 1].fee;
-}
-
-// ============================================================
-// CALCULATE DELIVERY FEE FROM COORDINATES
-// ============================================================
-async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
-  try {
-    const response = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/calculate-fee', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lat: lat, lng: lng, subtotal: subtotal || 0 })
-    });
-    const data = await response.json();
-    if (data.success) {
-      return data;
-    }
-    throw new Error('Failed to calculate fee');
-  } catch (error) {
-    console.error('Error calculating delivery fee:', error);
-    // Fallback: calculate locally
-    const distance = calculateDistance(SHOP_LOCATION.lat, SHOP_LOCATION.lng, lat, lng);
-    const fee = getFeeByDistance(distance);
-    return {
-      fee: fee,
-      distance: distance,
-      isFree: false,
-      reason: 'Distance-based fee'
-    };
-  }
-}
-
-// ============================================================
-// BUILDING AUTOCOMPLETE - GOOGLE PLACES
+// BUILDING AUTOCOMPLETE - USING BACKEND API (LocationIQ → Geoapify → Nominatim)
 // ============================================================
 function initBuildingAutocomplete() {
   var buildingInput = document.getElementById('building');
@@ -1593,288 +1502,114 @@ function initBuildingAutocomplete() {
     suggestionsContainer.style.display = 'block';
     suggestionsContainer.innerHTML = '<div class="loading-results"><span class="spinner-small"></span> Searching...</div>';
     
-    fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query + ' Nairobi Kenya') + '&format=json&limit=8&addressdetails=1&category=building,commercial,residential')
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (!data || data.length === 0) {
-          suggestionsContainer.innerHTML = '<div class="no-results">No buildings found. Try a different name.</div>';
-          return;
-        }
-        
-        var html = '';
-        for (var i = 0; i < data.length; i++) {
-          var place = data[i];
-          var displayName = place.display_name.split(',').slice(0, 3).join(', ');
-          var category = place.category || 'Building';
-          var type = place.type || '';
-          
-          var badgeText = 'Building';
-          if (type === 'commercial') badgeText = 'Commercial';
-          else if (type === 'residential') badgeText = 'Residential';
-          else if (type === 'apartment') badgeText = 'Apartment';
-          else if (type === 'estate') badgeText = 'Estate';
-          
-          html += '<div class="suggestion-item" data-name="' + escapeHtml(place.display_name.split(',')[0]) + '" data-full="' + escapeHtml(displayName) + '" data-lat="' + place.lat + '" data-lon="' + place.lon + '">';
-          html += '<span class="icon"><i class="ph ph-buildings"></i></span>';
-          html += '<div><span class="name">' + escapeHtml(place.display_name.split(',')[0]) + '</span>';
-          html += '<span class="address">' + escapeHtml(displayName) + '</span></div>';
-          html += '<span class="badge">' + badgeText + '</span>';
-          html += '</div>';
-        }
-        
-        suggestionsContainer.innerHTML = html;
-        
-        var items = suggestionsContainer.querySelectorAll('.suggestion-item');
-        for (var j = 0; j < items.length; j++) {
-          items[j].addEventListener('click', function() {
-            var name = this.dataset.name;
-            var full = this.dataset.full;
-            buildingInput.value = name;
-            suggestionsContainer.style.display = 'none';
-            buildingInput.dataset.fullAddress = full;
-            toast('📍 Selected: ' + name);
-          });
-        }
+    // ✅ USE BACKEND API - LocationIQ → Geoapify → Nominatim fallback
+    fetch(API_BASE + '/api/geocode/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        query: query, 
+        limit: 8,
+        category: 'building,commercial,residential'
       })
-      .catch(function(err) {
-        console.error('Building search error:', err);
-        suggestionsContainer.innerHTML = '<div class="no-results">Search error. Please type manually.</div>';
-      });
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (!data.success || !data.results || data.results.length === 0) {
+        suggestionsContainer.innerHTML = '<div class="no-results">No buildings found. Try a different name.</div>';
+        return;
+      }
+      
+      var html = '';
+      for (var i = 0; i < data.results.length; i++) {
+        var place = data.results[i];
+        var badgeText = 'Building';
+        if (place.type === 'commercial') badgeText = 'Commercial';
+        else if (place.type === 'residential') badgeText = 'Residential';
+        else if (place.type === 'apartment') badgeText = 'Apartment';
+        else if (place.type === 'estate') badgeText = 'Estate';
+        
+        html += '<div class="suggestion-item" data-name="' + escapeHtml(place.name) + '" data-full="' + escapeHtml(place.display_name) + '" data-lat="' + place.lat + '" data-lon="' + place.lon + '">';
+        html += '<span class="icon"><i class="ph ph-buildings"></i></span>';
+        html += '<div><span class="name">' + escapeHtml(place.name) + '</span>';
+        html += '<span class="address">' + escapeHtml(place.display_name) + '</span></div>';
+        html += '<span class="badge">' + badgeText + '</span>';
+        html += '</div>';
+      }
+      
+      suggestionsContainer.innerHTML = html;
+      
+      var items = suggestionsContainer.querySelectorAll('.suggestion-item');
+      for (var j = 0; j < items.length; j++) {
+        items[j].addEventListener('click', function() {
+          var name = this.dataset.name;
+          var full = this.dataset.full;
+          buildingInput.value = name;
+          suggestionsContainer.style.display = 'none';
+          buildingInput.dataset.fullAddress = full;
+          toast('📍 Selected: ' + name);
+        });
+      }
+    })
+    .catch(function(err) {
+      console.error('Building search error:', err);
+      suggestionsContainer.innerHTML = '<div class="no-results">Search error. Please type manually.</div>';
+    });
   }
 }
 
-// ===== PIN BUTTON EVENT LISTENER =====
-document.addEventListener('DOMContentLoaded', function() {
-  var pinBtn = document.getElementById('getLocationBtn');
-  if (pinBtn) {
-    pinBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      var statusDiv = document.getElementById('locationStatus');
-      var streetInput = document.getElementById('street');
-      var areaSelect = document.getElementById('deliveryArea');
-      var pinSquircle = this.querySelector('.pin-squircle');
-      
-      statusDiv.className = 'location-status';
-      statusDiv.style.display = 'block';
-      
-      statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>';
-      statusDiv.className = 'location-status loading';
-      
-      if (pinSquircle) {
-        pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
-        pinSquircle.style.transform = 'scale(1.05)';
-        pinSquircle.style.transition = 'all 0.3s ease';
-        pinSquircle.classList.add('loading');
-      }
-
-      if (!navigator.geolocation) {
-        statusDiv.innerHTML = '❌ Geolocation not supported on this device';
-        statusDiv.className = 'location-status error';
-        if (pinSquircle) {
-          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-          pinSquircle.style.transform = 'scale(1)';
-          pinSquircle.classList.remove('loading');
-        }
-        setTimeout(function() { 
-          statusDiv.style.display = 'none'; 
-        }, 5000);
-        return;
-      }
-
-      var locationTimeout = setTimeout(function() {
-        statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.';
-        statusDiv.className = 'location-status error';
-        if (pinSquircle) {
-          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-          pinSquircle.style.transform = 'scale(1)';
-          pinSquircle.classList.remove('loading');
-        }
-        setTimeout(function() { 
-          statusDiv.style.display = 'none'; 
-        }, 5000);
-      }, 10000);
-
-      navigator.geolocation.getCurrentPosition(
-        function(position) {
-          clearTimeout(locationTimeout);
-          
-          var lat = position.coords.latitude;
-          var lng = position.coords.longitude;
-          customerLat = lat;
-          customerLng = lng;
-          
-          statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Finding your street address...</span>';
-          statusDiv.className = 'location-status loading';
-
-          getAddressFromCoords(lat, lng).then(function(result) {
-            if (result && result.street) {
-              streetInput.value = result.street;
-              streetInput.style.borderColor = '#2ecc71';
-              streetInput.style.background = '#f0fff4';
-              streetInput.style.transition = 'all 0.3s ease';
-              
-              var inputEvent = new Event('input', { bubbles: true });
-              streetInput.dispatchEvent(inputEvent);
-              
-              if (result.area) {
-                var found = false;
-                for (var i = 0; i < areaSelect.options.length; i++) {
-                  var optionValue = areaSelect.options[i].value;
-                  if (optionValue && optionValue.toLowerCase().indexOf(result.area.toLowerCase()) !== -1) {
-                    areaSelect.value = optionValue;
-                    found = true;
-                    break;
-                  }
-                }
-                if (!found) {
-                  for (var j = 0; j < areaSelect.options.length; j++) {
-                    if (areaSelect.options[j].value.toLowerCase() === result.area.toLowerCase()) {
-                      areaSelect.value = areaSelect.options[j].value;
-                      found = true;
-                      break;
-                    }
-                  }
-                }
-                if (found) {
-                  var changeEvent = new Event('change', { bubbles: true });
-                  areaSelect.dispatchEvent(changeEvent);
-                  areaSelect.style.borderColor = '#2ecc71';
-                  areaSelect.style.background = '#f0fff4';
-                }
-              }
-              
-              var displayStreet = result.street || 'Location found';
-              var displayArea = result.area || 'Nairobi';
-              statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>';
-              statusDiv.className = 'location-status success';
-              
-              if (pinSquircle) {
-                pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
-                pinSquircle.style.transform = 'scale(1)';
-                pinSquircle.classList.remove('loading');
-              }
-              
-              setTimeout(function() {
-                statusDiv.style.display = 'none';
-              }, 5000);
-              
-              // Calculate delivery fee based on distance
-              calculateAndUpdateDeliveryFee(lat, lng);
-              
-              if (typeof renderSummary === 'function') {
-                renderSummary();
-              }
-              
-              if (typeof showSnack === 'function') {
-                showSnack('📍 Location set: ' + displayStreet, false);
-              } else if (typeof toast === 'function') {
-                toast('📍 Location found: ' + displayStreet);
-              }
-              
-            } else {
-              statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
-              statusDiv.className = 'location-status error';
-              if (pinSquircle) {
-                pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-                pinSquircle.style.transform = 'scale(1)';
-                pinSquircle.classList.remove('loading');
-              }
-              setTimeout(function() {
-                statusDiv.style.display = 'none';
-              }, 5000);
-            }
-          }).catch(function(err) {
-            console.error('Geocode error:', err);
-            statusDiv.innerHTML = '⚠️ Error finding address. Please enter manually.';
-            statusDiv.className = 'location-status error';
-            if (pinSquircle) {
-              pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-              pinSquircle.style.transform = 'scale(1)';
-              pinSquircle.classList.remove('loading');
-            }
-            setTimeout(function() {
-              statusDiv.style.display = 'none';
-            }, 5000);
-          });
-        },
-        function(error) {
-          clearTimeout(locationTimeout);
-          
-          var errorMsg = '❌ Location access denied. Please enter manually.';
-          if (error.code === 1) {
-            errorMsg = '❌ Please allow location access in your browser settings';
-          } else if (error.code === 2) {
-            errorMsg = '❌ Location unavailable. Please enter manually.';
-          } else if (error.code === 3) {
-            errorMsg = '❌ Location request timed out. Please enter manually.';
-          }
-          
-          statusDiv.innerHTML = errorMsg;
-          statusDiv.className = 'location-status error';
-          
-          if (pinSquircle) {
-            pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-            pinSquircle.style.transform = 'scale(1)';
-            pinSquircle.classList.remove('loading');
-          }
-          
-          setTimeout(function() {
-            statusDiv.style.display = 'none';
-          }, 6000);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        }
-      );
-    });
-  }
-  
-  initBuildingAutocomplete();
-});
+// ============================================================
+// CALCULATE DISTANCE (Haversine formula)
+// ============================================================
+function calculateDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
 
 // ============================================================
-// CALCULATE AND UPDATE DELIVERY FEE
+// GET FEE BY DISTANCE
 // ============================================================
-async function calculateAndUpdateDeliveryFee(lat, lng) {
-  var subtotal = getCartTotal(getCart());
-  
-  try {
-    var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
-    
-    if (result) {
-      selectedZoneFee = result.fee;
-      var distance = result.distance ? result.distance.toFixed(1) : '?';
-      
-      console.log('📍 Distance from shop:', distance + 'km');
-      console.log('💰 Delivery fee:', selectedZoneFee);
-      
-      // Update delivery fee display
-      var deliveryEl = document.getElementById('deliveryFee');
-      if (deliveryEl) {
-        deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
-      }
-      
-      // Show distance info
-      var distanceInfo = document.getElementById('distanceInfo');
-      if (!distanceInfo) {
-        distanceInfo = document.createElement('div');
-        distanceInfo.id = 'distanceInfo';
-        distanceInfo.className = 'distance-info';
-        distanceInfo.style.cssText = 'font-size:11px;color:var(--muted);margin-top:4px;text-align:right;';
-        var deliveryRow = document.querySelector('.summary-row:has(#deliveryFee)');
-        if (deliveryRow) {
-          deliveryRow.parentNode.insertBefore(distanceInfo, deliveryRow.nextSibling);
-        }
-      }
-      distanceInfo.textContent = '📍 ' + distance + 'km from shop';
-      
-      renderSummary();
+function getFeeByDistance(distance) {
+  for (var i = 0; i < DELIVERY_TIERS.length; i++) {
+    var tier = DELIVERY_TIERS[i];
+    if (distance >= tier.minDistance && distance < tier.maxDistance) {
+      return tier.fee;
     }
+  }
+  return DELIVERY_TIERS[DELIVERY_TIERS.length - 1].fee;
+}
+
+// ============================================================
+// CALCULATE DELIVERY FEE FROM COORDINATES
+// ============================================================
+async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
+  try {
+    const response = await fetch(API_BASE + '/api/calculate-fee', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat: lat, lng: lng, subtotal: subtotal || 0 })
+    });
+    const data = await response.json();
+    if (data.success) {
+      return data;
+    }
+    throw new Error('Failed to calculate fee');
   } catch (error) {
-    console.error('Failed to calculate delivery fee:', error);
+    console.error('Error calculating delivery fee:', error);
+    // Fallback: calculate locally
+    const distance = calculateDistance(SHOP_LOCATION.lat, SHOP_LOCATION.lng, lat, lng);
+    const fee = getFeeByDistance(distance);
+    return {
+      fee: fee,
+      distance: distance,
+      isFree: false,
+      reason: 'Distance-based fee'
+    };
   }
 }
 
@@ -2006,7 +1741,35 @@ function handleDeliveryChange() {
 }
 
 // ============================================================
-// RENDER SUMMARY WITH VAT
+// CALCULATE AND UPDATE DELIVERY FEE
+// ============================================================
+async function calculateAndUpdateDeliveryFee(lat, lng) {
+  var subtotal = getCartTotal(getCart());
+  
+  try {
+    var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
+    
+    if (result) {
+      selectedZoneFee = result.fee;
+      var distance = result.distance ? result.distance.toFixed(1) : '?';
+      
+      console.log('📍 Distance from shop:', distance + 'km');
+      console.log('💰 Delivery fee:', selectedZoneFee);
+      
+      var deliveryEl = document.getElementById('deliveryFee');
+      if (deliveryEl) {
+        deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
+      }
+      
+      renderSummary();
+    }
+  } catch (error) {
+    console.error('Failed to calculate delivery fee:', error);
+  }
+}
+
+// ============================================================
+// RENDER SUMMARY - VAT ON DELIVERY ONLY ✅
 // ============================================================
 function renderSummary() {
   var cart = getCart();
@@ -2029,7 +1792,6 @@ function renderSummary() {
 
   var html = '';
   var subtotal = 0;
-  var cartItemsWithCategory = [];
   
   for (var i = 0; i < cart.length; i++) {
     var item = cart[i];
@@ -2039,14 +1801,6 @@ function renderSummary() {
     var itemTotal = price * qty;
     subtotal += itemTotal;
     var size = item.size || '750ml';
-    var category = item.category || 'spirits';
-    
-    cartItemsWithCategory.push({
-      name: name,
-      category: category,
-      price: price,
-      qty: qty
-    });
     
     html += '<div class="cart-item-checkout">' +
       '<div class="item-name">' + escapeHtml(name) + ' <small>' + escapeHtml(size) + '</small></div>' +
@@ -2055,21 +1809,24 @@ function renderSummary() {
   }
   summaryItems.innerHTML = html;
 
-  var taxData = calculateCartTaxes(cartItemsWithCategory);
-  var vat = taxData.totalVAT;
-  
   console.log('📊 renderSummary - subtotal:', subtotal);
-  console.log('📊 VAT:', vat);
   console.log('📊 Delivery fee:', selectedZoneFee);
   
+  // ✅ VAT ONLY ON DELIVERY FEE (16% of delivery)
   var delivery = selectedZoneFee;
-  
   if (deliveryEnabled === true && subtotal >= freeDeliveryThreshold) {
     delivery = 0;
-    console.log('🎉 Free delivery applied');
+    console.log('🎉 Free delivery applied - VAT will be 0');
   }
   
+  // ✅ VAT calculated ONLY on delivery fee
+  var vat = Math.round(delivery * 0.16);
+  
+  // ✅ Total = Subtotal + VAT(ON DELIVERY ONLY) + Delivery
   var total = subtotal + vat + delivery;
+
+  console.log('📊 VAT (on delivery only):', vat);
+  console.log('📊 Total:', total);
 
   subtotalEl.textContent = 'KES ' + subtotal.toLocaleString();
   if (vatEl) vatEl.textContent = 'KES ' + vat.toLocaleString();
@@ -2077,13 +1834,13 @@ function renderSummary() {
   totalEl.textContent = 'KES ' + total.toLocaleString();
 
   if (delivery === 0 && subtotal > 0) {
-    freeNote.textContent = '🎉 Free delivery applied!';
+    freeNote.textContent = '🎉 Free delivery applied! (No VAT on delivery)';
   } else if (subtotal > 0 && deliveryEnabled) {
     var remaining = freeDeliveryThreshold - subtotal;
     if (remaining > 0) {
       freeNote.textContent = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
     } else {
-      freeNote.textContent = '🎉 Free delivery applied!';
+      freeNote.textContent = '🎉 Free delivery applied! (No VAT on delivery)';
     }
   } else {
     freeNote.textContent = '';
@@ -2213,7 +1970,7 @@ function autoFillSavedAddress() {
     }
   }
   
-  toast('📦 Saved address loaded!', 'success');
+  toast('📦 Saved address loaded!');
   return true;
 }
 
@@ -2286,7 +2043,8 @@ function renderCartDrawer() {
   container.innerHTML = html;
 
   var delivery = (subtotal >= freeDeliveryThreshold) ? 0 : selectedZoneFee;
-  var total = subtotal + delivery;
+  var vat = Math.round(delivery * 0.16);
+  var total = subtotal + vat + delivery;
   totalEl.textContent = 'KES ' + total.toLocaleString();
   footer.style.display = 'block';
   updateCartBadges();
@@ -2458,7 +2216,7 @@ function updateMobileMenuAuth() {
 }
 
 // ============================================================
-// PLACE ORDER WITH VAT
+// PLACE ORDER - VAT ON DELIVERY ONLY ✅
 // ============================================================
 async function placeOrder() {
   var btn = document.getElementById('placeOrderBtn');
@@ -2500,22 +2258,16 @@ async function placeOrder() {
 
   var subtotal = getCartTotal(cart);
   
-  var cartItemsWithCategory = cart.map(function(item) {
-    return {
-      name: item.name || 'Product',
-      category: item.category || 'spirits',
-      price: parseFloat(item.price) || 0,
-      qty: parseInt(item.quantity) || parseInt(item.qty) || 1
-    };
-  });
-  var taxData = calculateCartTaxes(cartItemsWithCategory);
-  var vat = taxData.totalVAT;
-  
+  // ✅ VAT ONLY ON DELIVERY
   var delivery = selectedZoneFee;
   if (deliveryEnabled && subtotal >= freeDeliveryThreshold) {
     delivery = 0;
   }
   
+  // ✅ VAT calculated ONLY on delivery fee
+  var vat = Math.round(delivery * 0.16);
+  
+  // ✅ Total = Subtotal + VAT(ON DELIVERY ONLY) + Delivery
   var total = subtotal + vat + delivery;
 
   var items = cart.map(function(item) {
@@ -2544,12 +2296,12 @@ async function placeOrder() {
       address: address,
       notes: '',
       subtotal: subtotal,
-      vat: vat,
+      vat: vat,        // ✅ VAT on delivery only
       delivery: delivery,
       total: total,
       items: items
     };
-    endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/orders/pod';
+    endpoint = API_BASE + '/api/orders/pod';
   } else {
     payload = {
       orderId: orderNumber,
@@ -2558,12 +2310,12 @@ async function placeOrder() {
       phone: phone,
       address: address,
       subtotal: subtotal,
-      vat: vat,
+      vat: vat,        // ✅ VAT on delivery only
       delivery: delivery,
       total: total,
       items: items
     };
-    endpoint = 'https://liquorbelle-mpesa-backend.onrender.com/api/stkpush';
+    endpoint = API_BASE + '/api/stkpush';
   }
 
   console.log('📦 Sending payload:', payload);
@@ -2633,7 +2385,7 @@ async function pollPaymentStatus(orderId) {
       attempts++;
       
       try {
-        var response = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/status/' + orderId);
+        var response = await fetch(API_BASE + '/api/status/' + orderId);
         var data = await response.json();
         
         console.log('📊 Payment status check #' + attempts + ':', data);
@@ -2655,7 +2407,7 @@ async function pollPaymentStatus(orderId) {
         } else if (attempts >= maxAttempts) {
           clearInterval(checkInterval);
           try {
-            var orderCheck = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/status/' + orderId);
+            var orderCheck = await fetch(API_BASE + '/api/status/' + orderId);
             var orderData = await orderCheck.json();
             if (orderData.status === 'paid') {
               resolve(true);
@@ -2809,6 +2561,207 @@ function validatePhone(phone) {
   if (cleaned.length === 12 && cleaned.startsWith('254')) return true;
   return false;
 }
+
+// ============================================================
+// SUCCESS MODAL
+// ============================================================
+function closeSuccessModal() {
+  document.getElementById('successModal').classList.remove('active');
+  window.location.href = 'track-orders.html';
+}
+
+// ============================================================
+// PIN BUTTON EVENT LISTENER
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  var pinBtn = document.getElementById('getLocationBtn');
+  if (pinBtn) {
+    pinBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      var statusDiv = document.getElementById('locationStatus');
+      var streetInput = document.getElementById('street');
+      var areaSelect = document.getElementById('deliveryArea');
+      var pinSquircle = this.querySelector('.pin-squircle');
+      
+      statusDiv.className = 'location-status';
+      statusDiv.style.display = 'block';
+      
+      statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>';
+      statusDiv.className = 'location-status loading';
+      
+      if (pinSquircle) {
+        pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
+        pinSquircle.style.transform = 'scale(1.05)';
+        pinSquircle.style.transition = 'all 0.3s ease';
+        pinSquircle.classList.add('loading');
+      }
+
+      if (!navigator.geolocation) {
+        statusDiv.innerHTML = '❌ Geolocation not supported on this device';
+        statusDiv.className = 'location-status error';
+        if (pinSquircle) {
+          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+          pinSquircle.style.transform = 'scale(1)';
+          pinSquircle.classList.remove('loading');
+        }
+        setTimeout(function() { 
+          statusDiv.style.display = 'none'; 
+        }, 5000);
+        return;
+      }
+
+      var locationTimeout = setTimeout(function() {
+        statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.';
+        statusDiv.className = 'location-status error';
+        if (pinSquircle) {
+          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+          pinSquircle.style.transform = 'scale(1)';
+          pinSquircle.classList.remove('loading');
+        }
+        setTimeout(function() { 
+          statusDiv.style.display = 'none'; 
+        }, 5000);
+      }, 10000);
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          clearTimeout(locationTimeout);
+          
+          var lat = position.coords.latitude;
+          var lng = position.coords.longitude;
+          customerLat = lat;
+          customerLng = lng;
+          
+          statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Finding your street address...</span>';
+          statusDiv.className = 'location-status loading';
+
+          getAddressFromCoords(lat, lng).then(function(result) {
+            if (result && result.street) {
+              streetInput.value = result.street;
+              streetInput.style.borderColor = '#2ecc71';
+              streetInput.style.background = '#f0fff4';
+              streetInput.style.transition = 'all 0.3s ease';
+              
+              var inputEvent = new Event('input', { bubbles: true });
+              streetInput.dispatchEvent(inputEvent);
+              
+              if (result.area) {
+                var found = false;
+                for (var i = 0; i < areaSelect.options.length; i++) {
+                  var optionValue = areaSelect.options[i].value;
+                  if (optionValue && optionValue.toLowerCase().indexOf(result.area.toLowerCase()) !== -1) {
+                    areaSelect.value = optionValue;
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  for (var j = 0; j < areaSelect.options.length; j++) {
+                    if (areaSelect.options[j].value.toLowerCase() === result.area.toLowerCase()) {
+                      areaSelect.value = areaSelect.options[j].value;
+                      found = true;
+                      break;
+                    }
+                  }
+                }
+                if (found) {
+                  var changeEvent = new Event('change', { bubbles: true });
+                  areaSelect.dispatchEvent(changeEvent);
+                  areaSelect.style.borderColor = '#2ecc71';
+                  areaSelect.style.background = '#f0fff4';
+                }
+              }
+              
+              var displayStreet = result.street || 'Location found';
+              var displayArea = result.area || 'Nairobi';
+              statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>';
+              statusDiv.className = 'location-status success';
+              
+              if (pinSquircle) {
+                pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
+                pinSquircle.style.transform = 'scale(1)';
+                pinSquircle.classList.remove('loading');
+              }
+              
+              setTimeout(function() {
+                statusDiv.style.display = 'none';
+              }, 5000);
+              
+              calculateAndUpdateDeliveryFee(lat, lng);
+              
+              if (typeof renderSummary === 'function') {
+                renderSummary();
+              }
+              
+              if (typeof showSnack === 'function') {
+                showSnack('📍 Location set: ' + displayStreet, false);
+              } else if (typeof toast === 'function') {
+                toast('📍 Location found: ' + displayStreet);
+              }
+              
+            } else {
+              statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
+              statusDiv.className = 'location-status error';
+              if (pinSquircle) {
+                pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+                pinSquircle.style.transform = 'scale(1)';
+                pinSquircle.classList.remove('loading');
+              }
+              setTimeout(function() {
+                statusDiv.style.display = 'none';
+              }, 5000);
+            }
+          }).catch(function(err) {
+            console.error('Geocode error:', err);
+            statusDiv.innerHTML = '⚠️ Error finding address. Please enter manually.';
+            statusDiv.className = 'location-status error';
+            if (pinSquircle) {
+              pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+              pinSquircle.style.transform = 'scale(1)';
+              pinSquircle.classList.remove('loading');
+            }
+            setTimeout(function() {
+              statusDiv.style.display = 'none';
+            }, 5000);
+          });
+        },
+        function(error) {
+          clearTimeout(locationTimeout);
+          
+          var errorMsg = '❌ Location access denied. Please enter manually.';
+          if (error.code === 1) {
+            errorMsg = '❌ Please allow location access in your browser settings';
+          } else if (error.code === 2) {
+            errorMsg = '❌ Location unavailable. Please enter manually.';
+          } else if (error.code === 3) {
+            errorMsg = '❌ Location request timed out. Please enter manually.';
+          }
+          
+          statusDiv.innerHTML = errorMsg;
+          statusDiv.className = 'location-status error';
+          
+          if (pinSquircle) {
+            pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+            pinSquircle.style.transform = 'scale(1)';
+            pinSquircle.classList.remove('loading');
+          }
+          
+          setTimeout(function() {
+            statusDiv.style.display = 'none';
+          }, 6000);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    });
+  }
+  
+  initBuildingAutocomplete();
+});
 
 // ============================================================
 // MAIN INITIALIZATION
