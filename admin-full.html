@@ -2061,8 +2061,9 @@ window.saveDeliverySettings = async function() {
   messageEl.style.color = 'var(--muted)';
   
   try {
-    const response = await adminFetch(API_BASE + '/api/delivery-settings', { 
-      method: 'PUT', 
+    // ✅ FIXED: Changed method to POST and added /admin/ to the path
+    const response = await adminFetch(API_BASE + '/api/admin/delivery-settings', { 
+      method: 'POST', 
       body: JSON.stringify({ 
         delivery_fee: deliveryFee, 
         free_delivery_threshold: freeThreshold, 
@@ -2097,34 +2098,85 @@ async function loadDeliveryZones() {
     if (data.success && data.zones) zones = data.zones;
     else zones = [{ name: 'Dagoretti', fee: 0 }, { name: 'Karen', fee: 50 }, { name: 'Westlands', fee: 100 }, { name: 'CBD', fee: 80 }];
     renderDeliveryZones();
-  } catch (error) { console.error('Error loading delivery zones:', error); zones = [{ name: 'Dagoretti', fee: 0 }, { name: 'Karen', fee: 50 }, { name: 'Westlands', fee: 100 }, { name: 'CBD', fee: 80 }]; renderDeliveryZones(); }
+  } catch (error) { 
+    console.error('Error loading delivery zones:', error); 
+    zones = [{ name: 'Dagoretti', fee: 0 }, { name: 'Karen', fee: 50 }, { name: 'Westlands', fee: 100 }, { name: 'CBD', fee: 80 }]; 
+    renderDeliveryZones(); 
+  }
 }
 
 function renderDeliveryZones() {
   const tbody = document.getElementById('deliveryZonesBody');
   if (!tbody) return;
-  tbody.innerHTML = zones.map((z, i) => '<tr class="zone-row"><td><input type="text" class="zone-name" value="' + z.name + '" placeholder="Area name"></td><td><input type="number" class="zone-fee" value="' + z.fee + '" placeholder="Fee" step="5"></td><td><button class="zone-remove-btn" onclick="removeZoneRow(' + i + ')">✕</button></td></tr>').join('');
+  
+  if (zones.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No zones added yet. Click "Add Zone" to start.</td></tr>`;
+    return;
+  }
+  
+  // ✅ Added escapeHtml for safety on zone names
+  tbody.innerHTML = zones.map((z, i) => 
+    '<tr class="zone-row">' +
+      '<td><input type="text" class="zone-name" value="' + escapeHtml(z.name) + '" placeholder="Area name"></td>' +
+      '<td><input type="number" class="zone-fee" value="' + z.fee + '" placeholder="Fee" step="5"></td>' +
+      '<td><button class="zone-remove-btn" onclick="removeZoneRow(' + i + ')">✕</button></td>' +
+    '</tr>'
+  ).join('');
 }
 
-window.addDeliveryZone = function() { zones.push({ name: '', fee: 0 }); renderDeliveryZones(); };
-window.removeZoneRow = function(index) { zones.splice(index, 1); renderDeliveryZones(); };
+window.addDeliveryZone = function() { 
+  zones.push({ name: '', fee: 0 }); 
+  renderDeliveryZones(); 
+};
+
+window.removeZoneRow = function(index) { 
+  zones.splice(index, 1); 
+  renderDeliveryZones(); 
+};
 
 window.saveDeliveryZones = async function() {
   const rows = document.querySelectorAll('#deliveryZonesBody .zone-row');
   const newZones = [];
-  rows.forEach(row => { const name = row.querySelector('.zone-name').value.trim(); const fee = parseInt(row.querySelector('.zone-fee').value) || 0; if (name) newZones.push({ name, fee }); });
-  if (newZones.length === 0) { showToast('❌ Please add at least one zone', 'error'); return; }
+  
+  rows.forEach(row => { 
+    const name = row.querySelector('.zone-name').value.trim(); 
+    const fee = parseInt(row.querySelector('.zone-fee').value) || 0; 
+    if (name) newZones.push({ name, fee }); 
+  });
+  
+  if (newZones.length === 0) { 
+    showToast('❌ Please add at least one zone', 'error'); 
+    return; 
+  }
+  
   const messageEl = document.getElementById('zoneMessage');
   messageEl.innerHTML = '<span class="loading-spinner"></span> Saving zones...';
   messageEl.style.color = 'var(--muted)';
+  
   try {
-    const response = await adminFetch(API_BASE + '/api/delivery-zones', { method: 'PUT', body: JSON.stringify({ zones: newZones }) });
+    // ✅ FIXED: Changed to POST method and added /admin/ to the path
+    const response = await adminFetch(API_BASE + '/api/admin/zones', { 
+      method: 'POST', 
+      body: JSON.stringify({ zones: newZones }) 
+    });
     const data = await response.json();
-    if (data.success) { zones = newZones; messageEl.innerHTML = '✅ Delivery zones saved successfully!'; messageEl.style.color = 'green'; showToast('✅ Zones saved!', 'success'); renderDeliveryZones(); }
-    else { messageEl.innerHTML = '❌ ' + (data.message || 'Failed to save zones'); messageEl.style.color = 'red'; }
-  } catch (error) { console.error('Error saving delivery zones:', error); messageEl.innerHTML = '❌ Network error. Please try again.'; messageEl.style.color = 'red'; }
+    
+    if (data.success) { 
+      zones = newZones; 
+      messageEl.innerHTML = '✅ Delivery zones saved successfully!'; 
+      messageEl.style.color = 'green'; 
+      showToast('✅ Zones saved!', 'success'); 
+      renderDeliveryZones(); 
+    } else { 
+      messageEl.innerHTML = '❌ ' + (data.message || 'Failed to save zones'); 
+      messageEl.style.color = 'red'; 
+    }
+  } catch (error) { 
+    console.error('Error saving delivery zones:', error); 
+    messageEl.innerHTML = '❌ Network error. Please try again.'; 
+    messageEl.style.color = 'red'; 
+  }
 };
-
 // ==================== TOGGLE PASSWORD VISIBILITY ====================
 function togglePasswordVisibility(inputId) {
   const input = document.getElementById(inputId);
