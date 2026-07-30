@@ -2092,7 +2092,9 @@ let zones = [];
 
 async function loadDeliveryZones() {
   try {
-    const response = await adminFetch(API_BASE + '/api/delivery-zones');
+    // ✅ FIXED: Changed to /api/admin/zones. 
+    // It requires adminFetch (which includes the auth token) and matches your backend delivery.js.
+    const response = await adminFetch(API_BASE + '/api/admin/zones');
     const data = await response.json();
     if (data.success && data.zones) zones = data.zones;
     else zones = [{ name: 'Dagoretti', fee: 0 }, { name: 'Karen', fee: 50 }, { name: 'Westlands', fee: 100 }, { name: 'CBD', fee: 80 }];
@@ -2174,7 +2176,6 @@ window.saveDeliveryZones = async function() {
     messageEl.style.color = 'red'; 
   }
 };
-
 // ==================== TOGGLE PASSWORD VISIBILITY ====================
 function togglePasswordVisibility(inputId) {
   const input = document.getElementById(inputId);
