@@ -1574,26 +1574,7 @@ function handleDeliveryChange() {
   if (typeof renderSummary === 'function') {
     renderSummary();
   }
-  
-  // ✅ Force the progress bar and delivery note to update instantly
-  updateDeliveryProgress();
 }
-
-async function calculateAndUpdateDeliveryFee(lat, lng) {
-  var subtotal = getCartTotal(getCart());
-  try {
-    var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
-    if (result) {
-      selectedZoneFee = result.fee;
-      var deliveryEl = document.getElementById('deliveryFee');
-      if (deliveryEl) deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
-      renderSummary();
-      // ✅ Force the progress bar and delivery note to update instantly
-      updateDeliveryProgress();
-    }
-  } catch (error) { console.error('Failed to calculate delivery fee:', error); }
-}
-
 // ============================================================
 // RENDER SUMMARY
 // ============================================================
@@ -1627,14 +1608,14 @@ function renderSummary() {
     var itemTotal = price * qty;
     subtotal += itemTotal;
     var size = item.size || '750ml';
-    var itemId = item.id || item._id || 'item_' + i; // ✅ Get the item ID
+    var itemId = item.id || item._id || 'item_' + i;
     
-    // ✅ ADDED THE REMOVE BUTTON HERE
+    // ✅ PROPERLY STYLED REMOVE BUTTON
     html += '<div class="cart-item-checkout">' +
       '<div class="item-name">' + escapeHtml(name) + ' <small>' + escapeHtml(size) + '</small></div>' +
-      '<div class="item-price">KES ' + itemTotal.toLocaleString() + '</div>' +
-      '<div style="margin-top:4px;">' +
-        '<button onclick="removeCartItem(\'' + itemId + '\')" style="background:none;border:none;color:var(--sale-red);cursor:pointer;font-size:11px;font-weight:600;padding:0;text-decoration:underline;">Remove</button>' +
+      '<div class="item-price" style="display:flex;align-items:center;gap:12px;">' +
+        '<span>KES ' + itemTotal.toLocaleString() + '</span>' +
+        '<button onclick="removeCartItem(\'' + itemId + '\')" style="background:var(--bg2);border:none;color:var(--sale-red);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;">✕ Remove</button>' +
       '</div>' +
       '</div>';
   }
