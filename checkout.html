@@ -1215,7 +1215,7 @@ a{color:inherit;text-decoration:none;}
 
 <script>
 // ============================================================
-// LIQUORBELLE CHECKOUT - COMPLETE FIXED VERSION
+// LIQUORBELLE CHECKOUT - FINAL PROFESSIONAL VERSION
 // ============================================================
 
 // ===== TAX CONFIGURATION =====
@@ -1459,7 +1459,7 @@ function saveCart(cartArray) {
 }
 
 // ============================================================
-// REMOVE CART ITEM (New function you were missing)
+// REMOVE CART ITEM
 // ============================================================
 function removeCartItem(itemId) {
   try {
@@ -1530,33 +1530,56 @@ function populateDeliveryAreas(selectId) {
     var option = document.createElement('option');
     option.value = zone.name;
     option.textContent = zone.name;
-    option.dataset.fee = zone.fee;
+    option.dataset.fee = zone.fee; // ✅ CRITICAL: Store the fee per zone
     select.appendChild(option);
   }
   
   if (sortedZones.length > 0) {
     select.value = sortedZones[0].name;
-    selectedZoneFee = sortedZones[0].fee;
+    // ✅ Immediately trigger change to set the correct fee
+    handleDeliveryChange();
   }
 }
 
+// ============================================================
+// HANDLE DELIVERY AREA CHANGE - DYNAMIC FEE
+// ============================================================
 function handleDeliveryChange() {
   var select = document.getElementById('deliveryArea');
   if (!select) return;
-  var selectedOption = select.options[select.selectedIndex];
-  if (!selectedOption || !selectedOption.value) return;
   
-  var fee = parseInt(selectedOption.dataset.fee);
-  if (!isNaN(fee)) {
-    selectedZoneFee = fee;
-  } else {
-    var zone = deliveryZones.find(z => z.name === selectedOption.value);
-    selectedZoneFee = zone ? zone.fee : deliveryFee;
+  var selectedOption = select.options[select.selectedIndex];
+  if (!selectedOption || !selectedOption.value) {
+    console.warn('⚠️ No valid option selected');
+    return;
   }
   
+  // ✅ READ THE FEE DIRECTLY FROM THE HTML DATA-FEE ATTRIBUTE
+  var fee = parseInt(selectedOption.dataset.fee);
+  
+  // ✅ FALLBACK: Search deliveryZones array if data-fee is missing
+  if (!fee || isNaN(fee) || fee === 0) {
+    var zone = deliveryZones.find(function(z) {
+      return z.name === selectedOption.value;
+    });
+    fee = zone ? zone.fee : 150; // fallback to 150 only if truly missing
+  }
+
+  // ✅ UPDATE THE GLOBAL VARIABLE
+  selectedZoneFee = fee;
+  
+  console.log('📍 Zone selected:', selectedOption.value, '| Fee:', selectedZoneFee);
+  
+  // ✅ UPDATE THE UI IMMEDIATELY
   var deliveryEl = document.getElementById('deliveryFee');
-  if (deliveryEl) deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
-  if (typeof renderSummary === 'function') renderSummary();
+  if (deliveryEl) {
+    deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
+  }
+  
+  // ✅ RECALCULATE THE WHOLE SUMMARY
+  if (typeof renderSummary === 'function') {
+    renderSummary();
+  }
 }
 
 async function calculateAndUpdateDeliveryFee(lat, lng) {
@@ -1796,6 +1819,9 @@ function closeWishlistModal() { document.getElementById('wishlistModal').style.d
 function handleAccountClick() { var u = getCurrentUser(); if (u && u.name) window.location.href = 'profile.html'; else window.location.href = 'accounts.html'; }
 function handleHeaderSearch(e) { e.preventDefault(); const q = document.getElementById('headerSearchInput').value.trim(); if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q); return false; }
 
+// ============================================================
+// RENDER CART DRAWER (FIXED: "Remove" button is now included)
+// ============================================================
 function renderCartDrawer() {
   var cart = getCart();
   var container = document.getElementById('cartItemsList');
@@ -1812,7 +1838,22 @@ function renderCartDrawer() {
   var html = ''; var subtotal = 0;
   for (var i = 0; i < cart.length; i++) {
     var item = cart[i]; var name = item.name || 'Product'; var qty = parseInt(item.quantity) || parseInt(item.qty) || 1; var price = parseFloat(item.price) || 0; var itemTotal = price * qty; subtotal += itemTotal; var itemId = item.id || item._id || 'item_' + i;
-    html += `<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(name)}</div><div class="cart-qty"><button onclick="updateQty('${itemId}', -1)">−</button><span>${qty}</span><button onclick="updateQty('${itemId}', 1)">+</button></div></div><div class="cart-item-price">KES ${itemTotal.toLocaleString()}</div></div>`;
+    
+    // ✅ "Remove" button is now included in the HTML
+    html += `<div class="cart-item">
+      <div>
+        <div class="cart-item-name">${escapeHtml(name)}</div>
+        <div class="cart-qty">
+          <button onclick="updateQty('${itemId}', -1)">−</button>
+          <span>${qty}</span>
+          <button onclick="updateQty('${itemId}', 1)">+</button>
+        </div>
+        <div style="margin-top:6px;">
+          <button onclick="removeCartItem('${itemId}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;font-weight:600;padding:0;"><i class="ph ph-trash"></i> Remove</button>
+        </div>
+      </div>
+      <div class="cart-item-price">KES ${itemTotal.toLocaleString()}</div>
+    </div>`;
   }
   container.innerHTML = html;
 
