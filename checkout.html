@@ -1016,7 +1016,7 @@ a{color:inherit;text-decoration:none;}
       <div class="cart-items-scroll" id="cartSummaryItems"></div>
       <div class="summary-calc">
         <div class="summary-row"><span>Subtotal</span><span id="subtotalAmount">KES 0</span></div>
-        <div class="summary-row"><span>VAT (16%)</span><span id="vatAmount">KES 0</span></div>
+        <!-- ❌ VAT ROW REMOVED PER USER REQUEST -->
         <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 0</span></div>
         <div class="summary-row" id="distanceRow" style="font-size:.75rem;color:var(--muted);padding:2px 0;display:none;">
           <span>📍 Distance from shop</span>
@@ -1077,13 +1077,11 @@ a{color:inherit;text-decoration:none;}
         <span class="location-helper"><i class="ph ph-crosshair"></i> Tap the PIN button to auto‑fill your exact address</span>
       </div>
       
+      <!-- ✅ SIMPLIFIED BUILDING INPUT: Removed autocomplete divs -->
       <div class="form-group">
         <label>Building / Apartment Name</label>
-        <div class="building-autocomplete-wrap" style="position:relative;">
-          <input type="text" id="building" placeholder="e.g. Quickmart Plaza, Kwa Nganga Estate..." autocomplete="off">
-          <div id="buildingSuggestions" class="building-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);z-index:100;max-height:200px;overflow-y:auto;margin-top:4px;"></div>
-        </div>
-        <span class="field-hint"><i class="ph ph-map-pin"></i> Start typing your building name for suggestions</span>
+        <input type="text" id="building" placeholder="e.g. Quickmart Plaza, Kwa Nganga Estate...">
+        <span class="field-hint"><i class="ph ph-map-pin"></i> Enter your apartment name manually</span>
       </div>
 
       <!-- Delivery Area Dropdown -->
@@ -1384,129 +1382,6 @@ function getAddressFromCoords(lat, lng) {
 }
 
 // ============================================================
-// 🚀 BUILDING AUTOCOMPLETE - RACE-CONDITION FIXED
-// ============================================================
-let currentController = null;
-
-function initBuildingAutocomplete() {
-  var buildingInput = document.getElementById('building');
-  var suggestionsContainer = document.getElementById('buildingSuggestions');
-  
-  if (!buildingInput || !suggestionsContainer) return;
-  
-  var debounceTimer;
-  
-  buildingInput.addEventListener('input', function() {
-    var query = this.value.trim();
-    clearTimeout(debounceTimer);
-    if (query.length < 2) {
-      suggestionsContainer.style.display = 'none';
-      return;
-    }
-    debounceTimer = setTimeout(() => searchBuildingSuggestions(query), 400);
-  });
-  
-  buildingInput.addEventListener('blur', () => {
-    setTimeout(() => suggestionsContainer.style.display = 'none', 300);
-  });
-  
-  buildingInput.addEventListener('focus', function() {
-    if (this.value.trim().length >= 2) {
-      searchBuildingSuggestions(this.value.trim());
-    }
-  });
-  
-  function searchBuildingSuggestions(query) {
-    if (currentController) currentController.abort(); // Cancel stale request
-    currentController = new AbortController();
-
-    suggestionsContainer.style.display = 'block';
-    suggestionsContainer.innerHTML = '<div class="loading-results"><span class="spinner-small"></span> Searching...</div>';
-
-    fetch(API_BASE + '/api/geocode/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: query, limit: 10 }),
-      signal: currentController.signal
-    })
-    .then(res => {
-      if (res.status === 429) throw { rateLimited: true };
-      return res.json();
-    })
-    .then(data => {
-      if (!data.success || !data.results || data.results.length === 0) {
-        suggestionsContainer.innerHTML = `<div class="no-results">No buildings found. Try the <strong>📍 PIN button</strong> above to set your exact address instead.</div>`;
-        return;
-      }
-      
-      var html = '';
-      var lowerQuery = query.toLowerCase();
-      
-      // Sort exact matches to the top
-      var sortedResults = data.results.sort((a, b) => {
-        var nameA = (a.display_name || a.name || '').toLowerCase();
-        var nameB = (b.display_name || b.name || '').toLowerCase();
-        if (nameA.startsWith(lowerQuery) && !nameB.startsWith(lowerQuery)) return -1;
-        if (!nameA.startsWith(lowerQuery) && nameB.startsWith(lowerQuery)) return 1;
-        return 0;
-      });
-
-      for (var i = 0; i < sortedResults.length; i++) {
-        var place = sortedResults[i];
-        var badgeText = 'Building';
-        if (place.type === 'commercial') badgeText = 'Commercial';
-        else if (place.type === 'residential') badgeText = 'Residential';
-        else if (place.type === 'apartment') badgeText = 'Apartment';
-        else if (place.type === 'estate') badgeText = 'Estate';
-        
-        html += `<div class="suggestion-item" data-name="${escapeHtml(place.name)}" data-full="${escapeHtml(place.display_name)}" data-lat="${place.lat}" data-lon="${place.lon}">
-          <span class="icon"><i class="ph ph-buildings"></i></span>
-          <div><span class="name">${escapeHtml(place.name)}</span>
-          <span class="address">${escapeHtml(place.display_name)}</span></div>
-          <span class="badge">${badgeText}</span>
-        </div>`;
-      }
-      
-      suggestionsContainer.innerHTML = html;
-      suggestionsContainer.scrollTop = 0;
-      
-      var items = suggestionsContainer.querySelectorAll('.suggestion-item');
-      for (var j = 0; j < items.length; j++) {
-        items[j].addEventListener('click', function() {
-          var name = this.dataset.name;
-          var full = this.dataset.full;
-          buildingInput.value = name;
-          buildingInput.dataset.fullAddress = full;
-          suggestionsContainer.style.display = 'none';
-          
-          // Auto-fill street
-          if (full) {
-            var parts = full.split(',').map(p => p.trim());
-            if (parts.length >= 2) {
-              var streetInput = document.getElementById('street');
-              if (streetInput && !streetInput.value) {
-                streetInput.value = parts[1];
-                streetInput.style.borderColor = '#2ecc71';
-                streetInput.style.background = '#f0fff4';
-              }
-            }
-          }
-          toast('📍 Selected: ' + name);
-        });
-      }
-    })
-    .catch(err => {
-      if (err.name === 'AbortError') return; // Ignore stale request
-      if (err.rateLimited) {
-        suggestionsContainer.innerHTML = `<div class="no-results">Search is busy right now — please try again in a moment, or use the <strong>📍 PIN button</strong> instead.</div>`;
-        return;
-      }
-      suggestionsContainer.innerHTML = '<div class="no-results">Search error. Please type manually.</div>';
-    });
-  }
-}
-
-// ============================================================
 // CALCULATE DISTANCE & FEES
 // ============================================================
 function calculateDistance(lat1, lng1, lat2, lng2) {
@@ -1703,12 +1578,13 @@ function renderSummary() {
   deliveryEl.textContent = delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString();
   totalEl.textContent = 'KES ' + total.toLocaleString();
 
+  // ✅ VAT text removed from free delivery note as requested
   if (delivery === 0 && subtotal > 0) {
-    freeNote.textContent = '🎉 Free delivery applied! (No VAT on delivery)';
+    freeNote.textContent = '🎉 Free delivery applied!';
   } else if (subtotal > 0 && deliveryEnabled) {
     var remaining = freeDeliveryThreshold - subtotal;
     if (remaining > 0) freeNote.textContent = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
-    else freeNote.textContent = '🎉 Free delivery applied! (No VAT on delivery)';
+    else freeNote.textContent = '🎉 Free delivery applied!';
   } else {
     freeNote.textContent = '';
   }
@@ -2069,7 +1945,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  initBuildingAutocomplete();
+  // ❌ initBuildingAutocomplete() completely removed as per user request
 });
 
 // ============================================================
