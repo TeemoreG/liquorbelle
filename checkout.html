@@ -1330,7 +1330,7 @@ async function loadDeliverySettings() {
 
 async function loadDeliveryZones() {
   try {
-    const res = await fetch(API_BASE + '/api/delivery-zones');
+    const res = await fetch(API_BASE + '/api/zones');
     const data = await res.json();
     if (data.success && data.zones) {
       deliveryZones = data.zones;
