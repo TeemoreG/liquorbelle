@@ -66,6 +66,7 @@
       align-items: center;
       gap: 10px;
       text-decoration: none;
+      cursor: pointer;
     }
     .logo-img {
       height: 38px;
@@ -94,6 +95,7 @@
       padding: 6px 16px;
       border-radius: 40px;
       transition: background .2s;
+      cursor: pointer;
     }
     .back-link:hover {
       background: rgba(255,255,255,0.18);
@@ -368,11 +370,11 @@
 <body>
 
 <header class="top-bar">
-  <a class="logo" href="#">
+  <a class="logo" href="index.html">
     <img class="logo-img" src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" />
     <div class="logo-text">Liquor<span class="gold">Belle</span></div>
   </a>
-  <a class="back-link" href="#"><i class="ph ph-arrow-left"></i> Back to Shop</a>
+  <a class="back-link" href="index.html"><i class="ph ph-arrow-left"></i> Back to Shop</a>
 </header>
 
 <div class="page-wrap">
@@ -528,54 +530,6 @@
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="ph ph-arrow-up"></i></button>
 <div id="toast" class="toast"></div>
 
-<script>
-  (function() {
-    // Scroll to top
-    const btn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 300) btn.classList.add('show');
-      else btn.classList.remove('show');
-    }, { passive: true });
-
-    // Toast system
-    function toast(msg, type) {
-      const t = document.getElementById('toast');
-      if (!t) return;
-      t.textContent = msg;
-      t.className = 'toast';
-      if (type === 'error') t.classList.add('error');
-      if (type === 'success') t.classList.add('success');
-      t.classList.add('show');
-      clearTimeout(t._timer);
-      t._timer = setTimeout(() => t.classList.remove('show'), 3200);
-    }
-
-    // Interactive: summary chip
-    document.getElementById('summaryChip')?.addEventListener('click', function(e) {
-      e.stopPropagation();
-      toast('👍 Thanks! We never sell your data. M-PESA is secure.', 'success');
-    });
-
-    // Interactive: any chip in chip-group shows info
-    document.querySelectorAll('.chip-group .chip').forEach(chip => {
-      chip.style.cursor = 'pointer';
-      chip.addEventListener('click', function() {
-        const name = this.textContent.trim() || 'service';
-        toast(`🔗 ${name} — we use this to power LiquorBelle.`, 'success');
-      });
-    });
-
-    // Interactive: contact items show toast
-    document.querySelectorAll('.ci-item').forEach(item => {
-      item.style.cursor = 'pointer';
-      item.addEventListener('click', function() {
-        toast('📬 Reach out anytime — we\'re here to help.', 'success');
-      });
-    });
-
-    console.log('✅ Privacy Policy page loaded (interactive)');
-  })();
-</script>
 <!-- ===== COOKIE CONSENT BANNER ===== -->
 <div id="cookieBanner" style="
     position: fixed;
@@ -630,27 +584,85 @@
 </div>
 
 <script>
-    // Check if user already made a choice
-    if (localStorage.getItem('cookieConsent')) {
-        document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
+  (function() {
+    // Scroll to top
+    const btn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 300) btn.classList.add('show');
+      else btn.classList.remove('show');
+    }, { passive: true });
+
+    // Toast system
+    function toast(msg, type) {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.className = 'toast';
+      if (type === 'error') t.classList.add('error');
+      if (type === 'success') t.classList.add('success');
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), 3200);
     }
 
-    function acceptCookies() {
-        localStorage.setItem('cookieConsent', 'accepted');
-        document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
-        // Your existing toast function if you have one
-        if (typeof toast === 'function') {
-            toast('🍪 Thanks! Cookies enabled.', 'success');
-        }
-    }
+    // Make toast available globally for cookie banner
+    window.toast = toast;
 
-    function rejectCookies() {
-        localStorage.setItem('cookieConsent', 'rejected');
-        document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
-        if (typeof toast === 'function') {
-            toast('🍪 Only essential cookies will be used.', 'info');
-        }
+    // Interactive: summary chip
+    document.getElementById('summaryChip')?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toast('👍 Thanks! We never sell your data. M-PESA is secure.', 'success');
+    });
+
+    // Interactive: any chip in chip-group shows info
+    document.querySelectorAll('.chip-group .chip').forEach(chip => {
+      chip.style.cursor = 'pointer';
+      chip.addEventListener('click', function() {
+        const name = this.textContent.trim() || 'service';
+        toast(`🔗 ${name} — we use this to power LiquorBelle.`, 'success');
+      });
+    });
+
+    // Interactive: contact items show toast
+    document.querySelectorAll('.ci-item').forEach(item => {
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', function() {
+        toast('📬 Reach out anytime — we\'re here to help.', 'success');
+      });
+    });
+
+    console.log('✅ Privacy Policy page loaded (interactive)');
+  })();
+
+  // ===== COOKIE CONSENT FUNCTIONS =====
+  // Check if user already made a choice
+  if (localStorage.getItem('cookieConsent')) {
+    document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
+  }
+
+  function acceptCookies() {
+    localStorage.setItem('cookieConsent', 'accepted');
+    document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
+    if (typeof toast === 'function') {
+      toast('🍪 Thanks! Cookies enabled for better experience.', 'success');
     }
+  }
+
+  function rejectCookies() {
+    localStorage.setItem('cookieConsent', 'rejected');
+    document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
+    if (typeof toast === 'function') {
+      toast('🍪 Only essential cookies will be used.', 'info');
+    }
+  }
+
+  // Also reject if user clicks outside (optional)
+  document.addEventListener('click', function(e) {
+    const banner = document.getElementById('cookieBanner');
+    if (banner && !banner.contains(e.target) && !e.target.closest('button')) {
+      // Don't auto-hide - let user explicitly choose
+    }
+  });
 </script>
 </body>
 </html>
