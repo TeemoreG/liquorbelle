@@ -1215,7 +1215,7 @@ a{color:inherit;text-decoration:none;}
 
 <script>
 // ============================================================
-// LIQUORBELLE CHECKOUT - FINAL PROFESSIONAL VERSION
+// LIQUORBELLE CHECKOUT - FINAL PROFESSIONAL VERSION (FIXED)
 // ============================================================
 
 // ===== TAX CONFIGURATION =====
@@ -1313,17 +1313,40 @@ let selectedZoneFee = 150;
 let customerLat = null;
 let customerLng = null;
 
+/**
+ * FIX: Loose truthy checks (`|| 5000`, `!== false`) silently break when the
+ * backend serializes numbers/booleans as strings (e.g. "0", "false").
+ * "0" is truthy in JS, so `"0" || 5000` kept the broken "0" value, and any
+ * subtotal >= "0" is always true — forcing free delivery on every order.
+ * We now explicitly coerce to Number/Boolean and validate before trusting them.
+ */
 async function loadDeliverySettings() {
   try {
     const res = await fetch(API_BASE + '/api/delivery-settings');
     const data = await res.json();
+
     if (data.success && data.settings) {
-      deliveryFee = data.settings.delivery_fee || 150;
-      freeDeliveryThreshold = data.settings.free_delivery_threshold || 5000;
-      deliveryEnabled = data.settings.delivery_enabled !== false;
+      const feeNum = Number(data.settings.delivery_fee);
+      deliveryFee = (!isNaN(feeNum) && feeNum >= 0) ? feeNum : 150;
+
+      const thresholdNum = Number(data.settings.free_delivery_threshold);
+      freeDeliveryThreshold = (!isNaN(thresholdNum) && thresholdNum > 0) ? thresholdNum : 5000;
+
+      const rawEnabled = data.settings.delivery_enabled;
+      if (rawEnabled === undefined || rawEnabled === null) {
+        deliveryEnabled = true; // default when field is missing
+      } else {
+        deliveryEnabled = (rawEnabled === true || rawEnabled === 'true' || rawEnabled === 1 || rawEnabled === '1');
+      }
     }
+
+    console.log('✅ Delivery settings:', { deliveryFee, freeDeliveryThreshold, deliveryEnabled });
     return { deliveryFee, freeDeliveryThreshold, deliveryEnabled };
   } catch (e) {
+    console.error('Error loading delivery settings:', e);
+    deliveryFee = 150;
+    freeDeliveryThreshold = 5000;
+    deliveryEnabled = true;
     return { deliveryFee: 150, freeDeliveryThreshold: 5000, deliveryEnabled: true };
   }
 }
@@ -1332,12 +1355,14 @@ async function loadDeliveryZones() {
   try {
     const res = await fetch(API_BASE + '/api/zones');
     const data = await res.json();
-    if (data.success && data.zones) {
+    if (data.success && data.zones && data.zones.length > 0) {
       deliveryZones = data.zones;
-      if (deliveryZones.length > 0) selectedZoneFee = deliveryZones[0].fee || deliveryFee;
+      selectedZoneFee = Number(deliveryZones[0].fee) || deliveryFee;
       return deliveryZones;
     }
-    // Fallback zones
+    throw new Error('No zones returned');
+  } catch (e) {
+    // Fallback zones (used if API fails or returns empty)
     deliveryZones = [
       { name: 'Dagoretti Road', fee: 150 }, { name: 'Naivasha Road', fee: 150 }, { name: 'Kikuyu Road', fee: 150 },
       { name: 'Ngong Road', fee: 150 }, { name: 'Kilimani', fee: 150 }, { name: 'Kileleshwa', fee: 150 },
@@ -1350,8 +1375,6 @@ async function loadDeliveryZones() {
       { name: 'Kikuyu', fee: 280 }
     ];
     selectedZoneFee = deliveryZones[0].fee;
-    return deliveryZones;
-  } catch (e) {
     return deliveryZones;
   }
 }
@@ -1412,10 +1435,38 @@ async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
     });
     const data = await response.json();
     if (data.success) return data;
-  } catch (error) { console.error(error); }
-  // Fallback
+  } catch (error) { console.error('calculate-fee API error:', error); }
+  // Fallback: compute locally from straight-line distance
   const distance = calculateDistance(SHOP_LOCATION.lat, SHOP_LOCATION.lng, lat, lng);
-  return { fee: getFeeByDistance(distance), distance: distance, isFree: false };
+  return { fee: getFeeByDistance(distance), distance: distance, isFree: false, reason: 'Distance-based fallback' };
+}
+
+/**
+ * RESTORED: this function was called from the PIN click handler
+ * (`calculateAndUpdateDeliveryFee(lat, lng)`) but was never defined,
+ * which threw "ReferenceError: calculateAndUpdateDeliveryFee is not defined"
+ * and killed the rest of the success callback before the UI could update.
+ */
+async function calculateAndUpdateDeliveryFee(lat, lng) {
+  var subtotal = getCartTotal(getCart());
+  try {
+    var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
+    if (result) {
+      var fee = Number(result.fee);
+      selectedZoneFee = (!isNaN(fee) && fee >= 0) ? fee : selectedZoneFee;
+
+      var distance = result.distance ? Number(result.distance).toFixed(1) : '?';
+      console.log('📍 Distance from shop:', distance + 'km', '| Fee:', selectedZoneFee);
+
+      var deliveryEl = document.getElementById('deliveryFee');
+      if (deliveryEl) {
+        deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
+      }
+      renderSummary();
+    }
+  } catch (error) {
+    console.error('Failed to calculate delivery fee:', error);
+  }
 }
 
 // ============================================================
@@ -1465,11 +1516,10 @@ function removeCartItem(itemId) {
   try {
     var stored = localStorage.getItem('liquorbelle_cart');
     if (!stored) return;
-    
+
     var cartObj = JSON.parse(stored);
     var found = false;
-    
-    // Loop through the cart object and delete the matching item
+
     for (var key in cartObj) {
       if (cartObj[key].id === itemId || key === itemId) {
         delete cartObj[key];
@@ -1477,9 +1527,8 @@ function removeCartItem(itemId) {
         break;
       }
     }
-    
+
     if (!found) {
-      // Fallback for array-based cart
       var cartArray = getCart();
       var newCartArray = cartArray.filter(function(item) {
         return (item.id !== itemId && item._id !== itemId);
@@ -1488,15 +1537,13 @@ function removeCartItem(itemId) {
     } else {
       localStorage.setItem('liquorbelle_cart', JSON.stringify(cartObj));
     }
-    
-    // Refresh all UI elements
+
     renderCartDrawer();
     if (typeof renderSummary === 'function') renderSummary();
     updateCartBadges();
     if (typeof updateCartUI === 'function') updateCartUI();
-    
+
     toast('Item removed from cart');
-    
   } catch(e) {
     console.error('Error removing item:', e);
     toast('Error removing item', true);
@@ -1510,12 +1557,12 @@ function populateDeliveryAreas(selectId) {
   var select = document.getElementById(selectId || 'deliveryArea');
   if (!select) return;
   select.innerHTML = '';
-  
+
   var defaultOption = document.createElement('option');
   defaultOption.value = '';
   defaultOption.textContent = 'Select your delivery area...';
   select.appendChild(defaultOption);
-  
+
   if (!deliveryZones || deliveryZones.length === 0) {
     var noZoneOption = document.createElement('option');
     noZoneOption.value = '';
@@ -1523,7 +1570,7 @@ function populateDeliveryAreas(selectId) {
     select.appendChild(noZoneOption);
     return;
   }
-  
+
   var sortedZones = [...deliveryZones].sort((a, b) => a.name.localeCompare(b.name));
   for (var i = 0; i < sortedZones.length; i++) {
     var zone = sortedZones[i];
@@ -1533,7 +1580,7 @@ function populateDeliveryAreas(selectId) {
     option.dataset.fee = zone.fee;
     select.appendChild(option);
   }
-  
+
   if (sortedZones.length > 0) {
     select.value = sortedZones[0].name;
     handleDeliveryChange();
@@ -1546,35 +1593,58 @@ function populateDeliveryAreas(selectId) {
 function handleDeliveryChange() {
   var select = document.getElementById('deliveryArea');
   if (!select) return;
-  
+
   var selectedOption = select.options[select.selectedIndex];
   if (!selectedOption || !selectedOption.value) {
     console.warn('⚠️ No valid option selected');
     return;
   }
-  
-  var fee = parseInt(selectedOption.dataset.fee);
-  
-  if (isNaN(fee) || fee === 0) {
-    var zone = deliveryZones.find(function(z) {
-      return z.name === selectedOption.value;
-    });
-    fee = zone ? zone.fee : 150;
+
+  var fee = Number(selectedOption.dataset.fee);
+
+  if (isNaN(fee)) {
+    var zone = deliveryZones.find(function(z) { return z.name === selectedOption.value; });
+    fee = zone ? Number(zone.fee) : 150;
   }
 
   selectedZoneFee = fee;
-  
+
   console.log('📍 Zone selected:', selectedOption.value, '| Fee:', selectedZoneFee);
-  
+
   var deliveryEl = document.getElementById('deliveryFee');
   if (deliveryEl) {
     deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
   }
-  
+
   if (typeof renderSummary === 'function') {
     renderSummary();
   }
 }
+
+/**
+ * Single source of truth for whether the free-delivery threshold applies.
+ * Used by renderSummary(), renderCartDrawer(), and placeOrder() so all three
+ * always agree, instead of each re-implementing the same comparison
+ * (and risking string/number mismatches like `subtotal >= "0"`).
+ */
+function computeDelivery(subtotal) {
+  var threshold = Number(freeDeliveryThreshold);
+  var isValidThreshold = !isNaN(threshold) && threshold > 0;
+  var zoneFee = Number(selectedZoneFee);
+  if (isNaN(zoneFee) || zoneFee < 0) zoneFee = 0;
+
+  var delivery = zoneFee;
+  var freeApplied = false;
+
+  if (deliveryEnabled === true && isValidThreshold && subtotal >= threshold) {
+    delivery = 0;
+    freeApplied = true;
+  }
+
+  var vat = Math.round(delivery * TAX_CONFIG.vatRate);
+  return { delivery: delivery, vat: vat, freeApplied: freeApplied, threshold: isValidThreshold ? threshold : null };
+}
+
 // ============================================================
 // RENDER SUMMARY
 // ============================================================
@@ -1599,7 +1669,7 @@ function renderSummary() {
 
   var html = '';
   var subtotal = 0;
-  
+
   for (var i = 0; i < cart.length; i++) {
     var item = cart[i];
     var name = item.name || 'Product';
@@ -1609,8 +1679,7 @@ function renderSummary() {
     subtotal += itemTotal;
     var size = item.size || '750ml';
     var itemId = item.id || item._id || 'item_' + i;
-    
-    // ✅ PROPERLY STYLED REMOVE BUTTON
+
     html += '<div class="cart-item-checkout">' +
       '<div class="item-name">' + escapeHtml(name) + ' <small>' + escapeHtml(size) + '</small></div>' +
       '<div class="item-price" style="display:flex;align-items:center;gap:12px;">' +
@@ -1621,34 +1690,36 @@ function renderSummary() {
   }
   summaryItems.innerHTML = html;
 
-  var delivery = selectedZoneFee;
-  if (deliveryEnabled === true && subtotal >= freeDeliveryThreshold) delivery = 0;
-  
-  var vat = Math.round(delivery * 0.16);
+  var result = computeDelivery(subtotal);
+  var delivery = result.delivery;
+  var vat = result.vat;
   var total = subtotal + vat + delivery;
+
+  console.log('📊 subtotal:', subtotal, '| delivery:', delivery, '| vat:', vat, '| total:', total, '| freeApplied:', result.freeApplied);
 
   subtotalEl.textContent = 'KES ' + subtotal.toLocaleString();
   if (vatEl) vatEl.textContent = 'KES ' + vat.toLocaleString();
   deliveryEl.textContent = delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString();
   totalEl.textContent = 'KES ' + total.toLocaleString();
 
-  if (delivery === 0 && subtotal > 0) {
+  if (result.freeApplied) {
     freeNote.textContent = '🎉 Free delivery applied!';
-  } else if (subtotal > 0 && deliveryEnabled) {
-    var remaining = freeDeliveryThreshold - subtotal;
-    if (remaining > 0) freeNote.textContent = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
-    else freeNote.textContent = '🎉 Free delivery applied!';
+  } else if (subtotal > 0 && deliveryEnabled && result.threshold) {
+    var remaining = result.threshold - subtotal;
+    freeNote.textContent = remaining > 0
+      ? '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery'
+      : '🎉 Free delivery applied!';
   } else {
     freeNote.textContent = '';
   }
 
   var progressContainer = document.getElementById('deliveryProgressContainer');
   if (progressContainer) {
-    if (subtotal > 0 && deliveryEnabled) {
-      var progress = Math.min((subtotal / freeDeliveryThreshold) * 100, 100);
+    if (subtotal > 0 && deliveryEnabled && result.threshold) {
+      var progress = Math.min((subtotal / result.threshold) * 100, 100);
       var isUnlocked = progress >= 100;
       progressContainer.innerHTML = '<div class="delivery-progress ' + (isUnlocked ? 'unlocked' : '') + '">' +
-        (isUnlocked ? '✅ Free Delivery Unlocked!' : 'Add KES ' + (freeDeliveryThreshold - subtotal).toLocaleString() + ' more for free delivery') +
+        (isUnlocked ? '✅ Free Delivery Unlocked!' : 'Add KES ' + (result.threshold - subtotal).toLocaleString() + ' more for free delivery') +
         '<div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:' + Math.min(progress, 100) + '%;"></div></div></div>';
     } else {
       progressContainer.innerHTML = '';
@@ -1662,7 +1733,7 @@ function renderSummary() {
 async function placeOrder() {
   var btn = document.getElementById('placeOrderBtn');
   if (btn.disabled) return;
-  
+
   var cart = getCart();
   if (cart.length === 0) { showSnack('Your cart is empty', true); return; }
 
@@ -1680,9 +1751,9 @@ async function placeOrder() {
   if (!area) { showSnack('Please enter your delivery area', true); return; }
 
   var subtotal = getCartTotal(cart);
-  var delivery = selectedZoneFee;
-  if (deliveryEnabled && subtotal >= freeDeliveryThreshold) delivery = 0;
-  var vat = Math.round(delivery * 0.16);
+  var result = computeDelivery(subtotal);
+  var delivery = result.delivery;
+  var vat = result.vat;
   var total = subtotal + vat + delivery;
 
   var items = cart.map(item => ({
@@ -1724,7 +1795,7 @@ async function placeOrder() {
         document.getElementById('successOrderId').textContent = orderNumber;
         document.getElementById('successMessage').innerHTML = '⏳ <strong>Waiting for payment confirmation...</strong><br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt and enter your PIN.</span>';
         document.getElementById('successModal').classList.add('active');
-        
+
         var paid = await pollPaymentStatus(orderNumber);
         if (paid) {
           localStorage.removeItem('liquorbelle_cart');
@@ -1805,7 +1876,7 @@ function handleAccountClick() { var u = getCurrentUser(); if (u && u.name) windo
 function handleHeaderSearch(e) { e.preventDefault(); const q = document.getElementById('headerSearchInput').value.trim(); if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q); return false; }
 
 // ============================================================
-// RENDER CART DRAWER (FIXED: "Remove" button is now included)
+// RENDER CART DRAWER
 // ============================================================
 function renderCartDrawer() {
   var cart = getCart();
@@ -1823,8 +1894,7 @@ function renderCartDrawer() {
   var html = ''; var subtotal = 0;
   for (var i = 0; i < cart.length; i++) {
     var item = cart[i]; var name = item.name || 'Product'; var qty = parseInt(item.quantity) || parseInt(item.qty) || 1; var price = parseFloat(item.price) || 0; var itemTotal = price * qty; subtotal += itemTotal; var itemId = item.id || item._id || 'item_' + i;
-    
-    // ✅ "Remove" button is now included in the HTML
+
     html += `<div class="cart-item">
       <div>
         <div class="cart-item-name">${escapeHtml(name)}</div>
@@ -1842,9 +1912,10 @@ function renderCartDrawer() {
   }
   container.innerHTML = html;
 
-  var delivery = (subtotal >= freeDeliveryThreshold) ? 0 : selectedZoneFee;
-  var vat = Math.round(delivery * 0.16);
-  var total = subtotal + vat + delivery;
+  // FIX: was reimplementing the free-delivery check independently
+  // (and could disagree with renderSummary). Now uses the shared helper.
+  var result = computeDelivery(subtotal);
+  var total = subtotal + result.vat + result.delivery;
   totalEl.textContent = 'KES ' + total.toLocaleString();
   footer.style.display = 'block';
   updateCartBadges();
@@ -1899,7 +1970,7 @@ function updateMobileMenuAuth() {
 }
 
 // ============================================================
-// DOM INIT & EVENT LISTENERS
+// DOM INIT & EVENT LISTENERS (form validation + PIN button)
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
   // Real-time validations
@@ -1933,6 +2004,15 @@ document.addEventListener('DOMContentLoaded', function() {
       if (phone.length > 0 && phone.length < 10) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; phoneError.style.display = 'block'; phoneError.textContent = '❌ Phone must be at least 10 digits'; }
       else if (phone.length >= 10) { this.style.borderColor = '#2ecc71'; this.style.background = '#f0fff4'; phoneError.style.display = 'none'; }
       else { this.style.borderColor = ''; this.style.background = ''; phoneError.style.display = 'none'; }
+    });
+
+    phoneInput.addEventListener('blur', function() {
+      var phone = this.value.replace(/\D/g, '');
+      if (phone.length > 0 && !validatePhone(phone)) {
+        this.style.borderColor = '#e03131'; this.style.background = '#fff0f0';
+        phoneError.style.display = 'block';
+        phoneError.textContent = '❌ Please enter a valid Kenyan phone (e.g., 0712345678)';
+      }
     });
   }
 
@@ -2015,14 +2095,14 @@ document.addEventListener('DOMContentLoaded', function() {
       );
     });
   }
-
-  // ❌ initBuildingAutocomplete() completely removed as per user request
 });
 
 // ============================================================
 // MAIN INITIALIZATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('🚀 Checkout page initializing...');
+
   Promise.all([loadDeliverySettings(), loadDeliveryZones()])
     .then(() => {
       var select = document.getElementById('deliveryArea');
@@ -2038,19 +2118,39 @@ document.addEventListener('DOMContentLoaded', function() {
         deliverySelect.removeEventListener('change', handleDeliveryChange);
         deliverySelect.addEventListener('change', handleDeliveryChange);
       }
-      renderSummary(); updateCartBadges(); updateUserBadge(); updateBottomNav(); updateMobileMenuAuth(); selectPayment('mpesa'); document.getElementById('successModal').classList.remove('active');
+      renderSummary();
+      updateCartBadges();
+      updateUserBadge();
+      updateBottomNav();
+      updateMobileMenuAuth();
+      selectPayment('mpesa');
+      var successModal = document.getElementById('successModal');
+      if (successModal) successModal.classList.remove('active');
       if (typeof updateCartUI === 'function') updateCartUI();
     })
     .catch((err) => {
       console.error('❌ Failed to load delivery:', err);
-      renderSummary(); updateCartBadges(); updateUserBadge(); updateBottomNav(); updateMobileMenuAuth(); selectPayment('mpesa');
+      renderSummary();
+      updateCartBadges();
+      updateUserBadge();
+      updateBottomNav();
+      updateMobileMenuAuth();
+      selectPayment('mpesa');
     });
 });
 
-// ===== STORAGE SYNC =====
+// ===== STORAGE SYNC (cross-tab) =====
 window.addEventListener('storage', function(e) {
-  if (e.key === 'liquorbelle_cart' || e.key === 'cart') { renderSummary(); updateCartBadges(); if (typeof updateCartUI === 'function') updateCartUI(); }
-  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') { updateUserBadge(); updateBottomNav(); updateMobileMenuAuth(); }
+  if (e.key === 'liquorbelle_cart' || e.key === 'cart') {
+    renderSummary();
+    updateCartBadges();
+    if (typeof updateCartUI === 'function') updateCartUI();
+  }
+  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
+    updateUserBadge();
+    updateBottomNav();
+    updateMobileMenuAuth();
+  }
 });
 
 console.log('✅ Checkout script loaded successfully');
