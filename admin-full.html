@@ -692,7 +692,7 @@ textarea { resize: vertical; }
     </div>
   </div>
 
-  <!-- SETTINGS TAB -->
+    <!-- SETTINGS TAB -->
   <div id="settingsTab" style="display:none;">
     <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
       <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
@@ -741,30 +741,24 @@ textarea { resize: vertical; }
       </form>
     </div>
 
-    <!-- ✅ UPDATED DELIVERY SETTINGS SECTION -->
+    <!-- ✅ FINAL UPDATED DELIVERY SETTINGS (REMOVED DELIVERY FEE) -->
     <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
       <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
         <i class="ph ph-truck" style="color:var(--gold);font-size:20px;"></i> Delivery Settings
         <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Configure delivery options</span>
       </div>
       
-      <!-- Changed onsubmit: Uses saveDeliverySettings(event) directly -->
       <form id="deliveryForm" onsubmit="event.preventDefault(); saveDeliverySettings(event);">
-        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <!-- ✅ REMOVED DELIVERY FEE INPUT -->
           <div class="form-group">
             <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
-              <i class="ph ph-currency-kes" style="color:var(--gold);"></i> Delivery Fee
+              <i class="ph ph-gift" style="color:var(--gold);"></i> Free Threshold (KES)
             </label>
-            <input type="number" id="deliveryFee" value="150" step="5" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-            <span style="font-size:10px;color:var(--muted);margin-top:4px;">Default delivery fee in KES</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
-              <i class="ph ph-gift" style="color:var(--gold);"></i> Free Threshold
-            </label>
-            <input type="number" id="freeThreshold" value="3000" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+            <input type="number" id="freeThreshold" value="5000" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
             <span style="font-size:10px;color:var(--muted);margin-top:4px;">Order above this gets free delivery</span>
           </div>
+
           <div class="form-group" style="flex-direction:row;align-items:center;gap:12px;padding-top:28px;">
             <label class="form-label" style="margin:0;font-size:12px;font-weight:600;color:var(--text-secondary);">Delivery Enabled</label>
             <label class="toggle-switch" style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer;">
@@ -774,8 +768,8 @@ textarea { resize: vertical; }
             </label>
           </div>
         </div>
+        
         <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
-          <!-- Changed type="submit" to type="button" to stop page reload -->
           <button type="button" class="btn" onclick="saveDeliverySettings(event)" style="padding:10px 24px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
             <i class="ph ph-floppy-disk"></i> Save Settings
           </button>
@@ -809,7 +803,6 @@ textarea { resize: vertical; }
         <button class="btn btn-outline" onclick="addDeliveryZone()" style="padding:8px 20px;background:transparent;border:2px solid var(--border);border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
           <i class="ph ph-plus" style="color:var(--gold);"></i> Add Zone
         </button>
-        <!-- Changed type="submit" to type="button" and added (event) -->
         <button type="button" class="btn btn-gold" onclick="saveDeliveryZones(event)" style="padding:8px 20px;background:linear-gradient(135deg, var(--gold), var(--gold-light));color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
           <i class="ph ph-floppy-disk"></i> Save All Zones
         </button>
@@ -906,6 +899,7 @@ textarea { resize: vertical; }
 
 <!-- ===== TOAST ===== -->
 <div id="toast" class="toast"><span id="toastMessage"></span><button class="toast-close" onclick="hideToast()"><i class="ph ph-x"></i></button></div>
+
 <script>
 // ============================================================
 // LIQUORBELLE ADMIN — COMPLETE JAVASCRIPT (FIXED & UPGRADED)
@@ -1990,8 +1984,8 @@ async function loadSettings() {
     
     if (settingsData.success && settingsData.settings) {
       const s = settingsData.settings;
-      document.getElementById('deliveryFee').value = s.delivery_fee || 150;
-      document.getElementById('freeThreshold').value = s.free_delivery_threshold || 3000;
+      // ✅ REMOVED: document.getElementById('deliveryFee').value = s.delivery_fee || 150;
+      document.getElementById('freeThreshold').value = s.free_delivery_threshold || 5000;
       document.getElementById('deliveryEnabled').checked = s.delivery_enabled !== false;
       
       if (deliveryMessage) {
@@ -2054,9 +2048,11 @@ window.updatePasswords = async function() {
 };
 
 // ==================== DELIVERY SETTINGS ====================
-window.saveDeliverySettings = async function() {
-  const deliveryFee = parseInt(document.getElementById('deliveryFee').value) || 150;
-  const freeThreshold = parseInt(document.getElementById('freeThreshold').value) || 3000;
+window.saveDeliverySettings = async function(e) {
+  if (e) e.preventDefault();
+
+  // ✅ REMOVED deliveryFee
+  const freeThreshold = parseInt(document.getElementById('freeThreshold').value) || 5000;
   const deliveryEnabled = document.getElementById('deliveryEnabled').checked;
   const messageEl = document.getElementById('deliveryMessage');
   
@@ -2066,11 +2062,9 @@ window.saveDeliverySettings = async function() {
   messageEl.style.color = 'var(--muted)';
   
   try {
-    // ✅ FIXED: Changed method to POST and added /admin/ to the path
     const response = await adminFetch(API_BASE + '/api/admin/delivery-settings', { 
       method: 'POST', 
       body: JSON.stringify({ 
-        delivery_fee: deliveryFee, 
         free_delivery_threshold: freeThreshold, 
         delivery_enabled: deliveryEnabled 
       }) 
@@ -2119,7 +2113,6 @@ function renderDeliveryZones() {
     return;
   }
   
-  // ✅ Added escapeHtml for safety on zone names
   tbody.innerHTML = zones.map((z, i) => 
     '<tr class="zone-row">' +
       '<td><input type="text" class="zone-name" value="' + escapeHtml(z.name) + '" placeholder="Area name"></td>' +
@@ -2159,7 +2152,6 @@ window.saveDeliveryZones = async function() {
   messageEl.style.color = 'var(--muted)';
   
   try {
-    // ✅ FIXED: Changed to POST method and added /admin/ to the path
     const response = await adminFetch(API_BASE + '/api/admin/zones', { 
       method: 'POST', 
       body: JSON.stringify({ zones: newZones }) 
