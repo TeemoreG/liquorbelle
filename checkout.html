@@ -1459,6 +1459,51 @@ function saveCart(cartArray) {
 }
 
 // ============================================================
+// REMOVE CART ITEM (New function you were missing)
+// ============================================================
+function removeCartItem(itemId) {
+  try {
+    var stored = localStorage.getItem('liquorbelle_cart');
+    if (!stored) return;
+    
+    var cartObj = JSON.parse(stored);
+    var found = false;
+    
+    // Loop through the cart object and delete the matching item
+    for (var key in cartObj) {
+      if (cartObj[key].id === itemId || key === itemId) {
+        delete cartObj[key];
+        found = true;
+        break;
+      }
+    }
+    
+    if (!found) {
+      // Fallback for array-based cart
+      var cartArray = getCart();
+      var newCartArray = cartArray.filter(function(item) {
+        return (item.id !== itemId && item._id !== itemId);
+      });
+      saveCart(newCartArray);
+    } else {
+      localStorage.setItem('liquorbelle_cart', JSON.stringify(cartObj));
+    }
+    
+    // Refresh all UI elements
+    renderCartDrawer();
+    if (typeof renderSummary === 'function') renderSummary();
+    updateCartBadges();
+    if (typeof updateCartUI === 'function') updateCartUI();
+    
+    toast('Item removed from cart');
+    
+  } catch(e) {
+    console.error('Error removing item:', e);
+    toast('Error removing item', true);
+  }
+}
+
+// ============================================================
 // DELIVERY AREA UI
 // ============================================================
 function populateDeliveryAreas(selectId) {
