@@ -1221,15 +1221,9 @@ a{color:inherit;text-decoration:none;}
 // ============================================================
 
 // ===== TAX CONFIGURATION =====
-// ✅ VAT is calculated on DELIVERY FEE only (16% of delivery fee)
-// ✅ NO VAT on products
-const TAX_CONFIG = {
-  vatRate: 0.16 // 16% VAT on delivery only
-};
+const TAX_CONFIG = { vatRate: 0.16 };
 
-// ===== DELIVERY TIERS (Distance-based) =====
-// 0-5km: KES 150 | 5-10km: KES 180 | 10-15km: KES 220
-// 15-20km: KES 280 | 20-30km: KES 350 | 30+km: KES 405
+// ===== DELIVERY TIERS =====
 const DELIVERY_TIERS = [
   { minDistance: 0, maxDistance: 5, fee: 150 },
   { minDistance: 5, maxDistance: 10, fee: 180 },
@@ -1240,10 +1234,7 @@ const DELIVERY_TIERS = [
 ];
 
 // ===== SHOP LOCATION =====
-const SHOP_LOCATION = {
-  lat: -1.2832,
-  lng: 36.7254
-};
+const SHOP_LOCATION = { lat: -1.2832, lng: 36.7254 };
 
 // ===== PAYMENT METHOD SELECTION =====
 function selectPayment(method) {
@@ -1256,10 +1247,7 @@ function selectPayment(method) {
 
 // ===== USER BADGE =====
 function getCurrentUser() {
-  try {
-    const user = localStorage.getItem('liquorbelle_user');
-    return user ? JSON.parse(user) : null;
-  } catch { return null; }
+  try { const user = localStorage.getItem('liquorbelle_user'); return user ? JSON.parse(user) : null; } catch { return null; }
 }
 
 function updateUserBadge() {
@@ -1268,22 +1256,18 @@ function updateUserBadge() {
   const menuAuth = document.getElementById('mobileMenuAuth');
 
   if (user && user.name) {
-    if (dotEl) { dotEl.className = 'user-dot'; }
+    if (dotEl) dotEl.className = 'user-dot';
     if (menuAuth) {
       menuAuth.innerHTML = `
         <div style="padding:8px 20px 12px;border-bottom:1px solid var(--border);margin-bottom:4px;">
-          <div style="font-weight:700;font-size:.85rem;color:var(--primary);">
-            <i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}
-          </div>
+          <div style="font-weight:700;font-size:.85rem;color:var(--primary);"><i class="ph ph-user-circle"></i> ${escapeHtml(user.name)}</div>
           <div style="font-size:.65rem;color:var(--muted);">${escapeHtml(user.email || 'No email')}</div>
-          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;">
-            <i class="ph ph-sign-out"></i> Logout
-          </button>
+          <button onclick="logoutUser()" style="margin-top:4px;padding:4px 12px;background:var(--sale-red);color:white;border:none;border-radius:40px;font-size:.65rem;font-weight:600;cursor:pointer;"><i class="ph ph-sign-out"></i> Logout</button>
         </div>
       `;
     }
   } else {
-    if (dotEl) { dotEl.className = 'user-dot guest'; }
+    if (dotEl) dotEl.className = 'user-dot guest';
     if (menuAuth) {
       menuAuth.innerHTML = `
         <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--text);font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
@@ -1308,7 +1292,7 @@ function toast(msg) {
   t.textContent = msg;
   t.className = 'snack show';
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.classList.remove('show'); }, 3000);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function showSnack(msg, isError) {
@@ -1321,7 +1305,7 @@ function showSnack(msg, isError) {
 }
 
 // ============================================================
-// DELIVERY SETTINGS
+// DELIVERY SETTINGS & ZONES
 // ============================================================
 let deliveryFee = 150;
 let freeDeliveryThreshold = 5000;
@@ -1340,13 +1324,8 @@ async function loadDeliverySettings() {
       freeDeliveryThreshold = data.settings.free_delivery_threshold || 5000;
       deliveryEnabled = data.settings.delivery_enabled !== false;
     }
-    console.log('✅ Delivery settings:', { deliveryFee, freeDeliveryThreshold, deliveryEnabled });
     return { deliveryFee, freeDeliveryThreshold, deliveryEnabled };
   } catch (e) {
-    console.error('Error loading delivery settings:', e);
-    deliveryFee = 150;
-    freeDeliveryThreshold = 5000;
-    deliveryEnabled = true;
     return { deliveryFee: 150, freeDeliveryThreshold: 5000, deliveryEnabled: true };
   }
 }
@@ -1357,81 +1336,30 @@ async function loadDeliveryZones() {
     const data = await res.json();
     if (data.success && data.zones) {
       deliveryZones = data.zones;
-      if (deliveryZones.length > 0) {
-        selectedZoneFee = deliveryZones[0].fee || deliveryFee;
-      }
+      if (deliveryZones.length > 0) selectedZoneFee = deliveryZones[0].fee || deliveryFee;
       return deliveryZones;
     }
-    // Default zones matching your backend
+    // Fallback zones
     deliveryZones = [
-      // 0–5 km — KES 150
-      { name: 'Dagoretti Road', fee: 150 },
-      { name: 'Naivasha Road', fee: 150 },
-      { name: 'Kikuyu Road', fee: 150 },
-      { name: 'Ngong Road', fee: 150 },
-      { name: 'Kilimani', fee: 150 },
-      { name: 'Kileleshwa', fee: 150 },
-      { name: 'Lavington', fee: 150 },
-      { name: 'Hurlingham', fee: 150 },
-      { name: 'Upper Hill', fee: 150 },
-      { name: 'Nairobi CBD', fee: 150 },
-      // 5–10 km — KES 180
-      { name: 'Westlands', fee: 180 },
-      { name: 'Parklands', fee: 180 },
-      { name: 'Muthaiga', fee: 180 },
-      { name: 'Karen', fee: 180 },
-      { name: 'Langata', fee: 180 },
-      { name: 'Waiyaki Way', fee: 180 },
-      // 10–15 km — KES 220
-      { name: 'Rongai', fee: 220 },
-      { name: 'South B', fee: 220 },
-      { name: 'Waithaka', fee: 220 },
-      { name: 'Runda', fee: 220 },
-      { name: 'Gigiri', fee: 220 },
-      { name: 'Loresho', fee: 220 },
-      { name: 'Kiambu Road', fee: 220 },
-      // 15–20 km — KES 280
-      { name: 'Ruaka', fee: 280 },
+      { name: 'Dagoretti Road', fee: 150 }, { name: 'Naivasha Road', fee: 150 }, { name: 'Kikuyu Road', fee: 150 },
+      { name: 'Ngong Road', fee: 150 }, { name: 'Kilimani', fee: 150 }, { name: 'Kileleshwa', fee: 150 },
+      { name: 'Lavington', fee: 150 }, { name: 'Hurlingham', fee: 150 }, { name: 'Upper Hill', fee: 150 },
+      { name: 'Nairobi CBD', fee: 150 }, { name: 'Westlands', fee: 180 }, { name: 'Parklands', fee: 180 },
+      { name: 'Muthaiga', fee: 180 }, { name: 'Karen', fee: 180 }, { name: 'Langata', fee: 180 },
+      { name: 'Waiyaki Way', fee: 180 }, { name: 'Rongai', fee: 220 }, { name: 'South B', fee: 220 },
+      { name: 'Waithaka', fee: 220 }, { name: 'Runda', fee: 220 }, { name: 'Gigiri', fee: 220 },
+      { name: 'Loresho', fee: 220 }, { name: 'Kiambu Road', fee: 220 }, { name: 'Ruaka', fee: 280 },
       { name: 'Kikuyu', fee: 280 }
     ];
     selectedZoneFee = deliveryZones[0].fee;
     return deliveryZones;
   } catch (e) {
-    console.error('Error loading delivery zones:', e);
-    deliveryZones = [
-      { name: 'Dagoretti Road', fee: 150 },
-      { name: 'Naivasha Road', fee: 150 },
-      { name: 'Kikuyu Road', fee: 150 },
-      { name: 'Ngong Road', fee: 150 },
-      { name: 'Kilimani', fee: 150 },
-      { name: 'Kileleshwa', fee: 150 },
-      { name: 'Lavington', fee: 150 },
-      { name: 'Hurlingham', fee: 150 },
-      { name: 'Upper Hill', fee: 150 },
-      { name: 'Nairobi CBD', fee: 150 },
-      { name: 'Westlands', fee: 180 },
-      { name: 'Parklands', fee: 180 },
-      { name: 'Muthaiga', fee: 180 },
-      { name: 'Karen', fee: 180 },
-      { name: 'Langata', fee: 180 },
-      { name: 'Waiyaki Way', fee: 180 },
-      { name: 'Rongai', fee: 220 },
-      { name: 'South B', fee: 220 },
-      { name: 'Waithaka', fee: 220 },
-      { name: 'Runda', fee: 220 },
-      { name: 'Gigiri', fee: 220 },
-      { name: 'Loresho', fee: 220 },
-      { name: 'Kiambu Road', fee: 220 },
-      { name: 'Ruaka', fee: 280 },
-      { name: 'Kikuyu', fee: 280 }
-    ];
-    selectedZoneFee = deliveryZones[0].fee;
     return deliveryZones;
   }
 }
 
 // ============================================================
-// LOCATION PIN - GET ADDRESS FROM GPS (USING BACKEND API)
+// LOCATION PIN - REVERSE GEOCODING
 // ============================================================
 function getAddressFromCoords(lat, lng) {
   return fetch(API_BASE + '/api/geocode/reverse', {
@@ -1439,27 +1367,27 @@ function getAddressFromCoords(lat, lng) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ lat: lat, lng: lng })
   })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
+  .then(res => res.json())
+  .then(data => {
     if (data && data.address) {
       var addr = data.address;
-      
       var street = addr.road || addr.pedestrian || addr.footway || '';
       var area = addr.suburb || addr.neighbourhood || addr.village || addr.town || addr.city || '';
       if (!area) area = addr.county || addr.state || addr.region || '';
       if (!area) area = 'Nairobi';
       var areaClean = area.replace(/\s*(ward|division|sub-county|constituency|location)\s*/gi, '').trim();
-      
       return { street: street || 'Location found', area: areaClean || 'Nairobi' };
     }
     return null;
   })
-  .catch(function() { return null; });
+  .catch(() => null);
 }
 
 // ============================================================
-// BUILDING AUTOCOMPLETE - USING BACKEND API (LocationIQ → Geoapify → Nominatim)
+// 🚀 BUILDING AUTOCOMPLETE - RACE-CONDITION FIXED
 // ============================================================
+let currentController = null;
+
 function initBuildingAutocomplete() {
   var buildingInput = document.getElementById('building');
   var suggestionsContainer = document.getElementById('buildingSuggestions');
@@ -1470,23 +1398,16 @@ function initBuildingAutocomplete() {
   
   buildingInput.addEventListener('input', function() {
     var query = this.value.trim();
-    
     clearTimeout(debounceTimer);
-    
     if (query.length < 2) {
       suggestionsContainer.style.display = 'none';
       return;
     }
-    
-    debounceTimer = setTimeout(function() {
-      searchBuildingSuggestions(query);
-    }, 400);
+    debounceTimer = setTimeout(() => searchBuildingSuggestions(query), 400);
   });
   
-  buildingInput.addEventListener('blur', function() {
-    setTimeout(function() {
-      suggestionsContainer.style.display = 'none';
-    }, 300);
+  buildingInput.addEventListener('blur', () => {
+    setTimeout(() => suggestionsContainer.style.display = 'none', 300);
   });
   
   buildingInput.addEventListener('focus', function() {
@@ -1496,44 +1417,58 @@ function initBuildingAutocomplete() {
   });
   
   function searchBuildingSuggestions(query) {
+    if (currentController) currentController.abort(); // Cancel stale request
+    currentController = new AbortController();
+
     suggestionsContainer.style.display = 'block';
     suggestionsContainer.innerHTML = '<div class="loading-results"><span class="spinner-small"></span> Searching...</div>';
-    
-    // ✅ USE BACKEND API - LocationIQ → Geoapify → Nominatim fallback
+
     fetch(API_BASE + '/api/geocode/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        query: query, 
-        limit: 8,
-        category: 'building,commercial,residential'
-      })
+      body: JSON.stringify({ query: query, limit: 10 }),
+      signal: currentController.signal
     })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
+    .then(res => {
+      if (res.status === 429) throw { rateLimited: true };
+      return res.json();
+    })
+    .then(data => {
       if (!data.success || !data.results || data.results.length === 0) {
-        suggestionsContainer.innerHTML = '<div class="no-results">No buildings found. Try a different name.</div>';
+        suggestionsContainer.innerHTML = `<div class="no-results">No buildings found. Try the <strong>📍 PIN button</strong> above to set your exact address instead.</div>`;
         return;
       }
       
       var html = '';
-      for (var i = 0; i < data.results.length; i++) {
-        var place = data.results[i];
+      var lowerQuery = query.toLowerCase();
+      
+      // Sort exact matches to the top
+      var sortedResults = data.results.sort((a, b) => {
+        var nameA = (a.display_name || a.name || '').toLowerCase();
+        var nameB = (b.display_name || b.name || '').toLowerCase();
+        if (nameA.startsWith(lowerQuery) && !nameB.startsWith(lowerQuery)) return -1;
+        if (!nameA.startsWith(lowerQuery) && nameB.startsWith(lowerQuery)) return 1;
+        return 0;
+      });
+
+      for (var i = 0; i < sortedResults.length; i++) {
+        var place = sortedResults[i];
         var badgeText = 'Building';
         if (place.type === 'commercial') badgeText = 'Commercial';
         else if (place.type === 'residential') badgeText = 'Residential';
         else if (place.type === 'apartment') badgeText = 'Apartment';
         else if (place.type === 'estate') badgeText = 'Estate';
         
-        html += '<div class="suggestion-item" data-name="' + escapeHtml(place.name) + '" data-full="' + escapeHtml(place.display_name) + '" data-lat="' + place.lat + '" data-lon="' + place.lon + '">';
-        html += '<span class="icon"><i class="ph ph-buildings"></i></span>';
-        html += '<div><span class="name">' + escapeHtml(place.name) + '</span>';
-        html += '<span class="address">' + escapeHtml(place.display_name) + '</span></div>';
-        html += '<span class="badge">' + badgeText + '</span>';
-        html += '</div>';
+        html += `<div class="suggestion-item" data-name="${escapeHtml(place.name)}" data-full="${escapeHtml(place.display_name)}" data-lat="${place.lat}" data-lon="${place.lon}">
+          <span class="icon"><i class="ph ph-buildings"></i></span>
+          <div><span class="name">${escapeHtml(place.name)}</span>
+          <span class="address">${escapeHtml(place.display_name)}</span></div>
+          <span class="badge">${badgeText}</span>
+        </div>`;
       }
       
       suggestionsContainer.innerHTML = html;
+      suggestionsContainer.scrollTop = 0;
       
       var items = suggestionsContainer.querySelectorAll('.suggestion-item');
       for (var j = 0; j < items.length; j++) {
@@ -1541,21 +1476,38 @@ function initBuildingAutocomplete() {
           var name = this.dataset.name;
           var full = this.dataset.full;
           buildingInput.value = name;
-          suggestionsContainer.style.display = 'none';
           buildingInput.dataset.fullAddress = full;
+          suggestionsContainer.style.display = 'none';
+          
+          // Auto-fill street
+          if (full) {
+            var parts = full.split(',').map(p => p.trim());
+            if (parts.length >= 2) {
+              var streetInput = document.getElementById('street');
+              if (streetInput && !streetInput.value) {
+                streetInput.value = parts[1];
+                streetInput.style.borderColor = '#2ecc71';
+                streetInput.style.background = '#f0fff4';
+              }
+            }
+          }
           toast('📍 Selected: ' + name);
         });
       }
     })
-    .catch(function(err) {
-      console.error('Building search error:', err);
+    .catch(err => {
+      if (err.name === 'AbortError') return; // Ignore stale request
+      if (err.rateLimited) {
+        suggestionsContainer.innerHTML = `<div class="no-results">Search is busy right now — please try again in a moment, or use the <strong>📍 PIN button</strong> instead.</div>`;
+        return;
+      }
       suggestionsContainer.innerHTML = '<div class="no-results">Search error. Please type manually.</div>';
     });
   }
 }
 
 // ============================================================
-// CALCULATE DISTANCE (Haversine formula)
+// CALCULATE DISTANCE & FEES
 // ============================================================
 function calculateDistance(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -1568,22 +1520,14 @@ function calculateDistance(lat1, lng1, lat2, lng2) {
   return R * c;
 }
 
-// ============================================================
-// GET FEE BY DISTANCE
-// ============================================================
 function getFeeByDistance(distance) {
   for (var i = 0; i < DELIVERY_TIERS.length; i++) {
     var tier = DELIVERY_TIERS[i];
-    if (distance >= tier.minDistance && distance < tier.maxDistance) {
-      return tier.fee;
-    }
+    if (distance >= tier.minDistance && distance < tier.maxDistance) return tier.fee;
   }
   return DELIVERY_TIERS[DELIVERY_TIERS.length - 1].fee;
 }
 
-// ============================================================
-// CALCULATE DELIVERY FEE FROM COORDINATES
-// ============================================================
 async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
   try {
     const response = await fetch(API_BASE + '/api/calculate-fee', {
@@ -1592,22 +1536,11 @@ async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
       body: JSON.stringify({ lat: lat, lng: lng, subtotal: subtotal || 0 })
     });
     const data = await response.json();
-    if (data.success) {
-      return data;
-    }
-    throw new Error('Failed to calculate fee');
-  } catch (error) {
-    console.error('Error calculating delivery fee:', error);
-    // Fallback: calculate locally
-    const distance = calculateDistance(SHOP_LOCATION.lat, SHOP_LOCATION.lng, lat, lng);
-    const fee = getFeeByDistance(distance);
-    return {
-      fee: fee,
-      distance: distance,
-      isFree: false,
-      reason: 'Distance-based fee'
-    };
-  }
+    if (data.success) return data;
+  } catch (error) { console.error(error); }
+  // Fallback
+  const distance = calculateDistance(SHOP_LOCATION.lat, SHOP_LOCATION.lng, lat, lng);
+  return { fee: getFeeByDistance(distance), distance: distance, isFree: false };
 }
 
 // ============================================================
@@ -1618,11 +1551,8 @@ function getCart() {
     var stored = localStorage.getItem('liquorbelle_cart');
     if (!stored) return [];
     var data = JSON.parse(stored);
-    if (Array.isArray(data)) return data;
-    return Object.values(data);
-  } catch(e) {
-    return [];
-  }
+    return Array.isArray(data) ? data : Object.values(data);
+  } catch(e) { return []; }
 }
 
 function getCartTotal(cart) {
@@ -1643,28 +1573,22 @@ function saveCart(cartArray) {
       var item = cartArray[i];
       var id = item.id || item._id || 'item_' + i;
       cartObj[id] = {
-        id: id,
-        name: item.name || 'Product',
-        price: parseFloat(item.price) || 0,
+        id: id, name: item.name || 'Product', price: parseFloat(item.price) || 0,
         qty: parseInt(item.quantity) || parseInt(item.qty) || 1,
-        capacity: item.capacity || item.size || '',
-        size: item.size || item.capacity || '',
+        capacity: item.capacity || item.size || '', size: item.size || item.capacity || '',
         category: item.category || 'spirits'
       };
     }
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cartObj));
-  } catch(e) {
-    console.error('Error saving cart:', e);
-  }
+  } catch(e) { console.error('Error saving cart:', e); }
 }
 
 // ============================================================
-// POPULATE DELIVERY AREAS
+// DELIVERY AREA UI
 // ============================================================
 function populateDeliveryAreas(selectId) {
   var select = document.getElementById(selectId || 'deliveryArea');
   if (!select) return;
-  
   select.innerHTML = '';
   
   var defaultOption = document.createElement('option');
@@ -1680,17 +1604,13 @@ function populateDeliveryAreas(selectId) {
     return;
   }
   
-  var sortedZones = [...deliveryZones].sort(function(a, b) {
-    return a.name.localeCompare(b.name);
-  });
-  
+  var sortedZones = [...deliveryZones].sort((a, b) => a.name.localeCompare(b.name));
   for (var i = 0; i < sortedZones.length; i++) {
     var zone = sortedZones[i];
     var option = document.createElement('option');
     option.value = zone.name;
     option.textContent = zone.name;
     option.dataset.fee = zone.fee;
-    option.dataset.name = zone.name;
     select.appendChild(option);
   }
   
@@ -1700,73 +1620,40 @@ function populateDeliveryAreas(selectId) {
   }
 }
 
-// ============================================================
-// HANDLE DELIVERY AREA CHANGE
-// ============================================================
 function handleDeliveryChange() {
   var select = document.getElementById('deliveryArea');
   if (!select) return;
-  
   var selectedOption = select.options[select.selectedIndex];
-  if (!selectedOption || !selectedOption.value) {
-    console.warn('⚠️ No valid option selected');
-    return;
-  }
+  if (!selectedOption || !selectedOption.value) return;
   
   var fee = parseInt(selectedOption.dataset.fee);
-  var zoneName = selectedOption.value;
-  
-  console.log('📍 Zone selected:', zoneName, 'Fee:', fee);
-  
   if (!isNaN(fee)) {
     selectedZoneFee = fee;
   } else {
-    var zone = deliveryZones.find(function(z) {
-      return z.name === zoneName;
-    });
+    var zone = deliveryZones.find(z => z.name === selectedOption.value);
     selectedZoneFee = zone ? zone.fee : deliveryFee;
   }
   
   var deliveryEl = document.getElementById('deliveryFee');
-  if (deliveryEl) {
-    deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
-  }
-  
-  if (typeof renderSummary === 'function') {
-    renderSummary();
-  }
+  if (deliveryEl) deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
+  if (typeof renderSummary === 'function') renderSummary();
 }
 
-// ============================================================
-// CALCULATE AND UPDATE DELIVERY FEE
-// ============================================================
 async function calculateAndUpdateDeliveryFee(lat, lng) {
   var subtotal = getCartTotal(getCart());
-  
   try {
     var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
-    
     if (result) {
       selectedZoneFee = result.fee;
-      var distance = result.distance ? result.distance.toFixed(1) : '?';
-      
-      console.log('📍 Distance from shop:', distance + 'km');
-      console.log('💰 Delivery fee:', selectedZoneFee);
-      
       var deliveryEl = document.getElementById('deliveryFee');
-      if (deliveryEl) {
-        deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
-      }
-      
+      if (deliveryEl) deliveryEl.textContent = selectedZoneFee === 0 ? 'FREE' : 'KES ' + selectedZoneFee.toLocaleString();
       renderSummary();
     }
-  } catch (error) {
-    console.error('Failed to calculate delivery fee:', error);
-  }
+  } catch (error) { console.error('Failed to calculate delivery fee:', error); }
 }
 
 // ============================================================
-// RENDER SUMMARY - VAT ON DELIVERY ONLY ✅
+// RENDER SUMMARY
 // ============================================================
 function renderSummary() {
   var cart = getCart();
@@ -1789,7 +1676,6 @@ function renderSummary() {
 
   var html = '';
   var subtotal = 0;
-  
   for (var i = 0; i < cart.length; i++) {
     var item = cart[i];
     var name = item.name || 'Product';
@@ -1806,24 +1692,11 @@ function renderSummary() {
   }
   summaryItems.innerHTML = html;
 
-  console.log('📊 renderSummary - subtotal:', subtotal);
-  console.log('📊 Delivery fee:', selectedZoneFee);
-  
-  // ✅ VAT ONLY ON DELIVERY FEE (16% of delivery)
   var delivery = selectedZoneFee;
-  if (deliveryEnabled === true && subtotal >= freeDeliveryThreshold) {
-    delivery = 0;
-    console.log('🎉 Free delivery applied - VAT will be 0');
-  }
+  if (deliveryEnabled === true && subtotal >= freeDeliveryThreshold) delivery = 0;
   
-  // ✅ VAT calculated ONLY on delivery fee
   var vat = Math.round(delivery * 0.16);
-  
-  // ✅ Total = Subtotal + VAT(ON DELIVERY ONLY) + Delivery
   var total = subtotal + vat + delivery;
-
-  console.log('📊 VAT (on delivery only):', vat);
-  console.log('📊 Total:', total);
 
   subtotalEl.textContent = 'KES ' + subtotal.toLocaleString();
   if (vatEl) vatEl.textContent = 'KES ' + vat.toLocaleString();
@@ -1834,11 +1707,8 @@ function renderSummary() {
     freeNote.textContent = '🎉 Free delivery applied! (No VAT on delivery)';
   } else if (subtotal > 0 && deliveryEnabled) {
     var remaining = freeDeliveryThreshold - subtotal;
-    if (remaining > 0) {
-      freeNote.textContent = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
-    } else {
-      freeNote.textContent = '🎉 Free delivery applied! (No VAT on delivery)';
-    }
+    if (remaining > 0) freeNote.textContent = '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery';
+    else freeNote.textContent = '🎉 Free delivery applied! (No VAT on delivery)';
   } else {
     freeNote.textContent = '';
   }
@@ -1850,9 +1720,7 @@ function renderSummary() {
       var isUnlocked = progress >= 100;
       progressContainer.innerHTML = '<div class="delivery-progress ' + (isUnlocked ? 'unlocked' : '') + '">' +
         (isUnlocked ? '✅ Free Delivery Unlocked!' : 'Add KES ' + (freeDeliveryThreshold - subtotal).toLocaleString() + ' more for free delivery') +
-        '<div class="delivery-progress-bar">' +
-        '<div class="delivery-progress-fill" style="width:' + Math.min(progress, 100) + '%;"></div>' +
-        '</div></div>';
+        '<div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:' + Math.min(progress, 100) + '%;"></div></div></div>';
     } else {
       progressContainer.innerHTML = '';
     }
@@ -1860,370 +1728,14 @@ function renderSummary() {
 }
 
 // ============================================================
-// AUTO-FILL SAVED ADDRESS
-// ============================================================
-function autoFillSavedAddress() {
-  var user = getCurrentUser();
-  if (!user) return;
-  
-  console.log('👤 User logged in, checking for saved addresses...');
-  
-  var storageKey = 'liquorbelle_addresses_' + user.email.toLowerCase();
-  var savedAddresses = [];
-  try {
-    var stored = localStorage.getItem(storageKey);
-    if (stored) {
-      savedAddresses = JSON.parse(stored);
-      console.log('📦 Found ' + savedAddresses.length + ' saved address(es)');
-    }
-  } catch(e) {
-    console.warn('Could not load saved addresses:', e);
-  }
-  
-  if (savedAddresses.length === 0) {
-    try {
-      var legacy = localStorage.getItem('liquorbelle_addresses');
-      if (legacy) {
-        var parsed = JSON.parse(legacy);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          savedAddresses = parsed;
-          console.log('📦 Found ' + savedAddresses.length + ' legacy saved address(es)');
-        }
-      }
-    } catch(e) {
-      console.warn('Could not load legacy addresses:', e);
-    }
-  }
-  
-  if (savedAddresses.length === 0) {
-    console.log('ℹ️ No saved addresses found');
-    return false;
-  }
-  
-  var defaultAddr = null;
-  for (var i = 0; i < savedAddresses.length; i++) {
-    if (savedAddresses[i].isDefault) {
-      defaultAddr = savedAddresses[i];
-      break;
-    }
-  }
-  if (!defaultAddr) {
-    defaultAddr = savedAddresses[0];
-  }
-  
-  console.log('📌 Using address:', defaultAddr);
-  
-  var nameInput = document.getElementById('fullName');
-  var phoneInput = document.getElementById('phone');
-  var streetInput = document.getElementById('street');
-  var buildingInput = document.getElementById('building');
-  var areaSelect = document.getElementById('deliveryArea');
-  
-  if (nameInput && user.name) {
-    nameInput.value = user.name;
-    nameInput.style.borderColor = '#2ecc71';
-    nameInput.style.background = '#f0fff4';
-  }
-  
-  if (phoneInput && user.phone) {
-    phoneInput.value = user.phone;
-    phoneInput.style.borderColor = '#2ecc71';
-    phoneInput.style.background = '#f0fff4';
-  }
-  
-  if (streetInput && defaultAddr.line1) {
-    streetInput.value = defaultAddr.line1;
-    streetInput.style.borderColor = '#2ecc71';
-    streetInput.style.background = '#f0fff4';
-  }
-  
-  if (buildingInput && defaultAddr.landmark) {
-    buildingInput.value = defaultAddr.landmark;
-    buildingInput.style.borderColor = '#2ecc71';
-    buildingInput.style.background = '#f0fff4';
-  }
-  
-  if (areaSelect && defaultAddr.area) {
-    var found = false;
-    for (var j = 0; j < areaSelect.options.length; j++) {
-      if (areaSelect.options[j].value === defaultAddr.area) {
-        areaSelect.value = defaultAddr.area;
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      for (var k = 0; k < areaSelect.options.length; k++) {
-        if (areaSelect.options[k].value.toLowerCase().indexOf(defaultAddr.area.toLowerCase()) !== -1) {
-          areaSelect.value = areaSelect.options[k].value;
-          found = true;
-          break;
-        }
-      }
-    }
-    if (found) {
-      var event = new Event('change');
-      areaSelect.dispatchEvent(event);
-    }
-  }
-  
-  toast('📦 Saved address loaded!');
-  return true;
-}
-
-// ============================================================
-// CART DRAWER
-// ============================================================
-function openCartDrawer() {
-  document.getElementById('cartOverlay').classList.add('open');
-  document.getElementById('cartDrawer').classList.add('open');
-  renderCartDrawer();
-}
-
-function closeCartDrawer() {
-  document.getElementById('cartOverlay').classList.remove('open');
-  document.getElementById('cartDrawer').classList.remove('open');
-}
-
-function renderCartDrawer() {
-  var cart = getCart();
-  var container = document.getElementById('cartItemsList');
-  var footer = document.getElementById('cartFooter');
-  var totalEl = document.getElementById('cartTotalAmount');
-
-  if (!container || !footer) return;
-
-  if (cart.length === 0) {
-    container.innerHTML = `
-      <div class="cart-container">
-        <div class="cart-icon-wrapper">
-          <svg class="cart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="20" r="1.5" fill="#111111"/>
-            <circle cx="17" cy="20" r="1.5" fill="#111111"/>
-          </svg>
-          <span class="cart-badge">0</span>
-        </div>
-        <h2 class="cart-message">Your cart is empty!</h2>
-        <a href="shop.html" class="shop-button">Start Shopping</a>
-      </div>
-    `;
-    footer.style.display = 'none';
-    return;
-  }
-
-  var html = '';
-  var subtotal = 0;
-  for (var i = 0; i < cart.length; i++) {
-    var item = cart[i];
-    var name = item.name || 'Product';
-    var qty = parseInt(item.quantity) || parseInt(item.qty) || 1;
-    var price = parseFloat(item.price) || 0;
-    var itemTotal = price * qty;
-    subtotal += itemTotal;
-    var itemId = item.id || item._id || 'item_' + i;
-    
-    html += `
-      <div class="cart-item">
-        <div>
-          <div class="cart-item-name">${escapeHtml(name)}</div>
-          <div class="cart-qty">
-            <button onclick="updateQty('${itemId}', -1)">−</button>
-            <span>${qty}</span>
-            <button onclick="updateQty('${itemId}', 1)">+</button>
-          </div>
-        </div>
-        <div class="cart-item-price">KES ${itemTotal.toLocaleString()}</div>
-      </div>
-    `;
-  }
-  container.innerHTML = html;
-
-  var delivery = (subtotal >= freeDeliveryThreshold) ? 0 : selectedZoneFee;
-  var vat = Math.round(delivery * 0.16);
-  var total = subtotal + vat + delivery;
-  totalEl.textContent = 'KES ' + total.toLocaleString();
-  footer.style.display = 'block';
-  updateCartBadges();
-}
-
-function updateQty(itemId, delta) {
-  try {
-    var stored = localStorage.getItem('liquorbelle_cart');
-    if (!stored) return;
-    var cartObj = JSON.parse(stored);
-    
-    var found = false;
-    for (var key in cartObj) {
-      if (cartObj[key].id === itemId || key === itemId) {
-        var newQty = (parseInt(cartObj[key].qty) || 1) + delta;
-        if (newQty < 1) newQty = 1;
-        cartObj[key].qty = newQty;
-        found = true;
-        break;
-      }
-    }
-    
-    if (!found) {
-      var cartArray = getCart();
-      for (var i = 0; i < cartArray.length; i++) {
-        if (cartArray[i].id === itemId || cartArray[i]._id === itemId) {
-          var newQty = (parseInt(cartArray[i].quantity) || parseInt(cartArray[i].qty) || 1) + delta;
-          if (newQty < 1) newQty = 1;
-          cartArray[i].quantity = newQty;
-          cartArray[i].qty = newQty;
-          saveCart(cartArray);
-          break;
-        }
-      }
-    } else {
-      localStorage.setItem('liquorbelle_cart', JSON.stringify(cartObj));
-    }
-    
-    renderCartDrawer();
-    if (typeof renderSummary === 'function') renderSummary();
-    updateCartBadges();
-    if (typeof updateCartUI === 'function') updateCartUI();
-  } catch(e) {
-    console.error('Error updating quantity:', e);
-  }
-}
-
-function updateCartBadges() {
-  var cart = getCart();
-  var count = 0;
-  for (var i = 0; i < cart.length; i++) {
-    var qty = parseInt(cart[i].quantity) || parseInt(cart[i].qty) || 1;
-    count += qty;
-  }
-  var headerBadge = document.getElementById('headerCartCount');
-  var navBadge = document.getElementById('navCartCount');
-  var drawerBadge = document.getElementById('cartBadgeCount');
-  if (headerBadge) headerBadge.textContent = count;
-  if (navBadge) navBadge.textContent = count;
-  if (drawerBadge) drawerBadge.textContent = count;
-}
-
-// ============================================================
-// MENU FUNCTIONS
-// ============================================================
-function openMobileMenu() {
-  document.getElementById('mobileMenuOverlay').classList.add('open');
-  document.getElementById('mobileMenu').classList.add('open');
-}
-
-function closeMobileMenu() {
-  document.getElementById('mobileMenuOverlay').classList.remove('open');
-  document.getElementById('mobileMenu').classList.remove('open');
-}
-
-function handleHeaderSearch(e) {
-  e.preventDefault();
-  const q = document.getElementById('headerSearchInput').value.trim();
-  if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q);
-  return false;
-}
-
-function openWishlistModal() {
-  document.getElementById('wishlistModal').style.display = 'flex';
-}
-
-function closeWishlistModal() {
-  document.getElementById('wishlistModal').style.display = 'none';
-}
-
-// ============================================================
-// HANDLE ACCOUNT CLICK
-// ============================================================
-function handleAccountClick() {
-  var user = getCurrentUser();
-  if (user && user.name) {
-    window.location.href = 'profile.html';
-  } else {
-    window.location.href = 'accounts.html';
-  }
-}
-
-// ============================================================
-// UPDATE BOTTOM NAV & MOBILE MENU
-// ============================================================
-function updateBottomNav() {
-  var user = getCurrentUser();
-  var accountBtn = document.getElementById('bottomNavAccount');
-  var accountLabel = document.getElementById('bottomNavAccountLabel');
-  var profileLink = document.getElementById('mobileMenuProfile');
-  
-  if (accountBtn && accountLabel) {
-    if (user && user.name) {
-      accountLabel.textContent = 'Profile';
-      accountBtn.onclick = function() {
-        window.location.href = 'profile.html';
-      };
-    } else {
-      accountLabel.textContent = 'Account';
-      accountBtn.onclick = function() {
-        window.location.href = 'accounts.html';
-      };
-    }
-  }
-  
-  if (profileLink) {
-    if (user && user.name) {
-      profileLink.style.display = 'flex';
-    } else {
-      profileLink.style.display = 'none';
-    }
-  }
-  
-  window.handleAccountClick = function() {
-    var user = getCurrentUser();
-    if (user && user.name) {
-      window.location.href = 'profile.html';
-    } else {
-      window.location.href = 'accounts.html';
-    }
-  };
-}
-
-// ============================================================
-// UPDATE MOBILE MENU AUTH SECTION
-// ============================================================
-function updateMobileMenuAuth() {
-  var user = getCurrentUser();
-  var authSection = document.getElementById('mobileMenuAuth');
-  if (!authSection) return;
-  
-  if (user && user.name) {
-    authSection.innerHTML = `
-      <div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;">
-        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div>
-        <div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div>
-        <button onclick="logoutUser();closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;">
-          <i class="ph ph-sign-out"></i> Logout
-        </button>
-      </div>
-    `;
-  } else {
-    authSection.innerHTML = `
-      <a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
-        <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
-      </a>
-    `;
-  }
-}
-
-// ============================================================
-// PLACE ORDER - VAT ON DELIVERY ONLY ✅
+// PLACE ORDER
 // ============================================================
 async function placeOrder() {
   var btn = document.getElementById('placeOrderBtn');
   if (btn.disabled) return;
   
   var cart = getCart();
-  if (cart.length === 0) {
-    showSnack('Your cart is empty', true);
-    return;
-  }
+  if (cart.length === 0) { showSnack('Your cart is empty', true); return; }
 
   var email = document.getElementById('customerEmail').value.trim();
   var name = document.getElementById('fullName').value.trim();
@@ -2232,101 +1744,41 @@ async function placeOrder() {
   var building = document.getElementById('building').value.trim();
   var area = document.getElementById('deliveryArea').value.trim();
 
-  if (!email || !isValidEmail(email)) {
-    showSnack('Please enter a valid email address', true);
-    return;
-  }
-  if (!name) {
-    showSnack('Please enter your full name', true);
-    return;
-  }
-  if (!phone) {
-    showSnack('Please enter your phone number', true);
-    return;
-  }
-  if (!street) {
-    showSnack('Please enter your street / estate', true);
-    return;
-  }
-  if (!area) {
-    showSnack('Please enter your delivery area', true);
-    return;
-  }
+  if (!email || !isValidEmail(email)) { showSnack('Please enter a valid email address', true); return; }
+  if (!name) { showSnack('Please enter your full name', true); return; }
+  if (!phone) { showSnack('Please enter your phone number', true); return; }
+  if (!street) { showSnack('Please enter your street / estate', true); return; }
+  if (!area) { showSnack('Please enter your delivery area', true); return; }
 
   var subtotal = getCartTotal(cart);
-  
-  // ✅ VAT ONLY ON DELIVERY
   var delivery = selectedZoneFee;
-  if (deliveryEnabled && subtotal >= freeDeliveryThreshold) {
-    delivery = 0;
-  }
-  
-  // ✅ VAT calculated ONLY on delivery fee
+  if (deliveryEnabled && subtotal >= freeDeliveryThreshold) delivery = 0;
   var vat = Math.round(delivery * 0.16);
-  
-  // ✅ Total = Subtotal + VAT(ON DELIVERY ONLY) + Delivery
   var total = subtotal + vat + delivery;
 
-  var items = cart.map(function(item) {
-    return {
-      name: item.name || 'Product',
-      quantity: parseInt(item.quantity) || parseInt(item.qty) || 1,
-      price: parseFloat(item.price) || 0,
-      size: item.size || '750ml',
-      category: item.category || 'spirits'
-    };
-  });
+  var items = cart.map(item => ({
+    name: item.name || 'Product', quantity: parseInt(item.quantity) || parseInt(item.qty) || 1,
+    price: parseFloat(item.price) || 0, size: item.size || '750ml', category: item.category || 'spirits'
+  }));
 
   var address = [street, building, area].filter(Boolean).join(', ');
   var orderNumber = 'LB-' + Date.now().toString(36).toUpperCase();
   var paymentMethod = document.getElementById('selectedPaymentMethod').value;
 
-  var payload;
-  var endpoint;
-
+  var payload, endpoint;
   if (paymentMethod === 'pod') {
-    payload = {
-      orderNumber: orderNumber,
-      customerName: name,
-      customerEmail: email,
-      phone: phone,
-      address: address,
-      notes: '',
-      subtotal: subtotal,
-      vat: vat,        // ✅ VAT on delivery only
-      delivery: delivery,
-      total: total,
-      items: items
-    };
+    payload = { orderNumber, customerName: name, customerEmail: email, phone, address, notes: '', subtotal, vat, delivery, total, items };
     endpoint = API_BASE + '/api/orders/pod';
   } else {
-    payload = {
-      orderId: orderNumber,
-      customerName: name,
-      customerEmail: email,
-      phone: phone,
-      address: address,
-      subtotal: subtotal,
-      vat: vat,        // ✅ VAT on delivery only
-      delivery: delivery,
-      total: total,
-      items: items
-    };
+    payload = { orderId: orderNumber, customerName: name, customerEmail: email, phone, address, subtotal, vat, delivery, total, items };
     endpoint = API_BASE + '/api/stkpush';
   }
-
-  console.log('📦 Sending payload:', payload);
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Processing...';
 
   try {
-    var response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
+    var response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     var data = await response.json();
 
     if (data.success) {
@@ -2340,13 +1792,11 @@ async function placeOrder() {
         if (typeof updateCartUI === 'function') updateCartUI();
       } else {
         showSnack('📱 M-PESA prompt sent to your phone. Please enter your PIN.', false);
-        
         document.getElementById('successOrderId').textContent = orderNumber;
         document.getElementById('successMessage').innerHTML = '⏳ <strong>Waiting for payment confirmation...</strong><br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt and enter your PIN.</span>';
         document.getElementById('successModal').classList.add('active');
         
         var paid = await pollPaymentStatus(orderNumber);
-        
         if (paid) {
           localStorage.removeItem('liquorbelle_cart');
           document.getElementById('successOrderId').textContent = orderNumber;
@@ -2371,187 +1821,36 @@ async function placeOrder() {
   }
 }
 
-// ==================== POLL PAYMENT STATUS ====================
 async function pollPaymentStatus(orderId) {
-  var maxAttempts = 30;
-  var attempts = 0;
-  var interval = 3000;
-
-  return new Promise(function(resolve) {
-    var checkInterval = setInterval(async function() {
+  var maxAttempts = 30, attempts = 0, interval = 3000;
+  return new Promise(resolve => {
+    var checkInterval = setInterval(async () => {
       attempts++;
-      
       try {
         var response = await fetch(API_BASE + '/api/status/' + orderId);
         var data = await response.json();
-        
-        console.log('📊 Payment status check #' + attempts + ':', data);
-        
         var statusEl = document.getElementById('successMessage');
         if (statusEl) {
           var dots = '.'.repeat(attempts % 4);
           statusEl.innerHTML = '⏳ <strong>Waiting for payment confirmation</strong>' + dots + '<br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt.</span>';
         }
-        
-        if (data.status === 'paid') {
-          clearInterval(checkInterval);
-          resolve(true);
-          return;
-        } else if (data.status === 'failed' || data.status === 'cancelled' || data.status === 'not_found') {
-          clearInterval(checkInterval);
-          resolve(false);
-          return;
-        } else if (attempts >= maxAttempts) {
-          clearInterval(checkInterval);
-          try {
-            var orderCheck = await fetch(API_BASE + '/api/status/' + orderId);
-            var orderData = await orderCheck.json();
-            if (orderData.status === 'paid') {
-              resolve(true);
-              return;
-            }
-          } catch (e) {}
-          resolve(false);
-          return;
-        }
-      } catch (err) {
-        console.error('Status check error:', err);
-        if (attempts >= maxAttempts) {
-          clearInterval(checkInterval);
-          resolve(false);
-        }
-      }
+        if (data.status === 'paid') { clearInterval(checkInterval); resolve(true); return; }
+        else if (data.status === 'failed' || data.status === 'cancelled' || data.status === 'not_found') { clearInterval(checkInterval); resolve(false); return; }
+        else if (attempts >= maxAttempts) { clearInterval(checkInterval); resolve(false); return; }
+      } catch (err) { if (attempts >= maxAttempts) { clearInterval(checkInterval); resolve(false); } }
     }, interval);
   });
 }
-
-// ============================================================
-// CHECKOUT FORM VALIDATION - REAL-TIME
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    var emailInput = document.getElementById('customerEmail');
-    if (emailInput) {
-        var emailError = document.createElement('span');
-        emailError.id = 'checkoutEmailError';
-        emailError.className = 'field-hint';
-        emailError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;';
-        emailError.textContent = 'Please enter a valid email address (e.g., name@domain.com)';
-        emailInput.parentNode.appendChild(emailError);
-
-        emailInput.addEventListener('input', function() {
-            var email = this.value.trim();
-            var isValid = isValidEmail(email);
-            
-            if (email.length > 0 && !isValid) {
-                this.style.borderColor = '#e03131';
-                this.style.background = '#fff0f0';
-                emailError.style.display = 'block';
-                emailError.textContent = '❌ Please enter a valid email address (e.g., name@domain.com)';
-            } else if (email.length > 0 && isValid) {
-                this.style.borderColor = '#2ecc71';
-                this.style.background = '#f0fff4';
-                emailError.style.display = 'none';
-            } else {
-                this.style.borderColor = '';
-                this.style.background = '';
-                emailError.style.display = 'none';
-            }
-        });
-
-        emailInput.addEventListener('blur', function() {
-            var email = this.value.trim();
-            if (email.length > 0 && !isValidEmail(email)) {
-                this.style.borderColor = '#e03131';
-                this.style.background = '#fff0f0';
-                emailError.style.display = 'block';
-                emailError.textContent = '❌ Please enter a valid email address (e.g., name@domain.com)';
-            }
-        });
-    }
-
-    var nameInput = document.getElementById('fullName');
-    if (nameInput) {
-        var nameError = document.createElement('span');
-        nameError.id = 'checkoutNameError';
-        nameError.className = 'field-hint';
-        nameError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;';
-        nameError.textContent = 'Name must be at least 2 characters';
-        nameInput.parentNode.appendChild(nameError);
-
-        nameInput.addEventListener('input', function() {
-            var name = this.value.trim();
-            
-            if (name.length > 0 && name.length < 2) {
-                this.style.borderColor = '#e03131';
-                this.style.background = '#fff0f0';
-                nameError.style.display = 'block';
-            } else if (name.length >= 2) {
-                this.style.borderColor = '#2ecc71';
-                this.style.background = '#f0fff4';
-                nameError.style.display = 'none';
-            } else {
-                this.style.borderColor = '';
-                this.style.background = '';
-                nameError.style.display = 'none';
-            }
-        });
-    }
-
-    var phoneInput = document.getElementById('phone');
-    if (phoneInput) {
-        var phoneError = document.createElement('span');
-        phoneError.id = 'checkoutPhoneError';
-        phoneError.className = 'field-hint';
-        phoneError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;';
-        phoneError.textContent = 'Please enter a valid Kenyan phone number (10 digits)';
-        phoneInput.parentNode.appendChild(phoneError);
-
-        phoneInput.addEventListener('input', function() {
-            var phone = this.value.replace(/\D/g, '');
-            this.value = phone;
-            
-            if (phone.length > 0 && phone.length < 10) {
-                this.style.borderColor = '#e03131';
-                this.style.background = '#fff0f0';
-                phoneError.style.display = 'block';
-                phoneError.textContent = '❌ Phone must be at least 10 digits';
-            } else if (phone.length >= 10) {
-                this.style.borderColor = '#2ecc71';
-                this.style.background = '#f0fff4';
-                phoneError.style.display = 'none';
-            } else {
-                this.style.borderColor = '';
-                this.style.background = '';
-                phoneError.style.display = 'none';
-            }
-        });
-
-        phoneInput.addEventListener('blur', function() {
-            var phone = this.value.replace(/\D/g, '');
-            if (phone.length > 0 && !validatePhone(phone)) {
-                this.style.borderColor = '#e03131';
-                this.style.background = '#fff0f0';
-                phoneError.style.display = 'block';
-                phoneError.textContent = '❌ Please enter a valid Kenyan phone (e.g., 0712345678)';
-            }
-        });
-    }
-});
 
 // ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
 function escapeHtml(str) {
   if (!str) return '';
-  return String(str).replace(/[&<>"']/g, function(m) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-  });
+  return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
 }
 
-function isValidEmail(email) {
-  return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email);
-}
-
+function isValidEmail(email) { return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email); }
 function validatePhone(phone) {
   var cleaned = phone.replace(/\D/g, '');
   if (cleaned.length === 10 && (cleaned.startsWith('07') || cleaned.startsWith('01'))) return true;
@@ -2559,204 +1858,217 @@ function validatePhone(phone) {
   return false;
 }
 
-// ============================================================
-// SUCCESS MODAL
-// ============================================================
 function closeSuccessModal() {
   document.getElementById('successModal').classList.remove('active');
   window.location.href = 'track-orders.html';
 }
 
 // ============================================================
-// PIN BUTTON EVENT LISTENER
+// MENU & NAV FUNCTIONS
+// ============================================================
+function openCartDrawer() { document.getElementById('cartOverlay').classList.add('open'); document.getElementById('cartDrawer').classList.add('open'); renderCartDrawer(); }
+function closeCartDrawer() { document.getElementById('cartOverlay').classList.remove('open'); document.getElementById('cartDrawer').classList.remove('open'); }
+function openMobileMenu() { document.getElementById('mobileMenuOverlay').classList.add('open'); document.getElementById('mobileMenu').classList.add('open'); }
+function closeMobileMenu() { document.getElementById('mobileMenuOverlay').classList.remove('open'); document.getElementById('mobileMenu').classList.remove('open'); }
+function openWishlistModal() { document.getElementById('wishlistModal').style.display = 'flex'; }
+function closeWishlistModal() { document.getElementById('wishlistModal').style.display = 'none'; }
+function handleAccountClick() { var u = getCurrentUser(); if (u && u.name) window.location.href = 'profile.html'; else window.location.href = 'accounts.html'; }
+function handleHeaderSearch(e) { e.preventDefault(); const q = document.getElementById('headerSearchInput').value.trim(); if (q) window.location.href = 'shop.html?search=' + encodeURIComponent(q); return false; }
+
+function renderCartDrawer() {
+  var cart = getCart();
+  var container = document.getElementById('cartItemsList');
+  var footer = document.getElementById('cartFooter');
+  var totalEl = document.getElementById('cartTotalAmount');
+  if (!container || !footer) return;
+
+  if (cart.length === 0) {
+    container.innerHTML = `<div class="cart-container"><div class="cart-icon-wrapper"><svg class="cart-svg" viewBox="0 0 24 24" fill="none"><path d="M2 2h3.5l2.6 11h10.3l2.6-8H6.5" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.5" fill="#111111"/><circle cx="17" cy="20" r="1.5" fill="#111111"/></svg><span class="cart-badge">0</span></div><h2 class="cart-message">Your cart is empty!</h2><a href="shop.html" class="shop-button">Start Shopping</a></div>`;
+    footer.style.display = 'none';
+    return;
+  }
+
+  var html = ''; var subtotal = 0;
+  for (var i = 0; i < cart.length; i++) {
+    var item = cart[i]; var name = item.name || 'Product'; var qty = parseInt(item.quantity) || parseInt(item.qty) || 1; var price = parseFloat(item.price) || 0; var itemTotal = price * qty; subtotal += itemTotal; var itemId = item.id || item._id || 'item_' + i;
+    html += `<div class="cart-item"><div><div class="cart-item-name">${escapeHtml(name)}</div><div class="cart-qty"><button onclick="updateQty('${itemId}', -1)">−</button><span>${qty}</span><button onclick="updateQty('${itemId}', 1)">+</button></div></div><div class="cart-item-price">KES ${itemTotal.toLocaleString()}</div></div>`;
+  }
+  container.innerHTML = html;
+
+  var delivery = (subtotal >= freeDeliveryThreshold) ? 0 : selectedZoneFee;
+  var vat = Math.round(delivery * 0.16);
+  var total = subtotal + vat + delivery;
+  totalEl.textContent = 'KES ' + total.toLocaleString();
+  footer.style.display = 'block';
+  updateCartBadges();
+}
+
+function updateQty(itemId, delta) {
+  try {
+    var stored = localStorage.getItem('liquorbelle_cart');
+    if (!stored) return;
+    var cartObj = JSON.parse(stored);
+    var found = false;
+    for (var key in cartObj) {
+      if (cartObj[key].id === itemId || key === itemId) {
+        var newQty = (parseInt(cartObj[key].qty) || 1) + delta; if (newQty < 1) newQty = 1; cartObj[key].qty = newQty; found = true; break;
+      }
+    }
+    if (!found) {
+      var cartArray = getCart();
+      for (var i = 0; i < cartArray.length; i++) {
+        if (cartArray[i].id === itemId || cartArray[i]._id === itemId) {
+          var newQty = (parseInt(cartArray[i].quantity) || parseInt(cartArray[i].qty) || 1) + delta; if (newQty < 1) newQty = 1; cartArray[i].quantity = newQty; cartArray[i].qty = newQty; saveCart(cartArray); break;
+        }
+      }
+    } else { localStorage.setItem('liquorbelle_cart', JSON.stringify(cartObj)); }
+    renderCartDrawer(); if (typeof renderSummary === 'function') renderSummary(); updateCartBadges(); if (typeof updateCartUI === 'function') updateCartUI();
+  } catch(e) { console.error('Error updating quantity:', e); }
+}
+
+function updateCartBadges() {
+  var cart = getCart(); var count = 0;
+  for (var i = 0; i < cart.length; i++) { var qty = parseInt(cart[i].quantity) || parseInt(cart[i].qty) || 1; count += qty; }
+  var h = document.getElementById('headerCartCount'), n = document.getElementById('navCartCount'), d = document.getElementById('cartBadgeCount');
+  if (h) h.textContent = count; if (n) n.textContent = count; if (d) d.textContent = count;
+}
+
+function updateBottomNav() {
+  var user = getCurrentUser(); var ab = document.getElementById('bottomNavAccount'); var al = document.getElementById('bottomNavAccountLabel'); var pl = document.getElementById('mobileMenuProfile');
+  if (ab && al) {
+    if (user && user.name) { al.textContent = 'Profile'; ab.onclick = () => window.location.href = 'profile.html'; }
+    else { al.textContent = 'Account'; ab.onclick = () => window.location.href = 'accounts.html'; }
+  }
+  if (pl) { if (user && user.name) pl.style.display = 'flex'; else pl.style.display = 'none'; }
+}
+
+function updateMobileMenuAuth() {
+  var user = getCurrentUser(); var a = document.getElementById('mobileMenuAuth'); if (!a) return;
+  if (user && user.name) {
+    a.innerHTML = `<div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;"><div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div><div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div><button onclick="logoutUser();closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;"><i class="ph ph-sign-out"></i> Logout</button></div>`;
+  } else {
+    a.innerHTML = `<a href="accounts.html" style="display:flex;align-items:center;gap:12px;padding:13px 20px;font-weight:600;font-size:.9rem;color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;"><i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register</a>`;
+  }
+}
+
+// ============================================================
+// DOM INIT & EVENT LISTENERS
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
+  // Real-time validations
+  var emailInput = document.getElementById('customerEmail');
+  if (emailInput) {
+    var emailError = document.createElement('span'); emailError.id = 'checkoutEmailError'; emailError.className = 'field-hint'; emailError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;'; emailError.textContent = 'Please enter a valid email address (e.g., name@domain.com)'; emailInput.parentNode.appendChild(emailError);
+    emailInput.addEventListener('input', function() {
+      var email = this.value.trim(); var isValid = isValidEmail(email);
+      if (email.length > 0 && !isValid) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; emailError.style.display = 'block'; emailError.textContent = '❌ Please enter a valid email address'; }
+      else if (email.length > 0 && isValid) { this.style.borderColor = '#2ecc71'; this.style.background = '#f0fff4'; emailError.style.display = 'none'; }
+      else { this.style.borderColor = ''; this.style.background = ''; emailError.style.display = 'none'; }
+    });
+  }
+
+  var nameInput = document.getElementById('fullName');
+  if (nameInput) {
+    var nameError = document.createElement('span'); nameError.id = 'checkoutNameError'; nameError.className = 'field-hint'; nameError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;'; nameError.textContent = 'Name must be at least 2 characters'; nameInput.parentNode.appendChild(nameError);
+    nameInput.addEventListener('input', function() {
+      var name = this.value.trim();
+      if (name.length > 0 && name.length < 2) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; nameError.style.display = 'block'; }
+      else if (name.length >= 2) { this.style.borderColor = '#2ecc71'; this.style.background = '#f0fff4'; nameError.style.display = 'none'; }
+      else { this.style.borderColor = ''; this.style.background = ''; nameError.style.display = 'none'; }
+    });
+  }
+
+  var phoneInput = document.getElementById('phone');
+  if (phoneInput) {
+    var phoneError = document.createElement('span'); phoneError.id = 'checkoutPhoneError'; phoneError.className = 'field-hint'; phoneError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;'; phoneError.textContent = 'Please enter a valid Kenyan phone number (10 digits)'; phoneInput.parentNode.appendChild(phoneError);
+    phoneInput.addEventListener('input', function() {
+      var phone = this.value.replace(/\D/g, ''); this.value = phone;
+      if (phone.length > 0 && phone.length < 10) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; phoneError.style.display = 'block'; phoneError.textContent = '❌ Phone must be at least 10 digits'; }
+      else if (phone.length >= 10) { this.style.borderColor = '#2ecc71'; this.style.background = '#f0fff4'; phoneError.style.display = 'none'; }
+      else { this.style.borderColor = ''; this.style.background = ''; phoneError.style.display = 'none'; }
+    });
+  }
+
+  // PIN Button Logic
   var pinBtn = document.getElementById('getLocationBtn');
   if (pinBtn) {
     pinBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      
-      var statusDiv = document.getElementById('locationStatus');
-      var streetInput = document.getElementById('street');
-      var areaSelect = document.getElementById('deliveryArea');
-      var pinSquircle = this.querySelector('.pin-squircle');
-      
-      statusDiv.className = 'location-status';
-      statusDiv.style.display = 'block';
-      
-      statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>';
-      statusDiv.className = 'location-status loading';
-      
-      if (pinSquircle) {
-        pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
-        pinSquircle.style.transform = 'scale(1.05)';
-        pinSquircle.style.transition = 'all 0.3s ease';
-        pinSquircle.classList.add('loading');
-      }
+      var statusDiv = document.getElementById('locationStatus'); var streetInput = document.getElementById('street'); var areaSelect = document.getElementById('deliveryArea'); var pinSquircle = this.querySelector('.pin-squircle');
+      statusDiv.className = 'location-status'; statusDiv.style.display = 'block'; statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>'; statusDiv.className = 'location-status loading';
+      if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))'; pinSquircle.style.transform = 'scale(1.05)'; pinSquircle.style.transition = 'all 0.3s ease'; pinSquircle.classList.add('loading'); }
 
       if (!navigator.geolocation) {
-        statusDiv.innerHTML = '❌ Geolocation not supported on this device';
-        statusDiv.className = 'location-status error';
-        if (pinSquircle) {
-          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-          pinSquircle.style.transform = 'scale(1)';
-          pinSquircle.classList.remove('loading');
-        }
-        setTimeout(function() { 
-          statusDiv.style.display = 'none'; 
-        }, 5000);
+        statusDiv.innerHTML = '❌ Geolocation not supported on this device'; statusDiv.className = 'location-status error';
+        if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
+        setTimeout(() => statusDiv.style.display = 'none', 5000);
         return;
       }
 
-      var locationTimeout = setTimeout(function() {
-        statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.';
-        statusDiv.className = 'location-status error';
-        if (pinSquircle) {
-          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-          pinSquircle.style.transform = 'scale(1)';
-          pinSquircle.classList.remove('loading');
-        }
-        setTimeout(function() { 
-          statusDiv.style.display = 'none'; 
-        }, 5000);
+      var locationTimeout = setTimeout(() => {
+        statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.'; statusDiv.className = 'location-status error';
+        if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
+        setTimeout(() => statusDiv.style.display = 'none', 5000);
       }, 10000);
 
       navigator.geolocation.getCurrentPosition(
-        function(position) {
+        (position) => {
           clearTimeout(locationTimeout);
-          
-          var lat = position.coords.latitude;
-          var lng = position.coords.longitude;
-          customerLat = lat;
-          customerLng = lng;
-          
-          statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Finding your street address...</span>';
-          statusDiv.className = 'location-status loading';
+          var lat = position.coords.latitude, lng = position.coords.longitude;
+          customerLat = lat; customerLng = lng;
+          statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Finding your street address...</span>'; statusDiv.className = 'location-status loading';
 
-          getAddressFromCoords(lat, lng).then(function(result) {
+          getAddressFromCoords(lat, lng).then((result) => {
             if (result && result.street) {
-              streetInput.value = result.street;
-              streetInput.style.borderColor = '#2ecc71';
-              streetInput.style.background = '#f0fff4';
-              streetInput.style.transition = 'all 0.3s ease';
-              
-              var inputEvent = new Event('input', { bubbles: true });
-              streetInput.dispatchEvent(inputEvent);
-              
+              streetInput.value = result.street; streetInput.style.borderColor = '#2ecc71'; streetInput.style.background = '#f0fff4';
               if (result.area) {
                 var found = false;
                 for (var i = 0; i < areaSelect.options.length; i++) {
-                  var optionValue = areaSelect.options[i].value;
-                  if (optionValue && optionValue.toLowerCase().indexOf(result.area.toLowerCase()) !== -1) {
-                    areaSelect.value = optionValue;
-                    found = true;
-                    break;
-                  }
+                  var optVal = areaSelect.options[i].value;
+                  if (optVal && optVal.toLowerCase().indexOf(result.area.toLowerCase()) !== -1) { areaSelect.value = optVal; found = true; break; }
                 }
                 if (!found) {
                   for (var j = 0; j < areaSelect.options.length; j++) {
-                    if (areaSelect.options[j].value.toLowerCase() === result.area.toLowerCase()) {
-                      areaSelect.value = areaSelect.options[j].value;
-                      found = true;
-                      break;
-                    }
+                    if (areaSelect.options[j].value.toLowerCase() === result.area.toLowerCase()) { areaSelect.value = areaSelect.options[j].value; found = true; break; }
                   }
                 }
-                if (found) {
-                  var changeEvent = new Event('change', { bubbles: true });
-                  areaSelect.dispatchEvent(changeEvent);
-                  areaSelect.style.borderColor = '#2ecc71';
-                  areaSelect.style.background = '#f0fff4';
-                }
+                if (found) { areaSelect.dispatchEvent(new Event('change')); areaSelect.style.borderColor = '#2ecc71'; areaSelect.style.background = '#f0fff4'; }
               }
-              
-              var displayStreet = result.street || 'Location found';
-              var displayArea = result.area || 'Nairobi';
-              statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>';
-              statusDiv.className = 'location-status success';
-              
-              if (pinSquircle) {
-                pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
-                pinSquircle.style.transform = 'scale(1)';
-                pinSquircle.classList.remove('loading');
-              }
-              
-              setTimeout(function() {
-                statusDiv.style.display = 'none';
-              }, 5000);
-              
+              var displayStreet = result.street || 'Location found'; var displayArea = result.area || 'Nairobi';
+              statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>'; statusDiv.className = 'location-status success';
+              if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
+              setTimeout(() => statusDiv.style.display = 'none', 5000);
               calculateAndUpdateDeliveryFee(lat, lng);
-              
-              if (typeof renderSummary === 'function') {
-                renderSummary();
-              }
-              
-              if (typeof showSnack === 'function') {
-                showSnack('📍 Location set: ' + displayStreet, false);
-              } else if (typeof toast === 'function') {
-                toast('📍 Location found: ' + displayStreet);
-              }
-              
+              if (typeof renderSummary === 'function') renderSummary();
+              if (typeof showSnack === 'function') showSnack('📍 Location set: ' + displayStreet, false);
+              else if (typeof toast === 'function') toast('📍 Location found: ' + displayStreet);
             } else {
-              statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
-              statusDiv.className = 'location-status error';
-              if (pinSquircle) {
-                pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-                pinSquircle.style.transform = 'scale(1)';
-                pinSquircle.classList.remove('loading');
-              }
-              setTimeout(function() {
-                statusDiv.style.display = 'none';
-              }, 5000);
+              statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.'; statusDiv.className = 'location-status error';
+              if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
+              setTimeout(() => statusDiv.style.display = 'none', 5000);
             }
-          }).catch(function(err) {
+          }).catch((err) => {
             console.error('Geocode error:', err);
-            statusDiv.innerHTML = '⚠️ Error finding address. Please enter manually.';
-            statusDiv.className = 'location-status error';
-            if (pinSquircle) {
-              pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-              pinSquircle.style.transform = 'scale(1)';
-              pinSquircle.classList.remove('loading');
-            }
-            setTimeout(function() {
-              statusDiv.style.display = 'none';
-            }, 5000);
+            statusDiv.innerHTML = '⚠️ Error finding address. Please enter manually.'; statusDiv.className = 'location-status error';
+            if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
+            setTimeout(() => statusDiv.style.display = 'none', 5000);
           });
         },
-        function(error) {
+        (error) => {
           clearTimeout(locationTimeout);
-          
           var errorMsg = '❌ Location access denied. Please enter manually.';
-          if (error.code === 1) {
-            errorMsg = '❌ Please allow location access in your browser settings';
-          } else if (error.code === 2) {
-            errorMsg = '❌ Location unavailable. Please enter manually.';
-          } else if (error.code === 3) {
-            errorMsg = '❌ Location request timed out. Please enter manually.';
-          }
-          
-          statusDiv.innerHTML = errorMsg;
-          statusDiv.className = 'location-status error';
-          
-          if (pinSquircle) {
-            pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
-            pinSquircle.style.transform = 'scale(1)';
-            pinSquircle.classList.remove('loading');
-          }
-          
-          setTimeout(function() {
-            statusDiv.style.display = 'none';
-          }, 6000);
+          if (error.code === 1) errorMsg = '❌ Please allow location access in your browser settings';
+          else if (error.code === 2) errorMsg = '❌ Location unavailable. Please enter manually.';
+          else if (error.code === 3) errorMsg = '❌ Location request timed out. Please enter manually.';
+          statusDiv.innerHTML = errorMsg; statusDiv.className = 'location-status error';
+          if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
+          setTimeout(() => statusDiv.style.display = 'none', 6000);
         },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
-        }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     });
   }
-  
+
   initBuildingAutocomplete();
 });
 
@@ -2764,69 +2076,38 @@ document.addEventListener('DOMContentLoaded', function() {
 // MAIN INITIALIZATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Checkout page initializing...');
-  
   Promise.all([loadDeliverySettings(), loadDeliveryZones()])
-    .then(function() {
-      console.log('✅ Delivery loaded:', { deliveryZones: deliveryZones.length, fee: deliveryFee, threshold: freeDeliveryThreshold });
-      
+    .then(() => {
       var select = document.getElementById('deliveryArea');
       if (select) {
         populateDeliveryAreas('deliveryArea');
         if (deliveryZones.length > 0) {
           select.value = deliveryZones[0].name;
           selectedZoneFee = deliveryZones[0].fee;
-          console.log('✅ Default zone set:', deliveryZones[0].name, 'Fee:', selectedZoneFee);
         }
       }
-      
       var deliverySelect = document.getElementById('deliveryArea');
       if (deliverySelect) {
         deliverySelect.removeEventListener('change', handleDeliveryChange);
         deliverySelect.addEventListener('change', handleDeliveryChange);
-        console.log('✅ Delivery area change listener attached');
       }
-      
-      autoFillSavedAddress();
-      
-      renderSummary();
-      updateCartBadges();
-      updateUserBadge();
-      updateBottomNav();
-      updateMobileMenuAuth();
-      selectPayment('mpesa');
-      document.getElementById('successModal').classList.remove('active');
-      
+      renderSummary(); updateCartBadges(); updateUserBadge(); updateBottomNav(); updateMobileMenuAuth(); selectPayment('mpesa'); document.getElementById('successModal').classList.remove('active');
       if (typeof updateCartUI === 'function') updateCartUI();
     })
-    .catch(function(err) {
+    .catch((err) => {
       console.error('❌ Failed to load delivery:', err);
-      renderSummary();
-      updateCartBadges();
-      updateUserBadge();
-      updateBottomNav();
-      updateMobileMenuAuth();
-      selectPayment('mpesa');
+      renderSummary(); updateCartBadges(); updateUserBadge(); updateBottomNav(); updateMobileMenuAuth(); selectPayment('mpesa');
     });
 });
 
-// ===== STORAGE EVENT LISTENER =====
+// ===== STORAGE SYNC =====
 window.addEventListener('storage', function(e) {
-  if (e.key === 'liquorbelle_cart' || e.key === 'cart') {
-    renderSummary();
-    updateCartBadges();
-    if (typeof updateCartUI === 'function') updateCartUI();
-  }
-  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') {
-    updateUserBadge();
-    updateBottomNav();
-    updateMobileMenuAuth();
-  }
+  if (e.key === 'liquorbelle_cart' || e.key === 'cart') { renderSummary(); updateCartBadges(); if (typeof updateCartUI === 'function') updateCartUI(); }
+  if (e.key === 'liquorbelle_user' || e.key === 'liquorbelle_token') { updateUserBadge(); updateBottomNav(); updateMobileMenuAuth(); }
 });
 
 console.log('✅ Checkout script loaded successfully');
 </script>
 <script src="js/utils.js"></script>
-
 </body>
 </html>
