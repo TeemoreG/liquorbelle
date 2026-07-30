@@ -388,6 +388,85 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 .modal-actions .confirm-delete-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 .modal-actions .save-btn{background:var(--gold);color:white;}
 .modal-actions .save-btn:hover{background:var(--gold-light);}
+
+/* ===== ADDRESS LOCATION PIN ===== */
+.location-pin-row{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.location-pin-row input{flex:1;}
+
+.pin-btn{
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  flex-shrink:0;
+}
+.pin-squircle{
+  width:44px;
+  height:44px;
+  background:linear-gradient(135deg, var(--primary), var(--primary-bright));
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .2s;
+  box-shadow:0 2px 8px rgba(128,0,0,0.3);
+}
+.pin-squircle:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(128,0,0,0.4);}
+.pin-squircle:active{transform:scale(0.95);}
+.pin-squircle svg{width:22px;height:22px;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.2));}
+.pin-squircle.loading{
+  animation:pulseGold 1.2s ease-in-out infinite;
+  background:linear-gradient(135deg, var(--gold), var(--gold-light)) !important;
+}
+.pin-label{
+  color:var(--primary);
+  font-size:8px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.location-status{
+  font-size:13px;
+  margin-top:6px;
+  padding:8px 14px;
+  border-radius:8px;
+  display:none;
+  font-weight:500;
+  line-height:1.4;
+  animation:fadeSlideDown 0.3s ease;
+}
+.location-status.show{display:block;}
+.location-status.loading{
+  background:rgba(184,134,11,0.12);
+  border:1px solid var(--gold);
+  color:var(--gold);
+}
+.location-status.success{
+  background:rgba(46,204,113,0.12);
+  border:1px solid #2ecc71;
+  color:#2ecc71;
+}
+.location-status.error{
+  background:rgba(224,49,49,0.12);
+  border:1px solid #e03131;
+  color:#e03131;
+}
+
+@keyframes pulseGold{
+  0%{transform:scale(1);box-shadow:0 0 0 0 rgba(184,134,11,0.4);}
+  50%{transform:scale(1.08);box-shadow:0 0 30px 10px rgba(184,134,11,0.15);}
+  100%{transform:scale(1);box-shadow:0 0 0 0 rgba(184,134,11,0);}
+}
+@keyframes fadeSlideDown{
+  from{opacity:0;transform:translateY(-8px);}
+  to{opacity:1;transform:translateY(0);}
+}
 </style>
 </head>
 <body>
@@ -621,7 +700,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
   </div>
 </div>
 
-<!-- ADDRESS MODAL -->
+<!-- ADDRESS MODAL WITH LOCATION PIN -->
 <div class="modal-overlay" id="addressModal">
   <div class="modal-card neutral">
     <h3 id="addressModalTitle">Add Address</h3>
@@ -636,7 +715,19 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
     <form id="addressForm">
       <div class="form-group">
         <label>Address line</label>
-        <input type="text" id="addrLine1" placeholder="Street, building, apartment no.">
+        <div class="location-pin-row">
+          <input type="text" id="addrLine1" placeholder="Street, building, apartment no.">
+          <div class="pin-btn" id="getAddressLocationBtn" title="Tap to get your exact location using GPS">
+            <div class="pin-squircle" style="width:38px;height:38px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" style="width:18px;height:18px;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <span class="pin-label">PIN</span>
+          </div>
+        </div>
+        <div class="location-status" id="addressLocationStatus"></div>
         <div class="input-error" id="addrLine1Error">Please enter your address</div>
       </div>
       <div class="form-group">
@@ -1716,6 +1807,201 @@ function logoutUser() {
 }
 
 // ============================================================
+// ADDRESS LOCATION PIN - GET ADDRESS FROM GPS
+// ============================================================
+function getAddressFromCoords(lat, lng) {
+  return fetch('https://liquorbelle-mpesa-backend.onrender.com/api/geocode/reverse', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lat: lat, lng: lng })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data && data.address) {
+      var addr = data.address;
+      
+      var street = addr.road || addr.pedestrian || addr.footway || '';
+      var area = addr.suburb || addr.neighbourhood || addr.village || addr.town || addr.city || '';
+      if (!area) area = addr.county || addr.state || addr.region || '';
+      if (!area) area = 'Nairobi';
+      var areaClean = area.replace(/\s*(ward|division|sub-county|constituency|location)\s*/gi, '').trim();
+      
+      return { street: street || 'Location found', area: areaClean || 'Nairobi' };
+    }
+    return null;
+  })
+  .catch(function() { return null; });
+}
+
+// ============================================================
+// INIT ADDRESS LOCATION PIN
+// ============================================================
+function initAddressLocationPin() {
+  var pinBtn = document.getElementById('getAddressLocationBtn');
+  if (!pinBtn) return;
+
+  pinBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    var statusDiv = document.getElementById('addressLocationStatus');
+    var line1Input = document.getElementById('addrLine1');
+    var areaInput = document.getElementById('addrArea');
+    var pinSquircle = this.querySelector('.pin-squircle');
+    
+    if (!statusDiv) return;
+    
+    statusDiv.className = 'location-status';
+    statusDiv.style.display = 'block';
+    
+    statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>';
+    statusDiv.className = 'location-status loading';
+    
+    if (pinSquircle) {
+      pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
+      pinSquircle.style.transform = 'scale(1.05)';
+      pinSquircle.classList.add('loading');
+    }
+
+    if (!navigator.geolocation) {
+      statusDiv.innerHTML = '❌ Geolocation not supported on this device';
+      statusDiv.className = 'location-status error';
+      if (pinSquircle) {
+        pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+        pinSquircle.classList.remove('loading');
+      }
+      setTimeout(function() { 
+        statusDiv.style.display = 'none'; 
+      }, 5000);
+      return;
+    }
+
+    var locationTimeout = setTimeout(function() {
+      statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.';
+      statusDiv.className = 'location-status error';
+      if (pinSquircle) {
+        pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+        pinSquircle.classList.remove('loading');
+      }
+      setTimeout(function() { 
+        statusDiv.style.display = 'none'; 
+      }, 5000);
+    }, 10000);
+
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        clearTimeout(locationTimeout);
+        
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        
+        statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Finding your address...</span>';
+        statusDiv.className = 'location-status loading';
+
+        getAddressFromCoords(lat, lng).then(function(result) {
+          if (result && result.street) {
+            if (line1Input) {
+              line1Input.value = result.street;
+              line1Input.style.borderColor = '#2ecc71';
+              line1Input.style.background = '#f0fff4';
+            }
+            
+            if (areaInput && result.area) {
+              areaInput.value = result.area;
+              areaInput.style.borderColor = '#2ecc71';
+              areaInput.style.background = '#f0fff4';
+            }
+            
+            var displayStreet = result.street || 'Location found';
+            var displayArea = result.area || 'Nairobi';
+            statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>';
+            statusDiv.className = 'location-status success';
+            
+            if (pinSquircle) {
+              pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
+              pinSquircle.style.transform = 'scale(1)';
+              pinSquircle.classList.remove('loading');
+            }
+            
+            setTimeout(function() {
+              statusDiv.style.display = 'none';
+            }, 5000);
+            
+            toast('📍 Location set: ' + displayStreet, 'success');
+            
+          } else {
+            statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.';
+            statusDiv.className = 'location-status error';
+            if (pinSquircle) {
+              pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+              pinSquircle.classList.remove('loading');
+            }
+            setTimeout(function() {
+              statusDiv.style.display = 'none';
+            }, 5000);
+          }
+        }).catch(function(err) {
+          console.error('Geocode error:', err);
+          statusDiv.innerHTML = '⚠️ Error finding address. Please enter manually.';
+          statusDiv.className = 'location-status error';
+          if (pinSquircle) {
+            pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+            pinSquircle.classList.remove('loading');
+          }
+          setTimeout(function() {
+            statusDiv.style.display = 'none';
+          }, 5000);
+        });
+      },
+      function(error) {
+        clearTimeout(locationTimeout);
+        
+        var errorMsg = '❌ Location access denied. Please enter manually.';
+        if (error.code === 1) {
+          errorMsg = '❌ Please allow location access in your browser settings';
+        } else if (error.code === 2) {
+          errorMsg = '❌ Location unavailable. Please enter manually.';
+        } else if (error.code === 3) {
+          errorMsg = '❌ Location request timed out. Please enter manually.';
+        }
+        
+        statusDiv.innerHTML = errorMsg;
+        statusDiv.className = 'location-status error';
+        
+        if (pinSquircle) {
+          pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))';
+          pinSquircle.classList.remove('loading');
+        }
+        
+        setTimeout(function() {
+          statusDiv.style.display = 'none';
+        }, 6000);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  });
+}
+
+// ============================================================
+// INIT LOCATION PIN ON ADDRESS MODAL OPEN
+// ============================================================
+function setupAddressLocationPin() {
+  var modal = document.getElementById('addressModal');
+  if (modal) {
+    var observer = new MutationObserver(function() {
+      if (modal.classList.contains('open')) {
+        setTimeout(initAddressLocationPin, 100);
+      }
+    });
+    observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+  }
+  setTimeout(initAddressLocationPin, 500);
+}
+
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
@@ -1741,6 +2027,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('addressModal').addEventListener('click', function(e) {
     if (e.target === this) closeAddressModal();
   });
+
+  setupAddressLocationPin();
 
   var chips = document.querySelectorAll('.label-chip');
   for (var ci = 0; ci < chips.length; ci++) {

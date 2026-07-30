@@ -44,7 +44,7 @@ body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--tex
 ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
 
-/* ===== CATEGORY BADGE STYLES - ALL 18 ===== */
+/* ===== CATEGORY BADGE STYLES - ALL 20 ===== */
 .cat-beer { background: #F59E0B; color: white; }
 .cat-brandy { background: #B8860B; color: white; }
 .cat-bourbon { background: #8B4513; color: white; }
@@ -57,14 +57,16 @@ body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--tex
 .cat-energy { background: #F97316; color: white; }
 .cat-cigar { background: #92400E; color: white; }
 .cat-accessory { background: #6B7280; color: white; }
-/* NEW CATEGORIES */
 .cat-whisky { background: #D4A843; color: white; }
 .cat-wine { background: #722F37; color: white; }
 .cat-vodka { background: #E8E8E8; color: #333; }
 .cat-gin { background: #4CAF50; color: white; }
 .cat-cognac { background: #8B6914; color: white; }
 .cat-cream { background: #F5D0A9; color: #333; }
+.cat-cider { background: #F59E0B; color: white; }
+.cat-vermouth { background: #B8860B; color: white; }
 
+.category-badge { display: inline-block; padding: 3px 12px; border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
 .category-badge { display: inline-block; padding: 3px 12px; border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
 .login-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 2000; }
 .login-modal-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 40px 32px; width: 90%; max-width: 400px; text-align: center; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; }
@@ -268,14 +270,28 @@ textarea { resize: vertical; }
 .zone-remove-btn { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-size: 11px; transition: var(--transition); }
 .zone-remove-btn:hover { background: var(--red); color: white; }
 
-/* ===== BULK SELECT & CATEGORY FILTER ===== */
 .row-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--gold); }
 .bulk-action-bar { display: flex; align-items: center; gap: 16px; background: var(--gold-bg); border: 1.5px solid var(--gold); border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 14px; flex-wrap: wrap; }
 .bulk-action-bar label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
 .bulk-count { font-size: 13px; color: var(--muted); margin-right: auto; }
 
+.toggle-switch { position: relative; display: inline-block; width: 48px; height: 26px; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: 0.3s; border-radius: 26px; }
+.toggle-slider::before { position: absolute; content: ''; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%; }
+.toggle-switch input:checked + .toggle-slider { background: var(--green); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(22px); }
+.toggle-switch input:focus + .toggle-slider { box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+
+/* ===== ORDER DELIVERY INFO - CUSTOMER DETAILS ===== */
+.order-delivery-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 18px; background: var(--gold-bg); border-bottom: 1px solid var(--border-light); font-size: 12px; }
+.order-delivery-info .delivery-item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+.order-delivery-info .delivery-item i { color: var(--gold); width: 16px; }
+.order-delivery-info .delivery-item strong { color: var(--text); }
+
 @media (max-width: 900px) {
   .table-header, .product-row { grid-template-columns: 36px 48px 1fr 150px 80px 80px 60px; }
+  .order-delivery-info { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
   .admin-header { padding: 10px 4%; height: auto; flex-wrap: wrap; }
@@ -300,62 +316,12 @@ textarea { resize: vertical; }
   .search-bar { flex-direction: column; }
   .delivery-zones-table { font-size: 12px; }
   .delivery-zones-table td, .delivery-zones-table th { padding: 4px 6px; }
+  .order-delivery-info { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .stat-card .value { font-size: 22px; }
   .stat-card { padding: 14px 16px; }
-}
-
-/* ===== TOGGLE SWITCH ===== */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
-  cursor: pointer;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #ccc;
-  transition: 0.3s;
-  border-radius: 26px;
-}
-
-.toggle-slider::before {
-  position: absolute;
-  content: '';
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-.toggle-switch input:checked + .toggle-slider {
-  background: var(--btn-green);
-}
-
-.toggle-switch input:checked + .toggle-slider::before {
-  transform: translateX(22px);
-}
-
-.toggle-switch input:focus + .toggle-slider {
-  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
 }
 </style>
 </head>
@@ -444,100 +410,128 @@ textarea { resize: vertical; }
     </div>
 
     <!-- Add Product -->
-<div class="form-card">
-  <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
-  <div class="help-text"><i class="ph ph-info"></i> Select category first to see relevant sizes. <strong>Choose "Other"</strong> for custom sizes.</div>
-  
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="prodName" placeholder="e.g. Fanta, Jameson"></div>
-    <div class="form-group"><label class="form-label">Category</label>
-      <select id="prodCategory">
-        <optgroup label="🥃 Spirits">
-          <option value="whisky">Whisky</option>
-          <option value="vodka">Vodka</option>
-          <option value="gin">Gin</option>
-          <option value="cognac">Cognac</option>
-          <option value="rum">Rum</option>
-          <option value="brandy">Brandy</option>
-          <option value="bourbon">Bourbon</option>
-          <option value="spirits">Spirits</option>
-          <option value="liqueur">Liqueur</option>
-        </optgroup>
-        <optgroup label="🍷 Wines &amp; Creams">
-          <option value="wine">Wine</option>
-          <option value="cream">Creams</option>
-        </optgroup>
-        <optgroup label="🍺 Beers &amp; Ciders">
-          <option value="beer">Beer</option>
-        </optgroup>
-        <optgroup label="🧃 Juices &amp; Mixers">
-          <option value="juice">Juice</option>
-          <option value="soda">Soda</option>
-          <option value="water">Water</option>
-          <option value="energy">Energy Drink</option>
-        </optgroup>
-        <optgroup label="🚬 Other">
-          <option value="cigar">Cigar</option>
-          <option value="accessory">Accessory</option>
-        </optgroup>
-      </select>
-    </div>
-    <div class="form-group"><label class="form-label">Badge</label><select id="prodBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
-  </div>
-  
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="prodImage" placeholder="https://res.cloudinary.com/..."><span class="form-hint">Paste the image web address here</span></div>
-  </div>
-  
-  <div class="form-row">
-    <div class="form-group" style="grid-column:1/-1;">
-      <label class="form-label" for="prodDesc"><i class="ph ph-note-pencil" style="color:var(--gold);"></i> Description</label>
-      <textarea id="prodDesc" placeholder="Describe the product..." rows="2" style="min-height:60px;"></textarea>
-      <span class="form-hint">Brief description of the product</span>
-    </div>
-  </div>
-  
-  <div class="toggles-row">
-    <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()"><input type="checkbox" id="prodTrending" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Trending</label></div>
-    <div class="trending-toggle" onclick="document.getElementById('prodNew').click()"><input type="checkbox" id="prodNew" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-star" style="color:#1D4ED8;"></i> New Arrival</label></div>
-  </div>
-  
-  <div class="rating-input"><label><i class="ph ph-star" style="color:var(--gold);"></i> Rating:</label><select id="prodRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4" selected>★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
+    <div class="form-card">
+      <div class="form-card-title"><i class="ph ph-plus-circle"></i> Add New Product</div>
+      <div class="help-text"><i class="ph ph-info"></i> Select category first to see relevant sizes. <strong>Choose "Other"</strong> for custom sizes.</div>
+      
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="prodName" placeholder="e.g. Fanta, Jameson"></div>
+        <div class="form-group"><label class="form-label">Category</label>
+          <select id="prodCategory">
+            <optgroup label="🥃 Spirits">
+              <option value="whisky">Whisky</option>
+              <option value="vodka">Vodka</option>
+              <option value="gin">Gin</option>
+              <option value="cognac">Cognac</option>
+              <option value="rum">Rum</option>
+              <option value="brandy">Brandy</option>
+              <option value="bourbon">Bourbon</option>
+              <option value="spirits">Spirits</option>
+              <option value="liqueur">Liqueur</option>
+              <option value="vermouth">Vermouth</option>
+            </optgroup>
+            <optgroup label="🍷 Wines &amp; Creams">
+              <option value="wine">Wine</option>
+              <option value="cream">Creams</option>
+            </optgroup>
+            <optgroup label="🍺 Beers &amp; Ciders">
+              <option value="beer">Beer</option>
+              <option value="cider">Cider</option>
+            </optgroup>
+            <optgroup label="🧃 Juices &amp; Mixers">
+              <option value="juice">Juice</option>
+              <option value="soda">Soda</option>
+              <option value="water">Water</option>
+              <option value="energy">Energy Drink</option>
+            </optgroup>
+            <optgroup label="🚬 Other">
+              <option value="cigar">Cigar</option>
+              <option value="accessory">Accessory</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Badge</label><select id="prodBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="prodImage" placeholder="https://res.cloudinary.com/..."><span class="form-hint">Paste the image web address here</span></div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label" for="prodDesc"><i class="ph ph-note-pencil" style="color:var(--gold);"></i> Description</label>
+          <textarea id="prodDesc" placeholder="Describe the product..." rows="2" style="min-height:60px;"></textarea>
+          <span class="form-hint">Brief description of the product</span>
+        </div>
+      </div>
+      
+      <div class="toggles-row">
+        <div class="trending-toggle" onclick="document.getElementById('prodTrending').click()"><input type="checkbox" id="prodTrending" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-fire" style="color:#C2410C;"></i> Trending</label></div>
+        <div class="trending-toggle" onclick="document.getElementById('prodNew').click()"><input type="checkbox" id="prodNew" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-star" style="color:#1D4ED8;"></i> New Arrival</label></div>
+      </div>
+      
+      <div class="rating-input"><label><i class="ph ph-star" style="color:var(--gold);"></i> Rating:</label><select id="prodRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4" selected>★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
 
-  <div class="variants-section">
-    <div class="variants-label"><i class="ph ph-ruler"></i> Variants (Size, Price, Discount, Flavour)</div>
-    <table class="variants-table" id="variantsTable">
-      <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th style="min-width:100px;">Flavour</th><th style="width:40px;"></th></tr></thead>
-      <tbody id="variantsBody">
-        <tr class="variant-row">
-          <td>
-            <select class="variant-size" onchange="toggleVariantOther(this)">
-              <optgroup label="🍺 Beer"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml" selected>750ml</option><option value="1L">1L</option></optgroup>
-              <optgroup label="🥃 Spirits"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></optgroup>
-              <optgroup label="🧃 Juice &amp; Soda"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option></optgroup>
-              <option value="OTHER">✏️ Other (Type custom)</option>
-            </select>
-            <input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">
-          </td>
-          <td><input type="number" class="variant-price" placeholder="Price" step="1"></td>
-          <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
-          <td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
-          <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
-        </tr>
-      </tbody>
-    </table>
-    <button type="button" class="add-variant-btn" onclick="addVariantRow()"><i class="ph ph-plus"></i> Add Another Variant</button>
-  </div>
-  
-  <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;gap:10px;">
-    <button class="btn" id="addProductBtn" onclick="addProduct()"><i class="ph ph-floppy-disk"></i> Save Product</button>
-  </div>
-</div>
+      <div class="variants-section">
+        <div class="variants-label"><i class="ph ph-ruler"></i> Variants (Size, Price, Discount, Flavour)</div>
+        <table class="variants-table" id="variantsTable">
+          <thead><tr><th>Size</th><th>Price (KES)</th><th>Discount %</th><th style="min-width:100px;">Flavour</th><th style="width:40px;"></th></tr></thead>
+          <tbody id="variantsBody">
+            <tr class="variant-row">
+              <td>
+                <select class="variant-size" onchange="toggleVariantOther(this)">
+                  <optgroup label="🍺 Beer &amp; Cider">
+                    <option value="250ml">250ml</option>
+                    <option value="330ml">330ml</option>
+                    <option value="350ml">350ml</option>
+                    <option value="500ml">500ml</option>
+                    <option value="750ml" selected>750ml</option>
+                    <option value="1L">1L</option>
+                  </optgroup>
+                  <optgroup label="🥃 Spirits">
+                    <option value="250ml">250ml</option>
+                    <option value="350ml">350ml</option>
+                    <option value="500ml">500ml</option>
+                    <option value="700ml">700ml</option>
+                    <option value="750ml">750ml</option>
+                    <option value="1L">1L</option>
+                    <option value="1.5L">1.5L</option>
+                  </optgroup>
+                  <optgroup label="🍷 Wines &amp; Creams">
+                    <option value="750ml">750ml</option>
+                    <option value="1L">1L</option>
+                  </optgroup>
+                  <optgroup label="🧃 Juice &amp; Soda">
+                    <option value="250ml">250ml</option>
+                    <option value="330ml">330ml</option>
+                    <option value="350ml">350ml</option>
+                    <option value="500ml">500ml</option>
+                    <option value="1L">1L</option>
+                    <option value="1.5L">1.5L</option>
+                    <option value="2L">2L</option>
+                  </optgroup>
+                  <option value="OTHER">✏️ Other (Type custom)</option>
+                </select>
+                <input type="text" class="variant-size-other" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;">
+              </td>
+              <td><input type="number" class="variant-price" placeholder="Price" step="1"></td>
+              <td><input type="number" class="variant-discount" placeholder="0" min="0" max="100" value="0" step="1"></td>
+              <td><input type="text" class="variant-flavour" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td>
+              <td><button type="button" class="remove-variant" onclick="removeVariantRow(this)">✕</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" class="add-variant-btn" onclick="addVariantRow()"><i class="ph ph-plus"></i> Add Another Variant</button>
+      </div>
+      
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border-light);display:flex;gap:10px;">
+        <button class="btn" id="addProductBtn" onclick="addProduct()"><i class="ph ph-floppy-disk"></i> Save Product</button>
+      </div>
+    </div>
 
     <!-- Search & Sort -->
     <div class="search-bar">
       <div class="search-input-wrap"><i class="ph ph-magnifying-glass"></i><input type="text" id="productSearch" class="search-input" placeholder="Search products..." oninput="filterProducts()"></div>
-      <!-- ADDED: Category filter dropdown -->
       <select id="categoryFilterSelect" class="sort-select" onchange="filterProducts()">
         <option value="all">🏷️ All Categories</option>
       </select>
@@ -550,7 +544,6 @@ textarea { resize: vertical; }
       <button class="btn btn-green" onclick="refreshProducts()"><i class="ph ph-arrows-clockwise"></i> Refresh</button>
     </div>
 
-    <!-- ADDED: Bulk Action Bar -->
     <div class="bulk-action-bar" id="bulkActionBar">
       <label>
         <input type="checkbox" id="selectAllCheckbox" class="row-checkbox" onchange="toggleSelectAll(this)">
@@ -563,371 +556,361 @@ textarea { resize: vertical; }
     </div>
 
     <div class="table-container">
-      <!-- UPDATED: Added checkbox column header -->
       <div class="table-header"><div></div><div>Image</div><div>Product</div><div>Variants</div><div>Badges</div><div>Rating</div><div>Actions</div></div>
       <div id="productsList"></div>
     </div>
   </div>
 
   <!-- ORDERS TAB -->
-<div id="ordersTab" style="display:none;">
-  <!-- Stats Row -->
-  <div class="stats-grid" id="orderStats">
-    <div class="stat-card">
-      <h4>Total Orders</h4>
-      <div class="value" id="totalOrdersCount">0</div>
-      <div class="sub">All time</div>
-      <div class="icon">📋</div>
-    </div>
-    <div class="stat-card" style="border-left:3px solid #F59E0B;">
-      <h4>Pending</h4>
-      <div class="value" id="pendingOrdersCount">0</div>
-      <div class="sub">⏳ Awaiting delivery</div>
-      <div class="icon">⏳</div>
-    </div>
-    <div class="stat-card" style="border-left:3px solid #22C55E;">
-      <h4>Paid</h4>
-      <div class="value" id="paidOrdersCount">0</div>
-      <div class="sub">✅ Confirmed</div>
-      <div class="icon">✅</div>
-    </div>
-    <div class="stat-card" style="border-left:3px solid #3B82F6;">
-      <h4>Delivered</h4>
-      <div class="value" id="deliveredOrdersCount">0</div>
-      <div class="sub">🚚 Completed</div>
-      <div class="icon">🚚</div>
-    </div>
-  </div>
-
-  <!-- Filter Bar -->
-  <div class="filter-bar" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;background:var(--white);padding:16px 20px;border-radius:var(--radius-sm);box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:18px;">
-    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:150px;">
-      <i class="ph ph-calendar" style="color:var(--gold);font-size:18px;"></i>
-      <select id="dateFilter" class="sort-select" onchange="applyFilters()" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:white;font-size:13px;">
-        <option value="24h">📅 Last 24 Hours</option>
-        <option value="7d">📆 Last 7 Days</option>
-        <option value="30d">📆 Last 30 Days</option>
-        <option value="90d">📆 Last 90 Days</option>
-        <option value="1y">📅 Last 1 Year</option>
-        <option value="all">📊 All Time</option>
-      </select>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:150px;">
-      <i class="ph ph-funnel" style="color:var(--gold);font-size:18px;"></i>
-      <select id="statusFilter" class="sort-select" onchange="applyFilters()" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:white;font-size:13px;">
-        <option value="all">📋 All Orders</option>
-        <option value="paid">✅ Paid</option>
-        <option value="delivered">🚚 Delivered</option>
-        <option value="pending">⏳ Pending</option>
-      </select>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="filter-stats" id="orderCountDisplay" style="background:var(--gold-bg);padding:6px 14px;border-radius:8px;font-size:12px;color:var(--text-secondary);border:1px solid var(--gold-bg);">
-        📦 <span id="orderCountNumber">0</span> orders
-      </span>
-      <button class="btn btn-green" onclick="refreshOrders()" style="padding:8px 16px;font-size:12px;">
-        <i class="ph ph-arrows-clockwise"></i> Refresh
-      </button>
-    </div>
-  </div>
-
-  <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
-    <i class="ph ph-info" style="color:var(--gold);"></i> 
-    M-PESA payments auto-confirmed. Use <strong style="color:var(--primary);">Mark Delivered</strong> when handed over to customer.
-  </div>
-
-  <!-- Orders List -->
-  <div id="ordersList" class="orders-list"></div>
-</div>
-
-  <!-- ANALYTICS TAB -->
-<div id="analyticsTab" style="display:none;">
-  <!-- Stats Grid -->
-  <div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
-    <div class="stat-card" style="background:linear-gradient(135deg, #1a472a, #2d6a4f);color:white;border:none;">
-      <h4 style="color:rgba(255,255,255,0.8);">💰 Revenue</h4>
-      <div class="value" id="totalRevenue" style="color:white;font-size:32px;">KES 0</div>
-      <div class="sub" style="color:rgba(255,255,255,0.7);">Delivered orders</div>
-      <div class="icon" style="opacity:0.15;">💰</div>
-    </div>
-    <div class="stat-card" style="background:linear-gradient(135deg, #1a365d, #2b6cb0);color:white;border:none;">
-      <h4 style="color:rgba(255,255,255,0.8);">📦 Orders</h4>
-      <div class="value" id="totalOrders" style="color:white;font-size:32px;">0</div>
-      <div class="sub" style="color:rgba(255,255,255,0.7);">All time</div>
-      <div class="icon" style="opacity:0.15;">📦</div>
-    </div>
-    <div class="stat-card" style="background:linear-gradient(135deg, #6b21a5, #7c3aed);color:white;border:none;">
-      <h4 style="color:rgba(255,255,255,0.8);">🍾 Products</h4>
-      <div class="value" id="totalProducts" style="color:white;font-size:32px;">0</div>
-      <div class="sub" style="color:rgba(255,255,255,0.7);">In catalogue</div>
-      <div class="icon" style="opacity:0.15;">🍾</div>
-    </div>
-    <div class="stat-card" style="background:linear-gradient(135deg, #9a3412, #c2410c);color:white;border:none;">
-      <h4 style="color:rgba(255,255,255,0.8);">📊 Avg Order</h4>
-      <div class="value" id="avgOrder" style="color:white;font-size:32px;">KES 0</div>
-      <div class="sub" style="color:rgba(255,255,255,0.7);">Per delivery</div>
-      <div class="icon" style="opacity:0.15;">📊</div>
-    </div>
-  </div>
-
-  <!-- Category Breakdown -->
-  <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);">
-    <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
-      <i class="ph ph-chart-bar" style="color:var(--gold);font-size:20px;"></i> 
-      Category Breakdown
-      <span style="margin-left:auto;font-size:12px;font-weight:400;color:var(--muted);" id="categoryTotalCount">0 categories</span>
-    </div>
-    <div id="categoryBreakdown" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;"></div>
-  </div>
-
-  <!-- Quick Stats Row -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px;">
-    <div style="background:var(--gold-bg);border-radius:var(--radius-sm);padding:14px 18px;border:1px solid var(--gold);display:flex;align-items:center;gap:12px;">
-      <i class="ph ph-trend-up" style="font-size:24px;color:var(--gold);"></i>
-      <div>
-        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;">Conversion Rate</div>
-        <div style="font-size:18px;font-weight:800;" id="conversionRate">0%</div>
+  <div id="ordersTab" style="display:none;">
+    <div class="stats-grid" id="orderStats">
+      <div class="stat-card">
+        <h4>Total Orders</h4>
+        <div class="value" id="totalOrdersCount">0</div>
+        <div class="sub">All time</div>
+        <div class="icon">📋</div>
+      </div>
+      <div class="stat-card" style="border-left:3px solid #F59E0B;">
+        <h4>Pending</h4>
+        <div class="value" id="pendingOrdersCount">0</div>
+        <div class="sub">⏳ Awaiting delivery</div>
+        <div class="icon">⏳</div>
+      </div>
+      <div class="stat-card" style="border-left:3px solid #22C55E;">
+        <h4>Paid</h4>
+        <div class="value" id="paidOrdersCount">0</div>
+        <div class="sub">✅ Confirmed</div>
+        <div class="icon">✅</div>
+      </div>
+      <div class="stat-card" style="border-left:3px solid #3B82F6;">
+        <h4>Delivered</h4>
+        <div class="value" id="deliveredOrdersCount">0</div>
+        <div class="sub">🚚 Completed</div>
+        <div class="icon">🚚</div>
       </div>
     </div>
-    <div style="background:var(--green-light);border-radius:var(--radius-sm);padding:14px 18px;border:1px solid var(--btn-green);display:flex;align-items:center;gap:12px;">
-      <i class="ph ph-star" style="font-size:24px;color:var(--btn-green);"></i>
-      <div>
-        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;">Avg Rating</div>
-        <div style="font-size:18px;font-weight:800;" id="avgRating">0.0 ⭐</div>
-      </div>
-    </div>
-    <div style="background:#EFF6FF;border-radius:var(--radius-sm);padding:14px 18px;border:1px solid #3B82F6;display:flex;align-items:center;gap:12px;">
-      <i class="ph ph-users" style="font-size:24px;color:#3B82F6;"></i>
-      <div>
-        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;">Total Customers</div>
-        <div style="font-size:18px;font-weight:800;" id="totalCustomers">0</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-  <!-- SETTINGS TAB -->
-<div id="settingsTab" style="display:none;">
-  <!-- Password Management -->
-  <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
-    <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
-      <i class="ph ph-lock-key" style="color:var(--gold);font-size:20px;"></i> Password Management
-      <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Secure your admin panel</span>
-    </div>
-    <p class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
-      <i class="ph ph-info" style="color:var(--gold);"></i> Update admin and cashier passwords. Minimum 6 characters.
-    </p>
-    <form id="passwordForm" onsubmit="event.preventDefault(); updatePasswords();">
-      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="form-group">
-          <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
-            <i class="ph ph-shield" style="color:var(--gold);"></i> New Admin Password
-          </label>
-          <div style="position:relative;">
-            <input type="password" id="newAdminPassword" placeholder="Enter new admin password" minlength="6" style="width:100%;padding:10px 40px 10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-            <button type="button" onclick="togglePasswordVisibility('newAdminPassword')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);">
-              <i class="ph ph-eye"></i>
-            </button>
-          </div>
-          <span style="font-size:10px;color:var(--muted);margin-top:4px;">Min 6 characters</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
-            <i class="ph ph-user" style="color:var(--gold);"></i> New Cashier Password
-          </label>
-          <div style="position:relative;">
-            <input type="password" id="newCashierPassword" placeholder="Enter new cashier password" minlength="6" style="width:100%;padding:10px 40px 10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-            <button type="button" onclick="togglePasswordVisibility('newCashierPassword')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);">
-              <i class="ph ph-eye"></i>
-            </button>
-          </div>
-          <span style="font-size:10px;color:var(--muted);margin-top:4px;">Min 6 characters</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
-        <button type="submit" class="btn" id="updatePasswordsBtn" style="padding:10px 24px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
-          <i class="ph ph-floppy-disk"></i> Save Passwords
-        </button>
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('newAdminPassword').value='';document.getElementById('newCashierPassword').value='';" style="padding:10px 24px;background:transparent;border:2px solid var(--border);border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
-          <i class="ph ph-x"></i> Clear
-        </button>
-      </div>
-      <div id="passwordMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
-    </form>
-  </div>
-
-  <!-- Delivery Settings -->
-  <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
-    <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
-      <i class="ph ph-truck" style="color:var(--gold);font-size:20px;"></i> Delivery Settings
-      <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Configure delivery options</span>
-    </div>
-    <form id="deliveryForm" onsubmit="event.preventDefault(); saveDeliverySettings();">
-      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
-        <div class="form-group">
-          <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
-            <i class="ph ph-currency-kes" style="color:var(--gold);"></i> Delivery Fee
-          </label>
-          <input type="number" id="deliveryFee" value="150" step="5" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-          <span style="font-size:10px;color:var(--muted);margin-top:4px;">Default delivery fee in KES</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
-            <i class="ph ph-gift" style="color:var(--gold);"></i> Free Threshold
-          </label>
-          <input type="number" id="freeThreshold" value="3000" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-          <span style="font-size:10px;color:var(--muted);margin-top:4px;">Order above this gets free delivery</span>
-        </div>
-        <div class="form-group" style="flex-direction:row;align-items:center;gap:12px;padding-top:28px;">
-          <label class="form-label" style="margin:0;font-size:12px;font-weight:600;color:var(--text-secondary);">Delivery Enabled</label>
-          <label class="toggle-switch" style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer;">
-            <input type="checkbox" id="deliveryEnabled" checked style="opacity:0;width:0;height:0;">
-            <span class="toggle-slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:0.3s;border-radius:26px;"></span>
-            <span class="toggle-slider:before" style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;transition:0.3s;border-radius:50%;"></span>
-          </label>
-        </div>
-      </div>
-      <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
-        <button type="submit" class="btn" style="padding:10px 24px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
-          <i class="ph ph-floppy-disk"></i> Save Settings
-        </button>
-      </div>
-      <div id="deliveryMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
-    </form>
-  </div>
-
-  <!-- Delivery Zones -->
-  <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
-    <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
-      <i class="ph ph-map-pin" style="color:var(--gold);font-size:20px;"></i> Delivery Zones &amp; Fees
-      <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Set delivery fee per area</span>
-    </div>
-    <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
-      <i class="ph ph-info" style="color:var(--gold);"></i> Add delivery zones and set custom fees per area. Zones without custom fees use the default delivery fee.
-    </div>
-    <div style="overflow-x:auto;">
-      <table class="delivery-zones-table" id="deliveryZonesTable" style="width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:var(--radius-xs);overflow:hidden;">
-        <thead>
-          <tr style="background:var(--gold-bg);border-bottom:2px solid var(--gold);">
-            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;">Area Name</th>
-            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;">Delivery Fee (KES)</th>
-            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;width:60px;">Action</th>
-          </tr>
-        </thead>
-        <tbody id="deliveryZonesBody">
-          <!-- Rows inserted by JS -->
-        </tbody>
-      </table>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
-      <button class="btn btn-outline" onclick="addDeliveryZone()" style="padding:8px 20px;background:transparent;border:2px solid var(--border);border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
-        <i class="ph ph-plus" style="color:var(--gold);"></i> Add Zone
-      </button>
-      <button class="btn btn-gold" onclick="saveDeliveryZones()" style="padding:8px 20px;background:linear-gradient(135deg, var(--gold), var(--gold-light));color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
-        <i class="ph ph-floppy-disk"></i> Save All Zones
-      </button>
-    </div>
-    <div id="zoneMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
-  </div>
-
-  <!-- Manage Categories -->
-  <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
-    <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
-      <i class="ph ph-tag" style="color:var(--gold);font-size:20px;"></i> Manage Categories
-      <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Add new product categories</span>
-    </div>
-    <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
-      <i class="ph ph-info" style="color:var(--gold);"></i> Add new categories to organize your products. Category keys must be lowercase with no spaces.
-    </div>
-    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;">
-      <div class="form-group">
-        <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);">Category Name</label>
-        <input type="text" id="newCategoryName" placeholder="e.g. Champagne, Port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-      </div>
-      <div class="form-group">
-        <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);">Category Key (slug)</label>
-        <input type="text" id="newCategoryKey" placeholder="e.g. champagne, port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
-        <span class="form-hint" style="font-size:10px;color:var(--muted);margin-top:4px;">Lowercase, no spaces</span>
-      </div>
-      <div class="form-group" style="flex-direction:row;align-items:flex-end;gap:8px;padding-bottom:2px;">
-        <button class="btn btn-green" onclick="addCategory()" style="padding:10px 24px;background:var(--btn-green);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
-          <i class="ph ph-plus"></i> Add Category
-        </button>
-      </div>
-    </div>
-    <div id="categoryList" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;"></div>
-    <div id="categoryMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
-  </div>
-</div>
-
-<!-- ===== EDIT MODAL ===== -->
-<div class="modal-overlay" id="editModal">
-  <div class="modal-card">
-    <div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div>
-    <input type="hidden" id="editProductId">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div>
-      <div class="form-group"><label class="form-label">Category</label>
-        <select id="editCategory">
-          <optgroup label="🥃 Spirits">
-            <option value="whisky">Whisky</option>
-            <option value="vodka">Vodka</option>
-            <option value="gin">Gin</option>
-            <option value="cognac">Cognac</option>
-            <option value="rum">Rum</option>
-            <option value="brandy">Brandy</option>
-            <option value="bourbon">Bourbon</option>
-            <option value="spirits">Spirits</option>
-            <option value="liqueur">Liqueur</option>
-          </optgroup>
-          <optgroup label="🍷 Wines &amp; Creams">
-            <option value="wine">Wine</option>
-            <option value="cream">Creams</option>
-          </optgroup>
-          <optgroup label="🍺 Beers &amp; Ciders">
-            <option value="beer">Beer</option>
-          </optgroup>
-          <optgroup label="🧃 Juices &amp; Mixers">
-            <option value="juice">Juice</option>
-            <option value="soda">Soda</option>
-            <option value="water">Water</option>
-            <option value="energy">Energy Drink</option>
-          </optgroup>
-          <optgroup label="🚬 Other">
-            <option value="cigar">Cigar</option>
-            <option value="accessory">Accessory</option>
-          </optgroup>
+    <div class="filter-bar" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;background:var(--white);padding:16px 20px;border-radius:var(--radius-sm);box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:150px;">
+        <i class="ph ph-calendar" style="color:var(--gold);font-size:18px;"></i>
+        <select id="dateFilter" class="sort-select" onchange="applyFilters()" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:white;font-size:13px;">
+          <option value="24h">📅 Last 24 Hours</option>
+          <option value="7d">📆 Last 7 Days</option>
+          <option value="30d">📆 Last 30 Days</option>
+          <option value="90d">📆 Last 90 Days</option>
+          <option value="1y">📅 Last 1 Year</option>
+          <option value="all">📊 All Time</option>
         </select>
       </div>
-      <div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:150px;">
+        <i class="ph ph-funnel" style="color:var(--gold);font-size:18px;"></i>
+        <select id="statusFilter" class="sort-select" onchange="applyFilters()" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:white;font-size:13px;">
+          <option value="all">📋 All Orders</option>
+          <option value="paid">✅ Paid</option>
+          <option value="delivered">🚚 Delivered</option>
+          <option value="pending">⏳ Pending</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="filter-stats" id="orderCountDisplay" style="background:var(--gold-bg);padding:6px 14px;border-radius:8px;font-size:12px;color:var(--text-secondary);border:1px solid var(--gold-bg);">
+          📦 <span id="orderCountNumber">0</span> orders
+        </span>
+        <button class="btn btn-green" onclick="refreshOrders()" style="padding:8px 16px;font-size:12px;">
+          <i class="ph ph-arrows-clockwise"></i> Refresh
+        </button>
+      </div>
     </div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div></div>
-    <div class="form-row"><div class="form-group" style="grid-column:1/-1;"><label class="form-label">Description</label><textarea id="editDesc" rows="2" style="min-height:60px;"></textarea></div></div>
-    <div class="toggles-row">
-      <div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div>
-      <div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-star"></i> New</label></div>
+
+    <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
+      <i class="ph ph-info" style="color:var(--gold);"></i> 
+      M-PESA payments auto-confirmed. Use <strong style="color:var(--primary);">Mark Delivered</strong> when handed over to customer.
     </div>
-    <div class="rating-input"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
-    <div class="variants-label">Variants (Size, Price, Discount, Flavour)</div>
-    <table class="variants-table"><tbody id="editVariantsBody"></tbody></table>
-    <button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Variant</button>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save</button></div>
+
+    <div id="ordersList" class="orders-list"></div>
   </div>
-</div>
+
+  <!-- ANALYTICS TAB -->
+  <div id="analyticsTab" style="display:none;">
+    <div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
+      <div class="stat-card" style="background:linear-gradient(135deg, #1a472a, #2d6a4f);color:white;border:none;">
+        <h4 style="color:rgba(255,255,255,0.8);">💰 Revenue</h4>
+        <div class="value" id="totalRevenue" style="color:white;font-size:32px;">KES 0</div>
+        <div class="sub" style="color:rgba(255,255,255,0.7);">Delivered orders</div>
+        <div class="icon" style="opacity:0.15;">💰</div>
+      </div>
+      <div class="stat-card" style="background:linear-gradient(135deg, #1a365d, #2b6cb0);color:white;border:none;">
+        <h4 style="color:rgba(255,255,255,0.8);">📦 Orders</h4>
+        <div class="value" id="totalOrders" style="color:white;font-size:32px;">0</div>
+        <div class="sub" style="color:rgba(255,255,255,0.7);">All time</div>
+        <div class="icon" style="opacity:0.15;">📦</div>
+      </div>
+      <div class="stat-card" style="background:linear-gradient(135deg, #6b21a5, #7c3aed);color:white;border:none;">
+        <h4 style="color:rgba(255,255,255,0.8);">🍾 Products</h4>
+        <div class="value" id="totalProducts" style="color:white;font-size:32px;">0</div>
+        <div class="sub" style="color:rgba(255,255,255,0.7);">In catalogue</div>
+        <div class="icon" style="opacity:0.15;">🍾</div>
+      </div>
+      <div class="stat-card" style="background:linear-gradient(135deg, #9a3412, #c2410c);color:white;border:none;">
+        <h4 style="color:rgba(255,255,255,0.8);">📊 Avg Order</h4>
+        <div class="value" id="avgOrder" style="color:white;font-size:32px;">KES 0</div>
+        <div class="sub" style="color:rgba(255,255,255,0.7);">Per delivery</div>
+        <div class="icon" style="opacity:0.15;">📊</div>
+      </div>
+    </div>
+
+    <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);">
+      <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
+        <i class="ph ph-chart-bar" style="color:var(--gold);font-size:20px;"></i> 
+        Category Breakdown
+        <span style="margin-left:auto;font-size:12px;font-weight:400;color:var(--muted);" id="categoryTotalCount">0 categories</span>
+      </div>
+      <div id="categoryBreakdown" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px;">
+      <div style="background:var(--gold-bg);border-radius:var(--radius-sm);padding:14px 18px;border:1px solid var(--gold);display:flex;align-items:center;gap:12px;">
+        <i class="ph ph-trend-up" style="font-size:24px;color:var(--gold);"></i>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;">Conversion Rate</div>
+          <div style="font-size:18px;font-weight:800;" id="conversionRate">0%</div>
+        </div>
+      </div>
+      <div style="background:var(--green-light);border-radius:var(--radius-sm);padding:14px 18px;border:1px solid var(--btn-green);display:flex;align-items:center;gap:12px;">
+        <i class="ph ph-star" style="font-size:24px;color:var(--btn-green);"></i>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;">Avg Rating</div>
+          <div style="font-size:18px;font-weight:800;" id="avgRating">0.0 ⭐</div>
+        </div>
+      </div>
+      <div style="background:#EFF6FF;border-radius:var(--radius-sm);padding:14px 18px;border:1px solid #3B82F6;display:flex;align-items:center;gap:12px;">
+        <i class="ph ph-users" style="font-size:24px;color:#3B82F6;"></i>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;">Total Customers</div>
+          <div style="font-size:18px;font-weight:800;" id="totalCustomers">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="settingsTab" style="display:none;">
+    <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
+      <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
+        <i class="ph ph-lock-key" style="color:var(--gold);font-size:20px;"></i> Password Management
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Secure your admin panel</span>
+      </div>
+      <p class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
+        <i class="ph ph-info" style="color:var(--gold);"></i> Update admin and cashier passwords. Minimum 6 characters.
+      </p>
+      <form id="passwordForm" onsubmit="event.preventDefault(); updatePasswords();">
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
+              <i class="ph ph-shield" style="color:var(--gold);"></i> New Admin Password
+            </label>
+            <div style="position:relative;">
+              <input type="password" id="newAdminPassword" placeholder="Enter new admin password" minlength="6" style="width:100%;padding:10px 40px 10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+              <button type="button" onclick="togglePasswordVisibility('newAdminPassword')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);">
+                <i class="ph ph-eye"></i>
+              </button>
+            </div>
+            <span style="font-size:10px;color:var(--muted);margin-top:4px;">Min 6 characters</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
+              <i class="ph ph-user" style="color:var(--gold);"></i> New Cashier Password
+            </label>
+            <div style="position:relative;">
+              <input type="password" id="newCashierPassword" placeholder="Enter new cashier password" minlength="6" style="width:100%;padding:10px 40px 10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+              <button type="button" onclick="togglePasswordVisibility('newCashierPassword')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);">
+                <i class="ph ph-eye"></i>
+              </button>
+            </div>
+            <span style="font-size:10px;color:var(--muted);margin-top:4px;">Min 6 characters</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
+          <button type="submit" class="btn" id="updatePasswordsBtn" style="padding:10px 24px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
+            <i class="ph ph-floppy-disk"></i> Save Passwords
+          </button>
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('newAdminPassword').value='';document.getElementById('newCashierPassword').value='';" style="padding:10px 24px;background:transparent;border:2px solid var(--border);border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
+            <i class="ph ph-x"></i> Clear
+          </button>
+        </div>
+        <div id="passwordMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
+      </form>
+    </div>
+
+    <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
+      <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
+        <i class="ph ph-truck" style="color:var(--gold);font-size:20px;"></i> Delivery Settings
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Configure delivery options</span>
+      </div>
+      <form id="deliveryForm" onsubmit="event.preventDefault(); saveDeliverySettings();">
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
+              <i class="ph ph-currency-kes" style="color:var(--gold);"></i> Delivery Fee
+            </label>
+            <input type="number" id="deliveryFee" value="150" step="5" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+            <span style="font-size:10px;color:var(--muted);margin-top:4px;">Default delivery fee in KES</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
+              <i class="ph ph-gift" style="color:var(--gold);"></i> Free Threshold
+            </label>
+            <input type="number" id="freeThreshold" value="3000" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+            <span style="font-size:10px;color:var(--muted);margin-top:4px;">Order above this gets free delivery</span>
+          </div>
+          <div class="form-group" style="flex-direction:row;align-items:center;gap:12px;padding-top:28px;">
+            <label class="form-label" style="margin:0;font-size:12px;font-weight:600;color:var(--text-secondary);">Delivery Enabled</label>
+            <label class="toggle-switch" style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer;">
+              <input type="checkbox" id="deliveryEnabled" checked style="opacity:0;width:0;height:0;">
+              <span class="toggle-slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:0.3s;border-radius:26px;"></span>
+              <span class="toggle-slider:before" style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;transition:0.3s;border-radius:50%;"></span>
+            </label>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
+          <button type="submit" class="btn" style="padding:10px 24px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
+            <i class="ph ph-floppy-disk"></i> Save Settings
+          </button>
+        </div>
+        <div id="deliveryMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
+      </form>
+    </div>
+
+    <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
+      <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
+        <i class="ph ph-map-pin" style="color:var(--gold);font-size:20px;"></i> Delivery Zones &amp; Fees
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Set delivery fee per area</span>
+      </div>
+      <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
+        <i class="ph ph-info" style="color:var(--gold);"></i> Add delivery zones and set custom fees per area. Zones without custom fees use the default delivery fee.
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="delivery-zones-table" id="deliveryZonesTable" style="width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:var(--radius-xs);overflow:hidden;">
+          <thead>
+            <tr style="background:var(--gold-bg);border-bottom:2px solid var(--gold);">
+              <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;">Area Name</th>
+              <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;">Delivery Fee (KES)</th>
+              <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;width:60px;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="deliveryZonesBody"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+        <button class="btn btn-outline" onclick="addDeliveryZone()" style="padding:8px 20px;background:transparent;border:2px solid var(--border);border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
+          <i class="ph ph-plus" style="color:var(--gold);"></i> Add Zone
+        </button>
+        <button class="btn btn-gold" onclick="saveDeliveryZones()" style="padding:8px 20px;background:linear-gradient(135deg, var(--gold), var(--gold-light));color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
+          <i class="ph ph-floppy-disk"></i> Save All Zones
+        </button>
+      </div>
+      <div id="zoneMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
+    </div>
+
+    <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
+      <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
+        <i class="ph ph-tag" style="color:var(--gold);font-size:20px;"></i> Manage Categories
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400;">Add new product categories</span>
+      </div>
+      <div class="help-text" style="background:var(--gold-bg);border-left:4px solid var(--gold);padding:10px 16px;border-radius:var(--radius-xs);margin-bottom:16px;">
+        <i class="ph ph-info" style="color:var(--gold);"></i> Add new categories to organize your products. Category keys must be lowercase with no spaces.
+      </div>
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;">
+        <div class="form-group">
+          <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);">Category Name</label>
+          <input type="text" id="newCategoryName" placeholder="e.g. Champagne, Port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);">Category Key (slug)</label>
+          <input type="text" id="newCategoryKey" placeholder="e.g. champagne, port" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13.5px;background:white;transition:var(--transition);">
+          <span class="form-hint" style="font-size:10px;color:var(--muted);margin-top:4px;">Lowercase, no spaces</span>
+        </div>
+        <div class="form-group" style="flex-direction:row;align-items:flex-end;gap:8px;padding-bottom:2px;">
+          <button class="btn btn-green" onclick="addCategory()" style="padding:10px 24px;background:var(--btn-green);color:white;border:none;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);">
+            <i class="ph ph-plus"></i> Add Category
+          </button>
+        </div>
+      </div>
+      <div id="categoryList" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <div id="categoryMessage" style="margin-top:12px;font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ===== EDIT MODAL ===== -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+      <div class="modal-header"><h3><i class="ph ph-pencil-simple"></i> Edit Product</h3><button class="modal-close" onclick="closeEditModal()"><i class="ph ph-x"></i></button></div>
+      <input type="hidden" id="editProductId">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="editName"></div>
+        <div class="form-group"><label class="form-label">Category</label>
+          <select id="editCategory">
+            <optgroup label="🥃 Spirits">
+              <option value="whisky">Whisky</option>
+              <option value="vodka">Vodka</option>
+              <option value="gin">Gin</option>
+              <option value="cognac">Cognac</option>
+              <option value="rum">Rum</option>
+              <option value="brandy">Brandy</option>
+              <option value="bourbon">Bourbon</option>
+              <option value="spirits">Spirits</option>
+              <option value="liqueur">Liqueur</option>
+              <option value="vermouth">Vermouth</option>
+            </optgroup>
+            <optgroup label="🍷 Wines &amp; Creams">
+              <option value="wine">Wine</option>
+              <option value="cream">Creams</option>
+            </optgroup>
+            <optgroup label="🍺 Beers &amp; Ciders">
+              <option value="beer">Beer</option>
+              <option value="cider">Cider</option>
+            </optgroup>
+            <optgroup label="🧃 Juices &amp; Mixers">
+              <option value="juice">Juice</option>
+              <option value="soda">Soda</option>
+              <option value="water">Water</option>
+              <option value="energy">Energy Drink</option>
+            </optgroup>
+            <optgroup label="🚬 Other">
+              <option value="cigar">Cigar</option>
+              <option value="accessory">Accessory</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Badge</label><select id="editBadge"><option value="">No Badge</option><option value="hot">🔥 Hot</option><option value="local">🇰🇪 Local</option><option value="prem">⭐ Premium</option></select></div>
+      </div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Image URL</label><input type="text" id="editImage"></div></div>
+      <div class="form-row"><div class="form-group" style="grid-column:1/-1;"><label class="form-label">Description</label><textarea id="editDesc" rows="2" style="min-height:60px;"></textarea></div></div>
+      <div class="toggles-row">
+        <div class="trending-toggle" onclick="document.getElementById('editTrending').click()"><input type="checkbox" id="editTrending" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-fire"></i> Trending</label></div>
+        <div class="trending-toggle" onclick="document.getElementById('editNew').click()"><input type="checkbox" id="editNew" onclick="event.stopPropagation()"><label onclick="event.preventDefault()"><i class="ph ph-star"></i> New</label></div>
+      </div>
+      <div class="rating-input"><label>Rating:</label><select id="editRating"><option value="5">★★★★★ (5.0)</option><option value="4.5">★★★★½ (4.5)</option><option value="4">★★★★☆ (4.0)</option><option value="3.5">★★★½☆ (3.5)</option><option value="3">★★★☆☆ (3.0)</option><option value="2.5">★★½☆☆ (2.5)</option><option value="2">★★☆☆☆ (2.0)</option></select></div>
+      <div class="variants-label">Variants (Size, Price, Discount, Flavour)</div>
+      <table class="variants-table"><tbody id="editVariantsBody"></tbody></table>
+      <button type="button" class="add-variant-btn" onclick="addEditVariantRow()"><i class="ph ph-plus"></i> Add Variant</button>
+      <div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn" onclick="saveProductEdit()"><i class="ph ph-floppy-disk"></i> Save</button></div>
+    </div>
+  </div>
 </div>
 
 <!-- ===== TOAST ===== -->
 <div id="toast" class="toast"><span id="toastMessage"></span><button class="toast-close" onclick="hideToast()"><i class="ph ph-x"></i></button></div>
+
 <script>
 // ============================================================
-// LIQUORBELLE ADMIN — COMPLETE JAVASCRIPT (FIXED)
-// - 18 Categories (whisky, wine, vodka, gin, cognac, cream added)
+// LIQUORBELLE ADMIN — COMPLETE JAVASCRIPT (FIXED & UPGRADED)
+// - 20 Categories (whisky, wine, vodka, gin, cognac, cream, cider, vermouth)
 // - Stock Management (status + quantity per variant)
 // - Low Stock Alerts
-// - Fixed: Out of stock count only counts explicit outOfStock
-// - Fixed: Settings tab loads categories
-// - Added: Bulk select & delete with scroll preservation
-// - Fixed: Scroll jump on refresh
+// - Order details with customer info (location, email, phone, address)
+// - Delivery zones management
+// - Bulk select & delete with scroll preservation
+// - Fixed scroll jump on refresh
 // ============================================================
 
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
@@ -986,13 +969,11 @@ function resetActivityTimer() {
   }
 }
 
-// Listen for user activity events
 document.addEventListener('click', resetActivityTimer);
 document.addEventListener('keydown', resetActivityTimer);
 document.addEventListener('scroll', resetActivityTimer);
 document.addEventListener('mousemove', resetActivityTimer);
 document.addEventListener('touchstart', resetActivityTimer);
-
 
 // ==================== CATEGORY CONFIG ====================
 const CATEGORY_LABELS = {
@@ -1000,10 +981,10 @@ const CATEGORY_LABELS = {
   cognac: 'Cognac', cream: 'Creams', beer: 'Beer', brandy: 'Brandy',
   bourbon: 'Bourbon', rum: 'Rum', spirits: 'Spirits', liqueur: 'Liqueur',
   juice: 'Juice', soda: 'Soda', water: 'Water', energy: 'Energy Drink',
-  cigar: 'Cigar', accessory: 'Accessory'
+  cigar: 'Cigar', accessory: 'Accessory', cider: 'Cider', vermouth: 'Vermouth'
 };
 
-const ALL_CATEGORIES = ['whisky', 'wine', 'vodka', 'gin', 'cognac', 'cream', 'beer', 'brandy', 'bourbon', 'rum', 'spirits', 'liqueur', 'juice', 'soda', 'water', 'energy', 'cigar', 'accessory'];
+const ALL_CATEGORIES = ['whisky', 'wine', 'vodka', 'gin', 'cognac', 'cream', 'beer', 'brandy', 'bourbon', 'rum', 'spirits', 'liqueur', 'juice', 'soda', 'water', 'energy', 'cigar', 'accessory', 'cider', 'vermouth'];
 
 // ==================== TOAST ====================
 function showToast(message, type) {
@@ -1317,9 +1298,8 @@ window.bulkDeleteProducts = async function() {
   await preserveScroll(loadProducts);
 };
 
-// ==================== ADD PRODUCT - FIXED ====================
+// ==================== ADD PRODUCT ====================
 window.addProduct = async function() {
-  // Get all form elements with proper validation
   const nameInput = document.getElementById('prodName');
   const categorySelect = document.getElementById('prodCategory');
   const badgeInput = document.getElementById('prodBadge');
@@ -1330,13 +1310,11 @@ window.addProduct = async function() {
   const ratingInput = document.getElementById('prodRating');
   const addBtn = document.getElementById('addProductBtn');
   
-  // Validate required elements exist
   if (!nameInput || !categorySelect || !imageInput) {
     showToast('❌ Form elements not found. Please refresh the page.', 'error');
     return;
   }
 
-  // Get values with proper validation
   const name = nameInput.value.trim();
   const category = categorySelect.value;
   const badge = badgeInput ? badgeInput.value.trim() : '';
@@ -1346,7 +1324,6 @@ window.addProduct = async function() {
   const isNew = newCheck ? newCheck.checked : false;
   const rating = ratingInput ? parseFloat(ratingInput.value) || 4.0 : 4.0;
   
-  // Validate required fields
   if (!name) {
     showToast('❌ Please enter a product name', 'error');
     nameInput.focus();
@@ -1365,7 +1342,6 @@ window.addProduct = async function() {
     return;
   }
 
-  // Get variants from the variants table
   const variantRows = document.querySelectorAll('#variantsBody .variant-row');
   
   if (variantRows.length === 0) {
@@ -1385,20 +1361,17 @@ window.addProduct = async function() {
     const stockSelect = row.querySelector('.variant-stock');
     const quantityInput = row.querySelector('.variant-quantity');
     
-    // Get size (handle OTHER option)
     let size = sizeSelect ? sizeSelect.value : '';
     if (size === 'OTHER' && sizeOther) {
       size = sizeOther.value.trim();
     }
     
-    // Get other values with proper parsing
     const price = priceInput ? parseFloat(priceInput.value) : 0;
     const discount = discountInput ? parseInt(discountInput.value) || 0 : 0;
     const flavour = flavourInput ? flavourInput.value.trim() : '';
     const stock = stockSelect ? stockSelect.value : 'inStock';
     const stockQuantity = quantityInput ? parseInt(quantityInput.value) || 0 : 20;
     
-    // Validate variant
     if (size && price > 0) {
       variants.push({
         size: size,
@@ -1409,8 +1382,6 @@ window.addProduct = async function() {
         stockQuantity: stockQuantity
       });
       hasValidVariant = true;
-    } else {
-      console.warn(`Variant ${index + 1} skipped: size="${size}", price=${price}`);
     }
   });
 
@@ -1419,7 +1390,6 @@ window.addProduct = async function() {
     return;
   }
 
-  // Prepare product data
   const productData = {
     name: name,
     category: category,
@@ -1434,9 +1404,6 @@ window.addProduct = async function() {
     updatedAt: new Date().toISOString()
   };
 
-  console.log('📦 Sending product data:', productData);
-
-  // Disable button and show loading
   if (addBtn) {
     addBtn.disabled = true;
     addBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
@@ -1452,12 +1419,10 @@ window.addProduct = async function() {
     });
     
     const data = await response.json();
-    console.log('📥 Server response:', data);
     
     if (data.success) {
       showToast('✅ Product added successfully!', 'success');
       
-      // Reset form
       if (nameInput) nameInput.value = '';
       if (imageInput) imageInput.value = '';
       if (descInput) descInput.value = '';
@@ -1466,14 +1431,13 @@ window.addProduct = async function() {
       if (ratingInput) ratingInput.value = 4.0;
       if (badgeInput) badgeInput.value = '';
       
-      // Reset variants to single row
       const variantsBody = document.getElementById('variantsBody');
       if (variantsBody) {
         variantsBody.innerHTML = `
           <tr class="variant-row">
             <td>
               <select class="variant-size" onchange="toggleVariantOther(this)">
-                <optgroup label="🍺 Beer">
+                <optgroup label="🍺 Beer &amp; Cider">
                   <option value="250ml">250ml</option>
                   <option value="330ml">330ml</option>
                   <option value="350ml">350ml</option>
@@ -1489,6 +1453,10 @@ window.addProduct = async function() {
                   <option value="750ml">750ml</option>
                   <option value="1L">1L</option>
                   <option value="1.5L">1.5L</option>
+                </optgroup>
+                <optgroup label="🍷 Wines &amp; Creams">
+                  <option value="750ml">750ml</option>
+                  <option value="1L">1L</option>
                 </optgroup>
                 <optgroup label="🧃 Juice &amp; Soda">
                   <option value="250ml">250ml</option>
@@ -1518,19 +1486,16 @@ window.addProduct = async function() {
         `;
       }
       
-      // Refresh the product list
       await preserveScroll(loadProducts);
       
     } else {
       showToast('❌ ' + (data.message || 'Failed to add product'), 'error');
-      console.error('Server error:', data);
     }
   } catch (error) {
     console.error('❌ Error adding product:', error);
     showToast('❌ Network error. Please try again.', 'error');
   }
   
-  // Re-enable button
   if (addBtn) {
     addBtn.disabled = false;
     addBtn.innerHTML = '<i class="ph ph-floppy-disk"></i> Save Product';
@@ -1591,7 +1556,7 @@ window.openEditModal = async function(productId) {
         row.className = 'variant-row';
         const stock = v.stock || 'inStock';
         const qty = v.stockQuantity || 0;
-        row.innerHTML = `<td><select class="variant-size-edit" onchange="toggleEditVariantOther(this)"><optgroup label="🍺 Beer"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option></optgroup><optgroup label="🥃 Spirits"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></optgroup><optgroup label="🧃 Juice &amp; Soda"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option></optgroup><option value="OTHER">✏️ Other (Type custom)</option></select><input type="text" class="variant-size-other-edit" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;"></td><td><input type="number" class="variant-price-edit" placeholder="Price" step="1" value="${v.price || 0}"></td><td><input type="number" class="variant-discount-edit" placeholder="0" min="0" max="100" value="${v.discount || 0}" step="1"></td><td><input type="text" class="variant-flavour-edit" placeholder="e.g. Orange, Original..." value="${v.flavour || ''}" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><select class="variant-stock-edit" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><option value="inStock" ${stock === 'inStock' ? 'selected' : ''}>✅ In Stock</option><option value="outOfStock" ${stock === 'outOfStock' ? 'selected' : ''}>❌ Out of Stock</option></select></td><td><input type="number" class="variant-quantity-edit" placeholder="Qty" value="${qty}" min="0" step="1" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>`;
+        row.innerHTML = `<td><select class="variant-size-edit" onchange="toggleEditVariantOther(this)"><optgroup label="🍺 Beer &amp; Cider"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option></optgroup><optgroup label="🥃 Spirits"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></optgroup><optgroup label="🍷 Wines &amp; Creams"><option value="750ml">750ml</option><option value="1L">1L</option></optgroup><optgroup label="🧃 Juice &amp; Soda"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option></optgroup><option value="OTHER">✏️ Other (Type custom)</option></select><input type="text" class="variant-size-other-edit" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;"></td><td><input type="number" class="variant-price-edit" placeholder="Price" step="1" value="${v.price || 0}"></td><td><input type="number" class="variant-discount-edit" placeholder="0" min="0" max="100" value="${v.discount || 0}" step="1"></td><td><input type="text" class="variant-flavour-edit" placeholder="e.g. Orange, Original..." value="${v.flavour || ''}" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><select class="variant-stock-edit" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><option value="inStock" ${stock === 'inStock' ? 'selected' : ''}>✅ In Stock</option><option value="outOfStock" ${stock === 'outOfStock' ? 'selected' : ''}>❌ Out of Stock</option></select></td><td><input type="number" class="variant-quantity-edit" placeholder="Qty" value="${qty}" min="0" step="1" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>`;
         tbody.appendChild(row);
         const select = row.querySelector('.variant-size-edit');
         const sizeOptions = select.querySelectorAll('option');
@@ -1619,7 +1584,7 @@ window.addEditVariantRow = function() {
   const tbody = document.getElementById('editVariantsBody');
   const row = document.createElement('tr');
   row.className = 'variant-row';
-  row.innerHTML = `<td><select class="variant-size-edit" onchange="toggleEditVariantOther(this)"><optgroup label="🍺 Beer"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option></optgroup><optgroup label="🥃 Spirits"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></optgroup><optgroup label="🧃 Juice &amp; Soda"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option></optgroup><option value="OTHER">✏️ Other (Type custom)</option></select><input type="text" class="variant-size-other-edit" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;"></td><td><input type="number" class="variant-price-edit" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount-edit" placeholder="0" min="0" max="100" value="0" step="1"></td><td><input type="text" class="variant-flavour-edit" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><select class="variant-stock-edit" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><option value="inStock">✅ In Stock</option><option value="outOfStock">❌ Out of Stock</option></select></td><td><input type="number" class="variant-quantity-edit" placeholder="Qty" value="20" min="0" step="1" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>`;
+  row.innerHTML = `<td><select class="variant-size-edit" onchange="toggleEditVariantOther(this)"><optgroup label="🍺 Beer &amp; Cider"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="750ml">750ml</option><option value="1L">1L</option></optgroup><optgroup label="🥃 Spirits"><option value="250ml">250ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="700ml">700ml</option><option value="750ml">750ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option></optgroup><optgroup label="🍷 Wines &amp; Creams"><option value="750ml">750ml</option><option value="1L">1L</option></optgroup><optgroup label="🧃 Juice &amp; Soda"><option value="250ml">250ml</option><option value="330ml">330ml</option><option value="350ml">350ml</option><option value="500ml">500ml</option><option value="1L">1L</option><option value="1.5L">1.5L</option><option value="2L">2L</option></optgroup><option value="OTHER">✏️ Other (Type custom)</option></select><input type="text" class="variant-size-other-edit" placeholder="Type custom size..." style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;"></td><td><input type="number" class="variant-price-edit" placeholder="Price" step="1"></td><td><input type="number" class="variant-discount-edit" placeholder="0" min="0" max="100" value="0" step="1"></td><td><input type="text" class="variant-flavour-edit" placeholder="e.g. Orange, Original..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><select class="variant-stock-edit" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><option value="inStock">✅ In Stock</option><option value="outOfStock">❌ Out of Stock</option></select></td><td><input type="number" class="variant-quantity-edit" placeholder="Qty" value="20" min="0" step="1" style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></td><td><button type="button" class="remove-variant" onclick="removeEditVariantRow(this)">✕</button></td>`;
   tbody.appendChild(row);
 };
 
@@ -1705,7 +1670,6 @@ async function loadOrders() {
   }
 }
 
-// ✅ RENDER ORDERS FUNCTION
 function renderOrders(orders) {
   const list = document.getElementById('ordersList');
   const countDisplay = document.getElementById('orderCountDisplay');
@@ -1734,6 +1698,12 @@ function renderOrders(orders) {
     const cleanPhone = phone.replace(/\D/g, '');
     const waLink = 'https://wa.me/' + (cleanPhone.startsWith('254') ? cleanPhone : '254' + cleanPhone);
     
+    // Delivery info
+    const deliveryAddress = o.delivery_address || o.address || o.location || '';
+    const deliveryLocation = o.delivery_location || o.location_name || '';
+    const email = o.customer_email || o.email || '';
+    const customerName = o.customer_name || o.name || 'Guest';
+    
     let itemsHtml = '';
     for (var i = 0; i < items.length; i++) {
       var item = items[i];
@@ -1751,14 +1721,26 @@ function renderOrders(orders) {
         '</div>';
     }
     
+    // Delivery info block
+    let deliveryInfoHtml = '';
+    if (deliveryAddress || deliveryLocation || email || phone) {
+      deliveryInfoHtml = '<div class="order-delivery-info">';
+      if (customerName) deliveryInfoHtml += '<div class="delivery-item"><i class="ph ph-user"></i> <strong>' + escapeHtml(customerName) + '</strong></div>';
+      if (email) deliveryInfoHtml += '<div class="delivery-item"><i class="ph ph-envelope"></i> ' + escapeHtml(email) + '</div>';
+      if (phone) deliveryInfoHtml += '<div class="delivery-item"><i class="ph ph-phone"></i> ' + escapeHtml(phone) + '</div>';
+      if (deliveryLocation) deliveryInfoHtml += '<div class="delivery-item"><i class="ph ph-map-pin"></i> <strong>Location:</strong> ' + escapeHtml(deliveryLocation) + '</div>';
+      if (deliveryAddress) deliveryInfoHtml += '<div class="delivery-item" style="grid-column:1/-1;"><i class="ph ph-address-book"></i> <strong>Address:</strong> ' + escapeHtml(deliveryAddress) + '</div>';
+      deliveryInfoHtml += '</div>';
+    }
+    
     return '<div class="order-card">' +
       '<div class="order-header">' +
       '<div>' +
       '<div class="order-id">#' + (o.order_number || o._id) + '</div>' +
-      '<div class="order-customer">' + escapeHtml(o.customer_name || 'Guest') + '</div>' +
+      '<div class="order-customer">' + escapeHtml(customerName) + '</div>' +
       '<div class="order-meta-row">' +
       '<span class="order-meta-chip"><i class="ph ph-phone"></i> ' + escapeHtml(phone || 'N/A') + '</span>' +
-      '<span class="order-meta-chip"><i class="ph ph-envelope"></i> ' + escapeHtml(o.customer_email || 'N/A') + '</span>' +
+      '<span class="order-meta-chip"><i class="ph ph-envelope"></i> ' + escapeHtml(email || 'N/A') + '</span>' +
       '<span class="order-meta-chip"><i class="ph ph-calendar"></i> ' + new Date(o.created_at).toLocaleDateString() + ' ' + new Date(o.created_at).toLocaleTimeString() + '</span>' +
       '</div>' +
       '</div>' +
@@ -1770,6 +1752,7 @@ function renderOrders(orders) {
       '</div>' +
       '</div>' +
       '</div>' +
+      deliveryInfoHtml +
       '<div class="order-items">' + itemsHtml + '</div>' +
       '<div class="order-footer">' +
       '<div class="order-total">KES ' + (o.total || 0).toLocaleString() + '</div>' +
@@ -1783,7 +1766,6 @@ function renderOrders(orders) {
   updateOrderStats();
 }
 
-// ✅ FILTER AND RENDER
 function filterAndRenderOrders() {
   const dateFilter = document.getElementById('dateFilter');
   const statusFilter = document.getElementById('statusFilter');
@@ -1815,12 +1797,10 @@ function filterAndRenderOrders() {
   renderOrders(filtered);
 }
 
-// ✅ APPLY FILTERS (for the filter buttons to call)
 window.applyFilters = function() {
   filterAndRenderOrders();
 };
 
-// ✅ UPDATE ORDER STATS
 function updateOrderStats() {
   const totalEl = document.getElementById('totalOrdersCount');
   const pendingEl = document.getElementById('pendingOrdersCount');
@@ -1847,11 +1827,8 @@ function updateOrderStats() {
   if (pendingEl) pendingEl.textContent = pending;
   if (paidEl) paidEl.textContent = paid;
   if (deliveredEl) deliveredEl.textContent = delivered;
-
-  console.log('📊 Order stats updated:', { total, pending, paid, delivered });
 }
 
-// ✅ MARK DELIVERED
 window.markDelivered = async function(orderId) {
   if (!confirm('Mark this order as delivered?')) return;
   try {
@@ -1872,13 +1849,11 @@ window.markDelivered = async function(orderId) {
   }
 };
 
-// ✅ REFRESH ORDERS
 window.refreshOrders = function() {
   showToast('🔄 Refreshing orders...', '');
   loadOrders();
 };
 
-// ✅ UTILITY: escapeHtml
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/[&<>"']/g, function(m) {
@@ -1958,7 +1933,7 @@ async function loadAnalytics() {
         cognac: '#8B6914', cream: '#F5D0A9', beer: '#F59E0B', brandy: '#B8860B',
         bourbon: '#8B4513', rum: '#DC2626', spirits: '#7C3AED', liqueur: '#EC4899',
         juice: '#EF4444', soda: '#3B82F6', water: '#06B6D4', energy: '#F97316',
-        cigar: '#92400E', accessory: '#6B7280'
+        cigar: '#92400E', accessory: '#6B7280', cider: '#F59E0B', vermouth: '#B8860B'
       };
       
       breakdown.innerHTML = sorted.map(([cat, count]) => {
@@ -2230,7 +2205,7 @@ function updateCategoryDropdowns() {
     const uniqueCategories = [...new Set(categories)];
     
     let html = '<optgroup label="🥃 Spirits">';
-    const spiritCats = ['whisky', 'vodka', 'gin', 'cognac', 'rum', 'brandy', 'bourbon', 'spirits', 'liqueur'];
+    const spiritCats = ['whisky', 'vodka', 'gin', 'cognac', 'rum', 'brandy', 'bourbon', 'spirits', 'liqueur', 'vermouth'];
     spiritCats.forEach(c => {
       if (uniqueCategories.includes(c)) {
         html += `<option value="${c}">${CATEGORY_LABELS[c] || c}</option>`;
@@ -2244,6 +2219,7 @@ function updateCategoryDropdowns() {
     });
     html += '</optgroup><optgroup label="🍺 Beers &amp; Ciders">';
     if (uniqueCategories.includes('beer')) html += `<option value="beer">Beer</option>`;
+    if (uniqueCategories.includes('cider')) html += `<option value="cider">Cider</option>`;
     html += '</optgroup><optgroup label="🧃 Juices &amp; Mixers">';
     ['juice', 'soda', 'water', 'energy'].forEach(c => {
       if (uniqueCategories.includes(c)) {
