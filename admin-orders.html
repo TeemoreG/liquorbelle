@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>LiquorBelle — Order Manager</title>
+<title>LiquorBelle — Cashier Orders</title>
 
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -39,13 +39,14 @@
   --gold-bg:#fdf6e3;
   --btn-green:#22C55E;
   --btn-green-hover:#16A34A;
-  --green-light:#E8F5E9;
-  --radius:24px;
-  --radius-sm:14px;
-  --radius-xs:10px;
-  --shadow:0 4px 20px rgba(0,0,0,0.06);
+  --btn-blue:#1D4ED8;
+  --btn-blue-hover:#1e40af;
+  --radius:20px;
+  --radius-sm:12px;
+  --radius-xs:8px;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
   --shadow-lg:0 8px 32px rgba(0,0,0,0.10);
-  --shadow-xl:0 30px 80px rgba(0,0,0,0.12);
+  --shadow-xl:0 20px 60px rgba(0,0,0,0.12);
   --font-body:'Inter',-apple-system,sans-serif;
 }
 body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh;}
@@ -55,44 +56,34 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 ::-webkit-scrollbar-thumb:hover{background:var(--gold-light);}
 
 /* ============================================================
-   CATEGORY BADGES
-   ============================================================ */
-.category-badge{display:inline-block;padding:2px 10px;border-radius:50px;font-size:10px;font-weight:600;margin-left:6px;}
-.cat-beer{background:#F59E0B;color:#fff}.cat-brandy{background:#B8860B;color:#fff}
-.cat-bourbon{background:#8B4513;color:#fff}.cat-rum{background:#DC2626;color:#fff}
-.cat-spirits{background:#7C3AED;color:#fff}.cat-liqueur{background:#EC4899;color:#fff}
-.cat-juice{background:#EF4444;color:#fff}.cat-soda{background:#3B82F6;color:#fff}
-.cat-water{background:#06B6D4;color:#fff}.cat-energy{background:#F97316;color:#fff}
-.cat-cigar{background:#92400E;color:#fff}.cat-accessory{background:#6B7280;color:#fff}
-
-/* ============================================================
    LOGIN
    ============================================================ */
 .login-modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);
   display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px;
 }
 .login-modal-card{
-  background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
-  padding:40px 32px;width:100%;max-width:400px;text-align:center;box-shadow:var(--shadow-xl);
-  position:relative;overflow:hidden;
+  background:var(--white);border-radius:var(--radius);padding:40px 34px;
+  width:100%;max-width:400px;text-align:center;box-shadow:var(--shadow-xl);
+  position:relative;overflow:hidden;animation:slideUp 0.4s ease;
 }
+@keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
 .login-modal-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:4px;
   background:linear-gradient(90deg,var(--primary),var(--gold),var(--primary));
 }
 .login-logo img{width:68px;height:68px;border-radius:16px;margin-bottom:14px;box-shadow:0 4px 20px rgba(128,0,0,0.2);}
-.login-logo h2{color:var(--primary);font-size:1.5rem;font-weight:800;letter-spacing:-0.01em;}
+.login-logo h2{color:var(--primary);font-size:1.5rem;font-weight:800;}
 .login-logo h2 .gold{color:var(--gold);}
 .login-logo p{color:var(--muted);font-size:13px;margin-bottom:24px;margin-top:4px;}
 .password-input-wrapper{position:relative;width:100%;margin-bottom:16px;}
 .login-input{
-  width:100%;padding:14px 50px 14px 16px;border:1.5px solid var(--border);
+  width:100%;padding:14px 50px 14px 16px;border:2px solid var(--border);
   border-radius:var(--radius-sm);font-size:15px;background:var(--bg);color:var(--text);
   transition:all 0.2s ease;font-family:var(--font-body);
 }
 .login-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(184,134,11,0.12);background:var(--white);}
-.password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:18px;background:none;border:none;padding:4px;}
+.password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:19px;background:none;border:none;padding:4px;}
 .password-toggle:hover{color:var(--gold);}
 .login-btn{
   width:100%;padding:14px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));
@@ -105,200 +96,225 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 .login-error{color:var(--sale-red);font-size:13px;margin-top:12px;min-height:20px;font-weight:500;}
 
 /* ============================================================
-   BUTTONS
-   ============================================================ */
-.btn{
-  background:var(--primary);color:white;border:none;padding:10px 18px;border-radius:var(--radius-sm);
-  cursor:pointer;font-weight:600;transition:all 0.2s ease;font-size:13px;font-family:var(--font-body);
-  display:inline-flex;align-items:center;gap:7px;line-height:1;white-space:nowrap;
-}
-.btn:hover{background:var(--primary-light);transform:translateY(-1px);box-shadow:0 4px 16px rgba(128,0,0,0.25);}
-.btn:active{transform:scale(0.97);}
-.btn-sm{padding:8px 14px;font-size:12px;gap:5px;}
-.btn-xs{padding:6px 10px;font-size:11px;gap:4px;}
-.btn-green{background:var(--btn-green);}
-.btn-green:hover{background:var(--btn-green-hover);box-shadow:0 4px 16px rgba(34,197,94,0.3);}
-.btn-blue{background:#1D4ED8;}
-.btn-blue:hover{background:#1e40af;box-shadow:0 4px 16px rgba(29,78,216,0.3);}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text-secondary);}
-.btn-outline:hover{background:var(--bg2);border-color:var(--muted);transform:none;box-shadow:none;}
-.btn-red{background:var(--sale-red);}
-.btn-red:hover{background:#B71C1C;box-shadow:0 4px 16px rgba(213,0,0,0.3);}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:white;}
-.btn-gold:hover{box-shadow:0 4px 20px rgba(184,134,11,0.35);transform:translateY(-1px);}
-.btn-wa{background:#25D366;color:white;}
-.btn-wa:hover{background:#128C7E;}
-.btn-call{background:#1D4ED8;color:white;}
-.btn-call:hover{background:#1e40af;}
-.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
-
-/* ============================================================
    HEADER
    ============================================================ */
 .admin-header{
-  background:linear-gradient(120deg,var(--primary-dark),var(--primary));
-  color:white;padding:0 5%;height:66px;display:flex;justify-content:space-between;
-  align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,0.18);
+  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+  color:white;padding:0 5%;height:68px;display:flex;justify-content:space-between;
+  align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,0.2);
 }
-.logo{display:flex;align-items:center;gap:11px;flex-shrink:0;}
-.logo-img{height:38px;width:auto;border-radius:9px;box-shadow:0 2px 10px rgba(0,0,0,0.2);}
-.logo-text{font-weight:700;font-size:1.15rem;white-space:nowrap;letter-spacing:-0.01em;}
+.logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.logo-img{height:40px;width:auto;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.2);}
+.logo-text{font-weight:700;font-size:1.1rem;white-space:nowrap;}
 .logo-text .gold{color:var(--gold-light);}
-.logo-divider{width:1px;height:26px;background:rgba(255,255,255,0.18);}
+.logo-divider{width:1px;height:28px;background:rgba(255,255,255,0.15);}
 .live-pill{
   display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
-  background:rgba(255,255,255,0.1);padding:5px 11px;border-radius:50px;color:rgba(255,255,255,0.85);
+  background:rgba(255,255,255,0.1);padding:5px 12px;border-radius:50px;color:rgba(255,255,255,0.85);
 }
-.live-dot{width:7px;height:7px;border-radius:50%;background:#4ADE80;box-shadow:0 0 0 rgba(74,222,128,0.5);animation:pulseDot 2s infinite;}
-@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(74,222,128,0.55);}70%{box-shadow:0 0 0 7px rgba(74,222,128,0);}100%{box-shadow:0 0 0 0 rgba(74,222,128,0);}}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ADE80;animation:pulseDot 2s infinite;}
+@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(74,222,128,0.5);}70%{box-shadow:0 0 0 7px rgba(74,222,128,0);}100%{box-shadow:0 0 0 0 rgba(74,222,128,0);}}
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-logout{
   background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.9);
-  padding:8px 15px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;
+  padding:8px 16px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;
   display:inline-flex;align-items:center;gap:6px;transition:all 0.2s ease;white-space:nowrap;
 }
 .header-logout:hover{background:rgba(255,255,255,0.2);color:white;}
 
 /* ============================================================
-   CONTAINER & STATS
+   BUTTONS
    ============================================================ */
-.container{max-width:1440px;margin:0 auto;padding:26px 5% 60px;}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin-bottom:22px;}
-.stat-card{
-  background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
-  padding:18px 20px;transition:all 0.25s ease;position:relative;overflow:hidden;box-shadow:var(--shadow);
+.btn{
+  background:var(--primary);color:white;border:none;padding:9px 16px;border-radius:var(--radius-sm);
+  cursor:pointer;font-weight:600;transition:all 0.2s ease;font-size:12.5px;font-family:var(--font-body);
+  display:inline-flex;align-items:center;gap:6px;line-height:1;white-space:nowrap;
 }
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--stat-accent,var(--gold));}
-.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
-.stat-card h4{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:700;display:flex;align-items:center;gap:5px;}
-.stat-card .value{font-size:28px;font-weight:800;color:var(--text);line-height:1.15;margin-top:6px;}
-.stat-card .sub{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500;}
-.stat-card .icon{position:absolute;right:14px;bottom:12px;font-size:30px;opacity:0.07;}
+.btn:hover{background:var(--primary-light);transform:translateY(-1px);box-shadow:0 4px 16px rgba(128,0,0,0.2);}
+.btn:active{transform:scale(0.97);}
+.btn-sm{padding:7px 12px;font-size:11.5px;gap:4px;}
+.btn-xs{padding:5px 10px;font-size:10.5px;gap:3px;}
+.btn-green{background:var(--btn-green);}
+.btn-green:hover{background:var(--btn-green-hover);box-shadow:0 4px 16px rgba(34,197,94,0.3);}
+.btn-blue{background:var(--btn-blue);}
+.btn-blue:hover{background:var(--btn-blue-hover);box-shadow:0 4px 16px rgba(29,78,216,0.3);}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text-secondary);}
+.btn-outline:hover{background:var(--bg2);border-color:var(--muted);transform:none;box-shadow:none;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:white;}
+.btn-gold:hover{box-shadow:0 4px 20px rgba(184,134,11,0.35);transform:translateY(-1px);}
+.btn-wa{background:#25D366;color:white;}
+.btn-wa:hover{background:#128C7E;}
+.btn-call{background:var(--btn-blue);color:white;}
+.btn-call:hover{background:var(--btn-blue-hover);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
+
+/* ============================================================
+   CONTAINER
+   ============================================================ */
+.container{max-width:1440px;margin:0 auto;padding:20px 4% 40px;}
+
+/* ============================================================
+   ANALYTICS SECTION
+   ============================================================ */
+.analytics-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;
+  margin-bottom:20px;
+}
+.analytics-card{
+  background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:16px 18px;box-shadow:var(--shadow);transition:all 0.2s ease;
+  display:flex;align-items:center;gap:14px;
+}
+.analytics-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--gold);}
+.analytics-icon{
+  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;
+}
+.analytics-icon.gold{background:var(--gold-bg);color:var(--gold);}
+.analytics-icon.green{background:#E8F5E9;color:var(--btn-green);}
+.analytics-icon.blue{background:#EFF6FF;color:var(--btn-blue);}
+.analytics-icon.orange{background:#FFF7ED;color:#F59E0B;}
+.analytics-icon.purple{background:#F5F3FF;color:#7C3AED;}
+.analytics-info{flex:1;min-width:0;}
+.analytics-info .label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:600;}
+.analytics-info .value{font-size:24px;font-weight:800;color:var(--text);line-height:1.2;}
+.analytics-info .sub{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500;}
+.analytics-info .trend{font-size:11px;font-weight:600;margin-left:6px;}
+.analytics-info .trend.up{color:var(--btn-green);}
+.analytics-info .trend.down{color:var(--sale-red);}
+
+/* ============================================================
+   HELP TEXT
+   ============================================================ */
+.help-text{
+  font-size:12px;color:var(--text-secondary);background:var(--gold-bg);
+  padding:10px 14px;border-radius:9px;border-left:3px solid var(--gold);
+  display:flex;align-items:center;gap:8px;margin-bottom:16px;
+}
+.help-text i{color:var(--gold);flex-shrink:0;}
 
 /* ============================================================
    TOOLBAR
    ============================================================ */
 .toolbar{
-  background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
-  padding:14px;margin-bottom:18px;display:flex;flex-direction:column;gap:12px;
-  position:sticky;top:66px;z-index:40;box-shadow:var(--shadow);
+  background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;
+  box-shadow:var(--shadow);
 }
 .toolbar-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-.search-input-wrap{flex:1;min-width:200px;position:relative;}
-.search-input-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;}
+.search-input-wrap{flex:1;min-width:180px;position:relative;}
+.search-input-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;}
 .search-input{
-  width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  font-size:13.5px;background:var(--bg);color:var(--text);transition:all 0.2s ease;font-family:var(--font-body);
+  width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--border);border-radius:var(--radius-xs);
+  font-size:13px;background:var(--bg);color:var(--text);transition:all 0.2s ease;font-family:var(--font-body);
 }
-.search-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,0.12);background:var(--white);}
+.search-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,0.1);background:var(--white);}
 .filter-select{
-  padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12.5px;
-  background:var(--bg);color:var(--text);cursor:pointer;min-width:150px;transition:all 0.2s ease;
-  font-family:var(--font-body);font-weight:500;
+  padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-xs);
+  font-size:12px;background:var(--bg);color:var(--text);cursor:pointer;min-width:130px;
+  transition:all 0.2s ease;font-family:var(--font-body);font-weight:500;
 }
 .filter-select:focus{outline:none;border-color:var(--gold);}
-.filter-stats{font-size:11.5px;color:var(--text-secondary);background:var(--gold-bg);padding:9px 14px;border-radius:var(--radius-sm);font-weight:600;white-space:nowrap;}
-.help-text{
-  font-size:12px;color:var(--text-secondary);background:var(--gold-bg);padding:9px 13px;border-radius:9px;
-  border-left:3px solid var(--gold);display:flex;align-items:center;gap:6px;margin-bottom:18px;
-}
-.help-text i{color:var(--gold);flex-shrink:0;}
+.filter-stats{font-size:11.5px;color:var(--text-secondary);background:var(--gold-bg);padding:8px 14px;border-radius:var(--radius-xs);font-weight:600;white-space:nowrap;}
+
+/* ============================================================
+   STATUS CHIPS
+   ============================================================ */
 .status-chips{display:flex;gap:6px;flex-wrap:wrap;}
 .status-chip{
-  padding:8px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);
-  background:var(--bg2);color:var(--text-secondary);transition:all 0.2s ease;display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:50px;font-size:11.5px;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--border);background:var(--bg2);color:var(--text-secondary);
+  transition:all 0.2s ease;display:inline-flex;align-items:center;gap:5px;
 }
 .status-chip:hover{border-color:var(--muted);}
 .status-chip.active{background:var(--primary);border-color:var(--primary);color:white;}
-.status-chip .count{font-size:10px;background:rgba(0,0,0,0.12);padding:1px 6px;border-radius:50px;}
-.status-chip.active .count{background:rgba(255,255,255,0.25);}
+.status-chip .count{font-size:9.5px;background:rgba(0,0,0,0.1);padding:1px 6px;border-radius:50px;}
+.status-chip.active .count{background:rgba(255,255,255,0.2);}
 
 /* ============================================================
-   BULK ACTION BAR
+   BULK BAR
    ============================================================ */
 .bulk-bar{
   display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  background:var(--primary);color:white;padding:12px 16px;border-radius:var(--radius);
-  margin-bottom:16px;animation:slideDown 0.25s ease;
+  background:var(--primary);color:white;padding:10px 16px;border-radius:var(--radius-sm);
+  margin-bottom:14px;animation:slideDown 0.25s ease;
 }
 .bulk-bar.show{display:flex;}
-@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
 .bulk-bar .left{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;}
 .bulk-bar .actions{display:flex;gap:8px;flex-wrap:wrap;}
 
 /* ============================================================
-   ORDER CARDS
+   ORDERS LIST
    ============================================================ */
-.orders-list{display:flex;flex-direction:column;gap:16px;}
+.orders-list{display:flex;flex-direction:column;gap:14px;}
 .order-card{
-  background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
-  overflow:hidden;transition:all 0.25s ease;display:flex;position:relative;box-shadow:var(--shadow);
+  background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);
+  overflow:hidden;transition:all 0.25s ease;box-shadow:var(--shadow);
 }
 .order-card:hover{box-shadow:var(--shadow-lg);border-color:var(--gold);}
 .order-card.selected{outline:2px solid var(--gold);outline-offset:-1px;}
 .order-card.is-new::after{
-  content:'NEW';position:absolute;top:-1px;left:46px;background:var(--gold);
-  color:white;font-size:9px;font-weight:800;letter-spacing:0.06em;padding:3px 8px 4px;border-radius:0 0 6px 6px;z-index:2;
+  content:'NEW';position:absolute;top:-1px;left:42px;background:var(--gold);
+  color:white;font-size:8px;font-weight:800;letter-spacing:0.06em;padding:2px 8px 3px;border-radius:0 0 6px 6px;z-index:2;
 }
-
+.order-card{position:relative;}
 .order-card-body{flex:1;min-width:0;display:flex;flex-direction:column;}
 .order-header{
-  display:grid;grid-template-columns:auto 1fr auto;gap:14px;padding:16px 18px;
-  background:linear-gradient(120deg,var(--primary-dark),var(--primary));align-items:start;
+  display:grid;grid-template-columns:auto 1fr auto;gap:12px;padding:14px 16px;
+  background:linear-gradient(135deg,var(--primary-dark),var(--primary));align-items:start;
 }
-.order-select{width:18px;height:18px;margin-top:3px;accent-color:var(--gold);cursor:pointer;}
-.order-id-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.order-select{width:17px;height:17px;margin-top:2px;accent-color:var(--gold);cursor:pointer;}
+.order-id-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .order-id{
-  font-family:monospace;font-weight:600;font-size:12px;color:rgba(255,255,255,0.9);
-  background:rgba(0,0,0,0.22);display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;
+  font-family:monospace;font-weight:600;font-size:11px;color:rgba(255,255,255,0.9);
+  background:rgba(0,0,0,0.2);display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;
   cursor:pointer;border:none;transition:all 0.15s ease;
 }
-.order-id:hover{background:rgba(0,0,0,0.32);}
-.order-age{font-size:10.5px;color:rgba(255,255,255,0.65);font-weight:500;}
-.order-customer{font-weight:700;color:white;font-size:17px;margin-top:7px;}
-.order-meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:9px;}
+.order-id:hover{background:rgba(0,0,0,0.35);}
+.order-age{font-size:10px;color:rgba(255,255,255,0.6);font-weight:500;}
+.order-customer{font-weight:700;color:white;font-size:16px;margin-top:4px;}
+.order-meta-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;}
 .order-meta-chip{
-  background:rgba(255,255,255,0.13);padding:4px 10px;border-radius:6px;font-size:11px;
-  display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,0.88);font-weight:500;
+  background:rgba(255,255,255,0.12);padding:3px 9px;border-radius:5px;font-size:10.5px;
+  display:inline-flex;align-items:center;gap:4px;color:rgba(255,255,255,0.85);font-weight:500;
 }
-.order-header-right{display:flex;flex-direction:column;gap:9px;align-items:flex-end;}
-.order-status{padding:6px 13px;border-radius:7px;font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
-.status-pending{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;}
+.order-header-right{display:flex;flex-direction:column;gap:7px;align-items:flex-end;}
+.order-status{padding:5px 12px;border-radius:6px;font-size:10.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.status-pending{background:var(--gold-bg);color:#C2410C;border:1px solid #FED7AA;}
 .status-paid{background:#F0FDF4;color:#15803D;border:1px solid #bbf7d0;}
-.status-delivered{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
-.contact-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
-.contact-buttons a{text-decoration:none;}
+.status-delivered{background:#EFF6FF;color:var(--btn-blue);border:1px solid #BFDBFE;}
+.contact-buttons{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+.contact-buttons a,.contact-buttons button{text-decoration:none;}
 
 .order-items{
-  padding:13px 18px;background:var(--bg2);max-height:300px;overflow-y:auto;
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px;
+  padding:10px 14px;background:var(--bg2);max-height:260px;overflow-y:auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;
 }
-.order-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--white);border-radius:var(--radius-sm);border:1px solid var(--border-light);}
-.order-item-img{width:44px;height:44px;object-fit:cover;border-radius:8px;background:var(--bg2);flex-shrink:0;}
+.order-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--white);border-radius:var(--radius-xs);border:1px solid var(--border-light);}
 .order-item-details{flex:1;min-width:0;}
-.order-item-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.order-item-qty{font-size:11.5px;color:var(--muted);margin-top:2px;}
-.order-item-price{font-weight:700;color:var(--text);font-size:13.5px;flex-shrink:0;}
+.order-item-name{font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.order-item-qty{font-size:10.5px;color:var(--muted);}
+.order-item-price{font-weight:700;color:var(--text);font-size:13px;flex-shrink:0;}
 
-.order-footer{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-top:1px solid var(--border-light);gap:12px;flex-wrap:wrap;background:var(--white);}
-.order-total{font-size:21px;font-weight:800;color:var(--text);}
-.order-total-label{font-size:10.5px;color:var(--muted);margin-top:1px;font-weight:500;}
-.order-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-.completed-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#1D4ED8;background:#EFF6FF;padding:7px 13px;border-radius:8px;border:1px solid #BFDBFE;}
+.order-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-top:1px solid var(--border-light);gap:10px;flex-wrap:wrap;background:var(--white);}
+.order-total{font-size:20px;font-weight:800;color:var(--text);}
+.order-total-label{font-size:10px;color:var(--muted);font-weight:500;}
+.order-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.completed-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--btn-blue);background:#EFF6FF;padding:6px 12px;border-radius:6px;border:1px solid #BFDBFE;}
 
 /* ============================================================
    EMPTY STATE
    ============================================================ */
-.empty-state{text-align:center;padding:64px 24px;color:var(--muted);background:var(--white);border-radius:var(--radius);border:1px dashed var(--border);}
-.empty-state i{font-size:42px;display:block;margin-bottom:14px;color:var(--border);}
-.empty-state p{font-size:14px;font-weight:500;}
-.empty-state .retry-btn{margin-top:14px;}
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted);background:var(--white);border-radius:var(--radius-sm);border:1px dashed var(--border);}
+.empty-state i{font-size:38px;display:block;margin-bottom:12px;color:var(--border);}
+.empty-state p{font-size:13px;font-weight:500;}
+.empty-state .retry-btn{margin-top:12px;}
 
 /* ============================================================
    TOAST
    ============================================================ */
-.toast-stack{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:2100;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
-.toast{background:var(--text);color:white;padding:12px 20px;border-radius:11px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(10px);transition:all 0.3s ease;white-space:nowrap;}
+.toast-stack{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2100;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;}
+.toast{background:var(--text);color:white;padding:10px 18px;border-radius:10px;font-size:12.5px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:6px;opacity:0;transform:translateY(8px);transition:all 0.3s ease;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateY(0);}
 .toast.error{background:var(--sale-red);}
 .toast.success{background:var(--btn-green);}
@@ -307,21 +323,20 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
    MODAL
    ============================================================ */
 .modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
   display:none;align-items:center;justify-content:center;z-index:1500;padding:20px;
 }
 .modal-overlay.show{display:flex;}
 .modal-card{
-  background:var(--white);border-radius:var(--radius);max-width:480px;width:100%;
-  max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-xl);animation:riseIn 0.3s ease;border:1px solid var(--border);
+  background:var(--white);border-radius:var(--radius);max-width:460px;width:100%;
+  max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-xl);animation:slideUp 0.3s ease;border:1px solid var(--border);
 }
-@keyframes riseIn{from{opacity:0;transform:translateY(16px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
-.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--border-light);position:sticky;top:0;background:var(--white);}
-.modal-head h3{font-size:18px;font-weight:800;color:var(--primary);}
-.modal-close{background:var(--bg2);border:none;width:32px;height:32px;border-radius:9px;cursor:pointer;color:var(--text-secondary);font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border-light);position:sticky;top:0;background:var(--white);}
+.modal-head h3{font-size:17px;font-weight:800;color:var(--primary);}
+.modal-close{background:var(--bg2);border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;color:var(--text-secondary);font-size:16px;display:flex;align-items:center;justify-content:center;}
 .modal-close:hover{background:var(--border);}
-.modal-body{padding:18px 20px;}
-.detail-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border-light);font-size:13px;}
+.modal-body{padding:16px 20px;}
+.detail-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-light);font-size:12.5px;}
 .detail-row:last-child{border-bottom:none;}
 .detail-row .label{color:var(--muted);font-weight:500;}
 .detail-row .val{font-weight:600;text-align:right;}
@@ -329,41 +344,38 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 /* ============================================================
    SKELETON
    ============================================================ */
-.skeleton-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
-.skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--border-light) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmerSkel 1.4s infinite;border-radius:6px;}
-@keyframes shimmerSkel{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
-.skel-line{height:12px;margin-bottom:8px;}
-
-/* ============================================================
-   SHORTCUTS MODAL
-   ============================================================ */
-.shortcut-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-light);font-size:13px;}
-.shortcut-row:last-child{border-bottom:none;}
-kbd{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-family:monospace;font-size:11.5px;font-weight:600;}
+.skeleton-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;}
+.skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--border-light) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.skel-line{height:11px;margin-bottom:6px;}
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
 @media(max-width:768px){
   .admin-header{padding:10px 4%;height:auto;flex-wrap:wrap;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
-  .toolbar{position:static;top:auto;}
+  .analytics-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .analytics-card{padding:12px 14px;}
+  .analytics-info .value{font-size:20px;}
   .order-header{grid-template-columns:auto 1fr;}
-  .order-header-right{grid-column:1/-1;align-items:flex-start;flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:4px;}
+  .order-header-right{grid-column:1/-1;align-items:flex-start;flex-direction:row;flex-wrap:wrap;gap:6px;margin-top:2px;}
   .contact-buttons{justify-content:flex-start;}
   .order-footer{flex-direction:column;align-items:stretch;}
   .order-actions{justify-content:flex-start;}
-  .order-items{grid-template-columns:1fr;}
-  .container{padding:14px 3% 50px;}
-  .filter-select{flex:1;min-width:140px;}
+  .order-items{grid-template-columns:1fr;padding:8px 10px;}
+  .container{padding:12px 3% 30px;}
+  .filter-select{flex:1;min-width:120px;}
   .status-chips{width:100%;}
 }
 @media(max-width:480px){
-  .stats-grid{grid-template-columns:1fr 1fr;}
-  .stat-card .value{font-size:24px;}
+  .analytics-grid{grid-template-columns:1fr 1fr;}
+  .analytics-card{padding:10px 12px;}
+  .analytics-icon{width:36px;height:36px;font-size:16px;}
+  .analytics-info .value{font-size:18px;}
+  .stat-card .value{font-size:22px;}
   .order-actions .btn{flex:1;justify-content:center;}
-  .order-customer{font-size:15px;}
-  .toast{white-space:normal;text-align:center;}
+  .order-customer{font-size:14px;}
+  .toast{white-space:normal;text-align:center;max-width:90%;}
 }
 </style>
 </head>
@@ -375,7 +387,7 @@ kbd{background:var(--bg2);border:1px solid var(--border);border-radius:6px;paddi
     <div class="login-logo">
       <img src="https://res.cloudinary.com/dvqjgbdhp/image/upload/f_auto,q_auto,w_120,c_fit/v1780905905/WhatsApp_Image_2026-06-04_at_3.41.50_PM_saprsh.jpg" alt="LiquorBelle" loading="eager">
       <h2>Cashier <span class="gold">Login</span></h2>
-      <p>Enter your password to open the order manager</p>
+      <p>Enter your password to manage orders</p>
     </div>
     <form id="cashierLoginForm" onsubmit="event.preventDefault(); submitCashierLogin();">
       <div class="password-input-wrapper">
@@ -406,10 +418,53 @@ kbd{background:var(--bg2);border:1px solid var(--border);border-radius:6px;paddi
 <!-- ===== MAIN CONTENT ===== -->
 <div class="container">
 
-  <div class="stats-grid" id="statsGrid"></div>
+  <!-- ===== ANALYTICS SECTION ===== -->
+  <div class="analytics-grid" id="analyticsGrid">
+    <div class="analytics-card">
+      <div class="analytics-icon gold"><i class="ph ph-clipboard-text"></i></div>
+      <div class="analytics-info">
+        <div class="label">Total Orders</div>
+        <div class="value" id="analyticsTotal">0</div>
+        <div class="sub">All time</div>
+      </div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-icon orange"><i class="ph ph-hourglass-medium"></i></div>
+      <div class="analytics-info">
+        <div class="label">Pending</div>
+        <div class="value" id="analyticsPending">0</div>
+        <div class="sub">Awaiting payment</div>
+      </div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-icon green"><i class="ph ph-money"></i></div>
+      <div class="analytics-info">
+        <div class="label">Paid</div>
+        <div class="value" id="analyticsPaid">0</div>
+        <div class="sub">Awaiting delivery</div>
+      </div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-icon blue"><i class="ph ph-truck"></i></div>
+      <div class="analytics-info">
+        <div class="label">Delivered</div>
+        <div class="value" id="analyticsDelivered">0</div>
+        <div class="sub">Completed</div>
+      </div>
+    </div>
+    <div class="analytics-card">
+      <div class="analytics-icon purple"><i class="ph ph-currency-kes"></i></div>
+      <div class="analytics-info">
+        <div class="label">Today's Revenue</div>
+        <div class="value" id="analyticsRevenue">KES 0</div>
+        <div class="sub">Today's earnings</div>
+      </div>
+    </div>
+  </div>
 
-  <div class="help-text"><i class="ph ph-info"></i> Auto-refreshes every 30s. <strong>Mark Paid</strong> once M-Pesa confirms, <strong>Mark Delivered</strong> once it's in the customer's hands.</div>
+  <div class="help-text"><i class="ph ph-info"></i> Auto-refreshes every 30s. <strong>Mark Paid</strong> once M-Pesa confirms, <strong>Mark Delivered</strong> when handed to customer.</div>
 
+  <!-- ===== TOOLBAR ===== -->
   <div class="toolbar">
     <div class="toolbar-row status-chips" id="statusChips"></div>
     <div class="toolbar-row">
@@ -425,62 +480,41 @@ kbd{background:var(--bg2);border:1px solid var(--border);border-radius:6px;paddi
         <option value="90">Last 90 days</option>
         <option value="365">Last year</option>
       </select>
-      <select id="sortOrder" class="filter-select" onchange="applyFilters()">
-        <option value="newest">Newest first</option>
-        <option value="oldest">Oldest first</option>
-        <option value="total_desc">Total: high → low</option>
-        <option value="total_asc">Total: low → high</option>
-      </select>
-      <span class="filter-stats" id="orderCountDisplay"></span>
+      <span class="filter-stats" id="orderCountDisplay">0 total</span>
       <button class="btn btn-outline btn-sm" onclick="clearSearch()"><i class="ph ph-x"></i> Clear</button>
       <button class="btn btn-gold btn-sm" onclick="manualRefresh()"><i class="ph ph-arrow-clockwise" id="refreshIcon"></i> Refresh</button>
-      <button class="btn btn-outline btn-sm" onclick="exportCsv()"><i class="ph ph-download-simple"></i> Export CSV</button>
     </div>
   </div>
 
+  <!-- ===== BULK BAR ===== -->
   <div class="bulk-bar" id="bulkBar">
     <div class="left"><i class="ph ph-check-square"></i> <span id="bulkCount">0</span> selected</div>
     <div class="actions">
       <button class="btn btn-green btn-sm" onclick="bulkUpdate('paid')"><i class="ph ph-money"></i> Mark Paid</button>
       <button class="btn btn-blue btn-sm" onclick="bulkUpdate('delivered')"><i class="ph ph-check-circle"></i> Mark Delivered</button>
-      <button class="btn btn-outline btn-sm" onclick="clearSelection()" style="background:rgba(255,255,255,0.12); color:white; border-color:rgba(255,255,255,0.3);">Clear</button>
+      <button class="btn btn-outline btn-sm" onclick="clearSelection()" style="background:rgba(255,255,255,0.15); color:white; border-color:rgba(255,255,255,0.25);">Clear</button>
     </div>
   </div>
 
+  <!-- ===== ORDERS LIST ===== -->
   <div id="ordersContainer" class="orders-list"></div>
 
 </div>
 
-<!-- ===== ORDER DETAILS MODAL ===== -->
+<!-- ===== DETAILS MODAL ===== -->
 <div class="modal-overlay" id="detailsModal" onclick="if(event.target===this) closeDetails()">
   <div class="modal-card">
-    <div class="modal-head"><h3>Order details</h3><button class="modal-close" onclick="closeDetails()"><i class="ph ph-x"></i></button></div>
+    <div class="modal-head"><h3>Order Details</h3><button class="modal-close" onclick="closeDetails()"><i class="ph ph-x"></i></button></div>
     <div class="modal-body" id="detailsBody"></div>
-  </div>
-</div>
-
-<!-- ===== SHORTCUTS MODAL ===== -->
-<div class="modal-overlay" id="shortcutsModal" onclick="if(event.target===this) closeShortcuts()">
-  <div class="modal-card">
-    <div class="modal-head"><h3>Keyboard shortcuts</h3><button class="modal-close" onclick="closeShortcuts()"><i class="ph ph-x"></i></button></div>
-    <div class="modal-body">
-      <div class="shortcut-row"><span>Focus search</span><kbd>/</kbd></div>
-      <div class="shortcut-row"><span>Refresh orders</span><kbd>Ctrl</kbd> + <kbd>R</kbd></div>
-      <div class="shortcut-row"><span>Clear search</span><kbd>Esc</kbd></div>
-      <div class="shortcut-row"><span>Show this panel</span><kbd>?</kbd></div>
-    </div>
   </div>
 </div>
 
 <!-- ===== TOAST ===== -->
 <div class="toast-stack" id="toastStack"></div>
 
-<!-- ============================================================
-     JAVASCRIPT
-     ============================================================ -->
 <script>
 // ============================================================
-// LIQUORBELLE — ADMIN ORDERS (COMPLETE)
+// LIQUORBELLE — CASHIER ORDER MANAGER (COMPLETE)
 // ============================================================
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const ADMIN_TOKEN_KEY = 'liquorbelle_admin_token';
@@ -611,10 +645,10 @@ function loadOrders() {
         firstLoad = false;
         renderStatusChips();
         applyFilters();
-        updateStats();
+        updateAnalytics();
       } else {
         document.getElementById('ordersContainer').innerHTML = emptyState('ph-warning-circle', 'No orders found', null);
-        updateStats();
+        updateAnalytics();
       }
     })
     .catch(function(err) {
@@ -631,27 +665,31 @@ function emptyState(icon, msg, retry) {
   return html;
 }
 
-// ---------------- STATS ----------------
-function updateStats() {
+// ---------------- ANALYTICS ----------------
+function updateAnalytics() {
   var total = allOrders.length;
   var pending = allOrders.filter(function(o) { return (o.status || '').toLowerCase() === 'pending'; }).length;
   var paid = allOrders.filter(function(o) { return (o.status || '').toLowerCase() === 'paid'; }).length;
   var delivered = allOrders.filter(function(o) { return (o.status || '').toLowerCase() === 'delivered'; }).length;
 
-  var statsGrid = document.getElementById('statsGrid');
-  if (!statsGrid) return;
-  statsGrid.innerHTML =
-    statCard('ph-clipboard-text', 'Total orders', total, 'All time') +
-    statCard('ph-hourglass-medium', 'Pending', pending, 'Awaiting payment') +
-    statCard('ph-money', 'Paid', paid, 'Awaiting delivery') +
-    statCard('ph-truck', 'Delivered', delivered, 'Completed');
+  // Calculate today's revenue (paid + delivered orders from today)
+  var today = new Date().toDateString();
+  var todayRevenue = allOrders
+    .filter(function(o) {
+      var orderDate = new Date(o.created_at).toDateString();
+      var status = (o.status || '').toLowerCase();
+      return orderDate === today && (status === 'paid' || status === 'delivered');
+    })
+    .reduce(function(sum, o) { return sum + (Number(o.total) || 0); }, 0);
+
+  document.getElementById('analyticsTotal').textContent = total;
+  document.getElementById('analyticsPending').textContent = pending;
+  document.getElementById('analyticsPaid').textContent = paid;
+  document.getElementById('analyticsDelivered').textContent = delivered;
+  document.getElementById('analyticsRevenue').textContent = 'KES ' + todayRevenue.toLocaleString();
 
   var countDisplay = document.getElementById('orderCountDisplay');
   if (countDisplay) countDisplay.textContent = total + ' total';
-}
-
-function statCard(icon, label, value, sub) {
-  return '<div class="stat-card"><h4><i class="ph ' + icon + '"></i> ' + label + '</h4><div class="value">' + value + '</div><div class="sub">' + sub + '</div><div class="icon"><i class="ph ' + icon + '"></i></div></div>';
 }
 
 // ---------------- STATUS CHIPS ----------------
@@ -683,7 +721,6 @@ window.setStatusChip = function(status) {
 // ---------------- FILTERS ----------------
 window.applyFilters = function() {
   var dateFilter = document.getElementById('dateFilter').value;
-  var sortOrder = document.getElementById('sortOrder').value;
   var searchQuery = document.getElementById('orderSearch').value.toLowerCase().trim();
 
   var filtered = allOrders.slice();
@@ -712,13 +749,11 @@ window.applyFilters = function() {
   }
 
   filtered.sort(function(a, b) {
-    if (sortOrder === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
-    if (sortOrder === 'total_desc') return (Number(b.total) || 0) - (Number(a.total) || 0);
-    if (sortOrder === 'total_asc') return (Number(a.total) || 0) - (Number(b.total) || 0);
     return new Date(b.created_at) - new Date(a.created_at);
   });
 
   renderOrders(filtered);
+  updateAnalytics();
 };
 
 // ---------------- RENDER ----------------
@@ -882,44 +917,17 @@ window.viewDetails = function(id) {
     (o.notes ? '<div class="detail-row"><span class="label">Notes</span><span class="val">' + escapeHtml(o.notes) + '</span></div>' : '') +
     '<div class="detail-row"><span class="label">Placed</span><span class="val">' + new Date(o.created_at).toLocaleString() + '</span></div>' +
     '<div class="detail-row"><span class="label">Status</span><span class="val">' + escapeHtml(o.status || '') + '</span></div>' +
-    '<div style="margin:14px 0 8px; font-weight:700; font-size:12.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Items</div>' +
+    '<div style="margin:12px 0 6px; font-weight:700; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Items</div>' +
     itemsHtml +
-    '<div class="detail-row" style="margin-top:6px;"><span class="label" style="font-weight:700;">Total</span><span class="val" style="font-size:16px;">KES ' + (Number(o.total)||0).toLocaleString() + '</span></div>';
+    '<div class="detail-row" style="margin-top:4px;"><span class="label" style="font-weight:700;">Total</span><span class="val" style="font-size:15px;">KES ' + (Number(o.total)||0).toLocaleString() + '</span></div>';
   document.getElementById('detailsModal').classList.add('show');
 };
 
 window.closeDetails = function() { document.getElementById('detailsModal').classList.remove('show'); };
-window.openShortcuts = function() { document.getElementById('shortcutsModal').classList.add('show'); };
-window.closeShortcuts = function() { document.getElementById('shortcutsModal').classList.remove('show'); };
 
 // ---------------- SEARCH / REFRESH ----------------
 window.clearSearch = function() { document.getElementById('orderSearch').value = ''; applyFilters(); };
 window.manualRefresh = function() { toast('🔄 Refreshing…', 'info'); loadOrders(); };
-
-// ---------------- CSV EXPORT ----------------
-window.exportCsv = function() {
-  var rows = [['Order #','Customer','Phone','Email','Status','Total (KES)','Placed']];
-  var dateFilter = document.getElementById('dateFilter').value;
-  var searchQuery = document.getElementById('orderSearch').value.toLowerCase().trim();
-  var set = allOrders.slice();
-  if (activeStatusChip !== 'all') set = set.filter(function(o){ return (o.status||'').toLowerCase() === activeStatusChip; });
-  if (searchQuery) set = set.filter(function(o){
-    return (o.customer_name||'').toLowerCase().indexOf(searchQuery) !== -1 ||
-           (o.customer_email||'').toLowerCase().indexOf(searchQuery) !== -1 ||
-           (o.phone||'').toLowerCase().indexOf(searchQuery) !== -1;
-  });
-  if (set.length === 0) { toast('Nothing to export', 'error'); return; }
-  set.forEach(function(o) {
-    rows.push([o.order_number || o._id, o.customer_name || 'Guest', o.phone || '', o.customer_email || '', o.status || '', Number(o.total)||0, new Date(o.created_at).toLocaleString()]);
-  });
-  var csv = rows.map(function(r) { return r.map(function(c) { return '"' + String(c).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
-  var blob = new Blob([csv], { type: 'text/csv' });
-  var link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'liquorbelle-orders-' + new Date().toISOString().slice(0,10) + '.csv';
-  link.click();
-  toast('📥 CSV exported', 'success');
-};
 
 // ---------------- CLIPBOARD ----------------
 window.copyText = function(text) {
@@ -960,17 +968,15 @@ document.addEventListener('keydown', function(e) {
 
   if (e.key === 'Escape') {
     if (document.getElementById('detailsModal').classList.contains('show')) { closeDetails(); return; }
-    if (document.getElementById('shortcutsModal').classList.contains('show')) { closeShortcuts(); return; }
     var searchInput = document.getElementById('orderSearch');
     if (searchInput && document.activeElement === searchInput) { searchInput.value = ''; applyFilters(); searchInput.blur(); }
     return;
   }
   if (e.ctrlKey && e.key.toLowerCase() === 'r') { e.preventDefault(); manualRefresh(); return; }
   if (!typing && e.key === '/') { e.preventDefault(); document.getElementById('orderSearch').focus(); return; }
-  if (!typing && e.key === '?') { openShortcuts(); return; }
 });
 
-console.log('🍾 LiquorBelle Order Manager loaded');
+console.log('🍾 LiquorBelle Cashier Order Manager loaded');
 </script>
 
 </body>

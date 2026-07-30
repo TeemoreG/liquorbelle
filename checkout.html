@@ -313,6 +313,11 @@ a{color:inherit;text-decoration:none;}
   padding:6px 0;
   font-size:.85rem;
 }
+.summary-row.vat-row{
+  color:var(--muted);
+  font-size:.78rem;
+  padding:2px 0;
+}
 .summary-row.total{
   border-top:2px solid var(--primary);
   margin-top:6px;
@@ -405,6 +410,88 @@ a{color:inherit;text-decoration:none;}
 }
 .form-group .field-hint{display:block;margin-top:4px;font-size:10px;color:var(--muted);}
 .form-group .field-hint i{margin-right:4px;}
+
+/* Building Autocomplete */
+.building-suggestions{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-lg);
+  z-index:100;
+  max-height:200px;
+  overflow-y:auto;
+  margin-top:4px;
+  display:none;
+}
+.building-suggestions .suggestion-item{
+  padding:10px 14px;
+  cursor:pointer;
+  border-bottom:1px solid var(--border-light);
+  font-size:13px;
+  transition:background 0.15s ease;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.building-suggestions .suggestion-item:last-child{
+  border-bottom:none;
+}
+.building-suggestions .suggestion-item:hover{
+  background:var(--gold-bg);
+}
+.building-suggestions .suggestion-item .icon{
+  color:var(--gold);
+  font-size:16px;
+  flex-shrink:0;
+}
+.building-suggestions .suggestion-item .name{
+  font-weight:600;
+  color:var(--text);
+}
+.building-suggestions .suggestion-item .address{
+  font-size:11px;
+  color:var(--muted);
+  display:block;
+  margin-top:2px;
+}
+.building-suggestions .suggestion-item .badge{
+  margin-left:auto;
+  background:var(--bg2);
+  padding:2px 8px;
+  border-radius:4px;
+  font-size:9px;
+  color:var(--muted);
+  font-weight:600;
+}
+.building-suggestions .no-results{
+  padding:14px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+.building-suggestions .loading-results{
+  padding:14px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.building-suggestions .loading-results .spinner-small{
+  width:14px;
+  height:14px;
+  border:2px solid var(--border);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:spin 0.6s linear infinite;
+  display:inline-block;
+}
 
 /* Location PIN */
 .location-pin-row{
@@ -745,6 +832,7 @@ a{color:inherit;text-decoration:none;}
 .modal-btn{padding:8px 16px;border-radius:50px;border:none;font-weight:600;cursor:pointer;}
 .modal-btn:active{transform:scale(0.95);}
 
+/* ===== RESPONSIVE ===== */
 @media(max-width:400px){
   .checkout-container{padding:12px 3% 20px;}
   .checkout-form{padding:20px 16px;}
@@ -838,6 +926,19 @@ a{color:inherit;text-decoration:none;}
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ===== BUILDING SUGGESTIONS SCROLLBAR ===== */
+.building-suggestions::-webkit-scrollbar {
+  width: 4px;
+}
+.building-suggestions::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: 4px;
+}
+.building-suggestions::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 4px;
+}
 </style>
 </head>
 <body>
@@ -915,6 +1016,7 @@ a{color:inherit;text-decoration:none;}
       <div class="cart-items-scroll" id="cartSummaryItems"></div>
       <div class="summary-calc">
         <div class="summary-row"><span>Subtotal</span><span id="subtotalAmount">KES 0</span></div>
+        <div class="summary-row"><span>VAT (16%)</span><span id="vatAmount">KES 0</span></div>
         <div class="summary-row"><span>Delivery Fee</span><span id="deliveryFee">KES 0</span></div>
         <div class="free-delivery-note" id="freeDeliveryNote"></div>
         <div class="summary-row total"><span>Total</span><span id="totalAmount">KES 0</span></div>
@@ -973,7 +1075,11 @@ a{color:inherit;text-decoration:none;}
       
       <div class="form-group">
         <label>Building / Apartment Name</label>
-        <input type="text" id="building" placeholder="e.g. Quickmart Plaza">
+        <div class="building-autocomplete-wrap" style="position:relative;">
+          <input type="text" id="building" placeholder="e.g. Quickmart Plaza, Kwa Nganga Estate..." autocomplete="off">
+          <div id="buildingSuggestions" class="building-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);z-index:100;max-height:200px;overflow-y:auto;margin-top:4px;"></div>
+        </div>
+        <span class="field-hint"><i class="ph ph-map-pin"></i> Start typing your building name for suggestions</span>
       </div>
 
       <!-- Delivery Area Dropdown -->
@@ -1105,11 +1211,20 @@ a{color:inherit;text-decoration:none;}
 
 <div class="snack" id="snack"></div>
 
-
 <script>
 // ============================================================
 // LIQUORBELLE CHECKOUT - COMPLETE FIXED VERSION
 // ============================================================
+
+// ===== TAX CONFIGURATION =====
+const TAX_CONFIG = {
+  vatRate: 0.16, // 16% VAT
+  alcoholicCategories: [
+    'whisky', 'wine', 'vodka', 'gin', 'cognac', 'cream',
+    'beer', 'brandy', 'bourbon', 'rum', 'spirits', 'liqueur',
+    'cider', 'vermouth'
+  ]
+};
 
 // ===== PAYMENT METHOD SELECTION =====
 function selectPayment(method) {
@@ -1187,7 +1302,7 @@ function showSnack(msg, isError) {
 }
 
 // ============================================================
-// DELIVERY SETTINGS - FORCED VALUES
+// DELIVERY SETTINGS
 // ============================================================
 let deliveryFee = 50;
 let freeDeliveryThreshold = 5000;
@@ -1204,11 +1319,10 @@ async function loadDeliverySettings() {
       freeDeliveryThreshold = data.settings.free_delivery_threshold || 5000;
       deliveryEnabled = data.settings.delivery_enabled !== false;
     }
-    // FORCE CORRECT VALUES
     deliveryFee = 50;
     freeDeliveryThreshold = 5000;
     deliveryEnabled = true;
-    console.log('✅ Delivery settings forced to:', { deliveryFee, freeDeliveryThreshold, deliveryEnabled });
+    console.log('✅ Delivery settings:', { deliveryFee, freeDeliveryThreshold, deliveryEnabled });
     return { deliveryFee, freeDeliveryThreshold, deliveryEnabled };
   } catch (e) {
     console.error('Error loading delivery settings:', e);
@@ -1263,7 +1377,46 @@ async function loadDeliveryZones() {
 }
 
 // ============================================================
-// LOCATION PIN - GET ADDRESS FROM GPS (UPDATED)
+// TAX CALCULATION
+// ============================================================
+function calculateVAT(price, category) {
+  if (!TAX_CONFIG.alcoholicCategories.includes(category)) {
+    return 0;
+  }
+  return Math.round(price * TAX_CONFIG.vatRate);
+}
+
+function calculateCartTaxes(cartItems) {
+  var totalVAT = 0;
+  var taxableItems = [];
+  
+  for (var i = 0; i < cartItems.length; i++) {
+    var item = cartItems[i];
+    var category = item.category || 'spirits';
+    var price = parseFloat(item.price) || 0;
+    var qty = parseInt(item.quantity) || parseInt(item.qty) || 1;
+    var itemPrice = price * qty;
+    
+    var vat = calculateVAT(itemPrice, category);
+    totalVAT += vat;
+    
+    taxableItems.push({
+      name: item.name,
+      category: category,
+      price: itemPrice,
+      vat: vat,
+      isAlcoholic: TAX_CONFIG.alcoholicCategories.includes(category)
+    });
+  }
+  
+  return {
+    totalVAT: Math.round(totalVAT),
+    items: taxableItems
+  };
+}
+
+// ============================================================
+// LOCATION PIN - GET ADDRESS FROM GPS
 // ============================================================
 function getAddressFromCoords(lat, lng) {
   return fetch('https://liquorbelle-mpesa-backend.onrender.com/api/geocode/reverse', {
@@ -1289,7 +1442,102 @@ function getAddressFromCoords(lat, lng) {
   .catch(function() { return null; });
 }
 
-// ===== PIN BUTTON EVENT LISTENER - FIXED WITH VISUAL FEEDBACK =====
+// ============================================================
+// BUILDING AUTOCOMPLETE - GOOGLE PLACES
+// ============================================================
+function initBuildingAutocomplete() {
+  var buildingInput = document.getElementById('building');
+  var suggestionsContainer = document.getElementById('buildingSuggestions');
+  
+  if (!buildingInput || !suggestionsContainer) return;
+  
+  var debounceTimer;
+  
+  buildingInput.addEventListener('input', function() {
+    var query = this.value.trim();
+    
+    clearTimeout(debounceTimer);
+    
+    if (query.length < 2) {
+      suggestionsContainer.style.display = 'none';
+      return;
+    }
+    
+    debounceTimer = setTimeout(function() {
+      searchBuildingSuggestions(query);
+    }, 400);
+  });
+  
+  buildingInput.addEventListener('blur', function() {
+    setTimeout(function() {
+      suggestionsContainer.style.display = 'none';
+    }, 300);
+  });
+  
+  buildingInput.addEventListener('focus', function() {
+    if (this.value.trim().length >= 2) {
+      searchBuildingSuggestions(this.value.trim());
+    }
+  });
+  
+  function searchBuildingSuggestions(query) {
+    suggestionsContainer.style.display = 'block';
+    suggestionsContainer.innerHTML = '<div class="loading-results"><span class="spinner-small"></span> Searching...</div>';
+    
+    // Use OpenStreetMap Nominatim for building/place search
+    fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query + ' Nairobi Kenya') + '&format=json&limit=8&addressdetails=1&category=building,commercial,residential')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data || data.length === 0) {
+          suggestionsContainer.innerHTML = '<div class="no-results">No buildings found. Try a different name.</div>';
+          return;
+        }
+        
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+          var place = data[i];
+          var displayName = place.display_name.split(',').slice(0, 3).join(', ');
+          var category = place.category || 'Building';
+          var type = place.type || '';
+          
+          var badgeText = 'Building';
+          if (type === 'commercial') badgeText = 'Commercial';
+          else if (type === 'residential') badgeText = 'Residential';
+          else if (type === 'apartment') badgeText = 'Apartment';
+          else if (type === 'estate') badgeText = 'Estate';
+          
+          html += '<div class="suggestion-item" data-name="' + escapeHtml(place.display_name.split(',')[0]) + '" data-full="' + escapeHtml(displayName) + '" data-lat="' + place.lat + '" data-lon="' + place.lon + '">';
+          html += '<span class="icon"><i class="ph ph-buildings"></i></span>';
+          html += '<div><span class="name">' + escapeHtml(place.display_name.split(',')[0]) + '</span>';
+          html += '<span class="address">' + escapeHtml(displayName) + '</span></div>';
+          html += '<span class="badge">' + badgeText + '</span>';
+          html += '</div>';
+        }
+        
+        suggestionsContainer.innerHTML = html;
+        
+        // Add click handlers to suggestions
+        var items = suggestionsContainer.querySelectorAll('.suggestion-item');
+        for (var j = 0; j < items.length; j++) {
+          items[j].addEventListener('click', function() {
+            var name = this.dataset.name;
+            var full = this.dataset.full;
+            buildingInput.value = name;
+            suggestionsContainer.style.display = 'none';
+            // Optional: store full address for reference
+            buildingInput.dataset.fullAddress = full;
+            toast('📍 Selected: ' + name);
+          });
+        }
+      })
+      .catch(function(err) {
+        console.error('Building search error:', err);
+        suggestionsContainer.innerHTML = '<div class="no-results">Search error. Please type manually.</div>';
+      });
+  }
+}
+
+// ===== PIN BUTTON EVENT LISTENER =====
 document.addEventListener('DOMContentLoaded', function() {
   var pinBtn = document.getElementById('getLocationBtn');
   if (pinBtn) {
@@ -1301,15 +1549,12 @@ document.addEventListener('DOMContentLoaded', function() {
       var areaSelect = document.getElementById('deliveryArea');
       var pinSquircle = this.querySelector('.pin-squircle');
       
-      // Reset any previous state
       statusDiv.className = 'location-status';
       statusDiv.style.display = 'block';
       
-      // Show loading state with gold color
       statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>';
       statusDiv.className = 'location-status loading';
       
-      // Add loading animation to PIN button
       if (pinSquircle) {
         pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
         pinSquircle.style.transform = 'scale(1.05)';
@@ -1317,7 +1562,6 @@ document.addEventListener('DOMContentLoaded', function() {
         pinSquircle.classList.add('loading');
       }
 
-      // Check if geolocation is supported
       if (!navigator.geolocation) {
         statusDiv.innerHTML = '❌ Geolocation not supported on this device';
         statusDiv.className = 'location-status error';
@@ -1332,7 +1576,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      // Set timeout for geolocation (10 seconds)
       var locationTimeout = setTimeout(function() {
         statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.';
         statusDiv.className = 'location-status error';
@@ -1346,7 +1589,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
       }, 10000);
 
-      // Get current position
       navigator.geolocation.getCurrentPosition(
         function(position) {
           clearTimeout(locationTimeout);
@@ -1359,20 +1601,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
           getAddressFromCoords(lat, lng).then(function(result) {
             if (result && result.street) {
-              // ✅ AUTO-FILL STREET INPUT
               streetInput.value = result.street;
               streetInput.style.borderColor = '#2ecc71';
               streetInput.style.background = '#f0fff4';
               streetInput.style.transition = 'all 0.3s ease';
               
-              // Trigger input event to update validation
               var inputEvent = new Event('input', { bubbles: true });
               streetInput.dispatchEvent(inputEvent);
               
-              // ✅ AUTO-FILL AREA IF AVAILABLE
               if (result.area) {
                 var found = false;
-                // Try to find matching zone by partial match
                 for (var i = 0; i < areaSelect.options.length; i++) {
                   var optionValue = areaSelect.options[i].value;
                   if (optionValue && optionValue.toLowerCase().indexOf(result.area.toLowerCase()) !== -1) {
@@ -1382,7 +1620,6 @@ document.addEventListener('DOMContentLoaded', function() {
                   }
                 }
                 if (!found) {
-                  // Try exact match
                   for (var j = 0; j < areaSelect.options.length; j++) {
                     if (areaSelect.options[j].value.toLowerCase() === result.area.toLowerCase()) {
                       areaSelect.value = areaSelect.options[j].value;
@@ -1392,7 +1629,6 @@ document.addEventListener('DOMContentLoaded', function() {
                   }
                 }
                 if (found) {
-                  // Trigger change event to update delivery fee
                   var changeEvent = new Event('change', { bubbles: true });
                   areaSelect.dispatchEvent(changeEvent);
                   areaSelect.style.borderColor = '#2ecc71';
@@ -1400,30 +1636,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
               }
               
-              // ✅ SUCCESS MESSAGE WITH ACTUAL LOCATION
               var displayStreet = result.street || 'Location found';
               var displayArea = result.area || 'Nairobi';
               statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>';
               statusDiv.className = 'location-status success';
               
-              // Reset PIN button
               if (pinSquircle) {
                 pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))';
                 pinSquircle.style.transform = 'scale(1)';
                 pinSquircle.classList.remove('loading');
               }
               
-              // Hide status after 5 seconds
               setTimeout(function() {
                 statusDiv.style.display = 'none';
               }, 5000);
               
-              // Update summary
               if (typeof renderSummary === 'function') {
                 renderSummary();
               }
               
-              // Show success toast
               if (typeof showSnack === 'function') {
                 showSnack('📍 Location set: ' + displayStreet, false);
               } else if (typeof toast === 'function') {
@@ -1489,6 +1720,9 @@ document.addEventListener('DOMContentLoaded', function() {
       );
     });
   }
+  
+  // Initialize building autocomplete
+  initBuildingAutocomplete();
 });
 
 // ============================================================
@@ -1529,7 +1763,8 @@ function saveCart(cartArray) {
         price: parseFloat(item.price) || 0,
         qty: parseInt(item.quantity) || parseInt(item.qty) || 1,
         capacity: item.capacity || item.size || '',
-        size: item.size || item.capacity || ''
+        size: item.size || item.capacity || '',
+        category: item.category || 'spirits'
       };
     }
     localStorage.setItem('liquorbelle_cart', JSON.stringify(cartObj));
@@ -1618,12 +1853,13 @@ function handleDeliveryChange() {
 }
 
 // ============================================================
-// RENDER SUMMARY
+// RENDER SUMMARY WITH VAT
 // ============================================================
 function renderSummary() {
   var cart = getCart();
   var summaryItems = document.getElementById('cartSummaryItems');
   var subtotalEl = document.getElementById('subtotalAmount');
+  var vatEl = document.getElementById('vatAmount');
   var deliveryEl = document.getElementById('deliveryFee');
   var totalEl = document.getElementById('totalAmount');
   var freeNote = document.getElementById('freeDeliveryNote');
@@ -1631,6 +1867,7 @@ function renderSummary() {
   if (cart.length === 0) {
     summaryItems.innerHTML = '<div class="empty-cart"><i class="ph ph-shopping-cart"></i>Your cart is empty</div>';
     subtotalEl.textContent = 'KES 0';
+    if (vatEl) vatEl.textContent = 'KES 0';
     deliveryEl.textContent = 'KES 0';
     totalEl.textContent = 'KES 0';
     freeNote.textContent = '';
@@ -1639,6 +1876,8 @@ function renderSummary() {
 
   var html = '';
   var subtotal = 0;
+  var cartItemsWithCategory = [];
+  
   for (var i = 0; i < cart.length; i++) {
     var item = cart[i];
     var name = item.name || 'Product';
@@ -1647,6 +1886,15 @@ function renderSummary() {
     var itemTotal = price * qty;
     subtotal += itemTotal;
     var size = item.size || '750ml';
+    var category = item.category || 'spirits';
+    
+    cartItemsWithCategory.push({
+      name: name,
+      category: category,
+      price: price,
+      qty: qty
+    });
+    
     html += '<div class="cart-item-checkout">' +
       '<div class="item-name">' + escapeHtml(name) + ' <small>' + escapeHtml(size) + '</small></div>' +
       '<div class="item-price">KES ' + itemTotal.toLocaleString() + '</div>' +
@@ -1654,23 +1902,24 @@ function renderSummary() {
   }
   summaryItems.innerHTML = html;
 
-  console.log('📊 renderSummary - selectedZoneFee:', selectedZoneFee);
-  console.log('📊 subtotal:', subtotal);
-  console.log('📊 freeDeliveryThreshold:', freeDeliveryThreshold);
-  console.log('📊 deliveryEnabled:', deliveryEnabled);
+  // Calculate VAT
+  var taxData = calculateCartTaxes(cartItemsWithCategory);
+  var vat = taxData.totalVAT;
+  
+  console.log('📊 renderSummary - subtotal:', subtotal);
+  console.log('📊 VAT:', vat);
   
   var delivery = selectedZoneFee;
   
   if (deliveryEnabled === true && subtotal >= freeDeliveryThreshold) {
     delivery = 0;
-    console.log('🎉 Free delivery applied (threshold met)');
-  } else {
-    console.log('💰 Regular delivery fee:', delivery);
+    console.log('🎉 Free delivery applied');
   }
   
-  var total = subtotal + delivery;
+  var total = subtotal + vat + delivery;
 
   subtotalEl.textContent = 'KES ' + subtotal.toLocaleString();
+  if (vatEl) vatEl.textContent = 'KES ' + vat.toLocaleString();
   deliveryEl.textContent = delivery === 0 ? 'FREE' : 'KES ' + delivery.toLocaleString();
   totalEl.textContent = 'KES ' + total.toLocaleString();
 
@@ -1704,7 +1953,7 @@ function renderSummary() {
 }
 
 // ============================================================
-// AUTO-FILL SAVED ADDRESS - NEW FUNCTION
+// AUTO-FILL SAVED ADDRESS
 // ============================================================
 function autoFillSavedAddress() {
   var user = getCurrentUser();
@@ -1712,7 +1961,6 @@ function autoFillSavedAddress() {
   
   console.log('👤 User logged in, checking for saved addresses...');
   
-  // Try to get saved addresses from localStorage
   var storageKey = 'liquorbelle_addresses_' + user.email.toLowerCase();
   var savedAddresses = [];
   try {
@@ -1726,7 +1974,6 @@ function autoFillSavedAddress() {
   }
   
   if (savedAddresses.length === 0) {
-    // Try legacy storage format
     try {
       var legacy = localStorage.getItem('liquorbelle_addresses');
       if (legacy) {
@@ -1746,7 +1993,6 @@ function autoFillSavedAddress() {
     return false;
   }
   
-  // Find default address or use first one
   var defaultAddr = null;
   for (var i = 0; i < savedAddresses.length; i++) {
     if (savedAddresses[i].isDefault) {
@@ -1760,7 +2006,6 @@ function autoFillSavedAddress() {
   
   console.log('📌 Using address:', defaultAddr);
   
-  // Auto-fill form fields
   var nameInput = document.getElementById('fullName');
   var phoneInput = document.getElementById('phone');
   var streetInput = document.getElementById('street');
@@ -1801,7 +2046,6 @@ function autoFillSavedAddress() {
       }
     }
     if (!found) {
-      // Try to find a partial match
       for (var k = 0; k < areaSelect.options.length; k++) {
         if (areaSelect.options[k].value.toLowerCase().indexOf(defaultAddr.area.toLowerCase()) !== -1) {
           areaSelect.value = areaSelect.options[k].value;
@@ -1811,7 +2055,6 @@ function autoFillSavedAddress() {
       }
     }
     if (found) {
-      // Trigger change event to update delivery fee
       var event = new Event('change');
       areaSelect.dispatchEvent(event);
     }
@@ -2002,7 +2245,6 @@ function updateBottomNav() {
   var accountLabel = document.getElementById('bottomNavAccountLabel');
   var profileLink = document.getElementById('mobileMenuProfile');
   
-  // Update bottom nav
   if (accountBtn && accountLabel) {
     if (user && user.name) {
       accountLabel.textContent = 'Profile';
@@ -2017,7 +2259,6 @@ function updateBottomNav() {
     }
   }
   
-  // Update mobile menu - hide/show "My Profile"
   if (profileLink) {
     if (user && user.name) {
       profileLink.style.display = 'flex';
@@ -2026,7 +2267,6 @@ function updateBottomNav() {
     }
   }
   
-  // Update handleAccountClick function
   window.handleAccountClick = function() {
     var user = getCurrentUser();
     if (user && user.name) {
@@ -2065,7 +2305,7 @@ function updateMobileMenuAuth() {
 }
 
 // ============================================================
-// PLACE ORDER - FIXED WITH PAYMENT STATUS POLLING
+// PLACE ORDER WITH VAT
 // ============================================================
 async function placeOrder() {
   var btn = document.getElementById('placeOrderBtn');
@@ -2107,19 +2347,32 @@ async function placeOrder() {
 
   var subtotal = getCartTotal(cart);
   
+  // Calculate VAT
+  var cartItemsWithCategory = cart.map(function(item) {
+    return {
+      name: item.name || 'Product',
+      category: item.category || 'spirits',
+      price: parseFloat(item.price) || 0,
+      qty: parseInt(item.quantity) || parseInt(item.qty) || 1
+    };
+  });
+  var taxData = calculateCartTaxes(cartItemsWithCategory);
+  var vat = taxData.totalVAT;
+  
   var delivery = selectedZoneFee;
   if (deliveryEnabled && subtotal >= freeDeliveryThreshold) {
     delivery = 0;
   }
   
-  var total = subtotal + delivery;
+  var total = subtotal + vat + delivery;
 
   var items = cart.map(function(item) {
     return {
       name: item.name || 'Product',
       quantity: parseInt(item.quantity) || parseInt(item.qty) || 1,
       price: parseFloat(item.price) || 0,
-      size: item.size || '750ml'
+      size: item.size || '750ml',
+      category: item.category || 'spirits'
     };
   });
 
@@ -2127,7 +2380,6 @@ async function placeOrder() {
   var orderNumber = 'LB-' + Date.now().toString(36).toUpperCase();
   var paymentMethod = document.getElementById('selectedPaymentMethod').value;
 
-  // Build payload based on payment method
   var payload;
   var endpoint;
 
@@ -2140,6 +2392,7 @@ async function placeOrder() {
       address: address,
       notes: '',
       subtotal: subtotal,
+      vat: vat,
       delivery: delivery,
       total: total,
       items: items
@@ -2153,6 +2406,7 @@ async function placeOrder() {
       phone: phone,
       address: address,
       subtotal: subtotal,
+      vat: vat,
       delivery: delivery,
       total: total,
       items: items
@@ -2176,7 +2430,6 @@ async function placeOrder() {
 
     if (data.success) {
       if (paymentMethod === 'pod') {
-        // ✅ POD - Show success immediately
         localStorage.removeItem('liquorbelle_cart');
         document.getElementById('successOrderId').textContent = orderNumber;
         document.getElementById('successMessage').textContent = 'Your order has been confirmed. Please have cash ready upon delivery.';
@@ -2185,19 +2438,15 @@ async function placeOrder() {
         renderSummary();
         if (typeof updateCartUI === 'function') updateCartUI();
       } else {
-        // ✅ M-PESA - Show waiting message, then poll for status
         showSnack('📱 M-PESA prompt sent to your phone. Please enter your PIN.', false);
         
-        // Show waiting modal
         document.getElementById('successOrderId').textContent = orderNumber;
         document.getElementById('successMessage').innerHTML = '⏳ <strong>Waiting for payment confirmation...</strong><br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt and enter your PIN.</span>';
         document.getElementById('successModal').classList.add('active');
         
-        // ✅ Poll for payment status
         var paid = await pollPaymentStatus(orderNumber);
         
         if (paid) {
-          // ✅ Payment successful!
           localStorage.removeItem('liquorbelle_cart');
           document.getElementById('successOrderId').textContent = orderNumber;
           document.getElementById('successMessage').innerHTML = '✅ <strong>Payment confirmed!</strong><br><span style="font-size:0.85rem;color:var(--muted);">Your order has been placed successfully.</span>';
@@ -2205,9 +2454,7 @@ async function placeOrder() {
           renderSummary();
           if (typeof updateCartUI === 'function') updateCartUI();
         } else {
-          // ❌ Payment failed or cancelled
           document.getElementById('successModal').classList.remove('active');
-          // Don't clear cart - user can try again
         }
       }
     } else {
@@ -2225,9 +2472,9 @@ async function placeOrder() {
 
 // ==================== POLL PAYMENT STATUS ====================
 async function pollPaymentStatus(orderId) {
-  var maxAttempts = 30; // 30 * 3 seconds = 90 seconds
+  var maxAttempts = 30;
   var attempts = 0;
-  var interval = 3000; // 3 seconds
+  var interval = 3000;
 
   return new Promise(function(resolve) {
     var checkInterval = setInterval(async function() {
@@ -2239,7 +2486,6 @@ async function pollPaymentStatus(orderId) {
         
         console.log('📊 Payment status check #' + attempts + ':', data);
         
-        // Update the modal with progress
         var statusEl = document.getElementById('successMessage');
         if (statusEl) {
           var dots = '.'.repeat(attempts % 4);
@@ -2256,7 +2502,6 @@ async function pollPaymentStatus(orderId) {
           return;
         } else if (attempts >= maxAttempts) {
           clearInterval(checkInterval);
-          // Timeout - check if order exists in orders collection
           try {
             var orderCheck = await fetch('https://liquorbelle-mpesa-backend.onrender.com/api/status/' + orderId);
             var orderData = await orderCheck.json();
@@ -2264,16 +2509,12 @@ async function pollPaymentStatus(orderId) {
               resolve(true);
               return;
             }
-          } catch (e) {
-            // Ignore
-          }
+          } catch (e) {}
           resolve(false);
           return;
         }
-        // Otherwise, keep waiting
       } catch (err) {
         console.error('Status check error:', err);
-        // Don't stop on network errors, keep trying
         if (attempts >= maxAttempts) {
           clearInterval(checkInterval);
           resolve(false);
@@ -2287,7 +2528,6 @@ async function pollPaymentStatus(orderId) {
 // CHECKOUT FORM VALIDATION - REAL-TIME
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Email validation on checkout
     var emailInput = document.getElementById('customerEmail');
     if (emailInput) {
         var emailError = document.createElement('span');
@@ -2328,7 +2568,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Full Name validation
     var nameInput = document.getElementById('fullName');
     if (nameInput) {
         var nameError = document.createElement('span');
@@ -2357,7 +2596,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Phone validation
     var phoneInput = document.getElementById('phone');
     if (phoneInput) {
         var phoneError = document.createElement('span');
@@ -2447,7 +2685,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Delivery area change listener attached');
       }
       
-      // ===== AUTO-FILL SAVED ADDRESS =====
       autoFillSavedAddress();
       
       renderSummary();
