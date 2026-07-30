@@ -1717,7 +1717,8 @@ function renderSummary() {
   if (progressContainer) {
     if (subtotal > 0 && deliveryEnabled && result.threshold) {
       var progress = Math.min((subtotal / result.threshold) * 100, 100);
-      var isUnlocked = progress >= 100;
+      // ✅ FIXED: Use result.freeApplied instead of recalculating
+      var isUnlocked = result.freeApplied;
       progressContainer.innerHTML = '<div class="delivery-progress ' + (isUnlocked ? 'unlocked' : '') + '">' +
         (isUnlocked ? '✅ Free Delivery Unlocked!' : 'Add KES ' + (result.threshold - subtotal).toLocaleString() + ' more for free delivery') +
         '<div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:' + Math.min(progress, 100) + '%;"></div></div></div>';
@@ -1726,7 +1727,6 @@ function renderSummary() {
     }
   }
 }
-
 // ============================================================
 // PLACE ORDER
 // ============================================================
