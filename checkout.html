@@ -2119,7 +2119,7 @@ function initAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(buildingInput, {
     componentRestrictions: { country: "ke" },
     fields: ["formatted_address", "geometry", "name", "place_id"],
-    types: ["establishment", "geocode", "address"],
+    types: ["geocode", "address"], // ✅ FIXED: Removed "establishment"
   });
 
   autocomplete.addListener("place_changed", function() {
