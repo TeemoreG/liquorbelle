@@ -215,6 +215,7 @@ function validateUserSession() {
     if (res.status === 401 || res.status === 403 || res.status === 404) {
       localStorage.removeItem('liquorbelle_user');
       localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_login_time');
       toast('Your account has been deactivated. Please contact support.', 'error');
       window.location.href = 'accounts.html';
       return null;
@@ -225,6 +226,7 @@ function validateUserSession() {
     if (data && !data.success) {
       localStorage.removeItem('liquorbelle_user');
       localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_login_time');
       window.location.href = 'accounts.html';
     }
   })
@@ -236,6 +238,7 @@ function validateUserSession() {
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
+  localStorage.removeItem('liquorbelle_login_time');
   if (window.location.pathname.indexOf('accounts.html') === -1) {
     window.location.href = 'accounts.html';
   } else {
@@ -261,6 +264,7 @@ function fetchWithAuth(url, options) {
           if (data.message && (data.message.includes('deactivated') || data.message.includes('deleted'))) {
             localStorage.removeItem('liquorbelle_user');
             localStorage.removeItem('liquorbelle_token');
+            localStorage.removeItem('liquorbelle_login_time');
             toast('Your account has been deactivated. Please contact support.', 'error');
             window.location.href = 'accounts.html';
             return Promise.reject(new Error('Account deactivated'));
@@ -305,7 +309,6 @@ function refreshAuthToken(token) {
     throw new Error('Token refresh failed');
   });
 }
-
 // ============================================================
 // LOGIN & REGISTER FUNCTIONS
 // ============================================================
@@ -343,6 +346,7 @@ function registerUser(name, email, phone, pin, otp) {
           name: data.customer.name,
           phone: data.customer.phone
         }));
+        localStorage.setItem('liquorbelle_login_time', Date.now().toString());
       }
       return data;
     }
@@ -424,6 +428,7 @@ function loginUser(email, pin) {
         name: data.customer.name,
         phone: data.customer.phone
       }));
+      localStorage.setItem('liquorbelle_login_time', Date.now().toString());
       
       // Update UI
       if (typeof updateUserBadge === 'function') updateUserBadge();
@@ -3443,6 +3448,48 @@ navigator.serviceWorker?.addEventListener('message', function(event) {
 });
 
 console.log('✅ Service Worker module loaded');
+
+// ============================================================
+// SESSION MANAGEMENT - Auto-logout after 30 minutes
+// ============================================================
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+function checkSession() {
+  const user = localStorage.getItem('liquorbelle_user');
+  const token = localStorage.getItem('liquorbelle_token');
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+
+  if (!user || !token) return;
+
+  if (loginTime) {
+    const elapsed = Date.now() - parseInt(loginTime);
+    if (elapsed > SESSION_TIMEOUT) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_login_time');
+      
+      if (!window.location.pathname.includes('accounts.html') && 
+          !window.location.pathname.includes('login.html') &&
+          !window.location.pathname.includes('signup.html')) {
+        window.location.href = 'accounts.html?session=expired';
+      }
+      return;
+    }
+  }
+}
+
+// Run session check on every page load
+document.addEventListener('DOMContentLoaded', function() {
+  checkSession();
+});
+
+// Refresh session timer on user activity
+document.addEventListener('click', function() {
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+  if (loginTime) {
+    localStorage.setItem('liquorbelle_login_time', Date.now().toString());
+  }
+});
 // ============================================================
 // USER BADGE INIT (For all pages)
 // ============================================================
@@ -3458,3 +3505,45 @@ window.addEventListener('storage', function(e) {
 });
 
 console.log('🚀 LiquorBelle — Master app.js loaded (Enhanced version)');
+// ============================================================
+// SESSION MANAGEMENT - Auto-logout after 30 minutes
+// ============================================================
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+function checkSession() {
+  const user = localStorage.getItem('liquorbelle_user');
+  const token = localStorage.getItem('liquorbelle_token');
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+
+  if (!user || !token) return;
+
+  if (loginTime) {
+    const elapsed = Date.now() - parseInt(loginTime);
+    if (elapsed > SESSION_TIMEOUT) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_login_time');
+      
+      // Don't redirect on accounts/login/signup pages
+      if (!window.location.pathname.includes('accounts.html') && 
+          !window.location.pathname.includes('login.html') &&
+          !window.location.pathname.includes('signup.html')) {
+        window.location.href = 'accounts.html?session=expired';
+      }
+      return;
+    }
+  }
+}
+
+// Run session check on every page load
+document.addEventListener('DOMContentLoaded', function() {
+  checkSession();
+});
+
+// Refresh session timer on user activity
+document.addEventListener('click', function() {
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+  if (loginTime) {
+    localStorage.setItem('liquorbelle_login_time', Date.now().toString());
+  }
+});

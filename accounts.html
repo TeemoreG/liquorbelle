@@ -14,6 +14,7 @@
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
 <link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785585419/WhatsApp_Image_2026-08-01_at_2.42.56_PM_h8kxdn.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
@@ -808,7 +809,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ===== JAVASCRIPT ===== -->
 <script>
 // ============================================================
 // CONFIG
@@ -817,6 +817,15 @@ const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 const CART_KEY = 'liquorbelle_cart';
 const WISHLIST_KEY = 'liquorbelle_wishlist';
 const TOAST_DURATION = 3000;
+
+// ============================================================
+// SESSION EXPIRED CHECK
+// ============================================================
+if (window.location.search.includes('session=expired')) {
+  setTimeout(function() {
+    toast('Your session expired. Please log in again.', 'error');
+  }, 500);
+}
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -886,6 +895,7 @@ function checkSessionValidity() {
     if (isExpired) {
       localStorage.removeItem('liquorbelle_user');
       localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_login_time');
       toast('Your session expired. Please login again.', 'error');
     }
   }
@@ -980,6 +990,7 @@ function toast(msg, type) {
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
+  localStorage.removeItem('liquorbelle_login_time');
   toast('Logged out successfully', 'success');
   setTimeout(function() {
     window.location.href = 'accounts.html';

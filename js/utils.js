@@ -763,3 +763,54 @@ window.addEventListener('scroll', function() {
 }, { passive: true });
 
 console.log('✅ Utils loaded');
+// ============================================================
+// SESSION MANAGEMENT - Auto-logout after 30 minutes
+// ============================================================
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+function checkSession() {
+  const user = localStorage.getItem('liquorbelle_user');
+  const token = localStorage.getItem('liquorbelle_token');
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+
+  if (!user || !token) return;
+
+  if (loginTime) {
+    const elapsed = Date.now() - parseInt(loginTime);
+    if (elapsed > SESSION_TIMEOUT) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_login_time');
+      
+      // Redirect to login with expired message
+      if (!window.location.pathname.includes('accounts.html') && 
+          !window.location.pathname.includes('login.html') &&
+          !window.location.pathname.includes('signup.html')) {
+        window.location.href = 'accounts.html?session=expired';
+      }
+      return;
+    }
+    
+    // Welcome back message on homepage
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+      try {
+        const userData = JSON.parse(user);
+        const name = userData.name || 'Customer';
+        toast('Welcome back, ' + name + '! 👋');
+      } catch(e) {}
+    }
+  }
+}
+
+// Refresh session timer on user activity
+document.addEventListener('click', function() {
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+  if (loginTime) {
+    localStorage.setItem('liquorbelle_login_time', Date.now().toString());
+  }
+});
+
+// Run session check on every page load
+document.addEventListener('DOMContentLoaded', function() {
+  checkSession();
+});

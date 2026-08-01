@@ -19,7 +19,7 @@
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com" crossorigin>
 <link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
-
+<link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785585419/WhatsApp_Image_2026-08-01_at_2.42.56_PM_h8kxdn.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
@@ -2144,6 +2144,15 @@ body:not(.age-gate-active) {
 // ============================================================
 
 // ============================================================
+// SESSION EXPIRED CHECK
+// ============================================================
+if (window.location.search.includes('session=expired')) {
+  setTimeout(function() {
+    toast('Your session expired. Please log in again.', 'error');
+  }, 500);
+}
+
+// ============================================================
 // GOOGLE AUTH HANDLER
 // ============================================================
 function handleGoogleCallback() {
@@ -2168,6 +2177,7 @@ function handleGoogleCallback() {
     
     localStorage.setItem('liquorbelle_user', JSON.stringify(user));
     localStorage.setItem('liquorbelle_token', token);
+    localStorage.setItem('liquorbelle_login_time', Date.now().toString());
     
     toast('✅ Welcome, ' + user.name + '! 👋', 'success');
     
@@ -2186,7 +2196,6 @@ function handleGoogleCallback() {
     handleGoogleCallback();
   }
 })();
-
 
 // ============================================================
 // MOBILE MENU
@@ -2318,7 +2327,6 @@ function updateBottomNav() {
   var accountLabel = document.getElementById('bottomNavAccountLabel');
   var profileLink = document.getElementById('mobileMenuProfile');
   
-  // Update bottom nav
   if (accountBtn && accountLabel) {
     if (user && user.name) {
       accountLabel.textContent = 'Profile';
@@ -2333,7 +2341,6 @@ function updateBottomNav() {
     }
   }
   
-  // Update mobile menu - hide/show "My Profile"
   if (profileLink) {
     if (user && user.name) {
       profileLink.style.display = 'flex';
@@ -2371,11 +2378,12 @@ function updateMobileMenuAuth() {
 }
 
 // ============================================================
-// LOGOUT (override)
+// LOGOUT (override - clears session)
 // ============================================================
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
+  localStorage.removeItem('liquorbelle_login_time');
   closeMobileMenu();
   window.location.href = 'accounts.html';
 }
@@ -2426,6 +2434,31 @@ document.getElementById('wishlistModal')?.addEventListener('click', function(e) 
 document.getElementById('cartOverlay')?.addEventListener('click', function(e) {
   if (e.target === this) closeCartDrawer();
 });
+
+// ============================================================
+// WELCOME BACK MESSAGE
+// ============================================================
+function showWelcomeBack() {
+  var user = getCurrentUser();
+  if (user && user.name) {
+    var heroOverlay = document.querySelector('.hero-overlay');
+    if (heroOverlay) {
+      var greeting = document.createElement('div');
+      greeting.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
+      greeting.textContent = '👋 Welcome back, ' + user.name + '!';
+      heroOverlay.prepend(greeting);
+      
+      setTimeout(function() {
+        greeting.style.transition = 'opacity 0.5s ease';
+        greeting.style.opacity = '0';
+        setTimeout(function() {
+          if (greeting.parentNode) greeting.remove();
+        }, 500);
+      }, 5000);
+    }
+  }
+}
+
 // ============================================================
 // INIT
 // ============================================================
@@ -2435,10 +2468,12 @@ document.addEventListener('DOMContentLoaded', function() {
   updateCartUI();
   updateBottomNav();
   updateMobileMenuAuth();
+  showWelcomeBack();
 
   console.log('🍾 LiquorBelle homepage loaded');
 });
 </script>
+
 <!-- ===== COOKIE CONSENT BANNER ===== -->
 <div id="cookieBanner" style="
     position: fixed;
@@ -2493,7 +2528,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-    // Check if user already made a choice
     if (localStorage.getItem('cookieConsent')) {
         document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
     }
@@ -2501,7 +2535,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function acceptCookies() {
         localStorage.setItem('cookieConsent', 'accepted');
         document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
-        // Your existing toast function if you have one
         if (typeof toast === 'function') {
             toast('🍪 Thanks! Cookies enabled.', 'success');
         }

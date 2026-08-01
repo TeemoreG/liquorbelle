@@ -20,8 +20,7 @@
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
 <link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍷</text></svg>">
-
+<link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dvqjgbdhp/image/upload/v1785585419/WhatsApp_Image_2026-08-01_at_2.42.56_PM_h8kxdn.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
@@ -1238,6 +1237,57 @@ const DELIVERY_TIERS = [
 // ===== SHOP LOCATION =====
 const SHOP_LOCATION = { lat: -1.2832, lng: 36.7254 };
 
+// ============================================================
+// SESSION EXPIRED CHECK
+// ============================================================
+if (window.location.search.includes('session=expired')) {
+  setTimeout(function() {
+    toast('Your session expired. Please log in again.', true);
+  }, 500);
+}
+
+// ============================================================
+// SESSION MANAGEMENT - Auto-logout after 30 minutes
+// ============================================================
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+function checkSession() {
+  const user = localStorage.getItem('liquorbelle_user');
+  const token = localStorage.getItem('liquorbelle_token');
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+
+  if (!user || !token) return;
+
+  if (loginTime) {
+    const elapsed = Date.now() - parseInt(loginTime);
+    if (elapsed > SESSION_TIMEOUT) {
+      localStorage.removeItem('liquorbelle_user');
+      localStorage.removeItem('liquorbelle_token');
+      localStorage.removeItem('liquorbelle_login_time');
+      
+      if (!window.location.pathname.includes('accounts.html') && 
+          !window.location.pathname.includes('login.html') &&
+          !window.location.pathname.includes('signup.html')) {
+        window.location.href = 'accounts.html?session=expired';
+      }
+      return;
+    }
+  }
+}
+
+// Run session check
+document.addEventListener('DOMContentLoaded', function() {
+  checkSession();
+});
+
+// Refresh session timer on user activity
+document.addEventListener('click', function() {
+  const loginTime = localStorage.getItem('liquorbelle_login_time');
+  if (loginTime) {
+    localStorage.setItem('liquorbelle_login_time', Date.now().toString());
+  }
+});
+
 // ===== PAYMENT METHOD SELECTION =====
 function selectPayment(method) {
   document.getElementById('selectedPaymentMethod').value = method;
@@ -1283,6 +1333,7 @@ function updateUserBadge() {
 function logoutUser() {
   localStorage.removeItem('liquorbelle_user');
   localStorage.removeItem('liquorbelle_token');
+  localStorage.removeItem('liquorbelle_login_time');
   updateUserBadge();
   toast('Logged out successfully');
 }
@@ -1377,7 +1428,7 @@ async function loadDeliveryZones() {
 }
 
 // ============================================================
-// LOCATION PIN - REVERSE GEOCODING
+// LOCATION PIN - REVERSE GEOCODING (FIXED - Mobile)
 // ============================================================
 function getAddressFromCoords(lat, lng) {
   return fetch(API_BASE + '/api/geocode/reverse', {
@@ -1389,16 +1440,22 @@ function getAddressFromCoords(lat, lng) {
   .then(data => {
     if (data && data.address) {
       var addr = data.address;
+      // ✅ Prefer road, then suburb, then neighbourhood
       var street = addr.road || addr.pedestrian || addr.footway || '';
       var area = addr.suburb || addr.neighbourhood || addr.village || addr.town || addr.city || '';
       if (!area) area = addr.county || addr.state || addr.region || '';
       if (!area) area = 'Nairobi';
       var areaClean = area.replace(/\s*(ward|division|sub-county|constituency|location)\s*/gi, '').trim();
-      return { street: street || 'Location found', area: areaClean || 'Nairobi' };
+      
+      // ✅ FIX: Never return "Location found" - use area as fallback
+      if (!street && areaClean) {
+        street = areaClean;
+      }
+      return { street: street || areaClean || 'Nairobi', area: areaClean || 'Nairobi' };
     }
-    return null;
+    return { street: 'Nairobi', area: 'Nairobi' };
   })
-  .catch(() => null);
+  .catch(() => ({ street: 'Nairobi', area: 'Nairobi' }));
 }
 
 // ============================================================
