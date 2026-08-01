@@ -1843,22 +1843,36 @@ async function placeOrder() {
       if (paymentMethod === 'pod') {
         localStorage.removeItem('liquorbelle_cart');
         document.getElementById('successOrderId').textContent = orderNumber;
-        document.getElementById('successMessage').textContent = 'Your order has been confirmed. Please have cash ready upon delivery.';
+        document.getElementById('successMessage').innerHTML = `
+          ✅ Order placed successfully!<br><br>
+          📧 Check your email for order tracking details.<br>
+          📞 Our rider will call you upon arrival.<br><br>
+          💰 Please have the exact cash ready for payment.
+        `;
         document.getElementById('successModal').classList.add('active');
         updateCartBadges();
         renderSummary();
         if (typeof updateCartUI === 'function') updateCartUI();
       } else {
-        showSnack('M-PESA prompt sent to your phone. Please enter your PIN.', false);
+        showSnack('📱 M-PESA prompt sent to your phone.', false);
         document.getElementById('successOrderId').textContent = orderNumber;
-        document.getElementById('successMessage').innerHTML = 'Waiting for payment confirmation...<br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt and enter your PIN.</span>';
+        document.getElementById('successMessage').innerHTML = `
+          📱 M-PESA prompt sent!<br><br>
+          Please check your phone and enter your PIN to complete payment.<br><br>
+          Once confirmed, you'll receive an email with tracking details.
+        `;
         document.getElementById('successModal').classList.add('active');
 
         var paid = await pollPaymentStatus(orderNumber);
         if (paid) {
           localStorage.removeItem('liquorbelle_cart');
           document.getElementById('successOrderId').textContent = orderNumber;
-          document.getElementById('successMessage').innerHTML = 'Payment confirmed!<br><span style="font-size:0.85rem;color:var(--muted);">Your order has been placed successfully.</span>';
+          document.getElementById('successMessage').innerHTML = `
+            ✅ Payment confirmed!<br><br>
+            Your order has been placed successfully.<br>
+            📧 Check your email for tracking details.<br>
+            📞 Our rider will call you upon arrival.
+          `;
           updateCartBadges();
           renderSummary();
           if (typeof updateCartUI === 'function') updateCartUI();
@@ -1890,7 +1904,12 @@ async function pollPaymentStatus(orderId) {
         var statusEl = document.getElementById('successMessage');
         if (statusEl) {
           var dots = '.'.repeat(attempts % 4);
-          statusEl.innerHTML = 'Waiting for payment confirmation' + dots + '<br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt.</span>';
+          statusEl.innerHTML = `
+            ⏳ Waiting for payment confirmation${dots}<br><br>
+            <span style="font-size:0.85rem;color:var(--muted);">
+              Please check your phone for the M-PESA prompt and enter your PIN.
+            </span>
+          `;
         }
         if (data.status === 'paid') { clearInterval(checkInterval); resolve(true); return; }
         else if (data.status === 'failed' || data.status === 'cancelled' || data.status === 'not_found') { clearInterval(checkInterval); resolve(false); return; }
@@ -1899,7 +1918,6 @@ async function pollPaymentStatus(orderId) {
     }, interval);
   });
 }
-
 // ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
