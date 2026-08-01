@@ -24,6 +24,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
+<!-- ===== GOOGLE MAPS PLACES API ===== -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBD4j_UnTQcobgYAQ9frmRyMYTR3yr2YnA&libraries=places&callback=initAutocomplete" async defer></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -1333,7 +1336,7 @@ async function loadDeliverySettings() {
       }
     }
 
-    console.log('✅ Delivery settings:', { deliveryFee, freeDeliveryThreshold, deliveryEnabled });
+    console.log('Delivery settings:', { deliveryFee, freeDeliveryThreshold, deliveryEnabled });
     return { deliveryFee, freeDeliveryThreshold, deliveryEnabled };
   } catch (e) {
     console.error('Error loading delivery settings:', e);
@@ -1448,13 +1451,13 @@ async function calculateAndUpdateDeliveryFee(lat, lng) {
   try {
     var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
     
-    // ✅ CRITICAL FIX: Check if dropdown already has a valid fee
+    // Critical fix: Check if dropdown already has a valid fee
     var select = document.getElementById('deliveryArea');
     var currentDropdownFee = parseInt(select.options[select.selectedIndex]?.dataset?.fee);
     
     if (!isNaN(currentDropdownFee) && currentDropdownFee > 0) {
-      // 🛑 If dropdown is already set, PRESERVE it and ignore backend fee
-      console.log('🛑 Preserving dropdown fee:', currentDropdownFee, '| Ignoring backend fee:', result?.fee);
+      // If dropdown is already set, PRESERVE it and ignore backend fee
+      console.log('Preserving dropdown fee:', currentDropdownFee, '| Ignoring backend fee:', result?.fee);
       selectedZoneFee = currentDropdownFee;
     } else if (result) {
       // Only use backend if dropdown is empty
@@ -1463,7 +1466,7 @@ async function calculateAndUpdateDeliveryFee(lat, lng) {
     }
 
     var distance = result?.distance ? Number(result.distance).toFixed(1) : '?';
-    console.log('📍 Distance from shop:', distance + 'km', '| Final Fee:', selectedZoneFee);
+    console.log('Distance from shop:', distance + 'km', '| Final Fee:', selectedZoneFee);
 
     var deliveryEl = document.getElementById('deliveryFee');
     if (deliveryEl) {
@@ -1475,6 +1478,7 @@ async function calculateAndUpdateDeliveryFee(lat, lng) {
     console.error('Failed to calculate delivery fee:', error);
   }
 }
+
 // ============================================================
 // CART FUNCTIONS
 // ============================================================
@@ -1602,7 +1606,7 @@ function handleDeliveryChange() {
 
   var selectedOption = select.options[select.selectedIndex];
   if (!selectedOption || !selectedOption.value) {
-    console.warn('⚠️ No valid option selected');
+    console.warn('No valid option selected');
     return;
   }
 
@@ -1615,7 +1619,7 @@ function handleDeliveryChange() {
 
   selectedZoneFee = fee;
 
-  console.log('📍 Zone selected:', selectedOption.value, '| Fee:', selectedZoneFee);
+  console.log('Zone selected:', selectedOption.value, '| Fee:', selectedZoneFee);
 
   var deliveryEl = document.getElementById('deliveryFee');
   if (deliveryEl) {
@@ -1690,7 +1694,7 @@ function renderSummary() {
       '<div class="item-name">' + escapeHtml(name) + ' <small>' + escapeHtml(size) + '</small></div>' +
       '<div class="item-price" style="display:flex;align-items:center;gap:12px;">' +
         '<span>KES ' + itemTotal.toLocaleString() + '</span>' +
-        '<button onclick="removeCartItem(\'' + itemId + '\')" style="background:var(--bg2);border:none;color:var(--sale-red);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;">✕ Remove</button>' +
+        '<button onclick="removeCartItem(\'' + itemId + '\')" style="background:var(--bg2);border:none;color:var(--sale-red);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;">Remove</button>' +
       '</div>' +
       '</div>';
   }
@@ -1701,7 +1705,7 @@ function renderSummary() {
   var vat = result.vat;
   var total = subtotal + vat + delivery;
 
-  console.log('📊 subtotal:', subtotal, '| delivery:', delivery, '| vat:', vat, '| total:', total, '| freeApplied:', result.freeApplied);
+  console.log('subtotal:', subtotal, '| delivery:', delivery, '| vat:', vat, '| total:', total, '| freeApplied:', result.freeApplied);
 
   subtotalEl.textContent = 'KES ' + subtotal.toLocaleString();
   if (vatEl) vatEl.textContent = 'KES ' + vat.toLocaleString();
@@ -1709,12 +1713,12 @@ function renderSummary() {
   totalEl.textContent = 'KES ' + total.toLocaleString();
 
   if (result.freeApplied) {
-    freeNote.textContent = '🎉 Free delivery applied!';
+    freeNote.textContent = 'Free delivery applied!';
   } else if (subtotal > 0 && deliveryEnabled && result.threshold) {
     var remaining = result.threshold - subtotal;
     freeNote.textContent = remaining > 0
-      ? '✨ Add KES ' + remaining.toLocaleString() + ' more for FREE delivery'
-      : '🎉 Free delivery applied!';
+      ? 'Add KES ' + remaining.toLocaleString() + ' more for FREE delivery'
+      : 'Free delivery applied!';
   } else {
     freeNote.textContent = '';
   }
@@ -1725,7 +1729,7 @@ function renderSummary() {
       var progress = Math.min((subtotal / result.threshold) * 100, 100);
       var isUnlocked = result.freeApplied;
       progressContainer.innerHTML = '<div class="delivery-progress ' + (isUnlocked ? 'unlocked' : '') + '">' +
-        (isUnlocked ? '✅ Free Delivery Unlocked!' : 'Add KES ' + (result.threshold - subtotal).toLocaleString() + ' more for free delivery') +
+        (isUnlocked ? 'Free Delivery Unlocked!' : 'Add KES ' + (result.threshold - subtotal).toLocaleString() + ' more for free delivery') +
         '<div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:' + Math.min(progress, 100) + '%;"></div></div></div>';
     } else {
       progressContainer.innerHTML = '';
@@ -1797,16 +1801,16 @@ async function placeOrder() {
         renderSummary();
         if (typeof updateCartUI === 'function') updateCartUI();
       } else {
-        showSnack('📱 M-PESA prompt sent to your phone. Please enter your PIN.', false);
+        showSnack('M-PESA prompt sent to your phone. Please enter your PIN.', false);
         document.getElementById('successOrderId').textContent = orderNumber;
-        document.getElementById('successMessage').innerHTML = '⏳ <strong>Waiting for payment confirmation...</strong><br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt and enter your PIN.</span>';
+        document.getElementById('successMessage').innerHTML = 'Waiting for payment confirmation...<br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt and enter your PIN.</span>';
         document.getElementById('successModal').classList.add('active');
 
         var paid = await pollPaymentStatus(orderNumber);
         if (paid) {
           localStorage.removeItem('liquorbelle_cart');
           document.getElementById('successOrderId').textContent = orderNumber;
-          document.getElementById('successMessage').innerHTML = '✅ <strong>Payment confirmed!</strong><br><span style="font-size:0.85rem;color:var(--muted);">Your order has been placed successfully.</span>';
+          document.getElementById('successMessage').innerHTML = 'Payment confirmed!<br><span style="font-size:0.85rem;color:var(--muted);">Your order has been placed successfully.</span>';
           updateCartBadges();
           renderSummary();
           if (typeof updateCartUI === 'function') updateCartUI();
@@ -1838,7 +1842,7 @@ async function pollPaymentStatus(orderId) {
         var statusEl = document.getElementById('successMessage');
         if (statusEl) {
           var dots = '.'.repeat(attempts % 4);
-          statusEl.innerHTML = '⏳ <strong>Waiting for payment confirmation</strong>' + dots + '<br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt.</span>';
+          statusEl.innerHTML = 'Waiting for payment confirmation' + dots + '<br><span style="font-size:0.85rem;color:var(--muted);">Please check your phone for the M-PESA prompt.</span>';
         }
         if (data.status === 'paid') { clearInterval(checkInterval); resolve(true); return; }
         else if (data.status === 'failed' || data.status === 'cancelled' || data.status === 'not_found') { clearInterval(checkInterval); resolve(false); return; }
@@ -1985,7 +1989,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var emailError = document.createElement('span'); emailError.id = 'checkoutEmailError'; emailError.className = 'field-hint'; emailError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;'; emailError.textContent = 'Please enter a valid email address (e.g., name@domain.com)'; emailInput.parentNode.appendChild(emailError);
     emailInput.addEventListener('input', function() {
       var email = this.value.trim(); var isValid = isValidEmail(email);
-      if (email.length > 0 && !isValid) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; emailError.style.display = 'block'; emailError.textContent = '❌ Please enter a valid email address'; }
+      if (email.length > 0 && !isValid) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; emailError.style.display = 'block'; emailError.textContent = 'Please enter a valid email address'; }
       else if (email.length > 0 && isValid) { this.style.borderColor = '#2ecc71'; this.style.background = '#f0fff4'; emailError.style.display = 'none'; }
       else { this.style.borderColor = ''; this.style.background = ''; emailError.style.display = 'none'; }
     });
@@ -2007,7 +2011,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var phoneError = document.createElement('span'); phoneError.id = 'checkoutPhoneError'; phoneError.className = 'field-hint'; phoneError.style.cssText = 'color:#e03131;font-size:11px;display:none;margin-top:4px;'; phoneError.textContent = 'Please enter a valid Kenyan phone number (10 digits)'; phoneInput.parentNode.appendChild(phoneError);
     phoneInput.addEventListener('input', function() {
       var phone = this.value.replace(/\D/g, ''); this.value = phone;
-      if (phone.length > 0 && phone.length < 10) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; phoneError.style.display = 'block'; phoneError.textContent = '❌ Phone must be at least 10 digits'; }
+      if (phone.length > 0 && phone.length < 10) { this.style.borderColor = '#e03131'; this.style.background = '#fff0f0'; phoneError.style.display = 'block'; phoneError.textContent = 'Phone must be at least 10 digits'; }
       else if (phone.length >= 10) { this.style.borderColor = '#2ecc71'; this.style.background = '#f0fff4'; phoneError.style.display = 'none'; }
       else { this.style.borderColor = ''; this.style.background = ''; phoneError.style.display = 'none'; }
     });
@@ -2017,7 +2021,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (phone.length > 0 && !validatePhone(phone)) {
         this.style.borderColor = '#e03131'; this.style.background = '#fff0f0';
         phoneError.style.display = 'block';
-        phoneError.textContent = '❌ Please enter a valid Kenyan phone (e.g., 0712345678)';
+        phoneError.textContent = 'Please enter a valid Kenyan phone (e.g., 0712345678)';
       }
     });
   }
@@ -2028,18 +2032,18 @@ document.addEventListener('DOMContentLoaded', function() {
     pinBtn.addEventListener('click', function(e) {
       e.preventDefault();
       var statusDiv = document.getElementById('locationStatus'); var streetInput = document.getElementById('street'); var areaSelect = document.getElementById('deliveryArea'); var pinSquircle = this.querySelector('.pin-squircle');
-      statusDiv.className = 'location-status'; statusDiv.style.display = 'block'; statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Getting your exact location...</span>'; statusDiv.className = 'location-status loading';
+      statusDiv.className = 'location-status'; statusDiv.style.display = 'block'; statusDiv.innerHTML = 'Getting your exact location...'; statusDiv.className = 'location-status loading';
       if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))'; pinSquircle.style.transform = 'scale(1.05)'; pinSquircle.style.transition = 'all 0.3s ease'; pinSquircle.classList.add('loading'); }
 
       if (!navigator.geolocation) {
-        statusDiv.innerHTML = '❌ Geolocation not supported on this device'; statusDiv.className = 'location-status error';
+        statusDiv.innerHTML = 'Geolocation not supported on this device'; statusDiv.className = 'location-status error';
         if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
         setTimeout(() => statusDiv.style.display = 'none', 5000);
         return;
       }
 
       var locationTimeout = setTimeout(() => {
-        statusDiv.innerHTML = '⚠️ Location request timed out. Please enter manually.'; statusDiv.className = 'location-status error';
+        statusDiv.innerHTML = 'Location request timed out. Please enter manually.'; statusDiv.className = 'location-status error';
         if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
         setTimeout(() => statusDiv.style.display = 'none', 5000);
       }, 10000);
@@ -2049,7 +2053,7 @@ document.addEventListener('DOMContentLoaded', function() {
           clearTimeout(locationTimeout);
           var lat = position.coords.latitude, lng = position.coords.longitude;
           customerLat = lat; customerLng = lng;
-          statusDiv.innerHTML = '📍 <span style="color:var(--gold);font-weight:700;">Finding your street address...</span>'; statusDiv.className = 'location-status loading';
+          statusDiv.innerHTML = 'Finding your street address...'; statusDiv.className = 'location-status loading';
 
           getAddressFromCoords(lat, lng).then((result) => {
             if (result && result.street) {
@@ -2068,31 +2072,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (found) { areaSelect.dispatchEvent(new Event('change')); areaSelect.style.borderColor = '#2ecc71'; areaSelect.style.background = '#f0fff4'; }
               }
               var displayStreet = result.street || 'Location found'; var displayArea = result.area || 'Nairobi';
-              statusDiv.innerHTML = '✅ <span style="color:#2ecc71;font-weight:700;">📍 ' + displayStreet + ', ' + displayArea + '</span>'; statusDiv.className = 'location-status success';
+              statusDiv.innerHTML = '📍 ' + displayStreet + ', ' + displayArea; statusDiv.className = 'location-status success';
               if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--gold), var(--gold-light))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
               setTimeout(() => statusDiv.style.display = 'none', 5000);
               calculateAndUpdateDeliveryFee(lat, lng);
               if (typeof renderSummary === 'function') renderSummary();
-              if (typeof showSnack === 'function') showSnack('📍 Location set: ' + displayStreet, false);
-              else if (typeof toast === 'function') toast('📍 Location found: ' + displayStreet);
+              if (typeof showSnack === 'function') showSnack('Location set: ' + displayStreet, false);
+              else if (typeof toast === 'function') toast('Location found: ' + displayStreet);
             } else {
-              statusDiv.innerHTML = '⚠️ Could not get exact address. Please enter manually.'; statusDiv.className = 'location-status error';
+              statusDiv.innerHTML = 'Could not get exact address. Please enter manually.'; statusDiv.className = 'location-status error';
               if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
               setTimeout(() => statusDiv.style.display = 'none', 5000);
             }
           }).catch((err) => {
             console.error('Geocode error:', err);
-            statusDiv.innerHTML = '⚠️ Error finding address. Please enter manually.'; statusDiv.className = 'location-status error';
+            statusDiv.innerHTML = 'Error finding address. Please enter manually.'; statusDiv.className = 'location-status error';
             if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
             setTimeout(() => statusDiv.style.display = 'none', 5000);
           });
         },
         (error) => {
           clearTimeout(locationTimeout);
-          var errorMsg = '❌ Location access denied. Please enter manually.';
-          if (error.code === 1) errorMsg = '❌ Please allow location access in your browser settings';
-          else if (error.code === 2) errorMsg = '❌ Location unavailable. Please enter manually.';
-          else if (error.code === 3) errorMsg = '❌ Location request timed out. Please enter manually.';
+          var errorMsg = 'Location access denied. Please enter manually.';
+          if (error.code === 1) errorMsg = 'Please allow location access in your browser settings';
+          else if (error.code === 2) errorMsg = 'Location unavailable. Please enter manually.';
+          else if (error.code === 3) errorMsg = 'Location request timed out. Please enter manually.';
           statusDiv.innerHTML = errorMsg; statusDiv.className = 'location-status error';
           if (pinSquircle) { pinSquircle.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-bright))'; pinSquircle.style.transform = 'scale(1)'; pinSquircle.classList.remove('loading'); }
           setTimeout(() => statusDiv.style.display = 'none', 6000);
@@ -2104,10 +2108,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================================
+// 🔵 GOOGLE PLACES AUTOCOMPLETE - ADDED
+// ============================================================
+let autocomplete;
+
+function initAutocomplete() {
+  const buildingInput = document.getElementById('building');
+  if (!buildingInput) return;
+
+  autocomplete = new google.maps.places.Autocomplete(buildingInput, {
+    componentRestrictions: { country: "ke" },
+    fields: ["formatted_address", "geometry", "name", "place_id"],
+    types: ["establishment", "geocode", "address"],
+  });
+
+  autocomplete.addListener("place_changed", function() {
+    const place = autocomplete.getPlace();
+    if (!place.geometry || !place.geometry.location) {
+      toast('No details available for this location');
+      return;
+    }
+    buildingInput.value = place.name || place.formatted_address;
+    buildingInput.dataset.fullAddress = place.formatted_address;
+    toast('Selected: ' + (place.name || place.formatted_address));
+  });
+}
+// Do NOT set window.initAutocomplete here - the callback in the URL handles it
+
+// ============================================================
 // MAIN INITIALIZATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Checkout page initializing...');
+  console.log('Checkout page initializing...');
 
   Promise.all([loadDeliverySettings(), loadDeliveryZones()])
     .then(() => {
@@ -2133,9 +2165,14 @@ document.addEventListener('DOMContentLoaded', function() {
       var successModal = document.getElementById('successModal');
       if (successModal) successModal.classList.remove('active');
       if (typeof updateCartUI === 'function') updateCartUI();
+
+      // 🔵 Initialize Google Places Autocomplete if already loaded
+      if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+        initAutocomplete();
+      }
     })
     .catch((err) => {
-      console.error('❌ Failed to load delivery:', err);
+      console.error('Failed to load delivery:', err);
       renderSummary();
       updateCartBadges();
       updateUserBadge();
@@ -2159,7 +2196,7 @@ window.addEventListener('storage', function(e) {
   }
 });
 
-console.log('✅ Checkout script loaded successfully');
+console.log('Checkout script loaded successfully');
 </script>
 <script src="js/utils.js"></script>
 </body>
