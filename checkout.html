@@ -20,12 +20,13 @@
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="preconnect" href="https://liquorbelle-mpesa-backend.onrender.com">
 <link rel="dns-prefetch" href="https://liquorbelle-mpesa-backend.onrender.com">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍷</text></svg>">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
 <!-- ===== GOOGLE MAPS PLACES API ===== -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBD4j_UnTQcobgYAQ9frmRyMYTR3yr2YnA&libraries=places&callback=initAutocomplete" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBD4j_UnTQcobgYAQ9frmRyMYTR3yr2YnA&libraries=places&callback=initAutocomplete&loading=async" async defer></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -1218,8 +1219,11 @@ a{color:inherit;text-decoration:none;}
 
 <script>
 // ============================================================
-// LIQUORBELLE CHECKOUT - FINAL PROFESSIONAL VERSION (FIXED)
+// LIQUORBELLE CHECKOUT - UPGRADED PROFESSIONAL VERSION
 // ============================================================
+
+// ===== API BASE URL - ADDED =====
+const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 
 // ===== TAX CONFIGURATION =====
 const TAX_CONFIG = { vatRate: 0.16 };
@@ -1330,7 +1334,7 @@ async function loadDeliverySettings() {
 
       const rawEnabled = data.settings.delivery_enabled;
       if (rawEnabled === undefined || rawEnabled === null) {
-        deliveryEnabled = true; // default when field is missing
+        deliveryEnabled = true;
       } else {
         deliveryEnabled = (rawEnabled === true || rawEnabled === 'true' || rawEnabled === 1 || rawEnabled === '1');
       }
@@ -1358,7 +1362,7 @@ async function loadDeliveryZones() {
     }
     throw new Error('No zones returned');
   } catch (e) {
-    // Fallback zones (used if API fails or returns empty)
+    // Fallback zones
     deliveryZones = [
       { name: 'Dagoretti Road', fee: 150 }, { name: 'Naivasha Road', fee: 150 }, { name: 'Kikuyu Road', fee: 150 },
       { name: 'Ngong Road', fee: 150 }, { name: 'Kilimani', fee: 150 }, { name: 'Kileleshwa', fee: 150 },
@@ -1423,7 +1427,7 @@ function getFeeByDistance(distance) {
 }
 
 // ============================================================
-// CALCULATE DELIVERY FEE FROM BACKEND (GPS -> Zone API)
+// CALCULATE DELIVERY FEE FROM BACKEND
 // ============================================================
 async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
   try {
@@ -1438,29 +1442,25 @@ async function calculateDeliveryFeeFromCoords(lat, lng, subtotal) {
     console.error('calculate-fee API error:', error); 
   }
   
-  // Fallback: compute locally from straight-line distance
   const distance = calculateDistance(SHOP_LOCATION.lat, SHOP_LOCATION.lng, lat, lng);
   return { fee: getFeeByDistance(distance), distance: distance, isFree: false, reason: 'Distance-based fallback' };
 }
 
 // ============================================================
-// CALCULATE AND UPDATE UI (Dropdown Priority Fix)
+// CALCULATE AND UPDATE UI
 // ============================================================
 async function calculateAndUpdateDeliveryFee(lat, lng) {
   var subtotal = getCartTotal(getCart());
   try {
     var result = await calculateDeliveryFeeFromCoords(lat, lng, subtotal);
     
-    // Critical fix: Check if dropdown already has a valid fee
     var select = document.getElementById('deliveryArea');
     var currentDropdownFee = parseInt(select.options[select.selectedIndex]?.dataset?.fee);
     
     if (!isNaN(currentDropdownFee) && currentDropdownFee > 0) {
-      // If dropdown is already set, PRESERVE it and ignore backend fee
-      console.log('Preserving dropdown fee:', currentDropdownFee, '| Ignoring backend fee:', result?.fee);
+      console.log('Preserving dropdown fee:', currentDropdownFee);
       selectedZoneFee = currentDropdownFee;
     } else if (result) {
-      // Only use backend if dropdown is empty
       var fee = Number(result.fee);
       selectedZoneFee = (!isNaN(fee) && fee >= 0) ? fee : selectedZoneFee;
     }
@@ -1598,7 +1598,7 @@ function populateDeliveryAreas(selectId) {
 }
 
 // ============================================================
-// HANDLE DELIVERY AREA CHANGE - DYNAMIC FEE
+// HANDLE DELIVERY AREA CHANGE
 // ============================================================
 function handleDeliveryChange() {
   var select = document.getElementById('deliveryArea');
@@ -1631,12 +1631,6 @@ function handleDeliveryChange() {
   }
 }
 
-/**
- * Single source of truth for whether the free-delivery threshold applies.
- * Used by renderSummary(), renderCartDrawer(), and placeOrder() so all three
- * always agree, instead of each re-implementing the same comparison
- * (and risking string/number mismatches like `subtotal >= "0"`).
- */
 function computeDelivery(subtotal) {
   var threshold = Number(freeDeliveryThreshold);
   var isValidThreshold = !isNaN(threshold) && threshold > 0;
@@ -1922,8 +1916,6 @@ function renderCartDrawer() {
   }
   container.innerHTML = html;
 
-  // FIX: was reimplementing the free-delivery check independently
-  // (and could disagree with renderSummary). Now uses the shared helper.
   var result = computeDelivery(subtotal);
   var total = subtotal + result.vat + result.delivery;
   totalEl.textContent = 'KES ' + total.toLocaleString();
@@ -1980,7 +1972,7 @@ function updateMobileMenuAuth() {
 }
 
 // ============================================================
-// DOM INIT & EVENT LISTENERS (form validation + PIN button)
+// DOM INIT & EVENT LISTENERS
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
   // Real-time validations
@@ -2108,7 +2100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================================
-// 🔵 GOOGLE PLACES AUTOCOMPLETE - ADDED
+// 🔵 GOOGLE PLACES AUTOCOMPLETE - FIXED (REMOVED TYPES ARRAY)
 // ============================================================
 let autocomplete;
 
@@ -2118,8 +2110,8 @@ function initAutocomplete() {
 
   autocomplete = new google.maps.places.Autocomplete(buildingInput, {
     componentRestrictions: { country: "ke" },
-    fields: ["formatted_address", "geometry", "name", "place_id"],
-    types: ["geocode", "address"], // ✅ FIXED: Removed "establishment"
+    fields: ["formatted_address", "geometry", "name", "place_id"]
+    // ✅ REMOVED types array entirely - Google will search everything (establishments, addresses, geocode)
   });
 
   autocomplete.addListener("place_changed", function() {
@@ -2133,7 +2125,6 @@ function initAutocomplete() {
     toast('Selected: ' + (place.name || place.formatted_address));
   });
 }
-// Do NOT set window.initAutocomplete here - the callback in the URL handles it
 
 // ============================================================
 // MAIN INITIALIZATION
@@ -2166,10 +2157,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (successModal) successModal.classList.remove('active');
       if (typeof updateCartUI === 'function') updateCartUI();
 
-      // 🔵 Initialize Google Places Autocomplete if already loaded
-      if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-        initAutocomplete();
-      }
+      // ✅ REMOVED manual initAutocomplete() call
+      // Google Maps API will call initAutocomplete via the callback parameter in the URL
     })
     .catch((err) => {
       console.error('Failed to load delivery:', err);
