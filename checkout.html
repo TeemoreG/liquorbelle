@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#800000">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex, nofollow">
 <title>Checkout — LiquorBelle</title>
 
 <!-- ===== CACHE CONTROL ===== -->
@@ -24,9 +25,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
 
+<script>
+// ============================================================
+// GOOGLE PLACES AUTOCOMPLETE - DEFINED EARLY
+// ============================================================
+let autocomplete;
+
+function initAutocomplete() {
+  const buildingInput = document.getElementById('building');
+  if (!buildingInput) return;
+
+  autocomplete = new google.maps.places.Autocomplete(buildingInput, {
+    componentRestrictions: { country: "ke" },
+    fields: ["formatted_address", "geometry", "name", "place_id"]
+  });
+
+  autocomplete.addListener("place_changed", function() {
+    const place = autocomplete.getPlace();
+    if (!place.geometry || !place.geometry.location) {
+      if (typeof toast === 'function') toast('No details available for this location');
+      return;
+    }
+    buildingInput.value = place.name || place.formatted_address;
+    buildingInput.dataset.fullAddress = place.formatted_address;
+    if (typeof toast === 'function') toast('Selected: ' + (place.name || place.formatted_address));
+  });
+}
+</script>
+
 <!-- ===== GOOGLE MAPS PLACES API ===== -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBD4j_UnTQcobgYAQ9frmRyMYTR3yr2YnA&libraries=places&callback=initAutocomplete&loading=async" async defer></script>
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -2213,33 +2241,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-
-// ============================================================
-// 🔵 GOOGLE PLACES AUTOCOMPLETE - FIXED (REMOVED TYPES ARRAY)
-// ============================================================
-let autocomplete;
-
-function initAutocomplete() {
-  const buildingInput = document.getElementById('building');
-  if (!buildingInput) return;
-
-  autocomplete = new google.maps.places.Autocomplete(buildingInput, {
-    componentRestrictions: { country: "ke" },
-    fields: ["formatted_address", "geometry", "name", "place_id"]
-    // ✅ REMOVED types array entirely - Google will search everything (establishments, addresses, geocode)
-  });
-
-  autocomplete.addListener("place_changed", function() {
-    const place = autocomplete.getPlace();
-    if (!place.geometry || !place.geometry.location) {
-      toast('No details available for this location');
-      return;
-    }
-    buildingInput.value = place.name || place.formatted_address;
-    buildingInput.dataset.fullAddress = place.formatted_address;
-    toast('Selected: ' + (place.name || place.formatted_address));
-  });
-}
 
 // ============================================================
 // MAIN INITIALIZATION
