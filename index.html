@@ -2148,7 +2148,11 @@ body:not(.age-gate-active) {
 // ============================================================
 if (window.location.search.includes('session=expired')) {
   setTimeout(function() {
-    toast('Your session expired. Please log in again.', 'error');
+    if (typeof toast === 'function') {
+      toast('Your session expired. Please log in again.', 'error');
+    } else {
+      alert('Your session expired. Please log in again.');
+    }
   }, 500);
 }
 
@@ -2179,7 +2183,9 @@ function handleGoogleCallback() {
     localStorage.setItem('liquorbelle_token', token);
     localStorage.setItem('liquorbelle_login_time', Date.now().toString());
     
-    toast('✅ Welcome, ' + user.name + '! 👋', 'success');
+    if (typeof toast === 'function') {
+      toast('✅ Welcome, ' + user.name + '! 👋', 'success');
+    }
     
     window.location.href = 'index.html';
   }
@@ -2268,21 +2274,29 @@ function clearMainSearch() {
 })();
 
 // ============================================================
-// CART
+// CART - LOCAL OVERRIDE (uses app.js functions)
 // ============================================================
 function openCartDrawer() {
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if (drawer) drawer.classList.add('open');
-  if (overlay) overlay.classList.add('open');
-  renderCartDrawer();
+  if (typeof window.openCartDrawer === 'function') {
+    window.openCartDrawer();
+  } else {
+    var drawer = document.getElementById('cartDrawer');
+    var overlay = document.getElementById('cartOverlay');
+    if (drawer) drawer.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    renderCartDrawer();
+  }
 }
 
 function closeCartDrawer() {
-  var drawer = document.getElementById('cartDrawer');
-  var overlay = document.getElementById('cartOverlay');
-  if (drawer) drawer.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
+  if (typeof window.closeCartDrawer === 'function') {
+    window.closeCartDrawer();
+  } else {
+    var drawer = document.getElementById('cartDrawer');
+    var overlay = document.getElementById('cartOverlay');
+    if (drawer) drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+  }
 }
 
 function renderCartDrawer() {
@@ -2306,7 +2320,7 @@ function renderCartDrawer() {
     var subtotal = item.price * item.qty;
     total += subtotal;
     count += item.qty;
-    html += '<div class="cart-item"><div><div class="cart-item-name">' + escapeHtml(item.name) + '</div></div><div class="cart-item-price">KES ' + subtotal.toLocaleString() + '</div></div>';
+    html += '<div class="cart-item"><div><div class="cart-item-name">' + (typeof escapeHtml === 'function' ? escapeHtml(item.name) : item.name) + '</div></div><div class="cart-item-price">KES ' + subtotal.toLocaleString() + '</div></div>';
   }
 
   container.innerHTML = html;
@@ -2322,7 +2336,16 @@ function renderCartDrawer() {
 // UPDATE BOTTOM NAV & MOBILE MENU
 // ============================================================
 function updateBottomNav() {
-  var user = getCurrentUser();
+  var user = null;
+  if (typeof getCurrentUser === 'function') {
+    user = getCurrentUser();
+  } else {
+    try {
+      var userData = localStorage.getItem('liquorbelle_user');
+      user = userData ? JSON.parse(userData) : null;
+    } catch(e) { user = null; }
+  }
+  
   var accountBtn = document.getElementById('bottomNavAccount');
   var accountLabel = document.getElementById('bottomNavAccountLabel');
   var profileLink = document.getElementById('mobileMenuProfile');
@@ -2354,15 +2377,26 @@ function updateBottomNav() {
 // UPDATE MOBILE MENU AUTH SECTION
 // ============================================================
 function updateMobileMenuAuth() {
-  var user = getCurrentUser();
+  var user = null;
+  if (typeof getCurrentUser === 'function') {
+    user = getCurrentUser();
+  } else {
+    try {
+      var userData = localStorage.getItem('liquorbelle_user');
+      user = userData ? JSON.parse(userData) : null;
+    } catch(e) { user = null; }
+  }
+  
   var authSection = document.getElementById('mobileMenuAuth');
   if (!authSection) return;
+  
+  var escape = typeof escapeHtml === 'function' ? escapeHtml : function(str) { return String(str).replace(/[&<>"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; }); };
   
   if (user && user.name) {
     authSection.innerHTML = `
       <div style="padding:8px 20px 14px;border-bottom:1px solid var(--border);margin-bottom:4px;">
-        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escapeHtml(user.name)}</div>
-        <div style="font-size:.75rem;color:var(--muted);">${escapeHtml(user.email || '')}</div>
+        <div style="font-weight:700;font-size:.95rem;color:var(--text);">${escape(user.name)}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${escape(user.email || '')}</div>
         <button onclick="logoutUser();closeMobileMenu();" style="margin-top:8px;padding:6px 16px;background:var(--sale-red);color:white;border:none;border-radius:30px;font-weight:600;font-size:.7rem;cursor:pointer;width:100%;">
           <i class="ph ph-sign-out"></i> Logout
         </button>
@@ -2439,7 +2473,16 @@ document.getElementById('cartOverlay')?.addEventListener('click', function(e) {
 // WELCOME BACK MESSAGE
 // ============================================================
 function showWelcomeBack() {
-  var user = getCurrentUser();
+  var user = null;
+  if (typeof getCurrentUser === 'function') {
+    user = getCurrentUser();
+  } else {
+    try {
+      var userData = localStorage.getItem('liquorbelle_user');
+      user = userData ? JSON.parse(userData) : null;
+    } catch(e) { user = null; }
+  }
+  
   if (user && user.name) {
     var heroOverlay = document.querySelector('.hero-overlay');
     if (heroOverlay) {
@@ -2460,15 +2503,36 @@ function showWelcomeBack() {
 }
 
 // ============================================================
-// INIT
+// INIT - WITH SAFETY CHECKS
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
   handleGoogleCallback();
   
-  updateCartUI();
-  updateBottomNav();
-  updateMobileMenuAuth();
-  showWelcomeBack();
+  // ✅ SAFETY: Check if functions exist before calling
+  if (typeof updateCartUI === 'function') {
+    updateCartUI();
+  } else {
+    console.warn('updateCartUI not available, using fallback');
+    renderCartDrawer();
+  }
+  
+  if (typeof updateBottomNav === 'function') {
+    updateBottomNav();
+  } else {
+    updateBottomNav();
+  }
+  
+  if (typeof updateMobileMenuAuth === 'function') {
+    updateMobileMenuAuth();
+  } else {
+    updateMobileMenuAuth();
+  }
+  
+  if (typeof showWelcomeBack === 'function') {
+    showWelcomeBack();
+  } else {
+    showWelcomeBack();
+  }
 
   console.log('🍾 LiquorBelle homepage loaded');
 });
