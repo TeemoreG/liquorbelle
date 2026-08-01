@@ -1,8 +1,8 @@
 // ============================================
-// LIQUORBELLE — SERVICE WORKER v8
+// LIQUORBELLE — SERVICE WORKER v8.0.2
 // ============================================
 
-const CACHE_NAME = 'liquorbelle-v8.0.1';
+const CACHE_NAME = 'liquorbelle-v8.0.2';
 const BASE_PATH = self.location.pathname.replace('sw.js', '');
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
 
@@ -21,6 +21,7 @@ const STATIC_PAGES = [
   'login.html',
   'signup.html',
   'profile.html',
+  'track-orders.html',
   'style.css',
   'app.js',
   'manifest.json',

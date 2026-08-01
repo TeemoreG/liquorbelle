@@ -946,6 +946,20 @@ a{color:inherit;text-decoration:none;}
 </head>
 <body>
 
+  <!-- ===== FORCE SERVICE WORKER UPDATE ===== -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for (var i = 0; i < registrations.length; i++) {
+      registrations[i].update();
+      console.log('[Checkout] SW update triggered');
+    }
+  }).catch(function(err) {
+    console.warn('[Checkout] SW update error:', err);
+  });
+}
+</script>
+
 <!-- Offline Banner -->
 <div class="offline-banner" id="offlineBanner">You're offline. Please check your connection.</div>
 
@@ -1216,7 +1230,8 @@ a{color:inherit;text-decoration:none;}
 
 <div class="snack" id="snack"></div>
 
-<script src="js/utils.js"></script>
+<script src="js/utils.js?v=20260801"></script>
+
 
 <script>
 // ============================================================
@@ -1785,10 +1800,10 @@ async function placeOrder() {
   var payload, endpoint;
   if (paymentMethod === 'pod') {
     payload = { orderNumber, customerName: name, customerEmail: email, phone, address, notes: '', subtotal, vat, delivery, total, items };
-    endpoint = API_BASE + '/api/orders/pod';
+    endpoint = API_BASE + '/api/orders/pod?t=' + Date.now();
   } else {
     payload = { orderId: orderNumber, customerName: name, customerEmail: email, phone, address, subtotal, vat, delivery, total, items };
-    endpoint = API_BASE + '/api/stkpush';
+    endpoint = API_BASE + '/api/stkpush?t=' + Date.now();
   }
 
   btn.disabled = true;
@@ -1911,7 +1926,7 @@ async function pollPaymentStatus(orderId) {
     var checkInterval = setInterval(async () => {
       attempts++;
       try {
-        var response = await fetch(API_BASE + '/api/status/' + orderId);
+        var response = await fetch(API_BASE + '/api/status/' + orderId + '?t=' + Date.now());
         var data = await response.json();
         var statusEl = document.getElementById('successMessage');
         if (statusEl) {
@@ -2271,7 +2286,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ===== STORAGE SYNC (cross-tab) =====
+/// ===== STORAGE SYNC (cross-tab) =====
 window.addEventListener('storage', function(e) {
   if (e.key === 'liquorbelle_cart' || e.key === 'cart') {
     renderSummary();
@@ -2286,6 +2301,30 @@ window.addEventListener('storage', function(e) {
 });
 
 console.log('Checkout script loaded successfully');
+
+// ============================================================
+// AUTO-UPDATE VERSION CHECK
+// ============================================================
+(function checkForUpdates() {
+  var currentVersion = '20260801';
+  var storedVersion = localStorage.getItem('liquorbelle_version');
+  
+  if (storedVersion !== currentVersion) {
+    localStorage.setItem('liquorbelle_version', currentVersion);
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (var i = 0; i < names.length; i++) {
+          if (names[i].includes('liquorbelle')) {
+            caches.delete(names[i]);
+            console.log('[Checkout] Cache deleted:', names[i]);
+          }
+        }
+      });
+    }
+    console.log('[Checkout] Version updated to:', currentVersion);
+  }
+})();
+
 </script>
 </body>
 </html>

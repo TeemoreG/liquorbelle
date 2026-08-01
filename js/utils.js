@@ -3,6 +3,29 @@
 // ============================================================
 
 // ============================================================
+// AUTO-UPDATE VERSION CHECK
+// ============================================================
+(function checkForUpdates() {
+  var currentVersion = '20260801';
+  var storedVersion = localStorage.getItem('liquorbelle_version');
+  
+  if (storedVersion !== currentVersion) {
+    localStorage.setItem('liquorbelle_version', currentVersion);
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (var i = 0; i < names.length; i++) {
+          if (names[i].includes('liquorbelle')) {
+            caches.delete(names[i]);
+            console.log('[Utils] Cache deleted:', names[i]);
+          }
+        }
+      });
+    }
+    console.log('[Utils] Version updated to:', currentVersion);
+  }
+})();
+
+// ============================================================
 // CONFIG
 // ============================================================
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
@@ -762,7 +785,6 @@ window.addEventListener('scroll', function() {
   else btn.classList.remove('show');
 }, { passive: true });
 
-console.log('✅ Utils loaded');
 // ============================================================
 // SESSION MANAGEMENT - Auto-logout after 30 minutes
 // ============================================================
@@ -814,3 +836,55 @@ document.addEventListener('click', function() {
 document.addEventListener('DOMContentLoaded', function() {
   checkSession();
 });
+
+// ============================================================
+// CLEAR SITE CACHE - FORCE REFRESH (Shared globally)
+// ============================================================
+function clearSiteCache() {
+  // Show loading state
+  if (typeof toast === 'function') {
+    toast('🧹 Clearing cache...', 'info');
+  }
+  
+  // Clear service workers
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (var i = 0; i < registrations.length; i++) {
+        registrations[i].unregister();
+        console.log('[Clear] SW unregistered');
+      }
+    }).catch(function(e) { console.warn('[Clear] SW error:', e); });
+  }
+  
+  // Clear localStorage
+  try {
+    localStorage.clear();
+    console.log('[Clear] localStorage cleared');
+  } catch(e) {}
+  
+  // Clear sessionStorage
+  try {
+    sessionStorage.clear();
+    console.log('[Clear] sessionStorage cleared');
+  } catch(e) {}
+  
+  // Clear Cache API
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      for (var i = 0; i < names.length; i++) {
+        caches.delete(names[i]);
+        console.log('[Clear] Cache deleted:', names[i]);
+      }
+    }).catch(function(e) { console.warn('[Clear] Cache error:', e); });
+  }
+  
+  // Force reload with cache bust
+  setTimeout(function() {
+    window.location.reload(true);
+  }, 600);
+}
+
+// Expose globally
+window.clearSiteCache = clearSiteCache;
+
+console.log('✅ Utils loaded');

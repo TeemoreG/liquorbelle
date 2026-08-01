@@ -604,6 +604,58 @@ window.updateUserBadge = function() {
 };
 
 // ============================================================
+// CLEAR SITE CACHE - FORCE REFRESH (SHARED)
+// ============================================================
+function clearSiteCache() {
+  // Show loading state
+  if (typeof toast === 'function') {
+    toast('🧹 Clearing cache...', 'info');
+  }
+  
+  // Clear service workers
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (var i = 0; i < registrations.length; i++) {
+        registrations[i].unregister();
+        console.log('[Clear] SW unregistered');
+      }
+    }).catch(function(e) { console.warn('[Clear] SW error:', e); });
+  }
+  
+  // Clear localStorage
+  try {
+    localStorage.clear();
+    console.log('[Clear] localStorage cleared');
+  } catch(e) {}
+  
+  // Clear sessionStorage
+  try {
+    sessionStorage.clear();
+    console.log('[Clear] sessionStorage cleared');
+  } catch(e) {}
+  
+  // Clear Cache API
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      for (var i = 0; i < names.length; i++) {
+        caches.delete(names[i]);
+        console.log('[Clear] Cache deleted:', names[i]);
+      }
+    }).catch(function(e) { console.warn('[Clear] Cache error:', e); });
+  }
+  
+  // Force reload with cache bust
+  setTimeout(function() {
+    window.location.reload(true);
+  }, 600);
+}
+
+// Expose globally
+window.clearSiteCache = clearSiteCache;
+
+console.log('🧹 Clear Cache function loaded');
+
+// ============================================================
 // BOTTOM NAV & MOBILE MENU AUTH (GLOBAL - USED BY ALL PAGES)
 // ============================================================
 
