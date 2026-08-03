@@ -2281,27 +2281,36 @@ function clearMainSearch() {
 // ============================================================
 // CART - LOCAL OVERRIDE (uses app.js functions)
 // ============================================================
+
+// Save reference to original functions BEFORE overriding
+var _originalOpenCartDrawer = window.openCartDrawer || null;
+var _originalCloseCartDrawer = window.closeCartDrawer || null;
+
 function openCartDrawer() {
-  if (typeof window.openCartDrawer === 'function') {
-    window.openCartDrawer();
-  } else {
-    var drawer = document.getElementById('cartDrawer');
-    var overlay = document.getElementById('cartOverlay');
-    if (drawer) drawer.classList.add('open');
-    if (overlay) overlay.classList.add('open');
-    renderCartDrawer();
+  // Check if original exists AND it's not this function itself
+  if (typeof _originalOpenCartDrawer === 'function' && _originalOpenCartDrawer !== openCartDrawer) {
+    _originalOpenCartDrawer();
+    return;
   }
+  
+  // Fallback implementation
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+  renderCartDrawer();
 }
 
 function closeCartDrawer() {
-  if (typeof window.closeCartDrawer === 'function') {
-    window.closeCartDrawer();
-  } else {
-    var drawer = document.getElementById('cartDrawer');
-    var overlay = document.getElementById('cartOverlay');
-    if (drawer) drawer.classList.remove('open');
-    if (overlay) overlay.classList.remove('open');
+  if (typeof _originalCloseCartDrawer === 'function' && _originalCloseCartDrawer !== closeCartDrawer) {
+    _originalCloseCartDrawer();
+    return;
   }
+  
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('cartOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
 }
 
 function renderCartDrawer() {
@@ -2336,7 +2345,6 @@ function renderCartDrawer() {
     if (el) el.textContent = count;
   });
 }
-
 // ============================================================
 // UPDATE BOTTOM NAV & MOBILE MENU
 // ============================================================
