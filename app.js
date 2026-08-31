@@ -653,7 +653,7 @@ function clearSiteCache() {
 // Expose globally
 window.clearSiteCache = clearSiteCache;
 
-console.log('🧹 Clear Cache function loaded');
+console.log('Clear Cache function loaded');
 
 // ============================================================
 // BOTTOM NAV & MOBILE MENU AUTH (GLOBAL - USED BY ALL PAGES)
