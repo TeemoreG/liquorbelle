@@ -101,7 +101,7 @@ function showUserGreeting() {
     var greetingEl = document.createElement('div');
     greetingEl.className = 'user-greeting-banner';
     greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
-    greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+    greetingEl.innerHTML = 'Welcome back, ' + escapeHtml(user.name) + '!';
     welcomeBanner.prepend(greetingEl);
     
     // Auto-hide after 5 seconds
@@ -3013,7 +3013,7 @@ function renderStars(rating) {
     var flavour = selectedVariant.flavour || '';
     var size = selectedVariant.size || '';
     var price = selectedVariant.discount > 0 ? Math.round(selectedVariant.price * (100 - selectedVariant.discount) / 100) : selectedVariant.price;
-    var text = '🍾 ' + currentProduct.name + (flavour ? ' (' + flavour + ')' : '') + ' at LiquorBelle! ' + size + ' - KES ' + price.toLocaleString() + '\n' + url;
+    var text = '' + currentProduct.name + (flavour ? ' (' + flavour + ')' : '') + ' at LiquorBelle! ' + size + ' - KES ' + price.toLocaleString() + '\n' + url;
     window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
   };
 

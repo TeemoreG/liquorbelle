@@ -984,7 +984,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
       localStorage.setItem('liquorbelle_token', result.data.token);
       localStorage.setItem('liquorbelle_user', JSON.stringify(result.data.customer));
       localStorage.setItem('liquorbelle_login_time', Date.now().toString());
-      toast('Welcome back! 🎉', 'success');
+      toast('Welcome back!', 'success');
       setTimeout(function() {
         window.location.href = getRedirectTarget();
       }, 400);
@@ -1138,7 +1138,7 @@ function handleGoogleCallback() {
   localStorage.setItem('liquorbelle_token', token);
   localStorage.setItem('liquorbelle_login_time', Date.now().toString());
 
-  toast('Welcome back, ' + user.name + '! 👋', 'success');
+  toast('Welcome back, ' + user.name + '!', 'success');
   setTimeout(function() {
     window.location.href = getRedirectTarget();
   }, 500);

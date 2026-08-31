@@ -278,7 +278,7 @@ a{color:inherit;text-decoration:none;}
   overflow: hidden;
 }
 .welcome-banner::after {
-  content: '🍾';
+  content: '';
   position: absolute;
   right: 20px;
   bottom: 10px;
@@ -919,7 +919,7 @@ function showUserGreeting() {
     var greetingEl = document.createElement('div');
     greetingEl.className = 'user-greeting-banner';
     greetingEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
-    greetingEl.innerHTML = '👋 Welcome back, ' + escapeHtml(user.name) + '!';
+    greetingEl.innerHTML = 'Welcome back, ' + escapeHtml(user.name) + '!';
     welcomeBanner.prepend(greetingEl);
     
     setTimeout(function() {
@@ -1014,7 +1014,7 @@ function updateUI() {
   if (user && user.name) {
     if (authOptions) authOptions.style.display = 'none';
     if (loggedInFeatures) loggedInFeatures.style.display = 'block';
-    if (welcomeTitle) welcomeTitle.innerHTML = 'Welcome back, <span class="gold-text">' + escapeHtml(user.name) + '</span>! 🍾';
+    if (welcomeTitle) welcomeTitle.innerHTML = 'Welcome back, <span class="gold-text">' + escapeHtml(user.name) + '</span>!';
     if (welcomeSub) welcomeSub.textContent = 'Your premium alcohol delivery service';
 
     if (avatar) {

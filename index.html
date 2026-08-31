@@ -2501,7 +2501,7 @@ function showWelcomeBack() {
     if (heroOverlay) {
       var greeting = document.createElement('div');
       greeting.style.cssText = 'background:rgba(255,255,255,0.15);padding:8px 20px;border-radius:50px;display:inline-block;margin-bottom:12px;color:white;font-weight:600;font-size:.9rem;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);';
-      greeting.textContent = '👋 Welcome back, ' + user.name + '!';
+      greeting.textContent = 'Welcome back, ' + user.name + '!';
       heroOverlay.prepend(greeting);
       
       setTimeout(function() {
@@ -2547,7 +2547,7 @@ document.addEventListener('DOMContentLoaded', function() {
     showWelcomeBack();
   }
 
-  console.log('🍾 LiquorBelle homepage loaded');
+  console.log('LiquorBelle homepage loaded');
 });
 </script>
 

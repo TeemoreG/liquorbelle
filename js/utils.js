@@ -818,7 +818,7 @@ function checkSession() {
       try {
         const userData = JSON.parse(user);
         const name = userData.name || 'Customer';
-        toast('Welcome back, ' + name + '! 👋');
+        toast('Welcome back, ' + name + '!');
       } catch(e) {}
     }
   }

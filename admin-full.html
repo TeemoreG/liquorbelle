@@ -637,19 +637,19 @@ textarea { resize: vertical; }
         <h4 style="color:rgba(255,255,255,0.8);">💰 Revenue</h4>
         <div class="value" id="totalRevenue" style="color:white;font-size:32px;">KES 0</div>
         <div class="sub" style="color:rgba(255,255,255,0.7);">Delivered orders</div>
-        <div class="icon" style="opacity:0.15;">💰</div>
+        <div class="icon" style="opacity:0.15;"></div>
       </div>
       <div class="stat-card" style="background:linear-gradient(135deg, #1a365d, #2b6cb0);color:white;border:none;">
-        <h4 style="color:rgba(255,255,255,0.8);">📦 Orders</h4>
+        <h4 style="color:rgba(255,255,255,0.8);"> Orders</h4>
         <div class="value" id="totalOrders" style="color:white;font-size:32px;">0</div>
         <div class="sub" style="color:rgba(255,255,255,0.7);">All time</div>
-        <div class="icon" style="opacity:0.15;">📦</div>
+        <div class="icon" style="opacity:0.15;"></div>
       </div>
       <div class="stat-card" style="background:linear-gradient(135deg, #6b21a5, #7c3aed);color:white;border:none;">
-        <h4 style="color:rgba(255,255,255,0.8);">🍾 Products</h4>
+        <h4 style="color:rgba(255,255,255,0.8);">Products</h4>
         <div class="value" id="totalProducts" style="color:white;font-size:32px;">0</div>
         <div class="sub" style="color:rgba(255,255,255,0.7);">In catalogue</div>
-        <div class="icon" style="opacity:0.15;">🍾</div>
+        <div class="icon" style="opacity:0.15;"></div>
       </div>
       <div class="stat-card" style="background:linear-gradient(135deg, #9a3412, #c2410c);color:white;border:none;">
         <h4 style="color:rgba(255,255,255,0.8);">📊 Avg Order</h4>
@@ -742,7 +742,7 @@ textarea { resize: vertical; }
       </form>
     </div>
 
-    <!-- ✅ FINAL UPDATED DELIVERY SETTINGS (REMOVED DELIVERY FEE) -->
+    <!-- DELIVERY SETTINGS -->
     <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
       <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
         <i class="ph ph-truck" style="color:var(--gold);font-size:20px;"></i> Delivery Settings
@@ -751,7 +751,6 @@ textarea { resize: vertical; }
       
       <form id="deliveryForm" onsubmit="event.preventDefault(); saveDeliverySettings(event);">
         <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <!-- ✅ REMOVED DELIVERY FEE INPUT -->
           <div class="form-group">
             <label class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
               <i class="ph ph-gift" style="color:var(--gold);"></i> Free Threshold (KES)
@@ -779,7 +778,7 @@ textarea { resize: vertical; }
       </form>
     </div>
 
-    <!-- ✅ UPDATED DELIVERY ZONES SECTION -->
+    <!-- DELIVERY ZONES SECTION -->
     <div class="form-card" style="background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;">
       <div class="form-card-title" style="font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:2px solid var(--gold-bg);">
         <i class="ph ph-map-pin" style="color:var(--gold);font-size:20px;"></i> Delivery Zones &amp; Fees
@@ -1060,7 +1059,7 @@ window.submitAdminLogin = function() {
   window.adminLogin(password.value).then(success => {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Login'; }
     if (success) { document.getElementById('adminLoginModal').style.display = 'none'; showToast('✅ Login successful!', 'success'); initializeAdmin(); }
-    else { if (errorDiv) errorDiv.innerText = 'Invalid admin password. Try again.'; if (password) { password.value = ''; password.focus(); } showToast('❌ Invalid password', 'error'); }
+    else { if (errorDiv) errorDiv.innerText = 'Invalid admin password. Try again.'; if (password) { password.value = ''; password.focus(); } showToast('Invalid password', 'error'); }
   }).catch(() => {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Login'; }
     if (errorDiv) errorDiv.innerText = 'Network error. Please try again.';
@@ -1204,7 +1203,7 @@ function updateProductStats() {
     .join('');
   
   stats.innerHTML = `
-    <div class="stat-card"><h4>Total Products</h4><div class="value">${total}</div><div class="sub">In catalogue</div><div class="icon">🍾</div></div>
+    <div class="stat-card"><h4>Total Products</h4><div class="value">${total}</div><div class="sub">In catalogue</div><div class="icon"></div></div>
     <div class="stat-card"><h4>With Variants</h4><div class="value">${withVariants}</div><div class="sub">${total > 0 ? Math.round(withVariants/total*100) : 0}% have variants</div><div class="icon">📦</div></div>
     <div class="stat-card"><h4>In Stock</h4><div class="value">${inStockVariants}</div><div class="sub">✅ Available variants</div><div class="icon">📦</div></div>
     <div class="stat-card"><h4>Out of Stock</h4><div class="value">${outOfStockVariants}</div><div class="sub">❌ Need restock</div><div class="icon">⚠️</div></div>
@@ -2473,11 +2472,11 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') { closeEditModal(); hideToast(); }
 });
 
-console.log('🍾 LiquorBelle Admin — Fully Loaded');
-console.log('🔑 API Base:', API_BASE);
-console.log('📂 Categories:', ALL_CATEGORIES.length + ' categories loaded');
-console.log('📦 Stock tracking enabled');
-console.log('✅ Bulk select & delete enabled with scroll preservation');
+console.log('LiquorBelle Admin — Fully Loaded');
+console.log('API Base:', API_BASE);
+console.log('Categories:', ALL_CATEGORIES.length + ' categories loaded');
+console.log('Stock tracking enabled');
+console.log('Bulk select & delete enabled with scroll preservation');
 </script>
 </body>
 </html>
