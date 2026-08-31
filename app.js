@@ -609,7 +609,7 @@ window.updateUserBadge = function() {
 function clearSiteCache() {
   // Show loading state
   if (typeof toast === 'function') {
-    toast('🧹 Clearing cache...', 'info');
+    toast('Clearing cache...', 'info');
   }
   
   // Clear service workers
@@ -3448,7 +3448,7 @@ if ('serviceWorker' in navigator) {
       return;
     }
 
-    navigator.serviceWorker.register('/liquorbelle/sw.js', {
+    navigator.serviceWorker.register('/sw.js', {
       scope: '/liquorbelle/'
     })
     .then(function(reg) {
@@ -3556,4 +3556,4 @@ window.addEventListener('storage', function(e) {
   }
 });
 
-console.log('🚀 LiquorBelle — Master app.js loaded (Enhanced version)');
+console.log('LiquorBelle — Master app.js loaded (Enhanced version)');
