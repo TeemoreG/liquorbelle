@@ -518,7 +518,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 // LIQUORBELLE — CASHIER ORDER MANAGER (COMPLETE)
 // ============================================================
 const API_BASE = 'https://liquorbelle-mpesa-backend.onrender.com';
-const ADMIN_TOKEN_KEY = 'liquorbelle_admin_token';
+const CASHIER_TOKEN_KEY = 'liquorbelle_cashier_token';
 
 var allOrders = [];
 var selectedIds = new Set();
@@ -527,9 +527,9 @@ var knownOrderIds = new Set();
 var firstLoad = true;
 
 // ---------------- AUTH ----------------
-function getAdminToken() { return localStorage.getItem(ADMIN_TOKEN_KEY); }
-function setAdminToken(t) { localStorage.setItem(ADMIN_TOKEN_KEY, t); }
-function removeAdminToken() { localStorage.removeItem(ADMIN_TOKEN_KEY); }
+function getAdminToken() { return localStorage.getItem(CASHIER_TOKEN_KEY); }
+function setAdminToken(t) { localStorage.setItem(CASHIER_TOKEN_KEY, t); }
+function removeAdminToken() { localStorage.removeItem(CASHIER_TOKEN_KEY); }
 
 function adminFetch(url, options) {
   options = options || {};
@@ -875,7 +875,7 @@ window.bulkUpdate = function(status) {
   if (!confirm('Mark ' + selectedIds.size + ' order(s) as ' + label + '?')) return;
   var ids = Array.from(selectedIds);
   var promises = ids.map(function(id) {
-    return adminFetch(API_BASE + '/api/orders/' + id + '/status', { method: 'PUT', body: JSON.stringify({ status: status }) }).then(function(r) { return r.json(); });
+return adminFetch(API_BASE + '/api/orders/cashier/' + id + '/status', { method: 'PUT', body: JSON.stringify({ status: status }) }).then(function(r) { return r.json(); });
   });
   Promise.all(promises).then(function(results) {
     var ok = results.filter(function(r) { return r.success; }).length;
@@ -890,7 +890,7 @@ window.bulkUpdate = function(status) {
 window.updateStatus = function(orderId, status) {
   var label = status === 'paid' ? 'paid' : 'delivered';
   if (!confirm('Mark this order as ' + label + '?')) return;
-  adminFetch(API_BASE + '/api/orders/' + orderId + '/status', { method: 'PUT', body: JSON.stringify({ status: status }) })
+  adminFetch(API_BASE + '/api/orders/cashier/' + orderId + '/status', { method: 'PUT', body: JSON.stringify({ status: status }) })
     .then(function(res) { return res.json(); })
     .then(function(data) {
       if (data.success) { toast('✅ Order marked as ' + label, 'success'); loadOrders(); }
