@@ -151,6 +151,22 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 
 .otp-timer{text-align:center;font-size:.75rem;color:var(--muted);margin-top:8px;}
 
+/* ============================================================
+   GOOGLE COMPLETION MODE
+   ============================================================ */
+.google-mode-banner{display:none;background:linear-gradient(135deg,#4285F4,#34A853);color:white;border-radius:16px;padding:18px 20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.google-mode-banner.show{display:block;}
+.google-mode-banner i{font-size:30px;display:block;margin-bottom:6px;}
+.google-mode-banner h3{font-size:1rem;font-weight:800;margin-bottom:4px;}
+.google-mode-banner p{font-size:.8rem;opacity:.95;line-height:1.45;}
+.google-mode-banner .google-badge{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.22);padding:4px 10px;border-radius:30px;font-size:.6rem;font-weight:700;letter-spacing:.5px;}
+body.google-mode .field-group.google-prefilled{display:none;}
+body.google-mode .divider,
+body.google-mode #googleRegisterBtn,
+body.google-mode .footer-links{display:none;}
+body.google-mode .auth-card .brand-icon{background:#e8f4ff;color:#4285F4;}
+body.google-mode .auth-card .brand-icon i{color:#4285F4;}
+
 @media(max-width:480px){
   .auth-card{padding:24px 18px;}
   .digit-box{width:48px;height:56px;font-size:1.3rem;}
@@ -170,16 +186,24 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
 <div class="page-wrap">
   <div class="auth-card">
 
-    <div class="brand-icon"><i class="ph ph-user-plus"></i></div>
-    <h1>Create Account</h1>
-    <p class="lead">Join LiquorBelle and start ordering</p>
+    <div class="brand-icon" id="brandIcon"><i class="ph ph-user-plus" id="brandIconGlyph"></i></div>
+    <h1 id="signupTitle">Create Account</h1>
+    <p class="lead" id="signupLead">Join LiquorBelle and start ordering</p>
+
+    <!-- Google completion mode banner -->
+    <div class="google-mode-banner" id="googleModeBanner">
+      <span class="google-badge">VIA GOOGLE</span>
+      <i class="ph ph-shield-check"></i>
+      <h3>One last step</h3>
+      <p>Your Google account is connected. Set a 4-digit PIN to secure your LiquorBelle account and finish signing up.</p>
+    </div>
 
     <div class="banner" id="registerBanner"></div>
 
     <!-- STEP 1: Registration Form -->
     <div class="step active" id="stepRegister">
       <form id="registerForm">
-        <div class="field-group">
+        <div class="field-group google-prefilled">
           <label class="field-label">Full Name</label>
           <div class="field-input-wrap">
             <input class="field-input" id="fullNameInput" type="text" placeholder="John Mwangi" autocomplete="name">
@@ -187,7 +211,7 @@ body{background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit
           <div class="field-error" id="fullNameError"></div>
         </div>
 
-        <div class="field-group">
+        <div class="field-group google-prefilled">
           <label class="field-label">Email address</label>
           <div class="field-input-wrap">
             <input class="field-input" id="emailInput" type="email" placeholder="you@example.com" autocomplete="email">
@@ -305,6 +329,63 @@ const OTP_RESEND_COOLDOWN = 60;
 let registrationData = {};
 let otpTimer = null;
 let otpCountdown = 0;
+let IS_GOOGLE_MODE = false;
+let GOOGLE_TOKEN = null;
+
+// ============================================================
+// GOOGLE COMPLETION MODE DETECTION
+// ============================================================
+(function detectGoogleMode() {
+  var params = new URLSearchParams(window.location.search);
+  var isGoogle = params.get('google') === '1';
+  if (!isGoogle) return;
+
+  IS_GOOGLE_MODE = true;
+  document.body.classList.add('google-mode');
+  document.title = 'Set Your PIN — LiquorBelle';
+
+  var banner = document.getElementById('googleModeBanner');
+  if (banner) banner.classList.add('show');
+
+  var title = document.getElementById('signupTitle');
+  if (title) title.textContent = 'Set Your PIN';
+
+  var lead = document.getElementById('signupLead');
+  if (lead) lead.textContent = 'Almost there — just a quick 4-digit PIN to finish.';
+
+  var iconGlyph = document.getElementById('brandIconGlyph');
+  if (iconGlyph) iconGlyph.className = 'ph ph-shield-check';
+
+  var btnText = document.getElementById('registerBtnText');
+  if (btnText) btnText.textContent = 'Set PIN & Finish';
+
+  // Prefill from sessionStorage
+  try {
+    var raw = sessionStorage.getItem('liquorbelle_google_pending');
+    if (raw) {
+      var data = JSON.parse(raw);
+      if (data.name) {
+        var n = document.getElementById('fullNameInput');
+        if (n) n.value = data.name;
+      }
+      if (data.email) {
+        var e = document.getElementById('emailInput');
+        if (e) e.value = data.email;
+      }
+      if (data.phone) {
+        var p = document.getElementById('phoneInput');
+        if (p) p.value = data.phone;
+      }
+      GOOGLE_TOKEN = data.token || null;
+      setTimeout(function() {
+        var firstPin = document.querySelector('#pinDigitGroup .digit-box');
+        if (firstPin) firstPin.focus();
+      }, 300);
+    }
+  } catch (err) {
+    console.warn('Google pending data missing or invalid');
+  }
+})();
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -379,9 +460,10 @@ function getRedirectTarget() {
 }
 
 // ============================================================
-// SESSION GUARD
+// SESSION GUARD (skip in google mode)
 // ============================================================
 (function guardExistingSession() {
+  if (IS_GOOGLE_MODE) return;
   var token = localStorage.getItem('liquorbelle_token');
   var user = localStorage.getItem('liquorbelle_user');
   if (!token || !user) return;
@@ -399,6 +481,7 @@ function getRedirectTarget() {
 // DIGIT GROUP HELPERS
 // ============================================================
 function wireDigitGroup(groupEl, onComplete) {
+  if (!groupEl) return null;
   var boxes = Array.prototype.slice.call(groupEl.querySelectorAll('.digit-box'));
 
   boxes.forEach(function(box, i) {
@@ -451,7 +534,6 @@ var pinGroup = wireDigitGroup(document.getElementById('pinDigitGroup'));
 var pinConfirmGroup = wireDigitGroup(document.getElementById('pinConfirmGroup'));
 var otpGroup = wireDigitGroup(document.getElementById('otpDigitGroup'), function(value) {
   if (value.length === 6) {
-    // Auto-verify when all 6 digits are entered
     document.getElementById('verifyOtpBtn').click();
   }
 });
@@ -478,33 +560,24 @@ document.getElementById('pinConfirmToggleBtn').addEventListener('click', functio
 });
 
 // ============================================================
-// CHECK IF EMAIL EXISTS - SILENT CHECK
+// CHECK IF EMAIL EXISTS
 // ============================================================
 function checkEmailExists(email) {
   var cleanEmail = email.toLowerCase().trim();
-  
   return fetch(AUTH_BASE + '/check-email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: cleanEmail })
   })
   .then(function(res) {
-    if (!res.ok) {
-      console.warn('Check email returned status:', res.status);
-      return { exists: false };
-    }
+    if (!res.ok) return { exists: false };
     return res.json();
   })
   .then(function(data) {
-    if (data && typeof data.exists === 'boolean') {
-      return data.exists;
-    }
+    if (data && typeof data.exists === 'boolean') return data.exists;
     return false;
   })
-  .catch(function(err) {
-    console.warn('Check email network error:', err);
-    return false;
-  });
+  .catch(function() { return false; });
 }
 
 // ============================================================
@@ -517,6 +590,7 @@ function updateEmailStatus(isValid, isRegistered) {
   var icon = document.getElementById('emailCheckIcon');
   var msg = document.getElementById('emailCheckMessage');
   var input = document.getElementById('emailInput');
+  if (!icon || !msg || !input) return;
 
   if (!isValid) {
     icon.style.display = 'none';
@@ -557,7 +631,6 @@ document.getElementById('emailInput').addEventListener('input', function() {
   emailRegistered = false;
 
   if (!email) return;
-
   if (!isValidEmail(email)) {
     this.classList.add('error');
     return;
@@ -577,8 +650,6 @@ document.getElementById('emailInput').addEventListener('input', function() {
         updateEmailStatus(true, exists);
       })
       .catch(function() {
-        var icon = document.getElementById('emailCheckIcon');
-        var msg = document.getElementById('emailCheckMessage');
         icon.style.display = 'none';
         msg.textContent = '';
       });
@@ -626,7 +697,6 @@ document.getElementById('fullNameInput').addEventListener('input', function() {
 // ============================================================
 function sendOtp(email) {
   var cleanEmail = email.toLowerCase().trim();
-  
   return fetch(AUTH_BASE + '/send-email-otp', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -635,26 +705,19 @@ function sendOtp(email) {
   .then(function(res) {
     if (!res.ok) {
       return res.json().then(function(data) {
-        console.error('Send OTP error response:', data);
         throw new Error(data.message || 'Failed to send OTP');
       });
     }
     return res.json();
   })
   .then(function(data) {
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to send OTP');
-    }
+    if (!data.success) throw new Error(data.message || 'Failed to send OTP');
     return data;
-  })
-  .catch(function(err) {
-    console.error('Send OTP error:', err);
-    throw err;
   });
 }
 
 // ============================================================
-// REGISTER FORM SUBMIT
+// REGISTER FORM SUBMIT — SPLIT PATH
 // ============================================================
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -674,25 +737,28 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 
   var valid = true;
 
-  if (!fullName || fullName.length < 2) {
-    setFieldError('fullNameError', 'Please enter your full name');
-    document.getElementById('fullNameInput').classList.add('error');
-    valid = false;
-  } else {
-    document.getElementById('fullNameInput').classList.remove('error');
-  }
+  // Skip name/email validation in Google mode (hidden, prefilled)
+  if (!IS_GOOGLE_MODE) {
+    if (!fullName || fullName.length < 2) {
+      setFieldError('fullNameError', 'Please enter your full name');
+      document.getElementById('fullNameInput').classList.add('error');
+      valid = false;
+    } else {
+      document.getElementById('fullNameInput').classList.remove('error');
+    }
 
-  if (!isValidEmail(email)) {
-    setFieldError('emailError', 'Please enter a valid email address');
-    document.getElementById('emailInput').classList.add('error');
-    valid = false;
-  } else {
-    document.getElementById('emailInput').classList.remove('error');
-  }
+    if (!isValidEmail(email)) {
+      setFieldError('emailError', 'Please enter a valid email address');
+      document.getElementById('emailInput').classList.add('error');
+      valid = false;
+    } else {
+      document.getElementById('emailInput').classList.remove('error');
+    }
 
-  if (emailRegistered) {
-    showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
-    valid = false;
+    if (emailRegistered) {
+      showBanner('registerBanner', 'This email is already registered. <a href="login.html" style="color:var(--primary);font-weight:700;">Sign in</a> instead.', 'error');
+      valid = false;
+    }
   }
 
   if (!phone || !isValidKenyanPhone(phone)) {
@@ -730,7 +796,58 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 
   if (!valid) return;
 
-  // Store registration data
+  // ===== GOOGLE COMPLETION PATH =====
+  if (IS_GOOGLE_MODE) {
+    if (!GOOGLE_TOKEN) {
+      setFieldError('pinError', 'Google session expired. Please sign in with Google again.');
+      return;
+    }
+
+    setLoading('registerBtn', 'registerBtnText', true, 'Finishing...', 'Set PIN & Finish');
+
+    fetch(AUTH_BASE + '/complete-google-registration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: GOOGLE_TOKEN,
+        name: fullName || 'Google User',
+        phone: phone,
+        pin: pin
+      })
+    })
+    .then(function(res) {
+      return res.json().then(function(data) {
+        return { status: res.status, data: data };
+      });
+    })
+    .then(function(result) {
+      setLoading('registerBtn', 'registerBtnText', false, '', 'Set PIN & Finish');
+
+      if (result.status === 200 && result.data.success) {
+        localStorage.setItem('liquorbelle_token', result.data.token);
+        localStorage.setItem('liquorbelle_user', JSON.stringify(result.data.customer));
+        localStorage.setItem('liquorbelle_login_time', Date.now().toString());
+        try { sessionStorage.removeItem('liquorbelle_google_pending'); } catch (e) {}
+        toast('Welcome to LiquorBelle!', 'success');
+        setTimeout(function() {
+          window.location.href = 'accounts.html';
+        }, 700);
+        return;
+      }
+
+      var msg = result.data.message || 'Failed to finish signing up';
+      setFieldError('pinError', msg);
+      toast(msg, 'error');
+    })
+    .catch(function() {
+      setLoading('registerBtn', 'registerBtnText', false, '', 'Set PIN & Finish');
+      setFieldError('pinError', 'Network error. Please try again.');
+    });
+
+    return;
+  }
+
+  // ===== NORMAL EMAIL SIGNUP PATH =====
   registrationData = {
     name: fullName,
     email: email.toLowerCase().trim(),
@@ -740,12 +857,9 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 
   setLoading('registerBtn', 'registerBtnText', true, 'Sending OTP...', 'Create Account');
 
-  // Step 1: Send OTP
   sendOtp(email)
     .then(function() {
       setLoading('registerBtn', 'registerBtnText', false, '', 'Create Account');
-      
-      // Switch to OTP step
       document.getElementById('stepRegister').classList.remove('active');
       document.getElementById('stepOtp').classList.add('active');
       document.getElementById('otpEmailDisplay').textContent = email;
@@ -761,7 +875,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 });
 
 // ============================================================
-// VERIFY OTP - FIXED (with auto-verify)
+// VERIFY OTP
 // ============================================================
 document.getElementById('verifyOtpBtn').addEventListener('click', function() {
   var otp = otpGroup.getValue();
@@ -775,22 +889,21 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
 
   setLoading('verifyOtpBtn', 'verifyOtpBtnText', true, 'Verifying...', 'Verify & Create Account');
 
-  // Step 2: Verify OTP and Register
   fetch(AUTH_BASE + '/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name: registrationData.name,
-      email: registrationData.email.toLowerCase().trim(),
+      email: registrationData.email,
       phone: registrationData.phone,
       pin: registrationData.pin,
       otp: otp
     })
   })
-  .then(function(res) { 
-    return res.json().then(function(data) { 
-      return { status: res.status, data: data }; 
-    }); 
+  .then(function(res) {
+    return res.json().then(function(data) {
+      return { status: res.status, data: data };
+    });
   })
   .then(function(result) {
     setLoading('verifyOtpBtn', 'verifyOtpBtnText', false, '', 'Verify & Create Account');
@@ -798,6 +911,7 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
     if (result.status === 200 && result.data.success) {
       localStorage.setItem('liquorbelle_token', result.data.token);
       localStorage.setItem('liquorbelle_user', JSON.stringify(result.data.customer));
+      localStorage.setItem('liquorbelle_login_time', Date.now().toString());
       toast('Account created successfully!', 'success');
       setTimeout(function() {
         window.location.href = getRedirectTarget();
@@ -806,7 +920,7 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
     }
 
     if (result.status === 400) {
-      var errorMsg = result.data.message || 'Validation error. Please check your input.';
+      var errorMsg = result.data.message || 'Validation error.';
       if (result.data.errors) {
         errorMsg = result.data.errors.map(function(e) { return e.msg; }).join(', ');
       }
@@ -851,7 +965,6 @@ document.getElementById('verifyOtpBtn').addEventListener('click', function() {
 // ============================================================
 document.getElementById('resendOtpBtn').addEventListener('click', function() {
   if (this.disabled) return;
-
   setFieldError('otpError', '');
   this.disabled = true;
   this.textContent = 'Sending...';
@@ -908,7 +1021,7 @@ document.getElementById('backToRegisterBtn').addEventListener('click', function(
 });
 
 // ============================================================
-// GOOGLE SIGNUP
+// GOOGLE SIGNUP BUTTON
 // ============================================================
 document.getElementById('googleRegisterBtn').addEventListener('click', function() {
   var btn = this;
@@ -918,7 +1031,7 @@ document.getElementById('googleRegisterBtn').addEventListener('click', function(
 });
 
 // ============================================================
-// HANDLE GOOGLE CALLBACK
+// HANDLE GOOGLE CALLBACK (from login.html redirect chain)
 // ============================================================
 function handleGoogleCallback() {
   var params = new URLSearchParams(window.location.search);
@@ -929,18 +1042,9 @@ function handleGoogleCallback() {
   var phone = params.get('phone') || '';
   var isNew = params.get('is_new') === 'true';
 
-  if (googleAuth !== 'success' || !token || !email) {
-    return;
-  }
+  if (googleAuth !== 'success' || !token || !email) return;
 
-  var cleanUrl = window.location.pathname + window.location.search
-    .replace(/[?&]google_auth=[^&]*/, '')
-    .replace(/[?&]token=[^&]*/, '')
-    .replace(/[?&]email=[^&]*/, '')
-    .replace(/[?&]name=[^&]*/, '')
-    .replace(/[?&]phone=[^&]*/, '')
-    .replace(/[?&]is_new=[^&]*/, '');
-  
+  var cleanUrl = window.location.pathname;
   if (window.history && window.history.replaceState) {
     window.history.replaceState({}, document.title, cleanUrl);
   }
@@ -953,35 +1057,54 @@ function handleGoogleCallback() {
     return;
   }
 
+  // New Google user -> enter completion mode
   var decodedName = decodeURIComponent(name);
   var decodedEmail = decodeURIComponent(email);
-  
+
+  document.body.classList.add('google-mode');
+  IS_GOOGLE_MODE = true;
+  GOOGLE_TOKEN = token;
+
+  var banner = document.getElementById('googleModeBanner');
+  if (banner) banner.classList.add('show');
+
+  var title = document.getElementById('signupTitle');
+  if (title) title.textContent = 'Set Your PIN';
+
+  var lead = document.getElementById('signupLead');
+  if (lead) lead.textContent = 'Almost there — just a quick 4-digit PIN to finish.';
+
+  var iconGlyph = document.getElementById('brandIconGlyph');
+  if (iconGlyph) iconGlyph.className = 'ph ph-shield-check';
+
+  var btnText = document.getElementById('registerBtnText');
+  if (btnText) btnText.textContent = 'Set PIN & Finish';
+
   document.getElementById('fullNameInput').value = decodedName;
   document.getElementById('emailInput').value = decodedEmail;
-  if (phone) {
-    document.getElementById('phoneInput').value = phone;
-  }
-
-  var event = new Event('input');
-  document.getElementById('emailInput').dispatchEvent(event);
+  if (phone) document.getElementById('phoneInput').value = phone;
 
   toast('Welcome! Please set your PIN to complete registration.', 'info');
-  
+
   document.getElementById('stepOtp').classList.remove('active');
   document.getElementById('stepRegister').classList.add('active');
-  
-  pinGroup.focus();
+
+  setTimeout(function() {
+    var firstPin = document.querySelector('#pinDigitGroup .digit-box');
+    if (firstPin) firstPin.focus();
+  }, 300);
 }
 
 // ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
+  // Case 1: came directly with google_auth params on this URL
   handleGoogleCallback();
 
+  // Case 2: came from index.html with ?google=1 (pending data in sessionStorage)
   var params = new URLSearchParams(window.location.search);
-  var googleParam = params.get('google');
-  if (googleParam === '1') {
+  if (params.get('google') === '1') {
     var pendingData = sessionStorage.getItem('liquorbelle_google_pending');
     if (pendingData) {
       try {
@@ -989,14 +1112,24 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('fullNameInput').value = data.name || '';
         document.getElementById('emailInput').value = data.email || '';
         document.getElementById('phoneInput').value = data.phone || '';
-        sessionStorage.removeItem('liquorbelle_google_pending');
+        GOOGLE_TOKEN = data.token || null;
+
+        // Detect mode also runs at top, so UI is already set
         toast('Please set your PIN to complete registration.', 'info');
-        pinGroup.focus();
-      } catch (e) {}
+        setTimeout(function() {
+          var firstPin = document.querySelector('#pinDigitGroup .digit-box');
+          if (firstPin) firstPin.focus();
+        }, 300);
+      } catch (e) {
+        console.warn('Bad pending data');
+      }
     }
   }
 
-  document.getElementById('fullNameInput').focus();
+  // Only focus name field in normal mode
+  if (!IS_GOOGLE_MODE) {
+    document.getElementById('fullNameInput').focus();
+  }
 });
 
 console.log('✅ Register page loaded');
