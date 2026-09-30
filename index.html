@@ -463,7 +463,17 @@ body.age-gate-active{overflow:hidden !important;height:100vh !important;position
       <input id="mobileSearchInput" type="text" placeholder="Search products...">
     </form>
   </div>
+
+  <!-- Auth section (injected by app.js updateMobileMenuAuth) -->
   <div id="mobileMenuAuth"></div>
+
+  <!-- Static fallback auth buttons - hidden when updateMobileMenuAuth runs -->
+  <div id="mobileMenuAuthFallback">
+    <a href="accounts.html" class="mm-link" style="display:flex;align-items:center;gap:12px;padding:13px 20px;color:var(--primary);font-weight:700;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--border);margin-bottom:4px;">
+      <i class="ph ph-sign-in" style="font-size:19px;color:var(--gold);width:20px;"></i> Login / Register
+    </a>
+  </div>
+
   <a href="index.html"><i class="ph ph-house"></i> Home</a>
   <a href="shop.html"><i class="ph ph-grid-four"></i> Shop</a>
   <button class="mm-link" onclick="closeMobileMenu();openCartDrawer();"><i class="ph ph-shopping-cart"></i> Cart</button>
@@ -727,10 +737,77 @@ body.age-gate-active{overflow:hidden !important;height:100vh !important;position
 
 <script src="app.js"></script>
 <script>
-// ============================================================
-// INDEX ONLY — hero chips, marquee, google auth, age gate,
-// cookie banner. Everything else lives in app.js
-// ============================================================
+// INDEX ONLY — hero chips, marquee, google auth, age gate,  cookie banner. Everything else lives in app.js
+
+// ---------- Mobile menu ----------
+function openMobileMenu() {
+  var m = document.getElementById('mobileMenu');
+  var o = document.getElementById('mobileMenuOverlay');
+  if (m) m.classList.add('open');
+  if (o) o.classList.add('open');
+}
+function closeMobileMenu() {
+  var m = document.getElementById('mobileMenu');
+  var o = document.getElementById('mobileMenuOverlay');
+  if (m) m.classList.remove('open');
+  if (o) o.classList.remove('open');
+}
+window.openMobileMenu = openMobileMenu;
+window.closeMobileMenu = closeMobileMenu;
+
+// ---------- Header search ----------
+function handleHeaderSearch(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  var val = '';
+  var hi = document.getElementById('headerSearchInput');
+  var mi = document.getElementById('mobileSearchInput');
+  if (hi && hi.value.trim()) val = hi.value.trim();
+  else if (mi && mi.value.trim()) val = mi.value.trim();
+  if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
+  return false;
+}
+window.handleHeaderSearch = handleHeaderSearch;
+
+// ---------- Main search clear + init ----------
+function clearMainSearch() {
+  var input = document.getElementById('mainSearchInput');
+  var btn = document.getElementById('mainSearchClear');
+  if (input) { input.value = ''; input.focus(); }
+  if (btn) btn.style.display = 'none';
+  var hi = document.getElementById('headerSearchInput');
+  if (hi) hi.value = '';
+  var mi = document.getElementById('mobileSearchInput');
+  if (mi) mi.value = '';
+}
+window.clearMainSearch = clearMainSearch;
+
+(function initMainSearch() {
+  var input = document.getElementById('mainSearchInput');
+  var clearBtn = document.getElementById('mainSearchClear');
+  if (!input) return;
+  input.addEventListener('input', function() {
+    var val = this.value.trim();
+    if (clearBtn) clearBtn.style.display = val.length > 0 ? 'block' : 'none';
+    var hi = document.getElementById('headerSearchInput');
+    if (hi) hi.value = val;
+    var mi = document.getElementById('mobileSearchInput');
+    if (mi) mi.value = val;
+  });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var val = this.value.trim();
+      if (val) window.location.href = 'shop.html?search=' + encodeURIComponent(val);
+    }
+  });
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      input.value = '';
+      clearBtn.style.display = 'none';
+      input.focus();
+    });
+  }
+})();
 
 // ---------- Category chips (below hero) ----------
 (function initChips() {
